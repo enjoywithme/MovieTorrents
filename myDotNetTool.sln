@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "0dsfvcheck", "0dsfvcheck\0d
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FindSimilarNameFolder", "FindSimilarNameFolder\FindSimilarNameFolder.csproj", "{2B43FC82-00B6-46A8-A647-5E6C8C84E2EF}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PostPrin", "PostPrin\PostPrin.csproj", "{AC5DCA3B-B81D-4B2D-AB53-7626C81EFE7D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -71,6 +73,14 @@ Global
 		{2B43FC82-00B6-46A8-A647-5E6C8C84E2EF}.Release|x64.ActiveCfg = Release|x86
 		{2B43FC82-00B6-46A8-A647-5E6C8C84E2EF}.Release|x86.ActiveCfg = Release|x86
 		{2B43FC82-00B6-46A8-A647-5E6C8C84E2EF}.Release|x86.Build.0 = Release|x86
+		{AC5DCA3B-B81D-4B2D-AB53-7626C81EFE7D}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{AC5DCA3B-B81D-4B2D-AB53-7626C81EFE7D}.Debug|x64.ActiveCfg = Debug|x86
+		{AC5DCA3B-B81D-4B2D-AB53-7626C81EFE7D}.Debug|x86.ActiveCfg = Debug|x86
+		{AC5DCA3B-B81D-4B2D-AB53-7626C81EFE7D}.Debug|x86.Build.0 = Debug|x86
+		{AC5DCA3B-B81D-4B2D-AB53-7626C81EFE7D}.Release|Any CPU.ActiveCfg = Release|x86
+		{AC5DCA3B-B81D-4B2D-AB53-7626C81EFE7D}.Release|x64.ActiveCfg = Release|x86
+		{AC5DCA3B-B81D-4B2D-AB53-7626C81EFE7D}.Release|x86.ActiveCfg = Release|x86
+		{AC5DCA3B-B81D-4B2D-AB53-7626C81EFE7D}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
