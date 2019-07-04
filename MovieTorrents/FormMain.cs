@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Data.SQLite;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -18,7 +19,60 @@ namespace MovieTorrents
     {
         private string _currentPath;
         private string _dbConnString;
-        private CancellationTokenSource _tokenSource;
+
+        private CancellationTokenSource _quernyTokenSource;
+        private CancellationTokenSource _operTokenSource;
+
+        private string _torrentFilePath;
+        private string TorrentFilePath
+        {
+            get {
+                if (!string.IsNullOrEmpty(_torrentFilePath))
+                    return _torrentFilePath;
+
+                var m_dbConnection = new SQLiteConnection(_dbConnString);
+                
+                var sql = $"select area,path from tb_dir as d inner join tb_hdd as h on h.hdd_nid=d.hdd_nid  limit 1";
+                try
+                {
+                    m_dbConnection.Open();
+                    try
+                    {
+                        var command = new SQLiteCommand(sql, m_dbConnection);
+                        var reader = command.ExecuteReader();
+                        if(reader.Read())
+                        {
+                            _torrentFilePath = (string)reader["area"] + (string)reader["path"];
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        MessageBox.Show(e.Message, "错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+
+                    m_dbConnection.Close();
+
+                }
+                catch (Exception e)
+                {
+                    MessageBox.Show(e.Message, "错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+                return _torrentFilePath;
+            }
+        }
+
+        private enum OperationType
+        {
+            None,
+            QueryFile,
+            ScanFile,
+            ClearFile
+        };
+
+        private OperationType _currentOperation = OperationType.None;
+
+        private long _fileScanned;
+
 
         public FormMain()
         {
@@ -36,20 +90,34 @@ namespace MovieTorrents
                 return;
             }
 
-            if(_tokenSource!=null)
+            lock(this)
             {
-                _tokenSource.Cancel();
-                _tokenSource.Dispose();
-                _tokenSource = null;
+                if(_currentOperation!=OperationType.None && _currentOperation!=OperationType.QueryFile)
+                {
+                    MessageBox.Show("正在执行其他操作，等待完成后操作", "提示", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
             }
 
-            _tokenSource = new CancellationTokenSource();
-            Task.Run(() => ExecuteSearch(tbSearchText.Text.Trim(), _tokenSource.Token))
+
+            if(_quernyTokenSource!=null)
+            {
+                _quernyTokenSource.Cancel();
+                _quernyTokenSource.Dispose();
+                _quernyTokenSource = null;
+            }
+
+            UpdateCurrentOperation(OperationType.QueryFile);
+
+            _quernyTokenSource = new CancellationTokenSource();
+            Task.Run(() => ExecuteSearch(tbSearchText.Text.Trim(), _quernyTokenSource.Token))
                 .ContinueWith(task =>
                 {
                     if (task.IsFaulted) Invoke(new Action(() => MessageBox.Show(task.Exception.InnerException.Message)));
                     else if (task.IsCanceled) { }
                     else Invoke(new Action(() => updateListView(task.Result)));
+
+                    Invoke(new Action(() => UpdateCurrentOperation()));
                 });
 
         }
@@ -61,8 +129,6 @@ namespace MovieTorrents
             lvResults.Items.Clear();
             foreach(var torrentFile in torrentFiles)
             {
-                if (_tokenSource != null && _tokenSource.IsCancellationRequested) return;
-
                 string[] row = { torrentFile.name,
                                 torrentFile.rating.ToString(),
                                 torrentFile.year,
@@ -74,7 +140,10 @@ namespace MovieTorrents
                     Tag = torrentFile.fid
                 });
             }
+
+
             lvResults.EndUpdate();
+            
         }
 
         public async Task<IEnumerable<TorrentFile>> ExecuteSearch(string text, CancellationToken cancelToken)
@@ -169,6 +238,125 @@ namespace MovieTorrents
             }
 
             return ok;
+        }
+
+        //扫描种子文件
+        private void ScanTorrentFile()
+        {
+            if(string.IsNullOrEmpty(TorrentFilePath))
+            {
+                MessageBox.Show("种子文件根目录没有配置", "错误", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+            if(!Directory.Exists(TorrentFilePath))
+            {
+                MessageBox.Show($"种子文件根目录\"{TorrentFilePath}\"不存在！", "错误", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            lock (this)
+            {
+                if (_currentOperation != OperationType.None)
+                {
+                    MessageBox.Show("正在执行其他操作，等待完成后操作", "提示", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+            }
+
+            if(_operTokenSource!=null)
+            {
+                _operTokenSource.Dispose();
+                _operTokenSource = null;
+            }
+            _operTokenSource = new CancellationTokenSource();
+
+            UpdateCurrentOperation(OperationType.ScanFile);
+
+            Task.Run(() => DoScanFile(TorrentFilePath, _operTokenSource.Token)).ContinueWith(task =>
+            {
+                Invoke(new Action(() => {
+                    UpdateCurrentOperation(OperationType.None,$"完成文件扫描，共{_fileScanned}个文件");
+                }));
+            });
+
+        }
+
+        private void UpdateCurrentOperation(OperationType operation= OperationType.None, string infoMsg = "")
+        {
+            lock (this)
+            {
+                _currentOperation = operation;
+            }
+
+            switch(_currentOperation)
+            {
+                case OperationType.None:
+                    tssInfo.Text =string.IsNullOrEmpty(infoMsg)?"空闲":infoMsg;
+                    tssState.BackColor = Color.LimeGreen;
+                    break;
+                case OperationType.QueryFile:
+                    tssInfo.Text = string.IsNullOrEmpty(infoMsg) ? "查询文件中" : infoMsg;
+                    tssState.BackColor = Color.OrangeRed;
+                    break;
+                case OperationType.ScanFile:
+                    tssInfo.Text = string.IsNullOrEmpty(infoMsg) ? "扫描文件中" : infoMsg;
+                    tssState.BackColor = Color.OrangeRed;
+                    break;
+            }
+        }
+
+        private void DoScanFile(string dirName,CancellationToken token)
+        {
+            _fileScanned = 0;
+            var di = new DirectoryInfo(dirName);
+            if (di != null && di.Exists)
+            {
+                foreach (FileInfo fi in di.EnumerateFiles("*.torrent", SearchOption.AllDirectories))
+                {
+                    if (token.IsCancellationRequested) return;
+
+                    _fileScanned++;
+
+                    Debug.WriteLine(fi.Extension);
+                    Debug.WriteLine(fi.FullName);
+                }
+            }
+        }
+
+        private void tsmiScanFile_Click(object sender, EventArgs e)
+        {
+            ScanTorrentFile();
+        }
+
+        private void FormMain_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            lock(this)
+            {
+                if(_currentOperation!=OperationType.None)
+                {
+                    MessageBox.Show("尚有操作在进行中，不能退出！", "提示", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    e.Cancel = true;
+                }
+            }
+        }
+
+        private void tssInfo_DoubleClick(object sender, EventArgs e)
+        {
+            
+        }
+
+        private void tssState_Click(object sender, EventArgs e)
+        {
+            lock (this)
+            {
+                if (_currentOperation == OperationType.None)
+                    return;
+            }
+
+            if (MessageBox.Show("确定取消当前操作?", "提示", MessageBoxButtons.YesNo, MessageBoxIcon.Asterisk) == DialogResult.No)
+                return;
+
+            if (_operTokenSource != null) _operTokenSource.Cancel();
         }
     }
 }
