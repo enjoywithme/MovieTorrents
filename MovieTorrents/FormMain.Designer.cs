@@ -110,7 +110,6 @@
             this.tssInfo.Size = new System.Drawing.Size(914, 17);
             this.tssInfo.Spring = true;
             this.tssInfo.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.tssInfo.DoubleClick += new System.EventHandler(this.tssInfo_DoubleClick);
             // 
             // lvResults
             // 

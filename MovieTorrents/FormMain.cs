@@ -9,6 +9,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -22,6 +23,7 @@ namespace MovieTorrents
 
         private CancellationTokenSource _quernyTokenSource;
         private CancellationTokenSource _operTokenSource;
+        private Stopwatch _stopwatch;
 
         private string _torrentFilePath;
         private string TorrentFilePath
@@ -30,33 +32,45 @@ namespace MovieTorrents
                 if (!string.IsNullOrEmpty(_torrentFilePath))
                     return _torrentFilePath;
 
-                var m_dbConnection = new SQLiteConnection(_dbConnString);
-                
-                var sql = $"select area,path from tb_dir as d inner join tb_hdd as h on h.hdd_nid=d.hdd_nid  limit 1";
-                try
+                using (var connection = new SQLiteConnection(_dbConnString))
                 {
-                    m_dbConnection.Open();
+                    var sql = $"select d.hdd_nid,area,path from tb_dir as d inner join tb_hdd as h on h.hdd_nid=d.hdd_nid  limit 1";
                     try
                     {
-                        var command = new SQLiteCommand(sql, m_dbConnection);
-                        var reader = command.ExecuteReader();
-                        if(reader.Read())
+                        connection.Open();
+                        try
                         {
-                            _torrentFilePath = (string)reader["area"] + (string)reader["path"];
+                            using (var command = new SQLiteCommand(sql, connection))
+                            {
+                                using (var reader = command.ExecuteReader())
+                                {
+                                    if (reader.Read())
+                                    {
+                                        _hdd_nid = (byte)reader.GetByte(0);// ["hdd_nid"];
+                                        _area = (string)reader["area"];
+                                        _shortRootPath = (string)reader["path"];
+                                        _torrentFilePath = _area + _shortRootPath;
+                                    }
+                                }
+                                    
+                            }
+                                
                         }
+                        catch (Exception e)
+                        {
+                            MessageBox.Show(e.Message, "错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        }
+
+                        connection.Close();
+
                     }
                     catch (Exception e)
                     {
                         MessageBox.Show(e.Message, "错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
-
-                    m_dbConnection.Close();
-
                 }
-                catch (Exception e)
-                {
-                    MessageBox.Show(e.Message, "错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }
+
+                    
                 return _torrentFilePath;
             }
         }
@@ -72,6 +86,12 @@ namespace MovieTorrents
         private OperationType _currentOperation = OperationType.None;
 
         private long _fileScanned;
+        private long _fileAdded;
+
+        private byte _hdd_nid;
+        private string _area;
+        private string _shortRootPath;
+
 
 
         public FormMain()
@@ -150,12 +170,12 @@ namespace MovieTorrents
         {
             var result = new List<TorrentFile>();
 
-            using (var m_dbConnection = new SQLiteConnection(_dbConnString))
+            using (var connection = new SQLiteConnection(_dbConnString))
             {
                 var sql = $"select * from filelist_view where name like '%{text}%' order by rating desc";
-                using (var command = new SQLiteCommand(sql, m_dbConnection))
+                using (var command = new SQLiteCommand(sql, connection))
                 {
-                    await m_dbConnection.OpenAsync(cancelToken);
+                    await connection.OpenAsync(cancelToken);
 
                     using (var reader = await command.ExecuteReaderAsync(cancelToken))
                     {
@@ -271,11 +291,19 @@ namespace MovieTorrents
             _operTokenSource = new CancellationTokenSource();
 
             UpdateCurrentOperation(OperationType.ScanFile);
+            _stopwatch = new Stopwatch();
+            _stopwatch.Start();
 
             Task.Run(() => DoScanFile(TorrentFilePath, _operTokenSource.Token)).ContinueWith(task =>
             {
+                if(task.IsFaulted)
+                {
+                    Invoke(new Action(() => MessageBox.Show(task.Exception.InnerException.Message)));
+                }
+
                 Invoke(new Action(() => {
-                    UpdateCurrentOperation(OperationType.None,$"完成文件扫描，共{_fileScanned}个文件");
+                    _stopwatch.Stop();
+                    UpdateCurrentOperation(OperationType.None,$"完成文件扫描，共{_fileScanned}个文件,新添加{_fileAdded}个文件，耗时{_stopwatch.Elapsed.Minutes}分{_stopwatch.Elapsed.Seconds}秒。");
                 }));
             });
 
@@ -308,21 +336,72 @@ namespace MovieTorrents
         private void DoScanFile(string dirName,CancellationToken token)
         {
             _fileScanned = 0;
+            _fileAdded = 0;
+
             var di = new DirectoryInfo(dirName);
-            if (di != null && di.Exists)
+            if (di == null || !di.Exists) return;
+
+            var regex = new Regex(@"\d{4}");
+
+
+            using (var connection = new SQLiteConnection(_dbConnString))
             {
-                foreach (FileInfo fi in di.EnumerateFiles("*.torrent", SearchOption.AllDirectories))
+                connection.Open();
+
+                using (var commandInsert = new SQLiteCommand($@"insert into tb_file(hdd_nid,path,name,ext,year) select {_hdd_nid},$path,$name,$ext,$year
+where not exists (select 1 from tb_file where hdd_nid={_hdd_nid} and path=$path and name=$name and ext=$ext)", connection))
                 {
-                    if (token.IsCancellationRequested) return;
+                    commandInsert.Parameters.Add("$path", DbType.String,520);
+                    commandInsert.Parameters.Add("$name", DbType.String,520);
+                    commandInsert.Parameters.Add("$ext", DbType.String,32);
+                    commandInsert.Parameters.Add("$year", DbType.String,16);
 
-                    _fileScanned++;
+                    commandInsert.Prepare();
 
-                    Debug.WriteLine(fi.Extension);
-                    Debug.WriteLine(fi.FullName);
+                    foreach (FileInfo fi in di.EnumerateFiles("*.torrent", SearchOption.AllDirectories))
+                    {
+                        if (token.IsCancellationRequested) return;
+
+                        _fileScanned++;
+
+                        Debug.WriteLine(fi.Extension);
+                        Debug.WriteLine(fi.FullName);
+                        var name = Path.GetFileNameWithoutExtension(fi.FullName);
+                        var path = fi.DirectoryName.Substring(_area.Length) + "\\";
+                        var ext = fi.Extension;
+
+
+                        var year = string.Empty;
+                        var match = regex.Match(name);
+                        if (match.Success) year = match.Value;
+
+
+                        commandInsert.Parameters["$path"].Value = path;
+                        commandInsert.Parameters["$name"].Value = name;
+                        commandInsert.Parameters["$ext"].Value = ext;
+                        commandInsert.Parameters["$year"].Value = year;
+
+                        _fileAdded += commandInsert.ExecuteNonQuery();
+
+
+                    }
+
+
                 }
+
+
+                
+                if (di != null && di.Exists)
+                {
+                    
+
+                }
+
+            
             }
         }
 
+        
         private void tsmiScanFile_Click(object sender, EventArgs e)
         {
             ScanTorrentFile();
@@ -340,10 +419,7 @@ namespace MovieTorrents
             }
         }
 
-        private void tssInfo_DoubleClick(object sender, EventArgs e)
-        {
-            
-        }
+        
 
         private void tssState_Click(object sender, EventArgs e)
         {
