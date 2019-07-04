@@ -15,6 +15,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FindSimilarNameFolder", "Fi
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PostPrin", "PostPrin\PostPrin.csproj", "{AC5DCA3B-B81D-4B2D-AB53-7626C81EFE7D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MovieTorrents", "MovieTorrents\MovieTorrents.csproj", "{610C0ADD-78E8-4B12-88D8-B5BFDDAB375C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -81,6 +83,18 @@ Global
 		{AC5DCA3B-B81D-4B2D-AB53-7626C81EFE7D}.Release|x64.ActiveCfg = Release|x86
 		{AC5DCA3B-B81D-4B2D-AB53-7626C81EFE7D}.Release|x86.ActiveCfg = Release|x86
 		{AC5DCA3B-B81D-4B2D-AB53-7626C81EFE7D}.Release|x86.Build.0 = Release|x86
+		{610C0ADD-78E8-4B12-88D8-B5BFDDAB375C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{610C0ADD-78E8-4B12-88D8-B5BFDDAB375C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{610C0ADD-78E8-4B12-88D8-B5BFDDAB375C}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{610C0ADD-78E8-4B12-88D8-B5BFDDAB375C}.Debug|x64.Build.0 = Debug|Any CPU
+		{610C0ADD-78E8-4B12-88D8-B5BFDDAB375C}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{610C0ADD-78E8-4B12-88D8-B5BFDDAB375C}.Debug|x86.Build.0 = Debug|Any CPU
+		{610C0ADD-78E8-4B12-88D8-B5BFDDAB375C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{610C0ADD-78E8-4B12-88D8-B5BFDDAB375C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{610C0ADD-78E8-4B12-88D8-B5BFDDAB375C}.Release|x64.ActiveCfg = Release|Any CPU
+		{610C0ADD-78E8-4B12-88D8-B5BFDDAB375C}.Release|x64.Build.0 = Release|Any CPU
+		{610C0ADD-78E8-4B12-88D8-B5BFDDAB375C}.Release|x86.ActiveCfg = Release|Any CPU
+		{610C0ADD-78E8-4B12-88D8-B5BFDDAB375C}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
