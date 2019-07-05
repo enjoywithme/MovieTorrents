@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.SQLite;
+using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -19,6 +21,25 @@ namespace MovieTorrents
         public string year { get; set; }
         public long seeflag { get; set; }
         public string seedate { get; set; }
+
+        private static Regex regex = new Regex(@"\d{4}");
+
+        public TorrentFile()
+        {
+            
+        }
+
+        public TorrentFile(string fullName)
+        {
+            name = Path.GetFileNameWithoutExtension(fullName);
+            var dir = Path.GetDirectoryName(fullName);
+            path = dir.Substring(Path.GetPathRoot(dir).Length)+"\\";
+            ext = Path.GetExtension(fullName);
+            
+            year = string.Empty;
+            var match = regex.Match(name);
+            if (match.Success) year = match.Value;
+        }
 
         public static bool SetWatched(string dbConnString, object fileid, out string seedate)
         {

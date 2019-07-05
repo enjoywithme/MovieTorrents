@@ -36,6 +36,7 @@
             this.退出XToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tbSearchText = new System.Windows.Forms.TextBox();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
+            this.tssState = new System.Windows.Forms.ToolStripStatusLabel();
             this.tssInfo = new System.Windows.Forms.ToolStripStatusLabel();
             this.lvResults = new System.Windows.Forms.ListView();
             this.columnHeaderName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -45,7 +46,6 @@
             this.columnHeaderSeeDate = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.lvContextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.tsmiSetWatched = new System.Windows.Forms.ToolStripMenuItem();
-            this.tssState = new System.Windows.Forms.ToolStripStatusLabel();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.lvContextMenu.SuspendLayout();
@@ -91,6 +91,7 @@
             this.tbSearchText.Size = new System.Drawing.Size(977, 21);
             this.tbSearchText.TabIndex = 1;
             this.tbSearchText.TextChanged += new System.EventHandler(this.tbSearchText_TextChanged);
+            this.tbSearchText.KeyDown += new System.Windows.Forms.KeyEventHandler(this.tbSearchText_KeyDown);
             // 
             // statusStrip1
             // 
@@ -103,12 +104,25 @@
             this.statusStrip1.TabIndex = 2;
             this.statusStrip1.Text = "statusStrip1";
             // 
+            // tssState
+            // 
+            this.tssState.AutoSize = false;
+            this.tssState.BackColor = System.Drawing.Color.LimeGreen;
+            this.tssState.BorderSides = ((System.Windows.Forms.ToolStripStatusLabelBorderSides)((((System.Windows.Forms.ToolStripStatusLabelBorderSides.Left | System.Windows.Forms.ToolStripStatusLabelBorderSides.Top) 
+            | System.Windows.Forms.ToolStripStatusLabelBorderSides.Right) 
+            | System.Windows.Forms.ToolStripStatusLabelBorderSides.Bottom)));
+            this.tssState.BorderStyle = System.Windows.Forms.Border3DStyle.Etched;
+            this.tssState.Name = "tssState";
+            this.tssState.Size = new System.Drawing.Size(17, 17);
+            this.tssState.Click += new System.EventHandler(this.tssState_Click);
+            // 
             // tssInfo
             // 
             this.tssInfo.AutoSize = false;
             this.tssInfo.Name = "tssInfo";
-            this.tssInfo.Size = new System.Drawing.Size(914, 17);
+            this.tssInfo.Size = new System.Drawing.Size(945, 17);
             this.tssInfo.Spring = true;
+            this.tssInfo.Text = "空闲";
             this.tssInfo.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // lvResults
@@ -168,18 +182,6 @@
             this.tsmiSetWatched.Text = "设置为已观看";
             this.tsmiSetWatched.Click += new System.EventHandler(this.tsmiSetWatched_Click);
             // 
-            // tssState
-            // 
-            this.tssState.AutoSize = false;
-            this.tssState.BackColor = System.Drawing.Color.LimeGreen;
-            this.tssState.BorderSides = ((System.Windows.Forms.ToolStripStatusLabelBorderSides)((((System.Windows.Forms.ToolStripStatusLabelBorderSides.Left | System.Windows.Forms.ToolStripStatusLabelBorderSides.Top) 
-            | System.Windows.Forms.ToolStripStatusLabelBorderSides.Right) 
-            | System.Windows.Forms.ToolStripStatusLabelBorderSides.Bottom)));
-            this.tssState.BorderStyle = System.Windows.Forms.Border3DStyle.Etched;
-            this.tssState.Name = "tssState";
-            this.tssState.Size = new System.Drawing.Size(17, 17);
-            this.tssState.Click += new System.EventHandler(this.tssState_Click);
-            // 
             // FormMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -194,6 +196,7 @@
             this.Name = "FormMain";
             this.Text = "Movie torrents";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FormMain_FormClosing);
+            this.Load += new System.EventHandler(this.FormMain_Load);
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
             this.statusStrip1.ResumeLayout(false);
