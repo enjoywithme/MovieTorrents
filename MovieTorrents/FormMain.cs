@@ -113,11 +113,18 @@ namespace MovieTorrents
             if(!string.IsNullOrEmpty(TorrentFilePath)&&Directory.Exists(TorrentFilePath))
             {
                 watcher.Path = TorrentFilePath;
+                watcher.IncludeSubdirectories = true;
                 watcher.NotifyFilter = NotifyFilters.FileName;
                 watcher.Filter = "*.torrent";
                 watcher.Created += Watcher_File_Created;
                 watcher.EnableRaisingEvents = true;
             }
+
+            //var d1 = DateTime.MinValue;
+            //var d2 = DateTime.Parse("2018-09-10 14:05:04");
+            //Debug.WriteLine((d2 - d1).TotalMilliseconds / 1000);
+
+
         }
 
         private void Watcher_File_Created(object sender, FileSystemEventArgs e)
@@ -200,12 +207,16 @@ namespace MovieTorrents
             lvResults.Items.Clear();
             foreach (var torrentFile in torrentFiles)
             {
+                if (_quernyTokenSource != null && _quernyTokenSource.IsCancellationRequested)
+                    break;
+
                 string[] row = { torrentFile.name,
                                 torrentFile.rating.ToString(),
                                 torrentFile.year,
                                 torrentFile.seeflag.ToString(),
                                 torrentFile.seedate,
-                                torrentFile.seecomment
+                                torrentFile.seecomment,
+                                torrentFile.path
                             };
                 lvResults.Items.Add(new ListViewItem(row)
                 {
@@ -247,6 +258,7 @@ namespace MovieTorrents
                             result.Add(new TorrentFile
                             {
                                 fid = (long)reader["file_nid"],
+                                path =(string)reader["path"],
                                 name = (string)reader["name"],
                                 rating = (double)reader["rating"],
                                 year = (string)reader["year"],
@@ -408,15 +420,21 @@ namespace MovieTorrents
             {
                 connection.Open();
 
-                using (var commandInsert = new SQLiteCommand($@"insert into tb_file(hdd_nid,path,name,ext,year) select {_hdd_nid},$path,$name,$ext,$year
+                using (var commandInsert = new SQLiteCommand($@"insert into tb_file(hdd_nid,path,name,ext,year,filesize,CreationTime,LastWriteTime,LastOpenTime)
+select {_hdd_nid},$path,$name,$ext,$year,$filesize,$n,$n,$n
 where not exists (select 1 from tb_file where hdd_nid={_hdd_nid} and path=$path and name=$name and ext=$ext)", connection))
                 {
                     commandInsert.Parameters.Add("$path", DbType.String, 520);
                     commandInsert.Parameters.Add("$name", DbType.String, 520);
                     commandInsert.Parameters.Add("$ext", DbType.String, 32);
                     commandInsert.Parameters.Add("$year", DbType.String, 16);
+                    commandInsert.Parameters.Add("$filesize", DbType.Int64);
+                    commandInsert.Parameters.Add("$n", DbType.Int64);
 
                     commandInsert.Prepare();
+
+                    var refDate = DateTime.Parse("2016-12-02 10:53:38");
+                    long refDateInt = 13125120818;
 
                     foreach (var torrentFile in _filesToProces.GetConsumingEnumerable())
                     {
@@ -425,10 +443,14 @@ where not exists (select 1 from tb_file where hdd_nid={_hdd_nid} and path=$path 
                         Debug.WriteLine($"Processing:{torrentFile.name}");
 
                         _fileProcessed++;
+                        long n = ((long)(DateTime.Now - refDate).TotalSeconds + refDateInt) * 10000000;
+                        
                         commandInsert.Parameters["$path"].Value = torrentFile.path;
                         commandInsert.Parameters["$name"].Value = torrentFile.name;
                         commandInsert.Parameters["$ext"].Value = torrentFile.ext;
                         commandInsert.Parameters["$year"].Value = torrentFile.year;
+                        commandInsert.Parameters["$filesize"].Value = torrentFile.filesize;
+                        commandInsert.Parameters["$n"].Value = n;
 
                         _fileAdded += commandInsert.ExecuteNonQuery();
                     }

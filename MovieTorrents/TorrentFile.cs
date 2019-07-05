@@ -17,6 +17,7 @@ namespace MovieTorrents
         public string path { get; set; }
         public string name { get; set; }
         public string ext { get; set; }
+        public long filesize { get; set; }
         public double rating { get; set; }
         public string year { get; set; }
         public long seeflag { get; set; }
@@ -36,7 +37,8 @@ namespace MovieTorrents
             var dir = Path.GetDirectoryName(fullName);
             path = dir.Substring(Path.GetPathRoot(dir).Length)+"\\";
             ext = Path.GetExtension(fullName);
-            
+            filesize = new FileInfo(fullName).Length;
+
             year = string.Empty;
             var match = regex.Match(name);
             if (match.Success) year = match.Value;

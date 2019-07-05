@@ -33,6 +33,7 @@
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.文件FToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tsmiScanFile = new System.Windows.Forms.ToolStripMenuItem();
+            this.tsmiClearRecords = new System.Windows.Forms.ToolStripMenuItem();
             this.退出XToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tbSearchText = new System.Windows.Forms.TextBox();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
@@ -44,11 +45,11 @@
             this.columnHeaderYear = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeaderSeen = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeaderSeeDate = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeaderSeeComment = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.lvContextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.tsmiSetWatched = new System.Windows.Forms.ToolStripMenuItem();
-            this.tsmiClearRecords = new System.Windows.Forms.ToolStripMenuItem();
-            this.columnHeaderSeeComment = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.tsmiCopyName = new System.Windows.Forms.ToolStripMenuItem();
+            this.columnHeaderPath = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.lvContextMenu.SuspendLayout();
@@ -77,14 +78,21 @@
             // tsmiScanFile
             // 
             this.tsmiScanFile.Name = "tsmiScanFile";
-            this.tsmiScanFile.Size = new System.Drawing.Size(180, 22);
+            this.tsmiScanFile.Size = new System.Drawing.Size(164, 22);
             this.tsmiScanFile.Text = "扫描种子文件(&S)";
             this.tsmiScanFile.Click += new System.EventHandler(this.tsmiScanFile_Click);
+            // 
+            // tsmiClearRecords
+            // 
+            this.tsmiClearRecords.Name = "tsmiClearRecords";
+            this.tsmiClearRecords.Size = new System.Drawing.Size(164, 22);
+            this.tsmiClearRecords.Text = "清除无效记录(&C)";
+            this.tsmiClearRecords.Click += new System.EventHandler(this.tsmiClearRecords_Click);
             // 
             // 退出XToolStripMenuItem
             // 
             this.退出XToolStripMenuItem.Name = "退出XToolStripMenuItem";
-            this.退出XToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.退出XToolStripMenuItem.Size = new System.Drawing.Size(164, 22);
             this.退出XToolStripMenuItem.Text = "退出(X)";
             // 
             // tbSearchText
@@ -137,7 +145,8 @@
             this.columnHeaderYear,
             this.columnHeaderSeen,
             this.columnHeaderSeeDate,
-            this.columnHeaderSeeComment});
+            this.columnHeaderSeeComment,
+            this.columnHeaderPath});
             this.lvResults.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lvResults.FullRowSelect = true;
             this.lvResults.Location = new System.Drawing.Point(0, 46);
@@ -171,41 +180,39 @@
             this.columnHeaderSeeDate.Text = "观看日期";
             this.columnHeaderSeeDate.Width = 120;
             // 
+            // columnHeaderSeeComment
+            // 
+            this.columnHeaderSeeComment.Text = "观看评论";
+            this.columnHeaderSeeComment.Width = 190;
+            // 
             // lvContextMenu
             // 
             this.lvContextMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.tsmiSetWatched,
             this.tsmiCopyName});
             this.lvContextMenu.Name = "lvContextMenu";
-            this.lvContextMenu.Size = new System.Drawing.Size(181, 70);
+            this.lvContextMenu.Size = new System.Drawing.Size(169, 48);
             this.lvContextMenu.Text = "设置已看";
             this.lvContextMenu.Opening += new System.ComponentModel.CancelEventHandler(this.lvContextMenu_Opening);
             // 
             // tsmiSetWatched
             // 
             this.tsmiSetWatched.Name = "tsmiSetWatched";
-            this.tsmiSetWatched.Size = new System.Drawing.Size(180, 22);
+            this.tsmiSetWatched.Size = new System.Drawing.Size(168, 22);
             this.tsmiSetWatched.Text = "设置为已观看(&W)";
             this.tsmiSetWatched.Click += new System.EventHandler(this.tsmiSetWatched_Click);
-            // 
-            // tsmiClearRecords
-            // 
-            this.tsmiClearRecords.Name = "tsmiClearRecords";
-            this.tsmiClearRecords.Size = new System.Drawing.Size(180, 22);
-            this.tsmiClearRecords.Text = "清除无效记录(&C)";
-            this.tsmiClearRecords.Click += new System.EventHandler(this.tsmiClearRecords_Click);
-            // 
-            // columnHeaderSeeComment
-            // 
-            this.columnHeaderSeeComment.Text = "观看评论";
-            this.columnHeaderSeeComment.Width = 190;
             // 
             // tsmiCopyName
             // 
             this.tsmiCopyName.Name = "tsmiCopyName";
-            this.tsmiCopyName.Size = new System.Drawing.Size(180, 22);
+            this.tsmiCopyName.Size = new System.Drawing.Size(168, 22);
             this.tsmiCopyName.Text = "拷贝名称(&C)";
             this.tsmiCopyName.Click += new System.EventHandler(this.tsmiCopyName_Click);
+            // 
+            // columnHeaderPath
+            // 
+            this.columnHeaderPath.Text = "路径";
+            this.columnHeaderPath.Width = 160;
             // 
             // FormMain
             // 
@@ -254,6 +261,7 @@
         private System.Windows.Forms.ToolStripMenuItem tsmiClearRecords;
         private System.Windows.Forms.ColumnHeader columnHeaderSeeComment;
         private System.Windows.Forms.ToolStripMenuItem tsmiCopyName;
+        private System.Windows.Forms.ColumnHeader columnHeaderPath;
     }
 }
 
