@@ -86,6 +86,35 @@ namespace MovieTorrents
             return ok;
         }
 
-        
+        public static long CountWatched(string dbConnString)
+        {
+            var connection = new SQLiteConnection(dbConnString);
+            var sql = $"select count(*) as watched from filelist_view where seeflag=1";
+            long watched = 0;
+            try
+            {
+                connection.Open();
+                try
+                {
+                    var command = new SQLiteCommand(sql, connection);
+                    watched =(long) command.ExecuteScalar();
+                }
+                catch (Exception e)
+                {
+                    MessageBox.Show(e.Message, "错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    watched = -1;
+                }
+
+                connection.Close();
+
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show(e.Message, "错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                watched = -1;
+            }
+
+            return watched;
+        }
     }
 }

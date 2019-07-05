@@ -317,8 +317,32 @@ namespace MovieTorrents
 
             }
 
+            //自动备份
+            BackupDbFile();
+
         }
         
+        //备份数据库文件
+        private void BackupDbFile()
+        {
+            var watched = TorrentFile.CountWatched(_dbConnString);
+            if (watched == -1) return;
+
+            try
+            {
+                File.Copy($"{ _currentPath}\\zogvm.db", "E:\\MyWinDoc\\My Movies\\zogvm.db", true);
+            }
+            catch(Exception ex)
+            {
+                MessageBox.Show(ex.Message, "错误", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
+
+
+            MessageBox.Show($"备份--OK\r\n观看了{watched}个", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+
+        }
 
         //扫描种子文件
         private void ScanTorrentFile()
@@ -476,7 +500,8 @@ where not exists (select 1 from tb_file where hdd_nid={_hdd_nid} and path=$path 
             {
                 tssInfo.Text = infoMsg;
                 tssState.BackColor = _currentOperation == OperationNone ? Color.LimeGreen : Color.OrangeRed;
-
+                if (notifyIcon1.Visible)
+                    notifyIcon1.ShowBalloonTip(2000, "Movie torrents", infoMsg, ToolTipIcon.Info);
             }));
 
 

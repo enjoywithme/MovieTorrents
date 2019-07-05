@@ -194,7 +194,7 @@
             this.tsmiCopyName,
             this.tsmiShowFileLocation});
             this.lvContextMenu.Name = "lvContextMenu";
-            this.lvContextMenu.Size = new System.Drawing.Size(187, 92);
+            this.lvContextMenu.Size = new System.Drawing.Size(187, 70);
             this.lvContextMenu.Text = "设置已看";
             this.lvContextMenu.Opening += new System.ComponentModel.CancelEventHandler(this.lvContextMenu_Opening);
             // 
@@ -220,7 +220,7 @@
             // notifyIcon1
             // 
             this.notifyIcon1.BalloonTipIcon = System.Windows.Forms.ToolTipIcon.Info;
-            this.notifyIcon1.BalloonTipText = "Double click to restore window";
+            this.notifyIcon1.BalloonTipText = "双击恢复窗口";
             this.notifyIcon1.BalloonTipTitle = "Movie torrents";
             this.notifyIcon1.Icon = ((System.Drawing.Icon)(resources.GetObject("notifyIcon1.Icon")));
             this.notifyIcon1.Text = "Movie torrents";
