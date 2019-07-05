@@ -46,6 +46,7 @@
             this.columnHeaderSeeDate = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.lvContextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.tsmiSetWatched = new System.Windows.Forms.ToolStripMenuItem();
+            this.tsmiClearRecords = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.lvContextMenu.SuspendLayout();
@@ -65,6 +66,7 @@
             // 
             this.文件FToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.tsmiScanFile,
+            this.tsmiClearRecords,
             this.退出XToolStripMenuItem});
             this.文件FToolStripMenuItem.Name = "文件FToolStripMenuItem";
             this.文件FToolStripMenuItem.Size = new System.Drawing.Size(58, 21);
@@ -73,14 +75,14 @@
             // tsmiScanFile
             // 
             this.tsmiScanFile.Name = "tsmiScanFile";
-            this.tsmiScanFile.Size = new System.Drawing.Size(163, 22);
+            this.tsmiScanFile.Size = new System.Drawing.Size(180, 22);
             this.tsmiScanFile.Text = "扫描种子文件(&S)";
             this.tsmiScanFile.Click += new System.EventHandler(this.tsmiScanFile_Click);
             // 
             // 退出XToolStripMenuItem
             // 
             this.退出XToolStripMenuItem.Name = "退出XToolStripMenuItem";
-            this.退出XToolStripMenuItem.Size = new System.Drawing.Size(163, 22);
+            this.退出XToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.退出XToolStripMenuItem.Text = "退出(X)";
             // 
             // tbSearchText
@@ -182,6 +184,13 @@
             this.tsmiSetWatched.Text = "设置为已观看";
             this.tsmiSetWatched.Click += new System.EventHandler(this.tsmiSetWatched_Click);
             // 
+            // tsmiClearRecords
+            // 
+            this.tsmiClearRecords.Name = "tsmiClearRecords";
+            this.tsmiClearRecords.Size = new System.Drawing.Size(180, 22);
+            this.tsmiClearRecords.Text = "清除无效记录(&C)";
+            this.tsmiClearRecords.Click += new System.EventHandler(this.tsmiClearRecords_Click);
+            // 
             // FormMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -225,6 +234,7 @@
         private System.Windows.Forms.ToolStripMenuItem tsmiScanFile;
         private System.Windows.Forms.ToolStripStatusLabel tssInfo;
         private System.Windows.Forms.ToolStripStatusLabel tssState;
+        private System.Windows.Forms.ToolStripMenuItem tsmiClearRecords;
     }
 }
 

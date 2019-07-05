@@ -177,9 +177,10 @@ namespace MovieTorrents
                 _quernyTokenSource = null;
             }
 
+            _quernyTokenSource = new CancellationTokenSource();
+
             DisplayInfo("正在查询文件");
 
-            _quernyTokenSource = new CancellationTokenSource();
             Task.Run(() => ExecuteSearch(tbSearchText.Text.Trim(), _quernyTokenSource.Token))
                 .ContinueWith(task =>
                 {
@@ -222,8 +223,19 @@ namespace MovieTorrents
 
             using (var connection = new SQLiteConnection(_dbConnString))
             {
-                var sql = $"select * from filelist_view where name like '%{text}%' order by rating desc";
-                using (var command = new SQLiteCommand(sql, connection))
+                var splits = text.Split(null);
+                var sb = new StringBuilder("select * from filelist_view where ");
+
+                for(var i= 0; i < splits.Length; i++)
+                {
+                    if (i > 0) sb.Append(" and ");
+                    sb.Append($"(name like '%{splits[i]}%' or othername like '%{splits[i]}%' or genres like '%{splits[i]}%')");
+                }
+                sb.Append(" order by rating desc");
+
+                Debug.WriteLine(sb.ToString());
+
+                using (var command = new SQLiteCommand(sb.ToString(), connection))
                 {
                     await connection.OpenAsync(cancelToken);
 
@@ -277,8 +289,7 @@ namespace MovieTorrents
             }
 
         }
-
-
+        
 
         //扫描种子文件
         private void ScanTorrentFile()
@@ -337,7 +348,6 @@ namespace MovieTorrents
             var di = new DirectoryInfo(dirName);
             if (di == null || !di.Exists) return;
 
-            var regex = new Regex(@"\d{4}");
             var stopwatch = Stopwatch.StartNew();
 
             foreach (FileInfo fi in di.EnumerateFiles("*.torrent", SearchOption.AllDirectories))
@@ -347,26 +357,8 @@ namespace MovieTorrents
                 _fileScanned++;
 
                 //Debug.WriteLine(fi.Extension);
-                Debug.WriteLine(fi.FullName);
-                var name = Path.GetFileNameWithoutExtension(fi.FullName);
-                var path = fi.DirectoryName.Substring(_area.Length) + "\\";
-                var ext = fi.Extension;
-
-
-                var year = string.Empty;
-                var match = regex.Match(name);
-                if (match.Success) year = match.Value;
-
-                _filesToProcess.Add(new TorrentFile
-                {
-                    hdd_nid = _hdd_nid,
-                    path = path,
-                    name = name,
-                    ext = ext,
-                    year = year
-                });
-
-
+               
+                _filesToProcess.Add(new TorrentFile(fi.FullName));
 
             }
 
@@ -431,6 +423,7 @@ where not exists (select 1 from tb_file where hdd_nid={_hdd_nid} and path=$path 
                 }
 
             }
+
             stopWatch.Stop();
             Interlocked.Exchange(ref _currentOperation, OperationNone);
 
@@ -450,9 +443,7 @@ where not exists (select 1 from tb_file where hdd_nid={_hdd_nid} and path=$path 
 
         }
 
-
-
-
+               
         private void tsmiScanFile_Click(object sender, EventArgs e)
         {
             ScanTorrentFile();
@@ -467,16 +458,12 @@ where not exists (select 1 from tb_file where hdd_nid={_hdd_nid} and path=$path 
                 e.Cancel = true;
             }
         }
-
-
-
-
+                       
         private void tssState_Click(object sender, EventArgs e)
         {
 
             if (_currentOperation == OperationNone)
                 return;
-
 
             if (MessageBox.Show("确定取消当前操作?", "提示", MessageBoxButtons.YesNo, MessageBoxIcon.Asterisk) == DialogResult.No)
                 return;
@@ -484,6 +471,84 @@ where not exists (select 1 from tb_file where hdd_nid={_hdd_nid} and path=$path 
             if (_operTokenSource != null) _operTokenSource.Cancel();
         }
 
-        
+        private void tsmiClearRecords_Click(object sender, EventArgs e)
+        {
+            if (Interlocked.CompareExchange(ref _currentOperation, OperationClearFile, OperationNone) != OperationNone)
+            {
+                MessageBox.Show("正在执行其他操作，等待完成后操作", "提示", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+
+            if (_operTokenSource != null)
+            {
+                _operTokenSource.Dispose();
+                _operTokenSource = null;
+            }
+
+            _operTokenSource = new CancellationTokenSource();
+
+            DisplayInfo("正在清理无效文件");
+
+            Task.Run(() => DoClearFile(_operTokenSource.Token))
+                .ContinueWith(task =>
+                {
+                    if (task.IsFaulted) Invoke(new Action(() => MessageBox.Show(task.Exception.InnerException.Message)));
+                });
+        }
+
+        private async void DoClearFile(CancellationToken cancelToken)
+        {
+            var filesCleard = 0;
+            var filesCount = 0;
+
+            var fileIdToClear = new List<long>();
+
+            using (var connection = new SQLiteConnection(_dbConnString))
+            {
+                await connection.OpenAsync();
+                using (var command = new SQLiteCommand("select file_nid,h.area || f.path || f.name || f.ext as fullname from tb_file as f INNER join tb_hdd as h on h.hdd_nid=f.hdd_nid",connection))
+                {
+                    using (var reader = await command.ExecuteReaderAsync())
+                    {
+                        while (await reader.ReadAsync())
+                        {
+                            if (cancelToken.IsCancellationRequested) break;
+
+                            var nid = (long)reader["file_nid"];
+                            var fullname = (string)reader["fullname"];
+                            Debug.WriteLine(fullname);
+
+                            filesCount++;
+
+                            if (!File.Exists(fullname)) fileIdToClear.Add(nid);
+                        }
+                        reader.Close();
+                    }
+                }
+
+                if (cancelToken.IsCancellationRequested) goto exit;
+
+                using (var command = new SQLiteCommand("delete from tb_file where file_nid=$nid",connection))
+                {
+                    command.Parameters.Add("$nid", DbType.Int32);
+                    command.Prepare();
+
+                    foreach(var nid in fileIdToClear)
+                    {
+                        command.Parameters["$nid"].Value = nid;
+                        await command.ExecuteNonQueryAsync(cancelToken);
+                        if (cancelToken.IsCancellationRequested) break;
+
+                        filesCleard++;
+                    }
+                }
+                
+            }
+
+            exit:
+            Interlocked.Exchange(ref _currentOperation, OperationNone);
+            DisplayInfo($"总共{filesCount}记录，清理了{filesCleard}条无效记录!");
+        }
     }
 }
