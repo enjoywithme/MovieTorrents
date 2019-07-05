@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -14,9 +15,26 @@ namespace MovieTorrents
         [STAThread]
         static void Main()
         {
-            Application.EnableVisualStyles();
-            Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new FormMain());
+
+            using (var mutex = new Mutex(false, "MovieTorrents SingletonApp"))
+            {
+                
+                bool isAnotherInstanceOpen = !mutex.WaitOne(TimeSpan.Zero);
+                if (isAnotherInstanceOpen)
+                {
+                    MessageBox.Show("程序已经在运行！", "提示", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
+                Application.EnableVisualStyles();
+                Application.SetCompatibleTextRenderingDefault(false);
+                Application.Run(new FormMain());
+
+                mutex.ReleaseMutex();
+
+            }
+
+
         }
     }
 }
