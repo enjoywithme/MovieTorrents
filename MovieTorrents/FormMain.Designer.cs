@@ -50,6 +50,7 @@
             this.tsmiSetWatched = new System.Windows.Forms.ToolStripMenuItem();
             this.tsmiCopyName = new System.Windows.Forms.ToolStripMenuItem();
             this.columnHeaderPath = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.notifyIcon1 = new System.Windows.Forms.NotifyIcon(this.components);
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.lvContextMenu.SuspendLayout();
@@ -214,6 +215,15 @@
             this.columnHeaderPath.Text = "路径";
             this.columnHeaderPath.Width = 160;
             // 
+            // notifyIcon1
+            // 
+            this.notifyIcon1.BalloonTipIcon = System.Windows.Forms.ToolTipIcon.Info;
+            this.notifyIcon1.BalloonTipText = "Double click to restore window";
+            this.notifyIcon1.BalloonTipTitle = "Movie torrents";
+            this.notifyIcon1.Icon = ((System.Drawing.Icon)(resources.GetObject("notifyIcon1.Icon")));
+            this.notifyIcon1.Text = "Movie torrents";
+            this.notifyIcon1.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.notifyIcon1_MouseDoubleClick);
+            // 
             // FormMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -230,6 +240,7 @@
             this.Text = "Movie torrents";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FormMain_FormClosing);
             this.Load += new System.EventHandler(this.FormMain_Load);
+            this.Resize += new System.EventHandler(this.FormMain_Resize);
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
             this.statusStrip1.ResumeLayout(false);
@@ -262,6 +273,7 @@
         private System.Windows.Forms.ColumnHeader columnHeaderSeeComment;
         private System.Windows.Forms.ToolStripMenuItem tsmiCopyName;
         private System.Windows.Forms.ColumnHeader columnHeaderPath;
+        private System.Windows.Forms.NotifyIcon notifyIcon1;
     }
 }
 

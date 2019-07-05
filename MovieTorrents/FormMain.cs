@@ -593,5 +593,22 @@ where not exists (select 1 from tb_file where hdd_nid={_hdd_nid} and path=$path 
             var lvItem = lvResults.SelectedItems[0];
             Clipboard.SetText(lvItem.Text);
         }
+
+        private void notifyIcon1_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+            Show();
+            WindowState = FormWindowState.Normal;
+            notifyIcon1.Visible = false;
+        }
+
+        private void FormMain_Resize(object sender, EventArgs e)
+        {
+            if (this.WindowState == FormWindowState.Minimized)
+            {
+                Hide();
+                notifyIcon1.Visible = true;
+                notifyIcon1.ShowBalloonTip(1000);
+            }
+        }
     }
 }
