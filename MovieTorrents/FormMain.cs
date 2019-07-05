@@ -204,7 +204,8 @@ namespace MovieTorrents
                                 torrentFile.rating.ToString(),
                                 torrentFile.year,
                                 torrentFile.seeflag.ToString(),
-                                torrentFile.seedate
+                                torrentFile.seedate,
+                                torrentFile.seecomment
                             };
                 lvResults.Items.Add(new ListViewItem(row)
                 {
@@ -250,7 +251,8 @@ namespace MovieTorrents
                                 rating = (double)reader["rating"],
                                 year = (string)reader["year"],
                                 seeflag = (long)reader["seeflag"],
-                                seedate = Convert.IsDBNull(reader["seedate"]) ? string.Empty : (string)reader["seedate"]
+                                seedate = Convert.IsDBNull(reader["seedate"]) ? string.Empty : (string)reader["seedate"],
+                                seecomment = Convert.IsDBNull(reader["seecomment"]) ? string.Empty : (string)reader["seecomment"]
                             });
 
                         }
@@ -278,11 +280,23 @@ namespace MovieTorrents
             if (lvResults.SelectedItems.Count == 0) e.Cancel = true;
         }
 
+        //标记为已观看
         private void tsmiSetWatched_Click(object sender, EventArgs e)
         {
             if (lvResults.SelectedItems.Count == 0) return;
             var lvItem = lvResults.SelectedItems[0];
-            if (TorrentFile.SetWatched(_dbConnString, lvItem.Tag, out var seedate))
+            var origWatchDate = lvItem.SubItems[4].Text;
+            var seecomment = lvItem.SubItems[5].Text;
+            var watchDate = DateTime.Today;
+            if(!string.IsNullOrEmpty(origWatchDate))
+            {
+                if (DateTime.TryParse(origWatchDate, out var parsedDate))
+                    watchDate = parsedDate;
+            }
+
+            var formSetWatched = new FormSetWatched(watchDate, seecomment);
+            if (formSetWatched.ShowDialog(this) == DialogResult.Cancel) return;
+            if (TorrentFile.SetWatched(_dbConnString, lvItem.Tag, formSetWatched.WatchDate, formSetWatched.Comment, out var seedate))
             {
                 lvItem.SubItems[4].Text = seedate;
                 lvItem.SubItems[3].Text = "1";
@@ -549,6 +563,13 @@ where not exists (select 1 from tb_file where hdd_nid={_hdd_nid} and path=$path 
             exit:
             Interlocked.Exchange(ref _currentOperation, OperationNone);
             DisplayInfo($"总共{filesCount}记录，清理了{filesCleard}条无效记录!");
+        }
+
+        private void tsmiCopyName_Click(object sender, EventArgs e)
+        {
+            if (lvResults.SelectedItems.Count == 0) return;
+            var lvItem = lvResults.SelectedItems[0];
+            Clipboard.SetText(lvItem.Text);
         }
     }
 }

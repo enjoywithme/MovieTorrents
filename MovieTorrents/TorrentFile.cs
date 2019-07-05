@@ -21,6 +21,7 @@ namespace MovieTorrents
         public string year { get; set; }
         public long seeflag { get; set; }
         public string seedate { get; set; }
+        public string seecomment { get; set; }
 
         private static Regex regex = new Regex(@"\d{4}");
 
@@ -41,11 +42,11 @@ namespace MovieTorrents
             if (match.Success) year = match.Value;
         }
 
-        public static bool SetWatched(string dbConnString, object fileid, out string seedate)
+        public static bool SetWatched(string dbConnString, object fileid, DateTime watchDate,string comment, out string seedate)
         {
             var m_dbConnection = new SQLiteConnection(dbConnString);
-            seedate = DateTime.Today.ToString("yyyy-MM-dd");
-            var sql = $"update tb_file set seeflag=1,seedate='{seedate}' where file_nid=$fid";
+            seedate =watchDate.ToString("yyyy-MM-dd");
+            var sql = $"update tb_file set seeflag=1,seedate=$seedate,seecomment=$comment where file_nid=$fid";
             var ok = true;
             try
             {
@@ -53,6 +54,8 @@ namespace MovieTorrents
                 try
                 {
                     var command = new SQLiteCommand(sql, m_dbConnection);
+                    command.Parameters.AddWithValue("$seedate", seedate);
+                    command.Parameters.AddWithValue("$comment", comment);
                     command.Parameters.AddWithValue("$fid", fileid);
                     command.ExecuteNonQuery();
                 }
