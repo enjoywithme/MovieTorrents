@@ -258,6 +258,7 @@ namespace MovieTorrents
                             result.Add(new TorrentFile
                             {
                                 fid = (long)reader["file_nid"],
+                                area = _area,
                                 path =(string)reader["path"],
                                 name = (string)reader["name"],
                                 rating = (double)reader["rating"],
@@ -310,8 +311,10 @@ namespace MovieTorrents
             if (formSetWatched.ShowDialog(this) == DialogResult.Cancel) return;
             if (TorrentFile.SetWatched(_dbConnString, lvItem.Tag, formSetWatched.WatchDate, formSetWatched.Comment, out var seedate))
             {
-                lvItem.SubItems[4].Text = seedate;
                 lvItem.SubItems[3].Text = "1";
+                lvItem.SubItems[4].Text = seedate;
+                lvItem.SubItems[5].Text = formSetWatched.Comment;
+
             }
 
         }
@@ -608,6 +611,18 @@ where not exists (select 1 from tb_file where hdd_nid={_hdd_nid} and path=$path 
                 Hide();
                 notifyIcon1.Visible = true;
                 notifyIcon1.ShowBalloonTip(1000);
+            }
+        }
+
+        private void tsmiShowFileLocation_Click(object sender, EventArgs e)
+        {
+            if (lvResults.SelectedItems.Count == 0) return;
+            
+            var lvItem = lvResults.SelectedItems[0];
+            var filePath = _area + lvItem.SubItems[6].Text + lvItem.Text + ".torrent";
+            if (File.Exists(filePath))
+            {
+                Process.Start("explorer.exe", "/select, " + filePath);
             }
         }
     }

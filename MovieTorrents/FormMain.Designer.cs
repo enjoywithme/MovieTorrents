@@ -51,6 +51,7 @@
             this.tsmiCopyName = new System.Windows.Forms.ToolStripMenuItem();
             this.columnHeaderPath = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.notifyIcon1 = new System.Windows.Forms.NotifyIcon(this.components);
+            this.tsmiShowFileLocation = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.lvContextMenu.SuspendLayout();
@@ -190,23 +191,24 @@
             // 
             this.lvContextMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.tsmiSetWatched,
-            this.tsmiCopyName});
+            this.tsmiCopyName,
+            this.tsmiShowFileLocation});
             this.lvContextMenu.Name = "lvContextMenu";
-            this.lvContextMenu.Size = new System.Drawing.Size(169, 48);
+            this.lvContextMenu.Size = new System.Drawing.Size(187, 92);
             this.lvContextMenu.Text = "设置已看";
             this.lvContextMenu.Opening += new System.ComponentModel.CancelEventHandler(this.lvContextMenu_Opening);
             // 
             // tsmiSetWatched
             // 
             this.tsmiSetWatched.Name = "tsmiSetWatched";
-            this.tsmiSetWatched.Size = new System.Drawing.Size(168, 22);
+            this.tsmiSetWatched.Size = new System.Drawing.Size(186, 22);
             this.tsmiSetWatched.Text = "设置为已观看(&W)";
             this.tsmiSetWatched.Click += new System.EventHandler(this.tsmiSetWatched_Click);
             // 
             // tsmiCopyName
             // 
             this.tsmiCopyName.Name = "tsmiCopyName";
-            this.tsmiCopyName.Size = new System.Drawing.Size(168, 22);
+            this.tsmiCopyName.Size = new System.Drawing.Size(186, 22);
             this.tsmiCopyName.Text = "拷贝名称(&C)";
             this.tsmiCopyName.Click += new System.EventHandler(this.tsmiCopyName_Click);
             // 
@@ -223,6 +225,13 @@
             this.notifyIcon1.Icon = ((System.Drawing.Icon)(resources.GetObject("notifyIcon1.Icon")));
             this.notifyIcon1.Text = "Movie torrents";
             this.notifyIcon1.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.notifyIcon1_MouseDoubleClick);
+            // 
+            // tsmiShowFileLocation
+            // 
+            this.tsmiShowFileLocation.Name = "tsmiShowFileLocation";
+            this.tsmiShowFileLocation.Size = new System.Drawing.Size(186, 22);
+            this.tsmiShowFileLocation.Text = "打开文件所在位置(&L)";
+            this.tsmiShowFileLocation.Click += new System.EventHandler(this.tsmiShowFileLocation_Click);
             // 
             // FormMain
             // 
@@ -274,6 +283,7 @@
         private System.Windows.Forms.ToolStripMenuItem tsmiCopyName;
         private System.Windows.Forms.ColumnHeader columnHeaderPath;
         private System.Windows.Forms.NotifyIcon notifyIcon1;
+        private System.Windows.Forms.ToolStripMenuItem tsmiShowFileLocation;
     }
 }
 

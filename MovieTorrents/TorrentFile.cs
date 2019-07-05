@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.SQLite;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -14,6 +15,7 @@ namespace MovieTorrents
     {
         public long fid { get; set;}
         public byte hdd_nid { get; set; }
+        public string area { get; set; }
         public string path { get; set; }
         public string name { get; set; }
         public string ext { get; set; }
@@ -23,6 +25,11 @@ namespace MovieTorrents
         public long seeflag { get; set; }
         public string seedate { get; set; }
         public string seecomment { get; set; }
+
+        public string FullName { get
+            {
+                return area + path + name + ext;
+            } }
 
         private static Regex regex = new Regex(@"\d{4}");
 
@@ -79,6 +86,6 @@ namespace MovieTorrents
             return ok;
         }
 
-
+        
     }
 }
