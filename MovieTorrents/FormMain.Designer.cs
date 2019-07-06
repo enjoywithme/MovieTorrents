@@ -45,7 +45,6 @@
             this.tsmiShowFileLocation = new System.Windows.Forms.ToolStripMenuItem();
             this.tsmiSearchDouban = new System.Windows.Forms.ToolStripMenuItem();
             this.notifyIcon1 = new System.Windows.Forms.NotifyIcon(this.components);
-            this.panel1 = new System.Windows.Forms.Panel();
             this.lvResults = new System.Windows.Forms.ListView();
             this.columnHeaderName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeaderRating = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -53,13 +52,11 @@
             this.columnHeaderSeen = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeaderSeeDate = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeaderSeeComment = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.columnHeaderPath = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.lbGenres = new System.Windows.Forms.Label();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.lvContextMenu.SuspendLayout();
-            this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -69,7 +66,7 @@
             this.文件FToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(1221, 25);
+            this.menuStrip1.Size = new System.Drawing.Size(1273, 25);
             this.menuStrip1.TabIndex = 0;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -106,10 +103,11 @@
             // 
             // tbSearchText
             // 
-            this.tbSearchText.Dock = System.Windows.Forms.DockStyle.Top;
-            this.tbSearchText.Location = new System.Drawing.Point(0, 25);
+            this.tbSearchText.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.tbSearchText.Location = new System.Drawing.Point(12, 25);
             this.tbSearchText.Name = "tbSearchText";
-            this.tbSearchText.Size = new System.Drawing.Size(1221, 21);
+            this.tbSearchText.Size = new System.Drawing.Size(1261, 21);
             this.tbSearchText.TabIndex = 1;
             this.tbSearchText.TextChanged += new System.EventHandler(this.tbSearchText_TextChanged);
             this.tbSearchText.KeyDown += new System.Windows.Forms.KeyEventHandler(this.tbSearchText_KeyDown);
@@ -121,7 +119,7 @@
             this.tssInfo});
             this.statusStrip1.Location = new System.Drawing.Point(0, 561);
             this.statusStrip1.Name = "statusStrip1";
-            this.statusStrip1.Size = new System.Drawing.Size(1221, 22);
+            this.statusStrip1.Size = new System.Drawing.Size(1273, 22);
             this.statusStrip1.TabIndex = 2;
             this.statusStrip1.Text = "statusStrip1";
             // 
@@ -195,31 +193,22 @@
             this.notifyIcon1.Text = "Movie torrents";
             this.notifyIcon1.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.notifyIcon1_MouseDoubleClick);
             // 
-            // panel1
-            // 
-            this.panel1.Controls.Add(this.lbGenres);
-            this.panel1.Controls.Add(this.pictureBox1);
-            this.panel1.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panel1.Location = new System.Drawing.Point(0, 432);
-            this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(1221, 129);
-            this.panel1.TabIndex = 4;
-            // 
             // lvResults
             // 
+            this.lvResults.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.lvResults.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnHeaderName,
             this.columnHeaderRating,
             this.columnHeaderYear,
             this.columnHeaderSeen,
             this.columnHeaderSeeDate,
-            this.columnHeaderSeeComment,
-            this.columnHeaderPath});
-            this.lvResults.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.columnHeaderSeeComment});
             this.lvResults.FullRowSelect = true;
-            this.lvResults.Location = new System.Drawing.Point(0, 46);
+            this.lvResults.Location = new System.Drawing.Point(132, 52);
             this.lvResults.Name = "lvResults";
-            this.lvResults.Size = new System.Drawing.Size(1221, 386);
+            this.lvResults.Size = new System.Drawing.Size(1141, 506);
             this.lvResults.TabIndex = 5;
             this.lvResults.UseCompatibleStateImageBehavior = false;
             this.lvResults.View = System.Windows.Forms.View.Details;
@@ -254,23 +243,21 @@
             this.columnHeaderSeeComment.Text = "观看评论";
             this.columnHeaderSeeComment.Width = 190;
             // 
-            // columnHeaderPath
-            // 
-            this.columnHeaderPath.Text = "路径";
-            this.columnHeaderPath.Width = 160;
-            // 
             // pictureBox1
             // 
-            this.pictureBox1.Location = new System.Drawing.Point(12, 6);
+            this.pictureBox1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.pictureBox1.Location = new System.Drawing.Point(12, 61);
             this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(100, 116);
+            this.pictureBox1.Size = new System.Drawing.Size(100, 146);
+            this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.pictureBox1.TabIndex = 0;
             this.pictureBox1.TabStop = false;
+            this.pictureBox1.DoubleClick += new System.EventHandler(this.pictureBox1_DoubleClick);
             // 
             // lbGenres
             // 
             this.lbGenres.AutoSize = true;
-            this.lbGenres.Location = new System.Drawing.Point(145, 19);
+            this.lbGenres.Location = new System.Drawing.Point(14, 229);
             this.lbGenres.Name = "lbGenres";
             this.lbGenres.Size = new System.Drawing.Size(0, 12);
             this.lbGenres.TabIndex = 1;
@@ -279,9 +266,10 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1221, 583);
+            this.ClientSize = new System.Drawing.Size(1273, 583);
+            this.Controls.Add(this.lbGenres);
             this.Controls.Add(this.lvResults);
-            this.Controls.Add(this.panel1);
+            this.Controls.Add(this.pictureBox1);
             this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.tbSearchText);
             this.Controls.Add(this.menuStrip1);
@@ -298,8 +286,6 @@
             this.statusStrip1.ResumeLayout(false);
             this.statusStrip1.PerformLayout();
             this.lvContextMenu.ResumeLayout(false);
-            this.panel1.ResumeLayout(false);
-            this.panel1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -323,7 +309,6 @@
         private System.Windows.Forms.NotifyIcon notifyIcon1;
         private System.Windows.Forms.ToolStripMenuItem tsmiShowFileLocation;
         private System.Windows.Forms.ToolStripMenuItem tsmiSearchDouban;
-        private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.ListView lvResults;
         private System.Windows.Forms.ColumnHeader columnHeaderName;
         private System.Windows.Forms.ColumnHeader columnHeaderRating;
@@ -331,7 +316,6 @@
         private System.Windows.Forms.ColumnHeader columnHeaderSeen;
         private System.Windows.Forms.ColumnHeader columnHeaderSeeDate;
         private System.Windows.Forms.ColumnHeader columnHeaderSeeComment;
-        private System.Windows.Forms.ColumnHeader columnHeaderPath;
         private System.Windows.Forms.Label lbGenres;
         private System.Windows.Forms.PictureBox pictureBox1;
     }

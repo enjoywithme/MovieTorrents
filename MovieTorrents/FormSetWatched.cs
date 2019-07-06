@@ -12,25 +12,27 @@ namespace MovieTorrents
 {
     public partial class FormSetWatched : Form
     {
-        public DateTime WatchDate { get; set; }
-        public string Comment { get; set; }
-        public FormSetWatched(DateTime watchDate,string comment)
+        private TorrentFile _torrentFile;
+        public FormSetWatched(TorrentFile torrentFile)
         {
             InitializeComponent();
-            WatchDate = watchDate;
-            Comment = comment;
+            _torrentFile = torrentFile;
         }
 
         private void FormSetWatched_Load(object sender, EventArgs e)
         {
-            dtPicker.Value = WatchDate;
-            tbComment.Text = Comment;
+            var seeDate = DateTime.Today;
+            if (!string.IsNullOrEmpty(_torrentFile.seedate) && DateTime.TryParse(_torrentFile.seedate, out var d))
+                seeDate = d;
+            dtPicker.Value = seeDate;
+            tbComment.Text = _torrentFile.seecomment;
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
-            WatchDate = dtPicker.Value;
-            Comment = tbComment.Text;
+            if (!_torrentFile.SetWatched(FormMain.DbConnection, dtPicker.Value, tbComment.Text))
+                return;
+
             DialogResult = DialogResult.OK;
         }
     }

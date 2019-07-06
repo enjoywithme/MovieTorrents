@@ -19,20 +19,18 @@ namespace MovieTorrents
 {
     public partial class FormSearchDouban : Form
     {
-        private string _searchText;
-        private object _fileid;
+        private TorrentFile _torrentFile;
         public DoubanSubject DoubanSubject { get; private set; }
 
-        public FormSearchDouban(object fileid, string searchText)
+        public FormSearchDouban(TorrentFile torrentFile)
         {
             InitializeComponent();
-            _searchText = searchText;
-            _fileid = fileid;
+            _torrentFile = torrentFile;
         }
 
         private void FormSearchDouban_Load(object sender, EventArgs e)
         {
-            tbSearchText.Text = _searchText;
+            tbSearchText.Text = _torrentFile.PurifiedName;
             DoSearcch();
         }
 
@@ -74,7 +72,7 @@ namespace MovieTorrents
             if (listView1.SelectedItems.Count == 0) return;
 
             var subject = (DoubanSubject)listView1.SelectedItems[0].Tag;
-            if (!string.IsNullOrEmpty(subject.img_local))
+            if (!string.IsNullOrEmpty(subject.img_local) && File.Exists(subject.img_local))
             {
                 using (var stream = new FileStream(subject.img_local, FileMode.Open, FileAccess.Read))
                 {
@@ -95,7 +93,7 @@ namespace MovieTorrents
                 return;
             }
 
-            if (TorrentFile.UpdateDoubanInfo(FormMain.DbConnection, _fileid, subject))
+            if (_torrentFile.UpdateDoubanInfo(FormMain.DbConnection, subject))
             {
                 DoubanSubject = subject;
                 DialogResult = DialogResult.OK;

@@ -25,17 +25,44 @@ namespace MovieTorrents
         public long seeflag { get; set; }
         public string seedate { get; set; }
         public string seecomment { get; set; }
+        public string genres { get; set; }
+        public string posterpath { get; set; }
+        public string doubanid { get; set; }
 
         public string FullName { get
             {
                 return area + path + name + ext;
             } }
 
+
+        public string RealPosterPath
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(posterpath)) return null;
+                return FormMain.CurrentPath + "\\poster\\douban\\" + Path.GetFileName(posterpath);
+            }
+        }
+
         private static Regex regex = new Regex(@"\d{4}");
         private static string[] PRE_CLEARS = { "WEB_DL", "DD5.1", "[0-9]*(?:\\.[0-9]*)?[GM]B?" };
         private static Regex BAD_CHARS = new Regex(@"[\[.\]()_-]");
-        private static string[] BAD_WORDS = { "1080P","720P", "x26[45]", "H26[45]", "BluRay","AC3", " DTS ", "2Audios?","FLAME","IMAX","中英字幕","国英双语"};
+        private static string[] BAD_WORDS = { "1080P", "720P", "x26[45]", "H26[45]", "BluRay", "AC3", " DTS ", "2Audios?", "FLAME", "IMAX", "中英字幕", "国英双语" };
         private static string[] RELEASE_GROUPS = { "SPARKS", "CMCT", "FGT", "KOOK" };
+        public string PurifiedName
+        {
+            get
+            {
+                var cleaned = Regex.Replace(name, "\\b" + string.Join("\\b|\\b", PRE_CLEARS) + "\\b", "", RegexOptions.IgnoreCase);
+                cleaned = BAD_CHARS.Replace(cleaned, " ");
+                cleaned = Regex.Replace(cleaned, "\\b" + string.Join("\\b|\\b", BAD_WORDS) + "\\b", "", RegexOptions.IgnoreCase);
+                cleaned = Regex.Replace(cleaned, "\\b" + string.Join("\\b|\\b", RELEASE_GROUPS) + "\\b", "", RegexOptions.IgnoreCase);
+                return cleaned.Trim();
+            }
+        }
+        
+
+        
 
         public TorrentFile()
         {
@@ -55,20 +82,21 @@ namespace MovieTorrents
             if (match.Success) year = match.Value;
         }
 
-        public static string PurifyName(string name)
+        
+        public void ShowInExplorer()
         {
-            var cleaned = Regex.Replace(name, "\\b" + string.Join("\\b|\\b", PRE_CLEARS) + "\\b", "", RegexOptions.IgnoreCase);
-            cleaned = BAD_CHARS.Replace(cleaned, " ");
-            cleaned = Regex.Replace(cleaned, "\\b" + string.Join("\\b|\\b", BAD_WORDS) + "\\b", "", RegexOptions.IgnoreCase);
-            cleaned = Regex.Replace(cleaned, "\\b" + string.Join("\\b|\\b", RELEASE_GROUPS) + "\\b", "", RegexOptions.IgnoreCase);
-            return cleaned.Trim();
+            if (File.Exists(FullName))
+            {
+                Process.Start("explorer.exe", "/select, " + FullName);
+            }
         }
 
-
-        public static bool SetWatched(string dbConnString, object fileid, DateTime watchDate,string comment, out string seedate)
+        public bool SetWatched(string dbConnString, DateTime watchDate,string comment)
         {
-            var m_dbConnection = new SQLiteConnection(dbConnString);
             seedate =watchDate.ToString("yyyy-MM-dd");
+            seecomment = comment;
+            var m_dbConnection = new SQLiteConnection(dbConnString);
+
             var sql = $"update tb_file set seeflag=1,seedate=$seedate,seecomment=$comment where file_nid=$fid";
             var ok = true;
             try
@@ -79,7 +107,7 @@ namespace MovieTorrents
                     var command = new SQLiteCommand(sql, m_dbConnection);
                     command.Parameters.AddWithValue("$seedate", seedate);
                     command.Parameters.AddWithValue("$comment", comment);
-                    command.Parameters.AddWithValue("$fid", fileid);
+                    command.Parameters.AddWithValue("$fid", fid);
                     command.ExecuteNonQuery();
                 }
                 catch (Exception e)
@@ -131,22 +159,20 @@ namespace MovieTorrents
             return watched;
         }
 
-        public static bool UpdateDoubanInfo(string dbConnString,object fileid,DoubanSubject subject)
+        public bool UpdateDoubanInfo(string dbConnString,DoubanSubject subject)
         {
-            
-            
+            var posterImageFileName = string.Empty;
 
             var m_dbConnection = new SQLiteConnection(dbConnString);
             var sql = @"update tb_file set year=$year,keyname=$keyname,othername=$othername,doubanid=$doubanid,posterpath=$posterpath,rating=$rating,genres=$genres where file_nid=$fid";
             var ok = true;
             try
             {
-                var posterImageFileName = string.Empty;
 
                 if (!string.IsNullOrEmpty(subject.img_local))
                 {
                     posterImageFileName = FormMain.CurrentPath + "\\poster\\douban\\" + Path.GetFileName(subject.img_local);
-                    File.Move(subject.img_local, posterImageFileName);
+                    File.Copy(subject.img_local, posterImageFileName,true);
 
                 }
 
@@ -161,7 +187,7 @@ namespace MovieTorrents
                     command.Parameters.AddWithValue("$posterpath", posterImageFileName);
                     command.Parameters.AddWithValue("$rating", double.Parse(subject.rating));
                     command.Parameters.AddWithValue("$genres", subject.genres);
-                    command.Parameters.AddWithValue("$fid", fileid);
+                    command.Parameters.AddWithValue("$fid", fid);
                     command.ExecuteNonQuery();
                 }
                 catch (Exception e)
@@ -181,7 +207,20 @@ namespace MovieTorrents
                 ok = false;
             }
 
+            if(ok)
+            {
+                genres = subject.genres;
+                posterpath = posterImageFileName;
+            }
+
+
             return ok;
+        }
+
+        public void OpenDoubanLink()
+        {
+            if (string.IsNullOrEmpty(doubanid)) return;
+            Process.Start($"https://movie.douban.com/subject/{doubanid}/");
         }
     }
 }

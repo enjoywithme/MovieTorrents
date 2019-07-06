@@ -105,12 +105,12 @@ namespace MovieTorrents
             CurrentPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
             DbConnection = $"Data Source ={CurrentPath}//zogvm.db; Version = 3; ";
 
-           
+
         }
 
         private void FormMain_Load(object sender, EventArgs e)
         {
-            if(!string.IsNullOrEmpty(TorrentFilePath)&&Directory.Exists(TorrentFilePath))
+            if (!string.IsNullOrEmpty(TorrentFilePath) && Directory.Exists(TorrentFilePath))
             {
                 watcher.Path = TorrentFilePath;
                 watcher.IncludeSubdirectories = true;
@@ -221,7 +221,7 @@ namespace MovieTorrents
                             };
                 lvResults.Items.Add(new ListViewItem(row)
                 {
-                    Tag = torrentFile.fid
+                    Tag = torrentFile
                 });
 
                 //Debug.Print(torrentFile.GetPurifiedChineseName());
@@ -241,7 +241,7 @@ namespace MovieTorrents
                 var splits = text.Split(null);
                 var sb = new StringBuilder("select * from filelist_view where ");
 
-                for(var i= 0; i < splits.Length; i++)
+                for (var i = 0; i < splits.Length; i++)
                 {
                     if (i > 0) sb.Append(" and ");
                     sb.Append($"(name like '%{splits[i]}%' or othername like '%{splits[i]}%' or genres like '%{splits[i]}%')");
@@ -262,11 +262,15 @@ namespace MovieTorrents
                             {
                                 fid = (long)reader["file_nid"],
                                 area = _area,
-                                path =(string)reader["path"],
+                                path = (string)reader["path"],
                                 name = (string)reader["name"],
+                                ext =(string)reader["ext"],
                                 rating = (double)reader["rating"],
                                 year = (string)reader["year"],
                                 seeflag = (long)reader["seeflag"],
+                                posterpath =(string)reader["posterpath"],
+                                genres = (string)reader["genres"],
+                                doubanid =(string)reader["doubanid"],
                                 seedate = Convert.IsDBNull(reader["seedate"]) ? string.Empty : (string)reader["seedate"],
                                 seecomment = Convert.IsDBNull(reader["seecomment"]) ? string.Empty : (string)reader["seecomment"]
                             });
@@ -301,30 +305,21 @@ namespace MovieTorrents
         {
             if (lvResults.SelectedItems.Count == 0) return;
             var lvItem = lvResults.SelectedItems[0];
-            var origWatchDate = lvItem.SubItems[4].Text;
-            var seecomment = lvItem.SubItems[5].Text;
-            var watchDate = DateTime.Today;
-            if(!string.IsNullOrEmpty(origWatchDate))
-            {
-                if (DateTime.TryParse(origWatchDate, out var parsedDate))
-                    watchDate = parsedDate;
-            }
+            var torrentFile = (TorrentFile)lvItem.Tag;
 
-            var formSetWatched = new FormSetWatched(watchDate, seecomment);
+
+            var formSetWatched = new FormSetWatched(torrentFile);
             if (formSetWatched.ShowDialog(this) == DialogResult.Cancel) return;
-            if (TorrentFile.SetWatched(DbConnection, lvItem.Tag, formSetWatched.WatchDate, formSetWatched.Comment, out var seedate))
-            {
-                lvItem.SubItems[3].Text = "1";
-                lvItem.SubItems[4].Text = seedate;
-                lvItem.SubItems[5].Text = formSetWatched.Comment;
+            lvItem.SubItems[3].Text = "1";
+            lvItem.SubItems[4].Text = torrentFile.seedate;
+            lvItem.SubItems[5].Text = torrentFile.seecomment;
 
-            }
 
             //自动备份
             BackupDbFile();
 
         }
-        
+
         //备份数据库文件
         private void BackupDbFile()
         {
@@ -335,7 +330,7 @@ namespace MovieTorrents
             {
                 File.Copy($"{ CurrentPath}\\zogvm.db", "E:\\MyWinDoc\\My Movies\\zogvm.db", true);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 MessageBox.Show(ex.Message, "错误", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 return;
@@ -377,7 +372,7 @@ namespace MovieTorrents
             var filesToProcess = new BlockingCollection<TorrentFile>();
 
 
-           
+
 
             Task.Run(() => DoScanFile(TorrentFilePath, _operTokenSource.Token, filesToProcess)).ContinueWith(task =>
             {
@@ -393,7 +388,7 @@ namespace MovieTorrents
                 {
                     Invoke(new Action(() => MessageBox.Show(task.Exception.InnerException.Message)));
                 }
-            }); 
+            });
 
         }
         //添加扫描到的种子到队列等待处理
@@ -413,7 +408,7 @@ namespace MovieTorrents
                 _fileScanned++;
 
                 //Debug.WriteLine(fi.Extension);
-               
+
                 _filesToProcess.Add(new TorrentFile(fi.FullName));
 
             }
@@ -468,13 +463,13 @@ where not exists (select 1 from tb_file where hdd_nid={_hdd_nid} and path=$path 
 
                     foreach (var torrentFile in _filesToProces.GetConsumingEnumerable())
                     {
-                        if (token!=null && token.IsCancellationRequested) break;
+                        if (token != null && token.IsCancellationRequested) break;
 
                         Debug.WriteLine($"Processing:{torrentFile.name}");
 
                         _fileProcessed++;
                         long n = ((long)(DateTime.Now - refDate).TotalSeconds + refDateInt) * 10000000;
-                        
+
                         commandInsert.Parameters["$path"].Value = torrentFile.path;
                         commandInsert.Parameters["$name"].Value = torrentFile.name;
                         commandInsert.Parameters["$ext"].Value = torrentFile.ext;
@@ -510,7 +505,7 @@ where not exists (select 1 from tb_file where hdd_nid={_hdd_nid} and path=$path 
 
         }
 
-               
+
         private void tsmiScanFile_Click(object sender, EventArgs e)
         {
             ScanTorrentFile();
@@ -525,7 +520,7 @@ where not exists (select 1 from tb_file where hdd_nid={_hdd_nid} and path=$path 
                 e.Cancel = true;
             }
         }
-                       
+
         private void tssState_Click(object sender, EventArgs e)
         {
 
@@ -574,7 +569,7 @@ where not exists (select 1 from tb_file where hdd_nid={_hdd_nid} and path=$path 
             using (var connection = new SQLiteConnection(DbConnection))
             {
                 await connection.OpenAsync();
-                using (var command = new SQLiteCommand("select file_nid,h.area || f.path || f.name || f.ext as fullname from tb_file as f INNER join tb_hdd as h on h.hdd_nid=f.hdd_nid",connection))
+                using (var command = new SQLiteCommand("select file_nid,h.area || f.path || f.name || f.ext as fullname from tb_file as f INNER join tb_hdd as h on h.hdd_nid=f.hdd_nid", connection))
                 {
                     using (var reader = await command.ExecuteReaderAsync())
                     {
@@ -596,12 +591,12 @@ where not exists (select 1 from tb_file where hdd_nid={_hdd_nid} and path=$path 
 
                 if (cancelToken.IsCancellationRequested) goto exit;
 
-                using (var command = new SQLiteCommand("delete from tb_file where file_nid=$nid",connection))
+                using (var command = new SQLiteCommand("delete from tb_file where file_nid=$nid", connection))
                 {
                     command.Parameters.Add("$nid", DbType.Int32);
                     command.Prepare();
 
-                    foreach(var nid in fileIdToClear)
+                    foreach (var nid in fileIdToClear)
                     {
                         command.Parameters["$nid"].Value = nid;
                         await command.ExecuteNonQueryAsync(cancelToken);
@@ -610,7 +605,7 @@ where not exists (select 1 from tb_file where hdd_nid={_hdd_nid} and path=$path 
                         filesCleard++;
                     }
                 }
-                
+
             }
 
             exit:
@@ -645,13 +640,9 @@ where not exists (select 1 from tb_file where hdd_nid={_hdd_nid} and path=$path 
         private void tsmiShowFileLocation_Click(object sender, EventArgs e)
         {
             if (lvResults.SelectedItems.Count == 0) return;
-            
-            var lvItem = lvResults.SelectedItems[0];
-            var filePath = _area + lvItem.SubItems[6].Text + lvItem.Text + ".torrent";
-            if (File.Exists(filePath))
-            {
-                Process.Start("explorer.exe", "/select, " + filePath);
-            }
+
+            var torrentFile  = (TorrentFile) lvResults.SelectedItems[0].Tag;
+            torrentFile.ShowInExplorer();
         }
 
         private void tsmiSearchDouban_Click(object sender, EventArgs e)
@@ -659,8 +650,9 @@ where not exists (select 1 from tb_file where hdd_nid={_hdd_nid} and path=$path 
             if (lvResults.SelectedItems.Count == 0) return;
 
             var lvItem = lvResults.SelectedItems[0];
-            var formSearchDouban = new FormSearchDouban(lvItem.Tag,TorrentFile.PurifyName(lvItem.Text));
-            if(formSearchDouban.ShowDialog()==DialogResult.Cancel) return;
+            var torrentFile = (TorrentFile)lvItem.Tag;
+            var formSearchDouban = new FormSearchDouban(torrentFile);
+            if (formSearchDouban.ShowDialog() == DialogResult.Cancel) return;
 
             lvItem.SubItems[1].Text = formSearchDouban.DoubanSubject.rating;
             lvItem.SubItems[2].Text = formSearchDouban.DoubanSubject.year;
@@ -673,7 +665,31 @@ where not exists (select 1 from tb_file where hdd_nid={_hdd_nid} and path=$path 
 
         private void lvResults_SelectedIndexChanged(object sender, EventArgs e)
         {
+            lbGenres.Text = null;
+            if(pictureBox1.Image!=null)
+            {
+                pictureBox1.Image.Dispose();
+                pictureBox1.Image = null;
+            }
 
+            if (lvResults.SelectedItems.Count == 0) return;
+            var torrentFile = (TorrentFile)lvResults.SelectedItems[0].Tag;
+            lbGenres.Text = torrentFile.genres;
+            if (!string.IsNullOrEmpty(torrentFile.RealPosterPath) && File.Exists(torrentFile.RealPosterPath))
+            {
+                using (var stream = new FileStream(torrentFile.RealPosterPath, FileMode.Open, FileAccess.Read))
+                {
+                    pictureBox1.Image = Image.FromStream(stream);
+                }
+            }
+
+        }
+
+        private void pictureBox1_DoubleClick(object sender, EventArgs e)
+        {
+            if (lvResults.SelectedItems.Count == 0) return;
+            var torrentFile = (TorrentFile)lvResults.SelectedItems[0].Tag;
+            torrentFile.OpenDoubanLink();
         }
     }
 }
