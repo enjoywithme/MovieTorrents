@@ -19,8 +19,8 @@ namespace MovieTorrents
 {
     public partial class FormMain : Form
     {
-        private string _currentPath;
-        private string _dbConnString;
+        public static string CurrentPath;
+        public static string DbConnection;
 
         private CancellationTokenSource _quernyTokenSource;
         private CancellationTokenSource _operTokenSource;
@@ -33,7 +33,7 @@ namespace MovieTorrents
                 if (!string.IsNullOrEmpty(_torrentFilePath))
                     return _torrentFilePath;
 
-                using (var connection = new SQLiteConnection(_dbConnString))
+                using (var connection = new SQLiteConnection(DbConnection))
                 {
                     var sql = $"select d.hdd_nid,area,path from tb_dir as d inner join tb_hdd as h on h.hdd_nid=d.hdd_nid  limit 1";
                     try
@@ -102,8 +102,8 @@ namespace MovieTorrents
         public FormMain()
         {
             InitializeComponent();
-            _currentPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-            _dbConnString = $"Data Source ={_currentPath}//zogvm.db; Version = 3; ";
+            CurrentPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+            DbConnection = $"Data Source ={CurrentPath}//zogvm.db; Version = 3; ";
 
            
         }
@@ -123,8 +123,9 @@ namespace MovieTorrents
             //var d1 = DateTime.MinValue;
             //var d2 = DateTime.Parse("2018-09-10 14:05:04");
             //Debug.WriteLine((d2 - d1).TotalMilliseconds / 1000);
-
-
+#if DEBUG
+            tbSearchText.Text = "雷神";
+#endif
         }
 
         private void Watcher_File_Created(object sender, FileSystemEventArgs e)
@@ -222,6 +223,8 @@ namespace MovieTorrents
                 {
                     Tag = torrentFile.fid
                 });
+
+                //Debug.Print(torrentFile.GetPurifiedChineseName());
             }
 
 
@@ -233,7 +236,7 @@ namespace MovieTorrents
         {
             var result = new List<TorrentFile>();
 
-            using (var connection = new SQLiteConnection(_dbConnString))
+            using (var connection = new SQLiteConnection(DbConnection))
             {
                 var splits = text.Split(null);
                 var sb = new StringBuilder("select * from filelist_view where ");
@@ -309,7 +312,7 @@ namespace MovieTorrents
 
             var formSetWatched = new FormSetWatched(watchDate, seecomment);
             if (formSetWatched.ShowDialog(this) == DialogResult.Cancel) return;
-            if (TorrentFile.SetWatched(_dbConnString, lvItem.Tag, formSetWatched.WatchDate, formSetWatched.Comment, out var seedate))
+            if (TorrentFile.SetWatched(DbConnection, lvItem.Tag, formSetWatched.WatchDate, formSetWatched.Comment, out var seedate))
             {
                 lvItem.SubItems[3].Text = "1";
                 lvItem.SubItems[4].Text = seedate;
@@ -325,12 +328,12 @@ namespace MovieTorrents
         //备份数据库文件
         private void BackupDbFile()
         {
-            var watched = TorrentFile.CountWatched(_dbConnString);
+            var watched = TorrentFile.CountWatched(DbConnection);
             if (watched == -1) return;
 
             try
             {
-                File.Copy($"{ _currentPath}\\zogvm.db", "E:\\MyWinDoc\\My Movies\\zogvm.db", true);
+                File.Copy($"{ CurrentPath}\\zogvm.db", "E:\\MyWinDoc\\My Movies\\zogvm.db", true);
             }
             catch(Exception ex)
             {
@@ -443,7 +446,7 @@ namespace MovieTorrents
 
             var stopWatch = Stopwatch.StartNew();
 
-            using (var connection = new SQLiteConnection(_dbConnString))
+            using (var connection = new SQLiteConnection(DbConnection))
             {
                 connection.Open();
 
@@ -568,7 +571,7 @@ where not exists (select 1 from tb_file where hdd_nid={_hdd_nid} and path=$path 
 
             var fileIdToClear = new List<long>();
 
-            using (var connection = new SQLiteConnection(_dbConnString))
+            using (var connection = new SQLiteConnection(DbConnection))
             {
                 await connection.OpenAsync();
                 using (var command = new SQLiteCommand("select file_nid,h.area || f.path || f.name || f.ext as fullname from tb_file as f INNER join tb_hdd as h on h.hdd_nid=f.hdd_nid",connection))
@@ -649,6 +652,28 @@ where not exists (select 1 from tb_file where hdd_nid={_hdd_nid} and path=$path 
             {
                 Process.Start("explorer.exe", "/select, " + filePath);
             }
+        }
+
+        private void tsmiSearchDouban_Click(object sender, EventArgs e)
+        {
+            if (lvResults.SelectedItems.Count == 0) return;
+
+            var lvItem = lvResults.SelectedItems[0];
+            var formSearchDouban = new FormSearchDouban(lvItem.Tag,TorrentFile.PurifyName(lvItem.Text));
+            if(formSearchDouban.ShowDialog()==DialogResult.Cancel) return;
+
+            lvItem.SubItems[1].Text = formSearchDouban.DoubanSubject.rating;
+            lvItem.SubItems[2].Text = formSearchDouban.DoubanSubject.year;
+        }
+
+        private void tsmiExit_Click(object sender, EventArgs e)
+        {
+            Close();
+        }
+
+        private void lvResults_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }
