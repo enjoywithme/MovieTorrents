@@ -211,6 +211,8 @@ namespace MovieTorrents
             {
                 genres = subject.genres;
                 posterpath = posterImageFileName;
+                if (!string.IsNullOrEmpty(subject.rating) && double.TryParse(subject.rating, out var d))
+                    rating = d;
             }
 
 

@@ -666,6 +666,7 @@ where not exists (select 1 from tb_file where hdd_nid={_hdd_nid} and path=$path 
         private void lvResults_SelectedIndexChanged(object sender, EventArgs e)
         {
             lbGenres.Text = null;
+            lbRating.Text = null;
             if(pictureBox1.Image!=null)
             {
                 pictureBox1.Image.Dispose();
@@ -675,6 +676,7 @@ where not exists (select 1 from tb_file where hdd_nid={_hdd_nid} and path=$path 
             if (lvResults.SelectedItems.Count == 0) return;
             var torrentFile = (TorrentFile)lvResults.SelectedItems[0].Tag;
             lbGenres.Text = torrentFile.genres;
+            lbRating.Text = torrentFile.rating ==0?null:torrentFile.rating.ToString();
             if (!string.IsNullOrEmpty(torrentFile.RealPosterPath) && File.Exists(torrentFile.RealPosterPath))
             {
                 using (var stream = new FileStream(torrentFile.RealPosterPath, FileMode.Open, FileAccess.Read))

@@ -54,6 +54,7 @@
             this.columnHeaderSeeComment = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.lbGenres = new System.Windows.Forms.Label();
+            this.lbRating = new System.Windows.Forms.Label();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.lvContextMenu.SuspendLayout();
@@ -139,7 +140,7 @@
             // 
             this.tssInfo.AutoSize = false;
             this.tssInfo.Name = "tssInfo";
-            this.tssInfo.Size = new System.Drawing.Size(1189, 17);
+            this.tssInfo.Size = new System.Drawing.Size(1241, 17);
             this.tssInfo.Spring = true;
             this.tssInfo.Text = "空闲";
             this.tssInfo.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -256,17 +257,26 @@
             // 
             // lbGenres
             // 
-            this.lbGenres.AutoSize = true;
-            this.lbGenres.Location = new System.Drawing.Point(14, 229);
+            this.lbGenres.Location = new System.Drawing.Point(14, 251);
             this.lbGenres.Name = "lbGenres";
-            this.lbGenres.Size = new System.Drawing.Size(0, 12);
+            this.lbGenres.Size = new System.Drawing.Size(98, 44);
             this.lbGenres.TabIndex = 1;
+            this.lbGenres.TextAlign = System.Drawing.ContentAlignment.TopCenter;
+            // 
+            // lbRating
+            // 
+            this.lbRating.Location = new System.Drawing.Point(12, 219);
+            this.lbRating.Name = "lbRating";
+            this.lbRating.Size = new System.Drawing.Size(100, 23);
+            this.lbRating.TabIndex = 6;
+            this.lbRating.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // FormMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1273, 583);
+            this.Controls.Add(this.lbRating);
             this.Controls.Add(this.lbGenres);
             this.Controls.Add(this.lvResults);
             this.Controls.Add(this.pictureBox1);
@@ -318,6 +328,7 @@
         private System.Windows.Forms.ColumnHeader columnHeaderSeeComment;
         private System.Windows.Forms.Label lbGenres;
         private System.Windows.Forms.PictureBox pictureBox1;
+        private System.Windows.Forms.Label lbRating;
     }
 }
 
