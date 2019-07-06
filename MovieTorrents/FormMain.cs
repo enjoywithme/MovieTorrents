@@ -268,9 +268,9 @@ namespace MovieTorrents
                                 rating = (double)reader["rating"],
                                 year = (string)reader["year"],
                                 seeflag = (long)reader["seeflag"],
-                                posterpath =(string)reader["posterpath"],
-                                genres = (string)reader["genres"],
-                                doubanid =(string)reader["doubanid"],
+                                posterpath = Convert.IsDBNull(reader["posterpath"]) ? string.Empty : (string)reader["posterpath"],
+                                genres = Convert.IsDBNull(reader["genres"]) ? string.Empty : (string)reader["genres"],
+                                doubanid = Convert.IsDBNull(reader["doubanid"]) ? string.Empty : (string)reader["doubanid"],
                                 seedate = Convert.IsDBNull(reader["seedate"]) ? string.Empty : (string)reader["seedate"],
                                 seecomment = Convert.IsDBNull(reader["seecomment"]) ? string.Empty : (string)reader["seecomment"]
                             });
