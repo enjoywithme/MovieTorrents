@@ -116,7 +116,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(775, 450);
+            this.ClientSize = new System.Drawing.Size(775, 398);
             this.Controls.Add(this.btSave);
             this.Controls.Add(this.pictureBox1);
             this.Controls.Add(this.btSearch);

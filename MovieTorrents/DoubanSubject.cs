@@ -106,7 +106,8 @@ namespace MovieTorrents
 
         private static void BuildCookies()
         {
-            cookieContainer = new CookieContainer();
+            if(cookieContainer==null)
+                cookieContainer = new CookieContainer();
             var url = "https://movie.douban.com";
             var cookieData = GetCookies(url);
             if (cookieData != null)
@@ -122,7 +123,7 @@ namespace MovieTorrents
             var uri = new Uri(sUrl);
 
 
-            if (cookieContainer == null) BuildCookies();
+            BuildCookies();
             
             var jsonText = string.Empty;
 #if !DEBUG
@@ -133,7 +134,6 @@ namespace MovieTorrents
                 request.Method = "GET";
                 request.Accept = "application/json; charset=utf-8";
                 var response = (HttpWebResponse)request.GetResponse();
-
                 using (var sr = new StreamReader(response.GetResponseStream()))
                 {
                     jsonText = sr.ReadToEnd();
@@ -182,6 +182,15 @@ namespace MovieTorrents
             return list;
         }
 
+        public static List<DoubanSubject> SearchSubject(string text)
+        {
+            var list = new List<DoubanSubject>();
+
+            //TODO:使用内嵌浏览器访问页面抓取
+
+            return list;
+        }
+
         public bool TryQueryDetail(out string msg)
         {
             msg = string.Empty;
@@ -190,7 +199,7 @@ namespace MovieTorrents
             var uri = new Uri(sUrl);
 
 
-            if (cookieContainer == null) BuildCookies();
+            BuildCookies();
 
             var html = string.Empty;
 
@@ -200,7 +209,6 @@ namespace MovieTorrents
                 var request = (HttpWebRequest)WebRequest.Create(uri);
                 request.CookieContainer = cookieContainer;
                 request.Method = "GET";
-                request.Accept = "application/json; charset=utf-8";
                 var response = (HttpWebResponse)request.GetResponse();
 
                 using (var sr = new StreamReader(response.GetResponseStream()))

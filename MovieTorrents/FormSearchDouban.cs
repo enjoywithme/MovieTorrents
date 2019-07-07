@@ -39,6 +39,8 @@ namespace MovieTorrents
             listView1.Items.Clear();
 
             var subjects = DoubanSubject.SearchSuggest(tbSearchText.Text.Trim());
+            if(subjects.Count==0)
+                subjects = DoubanSubject.SearchSubject(tbSearchText.Text.Trim());
             foreach (var subject in subjects)
             {
                 string[] row = {subject.title,
