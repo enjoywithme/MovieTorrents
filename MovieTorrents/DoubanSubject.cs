@@ -27,6 +27,12 @@ namespace MovieTorrents
         public string directors { get; set; }
         public string genres { get; set; }
         public string rating { get; set;}
+        public double Rating { get
+            {
+                if (string.IsNullOrEmpty(rating)) return 0;
+                if (!double.TryParse(rating, out var d)) return 0;
+                return d;
+            } }
         public string img_url { get; set; }
         private string _img_local = string.Empty;
         public string img_local { get {
@@ -245,7 +251,10 @@ namespace MovieTorrents
             {
                 var jo = JObject.Parse(html);
                 name = (string)jo["name"];
-                year = DateTime.Parse((string)jo["datePublished"]).Year.ToString();
+                year = string.Empty;
+                if(DateTime.TryParse((string)jo["datePublished"],out var d)){
+                    year = d.Year.ToString();
+                }
                 genres =string.Join(" ",jo["genre"].Select(t => (string)t).ToList());
                 rating = (string) jo["aggregateRating"]["ratingValue"];
             }

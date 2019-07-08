@@ -128,6 +128,39 @@ namespace MovieTorrents
             return ok;
         }
 
+        public bool DeleteFromDb(string dbConnString)
+        {
+            var m_dbConnection = new SQLiteConnection(dbConnString);
+
+            var sql = $"delete from tb_file where file_nid=$fid";
+            var ok = true;
+            try
+            {
+                m_dbConnection.Open();
+                try
+                {
+                    var command = new SQLiteCommand(sql, m_dbConnection);
+                    command.Parameters.AddWithValue("$fid", fid);
+                    ok = command.ExecuteNonQuery()>0;
+                }
+                catch (Exception e)
+                {
+                    MessageBox.Show(e.Message, "错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    ok = false;
+                }
+
+                m_dbConnection.Close();
+
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show(e.Message, "错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                ok = false;
+            }
+
+            return ok;
+        }
+
         public static long CountWatched(string dbConnString)
         {
             var connection = new SQLiteConnection(dbConnString);
@@ -173,19 +206,19 @@ namespace MovieTorrents
                 {
                     posterImageFileName = FormMain.CurrentPath + "\\poster\\douban\\" + Path.GetFileName(subject.img_local);
                     File.Copy(subject.img_local, posterImageFileName,true);
-
+                    posterImageFileName = posterImageFileName.Replace("\\", "/");//zogvm的路径使用正斜杠
                 }
 
                 m_dbConnection.Open();
                 try
                 {
                     var command = new SQLiteCommand(sql, m_dbConnection);
-                    command.Parameters.AddWithValue("$year", subject.year);
+                    command.Parameters.AddWithValue("$year", string.IsNullOrEmpty(subject.year)?year:subject.year);
                     command.Parameters.AddWithValue("$keyname", subject.name);
                     command.Parameters.AddWithValue("$othername", subject.othername);
                     command.Parameters.AddWithValue("$doubanid", subject.id);
                     command.Parameters.AddWithValue("$posterpath", posterImageFileName);
-                    command.Parameters.AddWithValue("$rating", double.Parse(subject.rating));
+                    command.Parameters.AddWithValue("$rating", subject.Rating);
                     command.Parameters.AddWithValue("$genres", subject.genres);
                     command.Parameters.AddWithValue("$fid", fid);
                     command.ExecuteNonQuery();
@@ -211,8 +244,8 @@ namespace MovieTorrents
             {
                 genres = subject.genres;
                 posterpath = posterImageFileName;
-                if (!string.IsNullOrEmpty(subject.rating) && double.TryParse(subject.rating, out var d))
-                    rating = d;
+                doubanid = subject.id;
+                rating = subject.Rating;
             }
 
 

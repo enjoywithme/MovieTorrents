@@ -30,7 +30,7 @@ namespace MovieTorrents
 
         private void button1_Click(object sender, EventArgs e)
         {
-            if (!_torrentFile.SetWatched(FormMain.DbConnection, dtPicker.Value, tbComment.Text))
+            if (!_torrentFile.SetWatched(FormMain.DbConnectionString, dtPicker.Value, tbComment.Text))
                 return;
 
             DialogResult = DialogResult.OK;

@@ -95,7 +95,7 @@ namespace MovieTorrents
                 return;
             }
 
-            if (_torrentFile.UpdateDoubanInfo(FormMain.DbConnection, subject))
+            if (_torrentFile.UpdateDoubanInfo(FormMain.DbConnectionString, subject))
             {
                 DoubanSubject = subject;
                 DialogResult = DialogResult.OK;

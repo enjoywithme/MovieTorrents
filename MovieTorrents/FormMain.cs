@@ -20,10 +20,12 @@ namespace MovieTorrents
     public partial class FormMain : Form
     {
         public static string CurrentPath;
-        public static string DbConnection;
+        public static string DbConnectionString;
 
         private CancellationTokenSource _quernyTokenSource;
         private CancellationTokenSource _operTokenSource;
+
+        private const string FILTER_RECENT_ADDED100 = ":recentadded100";
 
         private string _torrentFilePath;
         private string TorrentFilePath
@@ -33,7 +35,7 @@ namespace MovieTorrents
                 if (!string.IsNullOrEmpty(_torrentFilePath))
                     return _torrentFilePath;
 
-                using (var connection = new SQLiteConnection(DbConnection))
+                using (var connection = new SQLiteConnection(DbConnectionString))
                 {
                     var sql = $"select d.hdd_nid,area,path from tb_dir as d inner join tb_hdd as h on h.hdd_nid=d.hdd_nid  limit 1";
                     try
@@ -103,7 +105,7 @@ namespace MovieTorrents
         {
             InitializeComponent();
             CurrentPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-            DbConnection = $"Data Source ={CurrentPath}//zogvm.db; Version = 3; ";
+            DbConnectionString = $"Data Source ={CurrentPath}//zogvm.db; Version = 3; ";
 
 
         }
@@ -161,9 +163,14 @@ namespace MovieTorrents
 
         private void SearchRecords(string text)
         {
+            lvResults.Items.Clear();
+
+            text = text.Trim();
             if (string.IsNullOrEmpty(text))
+                return;
+            if(text.Length<=2 && text.All(x => (int)x <= 127))
             {
-                lvResults.Items.Clear();
+                DisplayInfo("输入的搜素文字过少");
                 return;
             }
 
@@ -189,7 +196,7 @@ namespace MovieTorrents
 
             DisplayInfo("正在查询文件");
 
-            Task.Run(() => ExecuteSearch(tbSearchText.Text.Trim(), _quernyTokenSource.Token))
+            Task.Run(() => ExecuteSearch(text, _quernyTokenSource.Token))
                 .ContinueWith(task =>
                 {
                     if (task.IsFaulted) Invoke(new Action(() => MessageBox.Show(task.Exception.InnerException.Message)));
@@ -232,25 +239,60 @@ namespace MovieTorrents
 
         }
 
+        private string BuildSearchSql(string text)
+        {
+            var sb = new StringBuilder("select * from filelist_view where 1=1");
+
+            if (text.ToLower() == FILTER_RECENT_ADDED100)
+            {
+
+            }
+            else
+            {
+                var splits = text.Split(null);
+
+                for (var i = 0; i < splits.Length; i++)
+                {
+                    sb.Append($" and (name like '%{splits[i]}%' or othername like '%{splits[i]}%' or genres like '%{splits[i]}%')");
+                }
+            }
+
+            
+            //看没看过过滤
+            if((tsmiFilterNotWatched.Checked && tsmiFilterWatched.Checked)
+                ||(!tsmiFilterNotWatched.Checked && !tsmiFilterWatched.Checked))
+            {
+
+            }
+            else if(tsmiFilterWatched.Checked)
+            {
+                sb.Append(" and seeflag=1");
+            }
+            else if(tsmiFilterNotWatched.Checked)
+            {
+                sb.Append(" and seeflag=0");
+            }
+
+            //排序
+            if (text.ToLower() == FILTER_RECENT_ADDED100)
+                sb.Append(" order by CreationTime desc limit 100");
+            else
+                sb.Append(" order by rating desc");
+
+            Debug.WriteLine(sb.ToString());
+
+            return sb.ToString();
+        }
+
         public async Task<IEnumerable<TorrentFile>> ExecuteSearch(string text, CancellationToken cancelToken)
         {
             var result = new List<TorrentFile>();
 
-            using (var connection = new SQLiteConnection(DbConnection))
+            using (var connection = new SQLiteConnection(DbConnectionString))
             {
-                var splits = text.Split(null);
-                var sb = new StringBuilder("select * from filelist_view where ");
+                var sql = BuildSearchSql(text);
 
-                for (var i = 0; i < splits.Length; i++)
-                {
-                    if (i > 0) sb.Append(" and ");
-                    sb.Append($"(name like '%{splits[i]}%' or othername like '%{splits[i]}%' or genres like '%{splits[i]}%')");
-                }
-                sb.Append(" order by rating desc");
-
-                Debug.WriteLine(sb.ToString());
-
-                using (var command = new SQLiteCommand(sb.ToString(), connection))
+                using (var command = new SQLiteCommand(sql, connection))
                 {
                     await connection.OpenAsync(cancelToken);
 
@@ -323,7 +365,7 @@ namespace MovieTorrents
         //备份数据库文件
         private void BackupDbFile()
         {
-            var watched = TorrentFile.CountWatched(DbConnection);
+            var watched = TorrentFile.CountWatched(DbConnectionString);
             if (watched == -1) return;
 
             try
@@ -421,8 +463,7 @@ namespace MovieTorrents
 
 
         }
-        //启动文件队列的处理
-
+       
         //处理文件队列
         private void ProcessFileToBeAdded(CancellationToken token, BlockingCollection<TorrentFile> _filesToProces)
         {
@@ -441,12 +482,13 @@ namespace MovieTorrents
 
             var stopWatch = Stopwatch.StartNew();
 
-            using (var connection = new SQLiteConnection(DbConnection))
+            using (var connection = new SQLiteConnection(DbConnectionString))
             {
                 connection.Open();
 
-                using (var commandInsert = new SQLiteCommand($@"insert into tb_file(hdd_nid,path,name,ext,year,filesize,CreationTime,LastWriteTime,LastOpenTime)
-select {_hdd_nid},$path,$name,$ext,$year,$filesize,$n,$n,$n
+                using (var commandInsert = new SQLiteCommand($@"insert into tb_file
+(hdd_nid,path,name,ext,year,filesize,CreationTime,LastWriteTime,LastOpenTime,maintype,resolutionW,resolutionH,filetime,bitrateKbps,zidian_sound,zidian_sub)
+select {_hdd_nid},$path,$name,$ext,$year,$filesize,$n,$n,$n,0,0,0,0,0,'',''
 where not exists (select 1 from tb_file where hdd_nid={_hdd_nid} and path=$path and name=$name and ext=$ext)", connection))
                 {
                     commandInsert.Parameters.Add("$path", DbType.String, 520);
@@ -566,7 +608,7 @@ where not exists (select 1 from tb_file where hdd_nid={_hdd_nid} and path=$path 
 
             var fileIdToClear = new List<long>();
 
-            using (var connection = new SQLiteConnection(DbConnection))
+            using (var connection = new SQLiteConnection(DbConnectionString))
             {
                 await connection.OpenAsync();
                 using (var command = new SQLiteCommand("select file_nid,h.area || f.path || f.name || f.ext as fullname from tb_file as f INNER join tb_hdd as h on h.hdd_nid=f.hdd_nid", connection))
@@ -620,11 +662,22 @@ where not exists (select 1 from tb_file where hdd_nid={_hdd_nid} and path=$path 
             Clipboard.SetText(lvItem.Text);
         }
 
-        private void notifyIcon1_MouseDoubleClick(object sender, MouseEventArgs e)
+        //通知栏图标
+        #region 通知栏图标 
+        private void RestoreWindowFromTray()
         {
             Show();
             WindowState = FormWindowState.Normal;
             notifyIcon1.Visible = false;
+        }
+
+        private void notifyIcon1_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+            RestoreWindowFromTray();
+        }
+        private void notifyIcon1_BalloonTipClicked(object sender, EventArgs e)
+        {
+            RestoreWindowFromTray();
         }
 
         private void FormMain_Resize(object sender, EventArgs e)
@@ -636,12 +689,15 @@ where not exists (select 1 from tb_file where hdd_nid={_hdd_nid} and path=$path 
                 notifyIcon1.ShowBalloonTip(1000);
             }
         }
+        #endregion
 
+        //右键菜单
+        #region
         private void tsmiShowFileLocation_Click(object sender, EventArgs e)
         {
             if (lvResults.SelectedItems.Count == 0) return;
 
-            var torrentFile  = (TorrentFile) lvResults.SelectedItems[0].Tag;
+            var torrentFile = (TorrentFile)lvResults.SelectedItems[0].Tag;
             torrentFile.ShowInExplorer();
         }
 
@@ -657,6 +713,23 @@ where not exists (select 1 from tb_file where hdd_nid={_hdd_nid} and path=$path 
             lvItem.SubItems[1].Text = formSearchDouban.DoubanSubject.rating;
             lvItem.SubItems[2].Text = formSearchDouban.DoubanSubject.year;
         }
+
+        private void tsmiDelete_Click(object sender, EventArgs e)
+        {
+            if (lvResults.SelectedItems.Count == 0) return;
+
+            if (MessageBox.Show("确定删除选中的记录？", "提示", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.No) return;
+
+            var lvItem = lvResults.SelectedItems[0];
+            var torrentFile = (TorrentFile)lvItem.Tag;
+            if(torrentFile.DeleteFromDb(DbConnectionString))
+            {
+                lvResults.Items.Remove(lvItem);
+            }
+        }
+
+        #endregion
+
 
         private void tsmiExit_Click(object sender, EventArgs e)
         {
@@ -693,5 +766,21 @@ where not exists (select 1 from tb_file where hdd_nid={_hdd_nid} and path=$path 
             var torrentFile = (TorrentFile)lvResults.SelectedItems[0].Tag;
             torrentFile.OpenDoubanLink();
         }
+
+        private void tsmiFilterRecent_Click(object sender, EventArgs e)
+        {
+            tbSearchText.Text = string.Empty;
+            SearchRecords(FILTER_RECENT_ADDED100);
+        }
+
+        private void tsmiFilterWatchedNotWatched_Click(object sender, EventArgs e)
+        {
+            var tsmi = sender as ToolStripMenuItem;
+            if (tsmi == null) return;
+            tsmi.Checked = !tsmi.Checked;
+            SearchRecords(tbSearchText.Text);
+        }
+
+        
     }
 }
