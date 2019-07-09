@@ -691,6 +691,7 @@ where not exists (select 1 from tb_file where hdd_nid={_hdd_nid} and path=$path 
 
         void MinimizeToTray()
         {
+            notifyIcon1.Icon = Icon;
             notifyIcon1.Visible = true;
             WindowState = FormWindowState.Minimized;
             Hide();

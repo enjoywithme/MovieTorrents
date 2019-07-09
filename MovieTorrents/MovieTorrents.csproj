@@ -145,6 +145,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Movie.ico" />
+    <None Include="README.md" />
     <None Include="Resources\dou.png" />
     <Content Include="sample_subject.html">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

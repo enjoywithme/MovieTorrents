@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 
 namespace MovieTorrents
 {
+    //The code below is from https://www.codeproject.com/Articles/32908/C-Single-Instance-App-With-the-Ability-To-Restore
     static public class SingleInstance
     {
         public static readonly int WM_SHOWFIRSTINSTANCE =
