@@ -16,24 +16,27 @@ namespace MovieTorrents
         static void Main()
         {
 
-            using (var mutex = new Mutex(false, "MovieTorrents SingletonApp"))
+            if (!SingleInstance.Start())
             {
-                
-                bool isAnotherInstanceOpen = !mutex.WaitOne(TimeSpan.Zero);
-                if (isAnotherInstanceOpen)
-                {
-                    MessageBox.Show("程序已经在运行！", "提示", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                    return;
-                }
-
-                Application.EnableVisualStyles();
-                Application.SetCompatibleTextRenderingDefault(false);
-                Application.Run(new FormMain());
-
-                mutex.ReleaseMutex();
-
+                SingleInstance.ShowFirstInstance();
+                return;
             }
 
+            Application.EnableVisualStyles();
+            Application.SetCompatibleTextRenderingDefault(false);
+
+            try
+            {
+                Application.Run(new FormMain());
+
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show(e.Message, "错误", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+            }
+
+
+            SingleInstance.Stop();
 
         }
     }

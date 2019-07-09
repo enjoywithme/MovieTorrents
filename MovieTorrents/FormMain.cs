@@ -22,6 +22,7 @@ namespace MovieTorrents
     {
         public static string CurrentPath;
         public static string DbConnectionString;
+        private bool minimizedToTray;
 
         private CancellationTokenSource _quernyTokenSource;
         private CancellationTokenSource _operTokenSource;
@@ -130,6 +131,8 @@ namespace MovieTorrents
             tbSearchText.Text = "雷神";
 #endif
         }
+
+        
 
         private void Watcher_File_Created(object sender, FileSystemEventArgs e)
         {
@@ -658,33 +661,60 @@ where not exists (select 1 from tb_file where hdd_nid={_hdd_nid} and path=$path 
             DisplayInfo($"总共{filesCount}记录，清理了{filesCleard}条无效记录!");
         }
 
-       
+
 
         //通知栏图标
         #region 通知栏图标 
-        private void RestoreWindowFromTray()
+        protected override void WndProc(ref Message message)
         {
-            Show();
-            WindowState = FormWindowState.Normal;
-            notifyIcon1.Visible = false;
+            if (message.Msg == SingleInstance.WM_SHOWFIRSTINSTANCE)
+            {
+                ShowWindow();
+            }
+            base.WndProc(ref message);
+        }
+        public void ShowWindow()
+        {
+            if (minimizedToTray)
+            {
+                notifyIcon1.Visible = false;
+                Show();
+                Activate();
+                WindowState = FormWindowState.Normal;
+                minimizedToTray = false;
+            }
+            else
+            {
+                WinApi.ShowToFront(Handle);
+            }
+        }
+
+        void MinimizeToTray()
+        {
+            notifyIcon1.Visible = true;
+            WindowState = FormWindowState.Minimized;
+            Hide();
+            minimizedToTray = true;
         }
 
         private void notifyIcon1_MouseDoubleClick(object sender, MouseEventArgs e)
         {
-            RestoreWindowFromTray();
+            ShowWindow();
+        }
+        private void notifyIcon1_MouseClick(object sender, MouseEventArgs e)
+        {
+            ShowWindow();
         }
         private void notifyIcon1_BalloonTipClicked(object sender, EventArgs e)
         {
-            RestoreWindowFromTray();
+            ShowWindow();
         }
 
         private void FormMain_Resize(object sender, EventArgs e)
         {
-            if (this.WindowState == FormWindowState.Minimized)
+            if (WindowState == FormWindowState.Minimized)
             {
-                Hide();
-                notifyIcon1.Visible = true;
-                notifyIcon1.ShowBalloonTip(1000);
+                MinimizeToTray();
             }
         }
         #endregion
