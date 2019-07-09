@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Data;
 using System.Data.SQLite;
@@ -239,6 +240,7 @@ namespace MovieTorrents
 
         }
 
+        //构造搜索SQL
         private string BuildSearchSql(string text)
         {
             var sb = new StringBuilder("select * from filelist_view where 1=1");
@@ -271,6 +273,7 @@ namespace MovieTorrents
             else if(tsmiFilterNotWatched.Checked)
             {
                 sb.Append(" and seeflag=0");
+                sb.Append(" and  doubanid not in(select DISTINCT doubanid from tb_file where seeflag=1 and doubanid<>'')");
             }
 
             //排序
@@ -655,12 +658,7 @@ where not exists (select 1 from tb_file where hdd_nid={_hdd_nid} and path=$path 
             DisplayInfo($"总共{filesCount}记录，清理了{filesCleard}条无效记录!");
         }
 
-        private void tsmiCopyName_Click(object sender, EventArgs e)
-        {
-            if (lvResults.SelectedItems.Count == 0) return;
-            var lvItem = lvResults.SelectedItems[0];
-            Clipboard.SetText(lvItem.Text);
-        }
+       
 
         //通知栏图标
         #region 通知栏图标 
@@ -710,8 +708,8 @@ where not exists (select 1 from tb_file where hdd_nid={_hdd_nid} and path=$path 
             var formSearchDouban = new FormSearchDouban(torrentFile);
             if (formSearchDouban.ShowDialog() == DialogResult.Cancel) return;
 
-            lvItem.SubItems[1].Text = formSearchDouban.DoubanSubject.rating;
-            lvItem.SubItems[2].Text = formSearchDouban.DoubanSubject.year;
+            lvItem.SubItems[1].Text = torrentFile.rating.ToString();
+            lvItem.SubItems[2].Text = torrentFile.year;
         }
 
         private void tsmiDelete_Click(object sender, EventArgs e)
@@ -728,6 +726,46 @@ where not exists (select 1 from tb_file where hdd_nid={_hdd_nid} and path=$path 
             }
         }
 
+        private void tsmiFilterRecent_Click(object sender, EventArgs e)
+        {
+            tbSearchText.Text = string.Empty;
+            SearchRecords(FILTER_RECENT_ADDED100);
+        }
+
+        private void tsmiFilterWatchedNotWatched_Click(object sender, EventArgs e)
+        {
+            var tsmi = sender as ToolStripMenuItem;
+            if (tsmi == null) return;
+            tsmi.Checked = !tsmi.Checked;
+            SearchRecords(tbSearchText.Text);
+        }
+
+        private void tsmiRename_Click(object sender, EventArgs e)
+        {
+            if (lvResults.SelectedItems.Count == 0) return;
+
+            var lvItem = lvResults.SelectedItems[0];
+            var torrentFile = (TorrentFile)lvItem.Tag;
+            var formRenameTorrent = new FormRenameTorrent(torrentFile);
+            if (formRenameTorrent.ShowDialog() == DialogResult.Cancel) return;
+
+            lvItem.Text =torrentFile.name;
+        }
+
+        private void tsmiCopyName_Click(object sender, EventArgs e)
+        {
+            if (lvResults.SelectedItems.Count == 0) return;
+            var lvItem = lvResults.SelectedItems[0];
+            Clipboard.SetText(lvItem.Text);
+        }
+
+        private void tsmiCopyFile_Click(object sender, EventArgs e)
+        {
+            if (lvResults.SelectedItems.Count == 0) return;
+            var lvItem = lvResults.SelectedItems[0];
+            var torrentFile = (TorrentFile)lvItem.Tag;
+            Clipboard.SetFileDropList(new StringCollection { torrentFile.FullName });
+        }
         #endregion
 
 
@@ -765,20 +803,6 @@ where not exists (select 1 from tb_file where hdd_nid={_hdd_nid} and path=$path 
             if (lvResults.SelectedItems.Count == 0) return;
             var torrentFile = (TorrentFile)lvResults.SelectedItems[0].Tag;
             torrentFile.OpenDoubanLink();
-        }
-
-        private void tsmiFilterRecent_Click(object sender, EventArgs e)
-        {
-            tbSearchText.Text = string.Empty;
-            SearchRecords(FILTER_RECENT_ADDED100);
-        }
-
-        private void tsmiFilterWatchedNotWatched_Click(object sender, EventArgs e)
-        {
-            var tsmi = sender as ToolStripMenuItem;
-            if (tsmi == null) return;
-            tsmi.Checked = !tsmi.Checked;
-            SearchRecords(tbSearchText.Text);
         }
 
         

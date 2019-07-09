@@ -47,7 +47,8 @@ namespace MovieTorrents
         private static Regex regex = new Regex(@"\d{4}");
         private static string[] PRE_CLEARS = { "WEB_DL", "DD5.1", "[0-9]*(?:\\.[0-9]*)?[GM]B?" };
         private static Regex BAD_CHARS = new Regex(@"[\[.\]()_-]");
-        private static string[] BAD_WORDS = { "1080P", "720P", "x26[45]", "H26[45]", "BluRay", "AC3", " DTS ", "2Audios?", "FLAME", "IMAX", "中英字幕", "国英双语" };
+        private static string[] BAD_WORDS = { "1080P", "720P", "x26[45]", "H26[45]", "BluRay", "AC3", " DTS ", "2Audios?", "FLAME", "IMAX",
+            "中英字幕", "国英双语","国英音轨" };
         private static string[] RELEASE_GROUPS = { "SPARKS", "CMCT", "FGT", "KOOK" };
         public string PurifiedName
         {
@@ -60,7 +61,14 @@ namespace MovieTorrents
                 return cleaned.Trim();
             }
         }
-        
+        public string ChineseName
+        {
+            get
+            {
+                var matches = Regex.Matches(PurifiedName, "[\u4e00-\u9fa5]+");
+                return string.Join(" ", matches.OfType<Match>().Where(m=>m.Success));
+            }
+        }
 
         
 
@@ -157,6 +165,60 @@ namespace MovieTorrents
                 MessageBox.Show(e.Message, "错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 ok = false;
             }
+
+            return ok;
+        }
+
+        public bool Rename(string dbConnString,string newName,out string msg)
+        {
+            msg = string.Empty;
+
+            var newFullName = area + path + newName + ext;
+            if(File.Exists(newFullName))
+            {
+                msg = "要命名的新文件已经存在！";
+                return false;
+            }
+
+            var m_dbConnection = new SQLiteConnection(dbConnString);
+            var sql = @"update tb_file set name=$name where file_nid=$fid";
+            var ok = true;
+            try
+            {
+                
+               
+                m_dbConnection.Open();
+                try
+                {
+                    File.Move(FullName, newFullName);
+
+                    var command = new SQLiteCommand(sql, m_dbConnection);
+                    command.Parameters.AddWithValue("$name", newName);
+                    command.Parameters.AddWithValue("$fid", fid);
+                    command.ExecuteNonQuery();
+                }
+                catch (Exception e)
+                {
+                    msg = e.Message;
+                    ok = false;
+                }
+
+                m_dbConnection.Close();
+
+
+
+            }
+            catch (Exception e)
+            {
+                msg = e.Message;
+                ok = false;
+            }
+
+            if (ok)
+            {
+                name = newName;
+            }
+
 
             return ok;
         }

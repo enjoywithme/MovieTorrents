@@ -48,6 +48,7 @@
             this.lvContextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.tsmiSetWatched = new System.Windows.Forms.ToolStripMenuItem();
             this.tsmiSearchDouban = new System.Windows.Forms.ToolStripMenuItem();
+            this.tsmiRename = new System.Windows.Forms.ToolStripMenuItem();
             this.tsmiShowFileLocation = new System.Windows.Forms.ToolStripMenuItem();
             this.tsmiCopyName = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem3 = new System.Windows.Forms.ToolStripSeparator();
@@ -63,6 +64,8 @@
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.lbGenres = new System.Windows.Forms.Label();
             this.lbRating = new System.Windows.Forms.Label();
+            this.tsmiCopyFile = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem4 = new System.Windows.Forms.ToolStripSeparator();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.lvContextMenu.SuspendLayout();
@@ -202,12 +205,15 @@
             this.lvContextMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.tsmiSetWatched,
             this.tsmiSearchDouban,
+            this.tsmiRename,
             this.tsmiShowFileLocation,
-            this.tsmiCopyName,
             this.toolStripMenuItem3,
+            this.tsmiCopyName,
+            this.tsmiCopyFile,
+            this.toolStripMenuItem4,
             this.tsmiDelete});
             this.lvContextMenu.Name = "lvContextMenu";
-            this.lvContextMenu.Size = new System.Drawing.Size(187, 120);
+            this.lvContextMenu.Size = new System.Drawing.Size(187, 192);
             this.lvContextMenu.Text = "设置已看";
             this.lvContextMenu.Opening += new System.ComponentModel.CancelEventHandler(this.lvContextMenu_Opening);
             // 
@@ -220,10 +226,18 @@
             // 
             // tsmiSearchDouban
             // 
+            this.tsmiSearchDouban.Image = global::MovieTorrents.Properties.Resources.dou;
             this.tsmiSearchDouban.Name = "tsmiSearchDouban";
             this.tsmiSearchDouban.Size = new System.Drawing.Size(186, 22);
             this.tsmiSearchDouban.Text = "搜索豆瓣信息(&S)";
             this.tsmiSearchDouban.Click += new System.EventHandler(this.tsmiSearchDouban_Click);
+            // 
+            // tsmiRename
+            // 
+            this.tsmiRename.Name = "tsmiRename";
+            this.tsmiRename.Size = new System.Drawing.Size(186, 22);
+            this.tsmiRename.Text = "修改名称(&R)";
+            this.tsmiRename.Click += new System.EventHandler(this.tsmiRename_Click);
             // 
             // tsmiShowFileLocation
             // 
@@ -337,6 +351,18 @@
             this.lbRating.TabIndex = 6;
             this.lbRating.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
+            // tsmiCopyFile
+            // 
+            this.tsmiCopyFile.Name = "tsmiCopyFile";
+            this.tsmiCopyFile.Size = new System.Drawing.Size(186, 22);
+            this.tsmiCopyFile.Text = "拷贝文件(&F)";
+            this.tsmiCopyFile.Click += new System.EventHandler(this.tsmiCopyFile_Click);
+            // 
+            // toolStripMenuItem4
+            // 
+            this.toolStripMenuItem4.Name = "toolStripMenuItem4";
+            this.toolStripMenuItem4.Size = new System.Drawing.Size(183, 6);
+            // 
             // FormMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -403,6 +429,9 @@
         private System.Windows.Forms.ToolStripSeparator toolStripMenuItem2;
         private System.Windows.Forms.ToolStripSeparator toolStripMenuItem3;
         private System.Windows.Forms.ToolStripMenuItem tsmiDelete;
+        private System.Windows.Forms.ToolStripMenuItem tsmiRename;
+        private System.Windows.Forms.ToolStripMenuItem tsmiCopyFile;
+        private System.Windows.Forms.ToolStripSeparator toolStripMenuItem4;
     }
 }
 

@@ -37,6 +37,7 @@
             this.btSearch = new System.Windows.Forms.Button();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.btSave = new System.Windows.Forms.Button();
+            this.tbOrigTitle = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -56,9 +57,9 @@
             this.columnHeaderYear,
             this.columnHeaderType});
             this.listView1.FullRowSelect = true;
-            this.listView1.Location = new System.Drawing.Point(179, 54);
+            this.listView1.Location = new System.Drawing.Point(179, 79);
             this.listView1.Name = "listView1";
-            this.listView1.Size = new System.Drawing.Size(570, 317);
+            this.listView1.Size = new System.Drawing.Size(570, 300);
             this.listView1.TabIndex = 1;
             this.listView1.UseCompatibleStateImageBehavior = false;
             this.listView1.View = System.Windows.Forms.View.Details;
@@ -95,7 +96,7 @@
             // pictureBox1
             // 
             this.pictureBox1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.pictureBox1.Location = new System.Drawing.Point(24, 54);
+            this.pictureBox1.Location = new System.Drawing.Point(24, 79);
             this.pictureBox1.Name = "pictureBox1";
             this.pictureBox1.Size = new System.Drawing.Size(137, 193);
             this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
@@ -104,7 +105,7 @@
             // 
             // btSave
             // 
-            this.btSave.Location = new System.Drawing.Point(44, 272);
+            this.btSave.Location = new System.Drawing.Point(43, 297);
             this.btSave.Name = "btSave";
             this.btSave.Size = new System.Drawing.Size(89, 23);
             this.btSave.TabIndex = 4;
@@ -112,11 +113,20 @@
             this.btSave.UseVisualStyleBackColor = true;
             this.btSave.Click += new System.EventHandler(this.btSave_Click);
             // 
+            // tbOrigTitle
+            // 
+            this.tbOrigTitle.Location = new System.Drawing.Point(24, 44);
+            this.tbOrigTitle.Name = "tbOrigTitle";
+            this.tbOrigTitle.ReadOnly = true;
+            this.tbOrigTitle.Size = new System.Drawing.Size(643, 21);
+            this.tbOrigTitle.TabIndex = 5;
+            // 
             // FormSearchDouban
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(775, 398);
+            this.Controls.Add(this.tbOrigTitle);
             this.Controls.Add(this.btSave);
             this.Controls.Add(this.pictureBox1);
             this.Controls.Add(this.btSearch);
@@ -147,5 +157,6 @@
         private System.Windows.Forms.ColumnHeader columnHeaderType;
         private System.Windows.Forms.PictureBox pictureBox1;
         private System.Windows.Forms.Button btSave;
+        private System.Windows.Forms.TextBox tbOrigTitle;
     }
 }

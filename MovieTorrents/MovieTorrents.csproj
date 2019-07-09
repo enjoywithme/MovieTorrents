@@ -81,6 +81,12 @@
     <Compile Include="FormMain.Designer.cs">
       <DependentUpon>FormMain.cs</DependentUpon>
     </Compile>
+    <Compile Include="FormRenameTorrent.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormRenameTorrent.Designer.cs">
+      <DependentUpon>FormRenameTorrent.cs</DependentUpon>
+    </Compile>
     <Compile Include="FormSearchDouban.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -99,6 +105,9 @@
     <EmbeddedResource Include="FormMain.resx">
       <DependentUpon>FormMain.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="FormRenameTorrent.resx">
+      <DependentUpon>FormRenameTorrent.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="FormSearchDouban.resx">
       <DependentUpon>FormSearchDouban.cs</DependentUpon>
     </EmbeddedResource>
@@ -114,6 +123,7 @@
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
     </Compile>
     <None Include="douban_suggest_sbuject.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -134,6 +144,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Movie.ico" />
+    <None Include="Resources\dou.png" />
     <Content Include="sample_subject.html">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
