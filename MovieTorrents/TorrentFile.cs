@@ -22,6 +22,7 @@ namespace MovieTorrents
         public long filesize { get; set; }
         public double rating { get; set; }
         public string year { get; set; }
+        public long seelater { get; set; }
         public long seeflag { get; set; }
         public string seedate { get; set; }
         public string seecomment { get; set; }
@@ -99,13 +100,46 @@ namespace MovieTorrents
             }
         }
 
+        public bool MarkSeelater(string dbConnString)
+        {
+            var m_dbConnection = new SQLiteConnection(dbConnString);
+
+            var sql = $"update tb_file set seelater=1 where file_nid=$fid";
+            var ok = true;
+            try
+            {
+                m_dbConnection.Open();
+                try
+                {
+                    var command = new SQLiteCommand(sql, m_dbConnection);
+                    command.Parameters.AddWithValue("$fid", fid);
+                    command.ExecuteNonQuery();
+                }
+                catch (Exception e)
+                {
+                    MessageBox.Show(e.Message, "错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    ok = false;
+                }
+
+                m_dbConnection.Close();
+
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show(e.Message, "错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                ok = false;
+            }
+
+            return ok;
+        }
+
         public bool SetWatched(string dbConnString, DateTime watchDate,string comment)
         {
             seedate =watchDate.ToString("yyyy-MM-dd");
             seecomment = comment;
             var m_dbConnection = new SQLiteConnection(dbConnString);
 
-            var sql = $"update tb_file set seeflag=1,seedate=$seedate,seecomment=$comment where file_nid=$fid";
+            var sql = $"update tb_file set seelater=0,seeflag=1,seedate=$seedate,seecomment=$comment where file_nid=$fid";
             var ok = true;
             try
             {
@@ -136,7 +170,7 @@ namespace MovieTorrents
             return ok;
         }
 
-        public bool DeleteFromDb(string dbConnString)
+        public bool DeleteFromDb(string dbConnString,bool deleteFile)
         {
             var m_dbConnection = new SQLiteConnection(dbConnString);
 
@@ -147,6 +181,9 @@ namespace MovieTorrents
                 m_dbConnection.Open();
                 try
                 {
+                    if(deleteFile)
+                        File.Delete(FullName);
+
                     var command = new SQLiteCommand(sql, m_dbConnection);
                     command.Parameters.AddWithValue("$fid", fid);
                     ok = command.ExecuteNonQuery()>0;

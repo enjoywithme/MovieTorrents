@@ -28,6 +28,7 @@ namespace MovieTorrents
         private CancellationTokenSource _operTokenSource;
 
         private const string FILTER_RECENT_ADDED100 = ":recentadded100";
+        private const string FILTER_SEELATER = ":seelater";
 
         private string _torrentFilePath;
         private string TorrentFilePath
@@ -114,6 +115,8 @@ namespace MovieTorrents
 
         private void FormMain_Load(object sender, EventArgs e)
         {
+            this.Icon = Icon.ExtractAssociatedIcon(Application.ExecutablePath);
+
             if (!string.IsNullOrEmpty(TorrentFilePath) && Directory.Exists(TorrentFilePath))
             {
                 watcher.Path = TorrentFilePath;
@@ -132,7 +135,16 @@ namespace MovieTorrents
 #endif
         }
 
-        
+        private void FormMain_FormClosing(object sender, FormClosingEventArgs e)
+        {
+
+            if (_currentOperation != OperationNone)
+            {
+                MessageBox.Show("尚有操作在进行中，不能退出！", "提示", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                e.Cancel = true;
+            }
+        }
+
 
         private void Watcher_File_Created(object sender, FileSystemEventArgs e)
         {
@@ -154,6 +166,34 @@ namespace MovieTorrents
             }); ;
         }
 
+        private void DisplayInfo(string infoMsg = "空闲")
+        {
+            Invoke(new Action(() =>
+            {
+                tssInfo.Text = infoMsg;
+                tssState.BackColor = _currentOperation == OperationNone ? Color.LimeGreen : Color.OrangeRed;
+                if (notifyIcon1.Visible)
+                    notifyIcon1.ShowBalloonTip(2000, "Movie torrents", infoMsg, ToolTipIcon.Info);
+            }));
+
+
+        }
+
+        
+        private void tssState_Click(object sender, EventArgs e)
+        {
+
+            if (_currentOperation == OperationNone)
+                return;
+
+            if (MessageBox.Show("确定取消当前操作?", "提示", MessageBoxButtons.YesNo, MessageBoxIcon.Asterisk) == DialogResult.No)
+                return;
+
+            if (_operTokenSource != null) _operTokenSource.Cancel();
+        }
+
+        //搜索记录
+        #region 搜索记录
         private void tbSearchText_TextChanged(object sender, EventArgs e)
         {
             SearchRecords(tbSearchText.Text.Trim());
@@ -225,6 +265,7 @@ namespace MovieTorrents
                 string[] row = { torrentFile.name,
                                 torrentFile.rating.ToString(),
                                 torrentFile.year,
+                                torrentFile.seelater.ToString(),
                                 torrentFile.seeflag.ToString(),
                                 torrentFile.seedate,
                                 torrentFile.seecomment,
@@ -251,6 +292,10 @@ namespace MovieTorrents
             if (text.ToLower() == FILTER_RECENT_ADDED100)
             {
 
+            }
+            else if(text.ToLower()==FILTER_SEELATER)
+            {
+                sb.Append(" and seelater=1");
             }
             else
             {
@@ -315,6 +360,7 @@ namespace MovieTorrents
                                 ext =(string)reader["ext"],
                                 rating = (double)reader["rating"],
                                 year = (string)reader["year"],
+                                seelater=(long)reader["seelater"],
                                 seeflag = (long)reader["seeflag"],
                                 posterpath = Convert.IsDBNull(reader["posterpath"]) ? string.Empty : (string)reader["posterpath"],
                                 genres = Convert.IsDBNull(reader["genres"]) ? string.Empty : (string)reader["genres"],
@@ -331,43 +377,9 @@ namespace MovieTorrents
             return result;
         }
 
+        #endregion
 
-        private void lvResults_MouseClick(object sender, MouseEventArgs e)
-        {
-            if (e.Button == MouseButtons.Right)
-            {
-                if (lvResults.FocusedItem.Bounds.Contains(e.Location))
-                {
-                    lvContextMenu.Show(Cursor.Position);
-                }
-            }
-        }
-
-        private void lvContextMenu_Opening(object sender, CancelEventArgs e)
-        {
-            if (lvResults.SelectedItems.Count == 0) e.Cancel = true;
-        }
-
-        //标记为已观看
-        private void tsmiSetWatched_Click(object sender, EventArgs e)
-        {
-            if (lvResults.SelectedItems.Count == 0) return;
-            var lvItem = lvResults.SelectedItems[0];
-            var torrentFile = (TorrentFile)lvItem.Tag;
-
-
-            var formSetWatched = new FormSetWatched(torrentFile);
-            if (formSetWatched.ShowDialog(this) == DialogResult.Cancel) return;
-            lvItem.SubItems[3].Text = "1";
-            lvItem.SubItems[4].Text = torrentFile.seedate;
-            lvItem.SubItems[5].Text = torrentFile.seecomment;
-
-
-            //自动备份
-            BackupDbFile();
-
-        }
-
+        
         //备份数据库文件
         private void BackupDbFile()
         {
@@ -391,6 +403,7 @@ namespace MovieTorrents
         }
 
         //扫描种子文件
+        #region 扫描种子文件
         private void ScanTorrentFile()
         {
             if (string.IsNullOrEmpty(TorrentFilePath))
@@ -439,6 +452,7 @@ namespace MovieTorrents
             });
 
         }
+
         //添加扫描到的种子到队列等待处理
         private void DoScanFile(string dirName, CancellationToken token, BlockingCollection<TorrentFile> _filesToProcess)
         {
@@ -540,73 +554,10 @@ where not exists (select 1 from tb_file where hdd_nid={_hdd_nid} and path=$path 
 
         }
 
-        private void DisplayInfo(string infoMsg = "空闲")
-        {
-            Invoke(new Action(() =>
-            {
-                tssInfo.Text = infoMsg;
-                tssState.BackColor = _currentOperation == OperationNone ? Color.LimeGreen : Color.OrangeRed;
-                if (notifyIcon1.Visible)
-                    notifyIcon1.ShowBalloonTip(2000, "Movie torrents", infoMsg, ToolTipIcon.Info);
-            }));
+        #endregion
 
-
-        }
-
-
-        private void tsmiScanFile_Click(object sender, EventArgs e)
-        {
-            ScanTorrentFile();
-        }
-
-        private void FormMain_FormClosing(object sender, FormClosingEventArgs e)
-        {
-
-            if (_currentOperation != OperationNone)
-            {
-                MessageBox.Show("尚有操作在进行中，不能退出！", "提示", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                e.Cancel = true;
-            }
-        }
-
-        private void tssState_Click(object sender, EventArgs e)
-        {
-
-            if (_currentOperation == OperationNone)
-                return;
-
-            if (MessageBox.Show("确定取消当前操作?", "提示", MessageBoxButtons.YesNo, MessageBoxIcon.Asterisk) == DialogResult.No)
-                return;
-
-            if (_operTokenSource != null) _operTokenSource.Cancel();
-        }
-
-        private void tsmiClearRecords_Click(object sender, EventArgs e)
-        {
-            if (Interlocked.CompareExchange(ref _currentOperation, OperationClearFile, OperationNone) != OperationNone)
-            {
-                MessageBox.Show("正在执行其他操作，等待完成后操作", "提示", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
-            }
-
-
-            if (_operTokenSource != null)
-            {
-                _operTokenSource.Dispose();
-                _operTokenSource = null;
-            }
-
-            _operTokenSource = new CancellationTokenSource();
-
-            DisplayInfo("正在清理无效文件");
-
-            Task.Run(() => DoClearFile(_operTokenSource.Token))
-                .ContinueWith(task =>
-                {
-                    if (task.IsFaulted) Invoke(new Action(() => MessageBox.Show(task.Exception.InnerException.Message)));
-                });
-        }
-
+                       
+        //清理无效记录
         private async void DoClearFile(CancellationToken cancelToken)
         {
             var filesCleard = 0;
@@ -660,8 +611,6 @@ where not exists (select 1 from tb_file where hdd_nid={_hdd_nid} and path=$path 
             Interlocked.Exchange(ref _currentOperation, OperationNone);
             DisplayInfo($"总共{filesCount}记录，清理了{filesCleard}条无效记录!");
         }
-
-
 
         //通知栏图标
         #region 通知栏图标 
@@ -720,8 +669,84 @@ where not exists (select 1 from tb_file where hdd_nid={_hdd_nid} and path=$path 
         }
         #endregion
 
+        //主菜单
+        #region 主菜单
+        private void tsmiExit_Click(object sender, EventArgs e)
+        {
+            Close();
+        }
+
+        private void tsmiScanFile_Click(object sender, EventArgs e)
+        {
+            ScanTorrentFile();
+        }
+
+        private void tsmiClearRecords_Click(object sender, EventArgs e)
+        {
+            if (Interlocked.CompareExchange(ref _currentOperation, OperationClearFile, OperationNone) != OperationNone)
+            {
+                MessageBox.Show("正在执行其他操作，等待完成后操作", "提示", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+
+            if (_operTokenSource != null)
+            {
+                _operTokenSource.Dispose();
+                _operTokenSource = null;
+            }
+
+            _operTokenSource = new CancellationTokenSource();
+
+            DisplayInfo("正在清理无效文件");
+
+            Task.Run(() => DoClearFile(_operTokenSource.Token))
+                .ContinueWith(task =>
+                {
+                    if (task.IsFaulted) Invoke(new Action(() => MessageBox.Show(task.Exception.InnerException.Message)));
+                });
+        }
+
+        private void tsmiFilterRecent_Click(object sender, EventArgs e)
+        {
+            tbSearchText.Text = string.Empty;
+            SearchRecords(FILTER_RECENT_ADDED100);
+        }
+
+        private void tsmiFilterSeelater_Click(object sender, EventArgs e)
+        {
+            tbSearchText.Text = string.Empty;
+            SearchRecords(FILTER_SEELATER);
+        }
+
+        private void tsmiFilterWatchedNotWatched_Click(object sender, EventArgs e)
+        {
+            var tsmi = sender as ToolStripMenuItem;
+            if (tsmi == null) return;
+            tsmi.Checked = !tsmi.Checked;
+            SearchRecords(tbSearchText.Text);
+        }
+
+        #endregion
+
         //右键菜单
         #region
+        private void lvResults_MouseClick(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right)
+            {
+                if (lvResults.FocusedItem.Bounds.Contains(e.Location))
+                {
+                    lvContextMenu.Show(Cursor.Position);
+                }
+            }
+        }
+
+        private void lvContextMenu_Opening(object sender, CancelEventArgs e)
+        {
+            if (lvResults.SelectedItems.Count == 0) e.Cancel = true;
+        }
+
         private void tsmiShowFileLocation_Click(object sender, EventArgs e)
         {
             if (lvResults.SelectedItems.Count == 0) return;
@@ -751,24 +776,46 @@ where not exists (select 1 from tb_file where hdd_nid={_hdd_nid} and path=$path 
 
             var lvItem = lvResults.SelectedItems[0];
             var torrentFile = (TorrentFile)lvItem.Tag;
-            if(torrentFile.DeleteFromDb(DbConnectionString))
+            var deleteFile = (MessageBox.Show("同时删除文件？", "提示", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes);
+            if(torrentFile.DeleteFromDb(DbConnectionString,deleteFile))
             {
                 lvResults.Items.Remove(lvItem);
             }
         }
 
-        private void tsmiFilterRecent_Click(object sender, EventArgs e)
+
+
+        //标记为已观看
+        private void tsmiSetWatched_Click(object sender, EventArgs e)
         {
-            tbSearchText.Text = string.Empty;
-            SearchRecords(FILTER_RECENT_ADDED100);
+            if (lvResults.SelectedItems.Count == 0) return;
+            var lvItem = lvResults.SelectedItems[0];
+            var torrentFile = (TorrentFile)lvItem.Tag;
+
+
+            var formSetWatched = new FormSetWatched(torrentFile);
+            if (formSetWatched.ShowDialog(this) == DialogResult.Cancel) return;
+            lvItem.SubItems[3].Text = "0";
+            lvItem.SubItems[4].Text = "1";
+            lvItem.SubItems[5].Text = torrentFile.seedate;
+            lvItem.SubItems[6].Text = torrentFile.seecomment;
+
+
+            //自动备份
+            BackupDbFile();
+
         }
 
-        private void tsmiFilterWatchedNotWatched_Click(object sender, EventArgs e)
+        //标记稍后看
+        private void tsmiSetSeelater_Click(object sender, EventArgs e)
         {
-            var tsmi = sender as ToolStripMenuItem;
-            if (tsmi == null) return;
-            tsmi.Checked = !tsmi.Checked;
-            SearchRecords(tbSearchText.Text);
+            if (lvResults.SelectedItems.Count == 0) return;
+            var lvItem = lvResults.SelectedItems[0];
+            var torrentFile = (TorrentFile)lvItem.Tag;
+
+            if (!torrentFile.MarkSeelater(DbConnectionString)) return;
+            lvItem.SubItems[3].Text = "1";
+
         }
 
         private void tsmiRename_Click(object sender, EventArgs e)
@@ -797,13 +844,10 @@ where not exists (select 1 from tb_file where hdd_nid={_hdd_nid} and path=$path 
             var torrentFile = (TorrentFile)lvItem.Tag;
             Clipboard.SetFileDropList(new StringCollection { torrentFile.FullName });
         }
+
         #endregion
 
 
-        private void tsmiExit_Click(object sender, EventArgs e)
-        {
-            Close();
-        }
 
         private void lvResults_SelectedIndexChanged(object sender, EventArgs e)
         {
