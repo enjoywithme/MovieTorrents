@@ -268,8 +268,7 @@ namespace MovieTorrents
                                 torrentFile.seelater.ToString(),
                                 torrentFile.seeflag.ToString(),
                                 torrentFile.seedate,
-                                torrentFile.seecomment,
-                                torrentFile.path
+                                torrentFile.seecomment
                             };
                 lvResults.Items.Add(new ListViewItem(row)
                 {

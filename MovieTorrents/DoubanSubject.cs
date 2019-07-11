@@ -251,8 +251,8 @@ namespace MovieTorrents
             {
                 var jo = JObject.Parse(html);
                 name = (string)jo["name"];
-                year = string.Empty;
-                if(DateTime.TryParse((string)jo["datePublished"],out var d)){
+                var datePublished = (string)jo["datePublished"];
+                if (!string.IsNullOrEmpty(datePublished) && DateTime.TryParse(datePublished,out var d)){
                     year = d.Year.ToString();
                 }
                 genres =string.Join(" ",jo["genre"].Select(t => (string)t).ToList());

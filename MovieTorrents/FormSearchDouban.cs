@@ -34,7 +34,7 @@ namespace MovieTorrents
 
             tbSearchText.Text = _torrentFile.ChineseName;
 
-            DoSearcch();
+            //DoSearcch();
         }
 
         private void DoSearcch()

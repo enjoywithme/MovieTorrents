@@ -342,6 +342,7 @@ namespace MovieTorrents
             if(ok)
             {
                 genres = subject.genres;
+                year = string.IsNullOrEmpty(subject.year) ? year : subject.year;
                 posterpath = posterImageFileName;
                 doubanid = subject.id;
                 rating = subject.Rating;
