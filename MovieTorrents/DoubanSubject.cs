@@ -46,6 +46,13 @@ namespace MovieTorrents
         //regex: <script type="application\/ld\+json">([\s\S]*?)<\/script>    https://www.regextester.com/93588
         private static Regex SubjectScriptJsonMatch = new Regex("<script type=\"application\\/ld\\+json\">([\\s\\S]*?)<\\/script>");
 
+        public DoubanSubject()
+        {
+            casts=string.Empty;
+            directors = string.Empty;
+            genres = string.Empty;
+        }
+
         private void TryToDownloadSubjectImg()
         {
             var filename = Path.GetFileName(img_url);
@@ -255,6 +262,8 @@ namespace MovieTorrents
                 if (!string.IsNullOrEmpty(datePublished) && DateTime.TryParse(datePublished,out var d)){
                     year = d.Year.ToString();
                 }
+                directors = string.Join("|", jo["director"].Select(t => (string)t["name"]).ToList());
+                casts = string.Join("|", jo["actor"].Select(t => (string) t["name"]).ToList());
                 genres =string.Join(" ",jo["genre"].Select(t => (string)t).ToList());
                 rating = (string) jo["aggregateRating"]["ratingValue"];
             }

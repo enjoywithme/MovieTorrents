@@ -296,7 +296,8 @@ namespace MovieTorrents
             var posterImageFileName = string.Empty;
 
             var m_dbConnection = new SQLiteConnection(dbConnString);
-            var sql = @"update tb_file set year=$year,keyname=$keyname,othername=$othername,doubanid=$doubanid,posterpath=$posterpath,rating=$rating,genres=$genres where file_nid=$fid";
+            var sql = @"update tb_file set year=$year,keyname=$keyname,othername=$othername,doubanid=$doubanid,posterpath=$posterpath,
+rating=$rating,genres=$genres,directors=$directors,casts=$casts where file_nid=$fid";
             var ok = true;
             try
             {
@@ -319,6 +320,8 @@ namespace MovieTorrents
                     command.Parameters.AddWithValue("$posterpath", posterImageFileName);
                     command.Parameters.AddWithValue("$rating", subject.Rating);
                     command.Parameters.AddWithValue("$genres", subject.genres);
+                    command.Parameters.AddWithValue("$directors", subject.directors);
+                    command.Parameters.AddWithValue("$casts", subject.casts);
                     command.Parameters.AddWithValue("$fid", fid);
                     command.ExecuteNonQuery();
                 }
