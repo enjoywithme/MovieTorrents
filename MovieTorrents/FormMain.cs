@@ -4,9 +4,11 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Data;
+using System.Data.Common;
 using System.Data.SQLite;
 using System.Diagnostics;
 using System.Drawing;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -101,7 +103,7 @@ namespace MovieTorrents
         private string _area;
         private string _shortRootPath;
 
-        private FileSystemWatcher watcher = new FileSystemWatcher();
+        private readonly FileSystemWatcher _watcher = new FileSystemWatcher();
 
 
         public FormMain()
@@ -115,16 +117,18 @@ namespace MovieTorrents
 
         private void FormMain_Load(object sender, EventArgs e)
         {
-            this.Icon = Icon.ExtractAssociatedIcon(Application.ExecutablePath);
+            Icon = Icon.ExtractAssociatedIcon(Application.ExecutablePath);
+
+            lbGenres.Text = lbKeyName.Text = lbOtherName.Text = lbRating.Text = string.Empty;
 
             if (!string.IsNullOrEmpty(TorrentFilePath) && Directory.Exists(TorrentFilePath))
             {
-                watcher.Path = TorrentFilePath;
-                watcher.IncludeSubdirectories = true;
-                watcher.NotifyFilter = NotifyFilters.FileName;
-                watcher.Filter = "*.torrent";
-                watcher.Created += Watcher_File_Created;
-                watcher.EnableRaisingEvents = true;
+                _watcher.Path = TorrentFilePath;
+                _watcher.IncludeSubdirectories = true;
+                _watcher.NotifyFilter = NotifyFilters.FileName;
+                _watcher.Filter = "*.torrent";
+                _watcher.Created += Watcher_File_Created;
+                _watcher.EnableRaisingEvents = true;
             }
 
             //var d1 = DateTime.MinValue;
@@ -189,7 +193,7 @@ namespace MovieTorrents
             if (MessageBox.Show("确定取消当前操作?", "提示", MessageBoxButtons.YesNo, MessageBoxIcon.Asterisk) == DialogResult.No)
                 return;
 
-            if (_operTokenSource != null) _operTokenSource.Cancel();
+            _operTokenSource?.Cancel();
         }
 
         //搜索记录
@@ -245,7 +249,7 @@ namespace MovieTorrents
                 {
                     if (task.IsFaulted) Invoke(new Action(() => MessageBox.Show(task.Exception.InnerException.Message)));
                     else if (task.IsCanceled) { }
-                    else Invoke(new Action(() => updateListView(task.Result)));
+                    else Invoke(new Action(() => UpdateListView(task.Result)));
 
                     Interlocked.Exchange(ref _currentOperation, OperationNone);
                     DisplayInfo();
@@ -253,7 +257,7 @@ namespace MovieTorrents
 
         }
 
-        private void updateListView(IEnumerable<TorrentFile> torrentFiles)
+        private void UpdateListView(IEnumerable<TorrentFile> torrentFiles)
         {
             lvResults.BeginUpdate();
             lvResults.Items.Clear();
@@ -334,6 +338,12 @@ namespace MovieTorrents
             return sb.ToString();
         }
 
+
+        private string GetReaderFieldString(DbDataReader reader, string fieldName)
+        {
+            return Convert.IsDBNull(reader[fieldName]) ? string.Empty : (string) reader[fieldName];
+        }
+
         public async Task<IEnumerable<TorrentFile>> ExecuteSearch(string text, CancellationToken cancelToken)
         {
             var result = new List<TorrentFile>();
@@ -356,16 +366,18 @@ namespace MovieTorrents
                                 area = _area,
                                 path = (string)reader["path"],
                                 name = (string)reader["name"],
+                                keyname = GetReaderFieldString(reader,"keyname"),
+                                otherName = GetReaderFieldString(reader, "othername"),
                                 ext =(string)reader["ext"],
                                 rating = (double)reader["rating"],
-                                year = (string)reader["year"],
+                                year = GetReaderFieldString(reader, "year"),
                                 seelater=(long)reader["seelater"],
                                 seeflag = (long)reader["seeflag"],
-                                posterpath = Convert.IsDBNull(reader["posterpath"]) ? string.Empty : (string)reader["posterpath"],
-                                genres = Convert.IsDBNull(reader["genres"]) ? string.Empty : (string)reader["genres"],
-                                doubanid = Convert.IsDBNull(reader["doubanid"]) ? string.Empty : (string)reader["doubanid"],
-                                seedate = Convert.IsDBNull(reader["seedate"]) ? string.Empty : (string)reader["seedate"],
-                                seecomment = Convert.IsDBNull(reader["seecomment"]) ? string.Empty : (string)reader["seecomment"]
+                                posterpath = GetReaderFieldString(reader, "posterpath"),
+                                genres = GetReaderFieldString(reader, "genres"),
+                                doubanid = GetReaderFieldString(reader, "doubanid"),
+                                seedate = GetReaderFieldString(reader, "seedate"),
+                                seecomment = GetReaderFieldString(reader, "seecomment")
                             });
 
                         }
@@ -401,24 +413,75 @@ namespace MovieTorrents
 
         }
 
+        //编辑记录
+        private void EditRecord()
+        {
+            if (lvResults.SelectedItems.Count == 0) return;
+
+            var lvItem = lvResults.SelectedItems[0];
+            var torrentFile = (TorrentFile)lvItem.Tag;
+            var formRenameTorrent = new FormEdit(torrentFile);
+            if (formRenameTorrent.ShowDialog() == DialogResult.Cancel) return;
+
+            lvItem.Text = torrentFile.name;
+            lvItem.SubItems[1].Text = torrentFile.year;
+
+            lbKeyName.Text = torrentFile.keyname;
+            lbOtherName.Text = torrentFile.otherName;
+            lbGenres.Text = torrentFile.genres;
+
+        }
+
+        //刷新当前选择
+        private void RefreshSelected(TorrentFile torrentFile = null)
+        {
+            lbGenres.Text = lbRating.Text = lbOtherName.Text = lbKeyName.Text = null;
+            if (pictureBox1.Image != null)
+            {
+                pictureBox1.Image.Dispose();
+                pictureBox1.Image = null;
+            }
+
+            if (lvResults.SelectedItems.Count == 0) return;
+            var lvItem = lvResults.SelectedItems[0];
+
+            if (torrentFile == null) torrentFile = (TorrentFile)lvItem.Tag;
+
+            lvItem.Text = torrentFile.name;
+
+            lvItem.SubItems[1].Text = torrentFile.rating.ToString(CultureInfo.InvariantCulture);
+            lvItem.SubItems[2].Text = torrentFile.year;
+
+            lbGenres.Text = torrentFile.genres;
+            lbKeyName.Text = torrentFile.keyname;
+            lbOtherName.Text = torrentFile.otherName;
+            lbRating.Text = Math.Abs(torrentFile.rating) < 0.0001 ? null : torrentFile.rating.ToString(CultureInfo.InvariantCulture);
+
+            if (string.IsNullOrEmpty(torrentFile.RealPosterPath) || !File.Exists(torrentFile.RealPosterPath)) return;
+            using (var stream = new FileStream(torrentFile.RealPosterPath, FileMode.Open, FileAccess.Read))
+            {
+                pictureBox1.Image = Image.FromStream(stream);
+            }
+        }
+
         //扫描种子文件
         #region 扫描种子文件
         private void ScanTorrentFile()
         {
             if (string.IsNullOrEmpty(TorrentFilePath))
             {
-                MessageBox.Show("种子文件根目录没有配置", "错误", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("种子文件根目录没有配置", Properties.Resources.TextError, MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
             if (!Directory.Exists(TorrentFilePath))
             {
-                MessageBox.Show($"种子文件根目录\"{TorrentFilePath}\"不存在！", "错误", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show($"种子文件根目录\"{TorrentFilePath}\"不存在！", Properties.Resources.TextError, MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
             if (_currentOperation != 0)
             {
-                MessageBox.Show("正在执行其他操作，等待完成后操作", "提示", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("正在执行其他操作，等待完成后操作", Properties.Resources.TextHint, MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
@@ -446,38 +509,41 @@ namespace MovieTorrents
             {
                 if (task.IsFaulted)
                 {
-                    Invoke(new Action(() => MessageBox.Show(task.Exception.InnerException.Message)));
+                    Invoke(new Action(() =>
+                    {
+                        if (task.Exception?.InnerExceptions != null) MessageBox.Show(task.Exception.InnerException.Message);
+                    }));
                 }
             });
 
         }
 
         //添加扫描到的种子到队列等待处理
-        private void DoScanFile(string dirName, CancellationToken token, BlockingCollection<TorrentFile> _filesToProcess)
+        private void DoScanFile(string dirName, CancellationToken token, BlockingCollection<TorrentFile> filesToProcess)
         {
-            var _fileScanned = 0;
+            var fileScanned = 0;
 
             var di = new DirectoryInfo(dirName);
-            if (di == null || !di.Exists) return;
+            if (!di.Exists) return;
 
             var stopwatch = Stopwatch.StartNew();
 
-            foreach (FileInfo fi in di.EnumerateFiles("*.torrent", SearchOption.AllDirectories))
+            foreach (var fi in di.EnumerateFiles("*.torrent", SearchOption.AllDirectories))
             {
                 if (token.IsCancellationRequested) break;
 
-                _fileScanned++;
+                fileScanned++;
 
                 //Debug.WriteLine(fi.Extension);
 
-                _filesToProcess.Add(new TorrentFile(fi.FullName));
+                filesToProcess.Add(new TorrentFile(fi.FullName));
 
             }
 
-            _filesToProcess.CompleteAdding();
+            filesToProcess.CompleteAdding();
 
             stopwatch.Stop();
-            DisplayInfo($"完成文件磁盘扫描，共{_fileScanned}个文件，耗时{stopwatch.Elapsed.Minutes}分{stopwatch.Elapsed.Seconds}秒。");
+            DisplayInfo($"完成文件磁盘扫描，共{fileScanned}个文件，耗时{stopwatch.Elapsed.Minutes}分{stopwatch.Elapsed.Seconds}秒。");
 
 
 
@@ -524,7 +590,7 @@ where not exists (select 1 from tb_file where hdd_nid={_hdd_nid} and path=$path 
 
                     foreach (var torrentFile in _filesToProces.GetConsumingEnumerable())
                     {
-                        if (token != null && token.IsCancellationRequested) break;
+                        if (token.IsCancellationRequested) break;
 
                         Debug.WriteLine($"Processing:{torrentFile.name}");
 
@@ -763,19 +829,18 @@ where not exists (select 1 from tb_file where hdd_nid={_hdd_nid} and path=$path 
             var formSearchDouban = new FormSearchDouban(torrentFile);
             if (formSearchDouban.ShowDialog() == DialogResult.Cancel) return;
 
-            lvItem.SubItems[1].Text = torrentFile.rating.ToString();
-            lvItem.SubItems[2].Text = torrentFile.year;
+            RefreshSelected(torrentFile);
         }
 
         private void tsmiDelete_Click(object sender, EventArgs e)
         {
             if (lvResults.SelectedItems.Count == 0) return;
 
-            if (MessageBox.Show("确定删除选中的记录？", "提示", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.No) return;
+            if (MessageBox.Show("确定删除选中的记录？", Properties.Resources.TextHint, MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.No) return;
 
             var lvItem = lvResults.SelectedItems[0];
             var torrentFile = (TorrentFile)lvItem.Tag;
-            var deleteFile = (MessageBox.Show("同时删除文件？", "提示", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes);
+            var deleteFile = (MessageBox.Show("同时删除文件？", Properties.Resources.TextHint, MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes);
             if(torrentFile.DeleteFromDb(DbConnectionString,deleteFile))
             {
                 lvResults.Items.Remove(lvItem);
@@ -817,17 +882,7 @@ where not exists (select 1 from tb_file where hdd_nid={_hdd_nid} and path=$path 
 
         }
 
-        private void tsmiRename_Click(object sender, EventArgs e)
-        {
-            if (lvResults.SelectedItems.Count == 0) return;
-
-            var lvItem = lvResults.SelectedItems[0];
-            var torrentFile = (TorrentFile)lvItem.Tag;
-            var formRenameTorrent = new FormRenameTorrent(torrentFile);
-            if (formRenameTorrent.ShowDialog() == DialogResult.Cancel) return;
-
-            lvItem.Text =torrentFile.name;
-        }
+        
 
         private void tsmiCopyName_Click(object sender, EventArgs e)
         {
@@ -844,32 +899,18 @@ where not exists (select 1 from tb_file where hdd_nid={_hdd_nid} and path=$path 
             Clipboard.SetFileDropList(new StringCollection { torrentFile.FullName });
         }
 
+        private void lvResults_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+            EditRecord();
+        }
+
         #endregion
 
-
+        
 
         private void lvResults_SelectedIndexChanged(object sender, EventArgs e)
         {
-            lbGenres.Text = null;
-            lbRating.Text = null;
-            if(pictureBox1.Image!=null)
-            {
-                pictureBox1.Image.Dispose();
-                pictureBox1.Image = null;
-            }
-
-            if (lvResults.SelectedItems.Count == 0) return;
-            var torrentFile = (TorrentFile)lvResults.SelectedItems[0].Tag;
-            lbGenres.Text = torrentFile.genres;
-            lbRating.Text = torrentFile.rating ==0?null:torrentFile.rating.ToString();
-            if (!string.IsNullOrEmpty(torrentFile.RealPosterPath) && File.Exists(torrentFile.RealPosterPath))
-            {
-                using (var stream = new FileStream(torrentFile.RealPosterPath, FileMode.Open, FileAccess.Read))
-                {
-                    pictureBox1.Image = Image.FromStream(stream);
-                }
-            }
-
+            RefreshSelected();
         }
 
         private void pictureBox1_DoubleClick(object sender, EventArgs e)

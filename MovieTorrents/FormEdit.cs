@@ -11,10 +11,10 @@ using System.Windows.Forms;
 
 namespace MovieTorrents
 {
-    public partial class FormRenameTorrent : Form
+    public partial class FormEdit : Form
     {
-        private TorrentFile _torrentFile;
-        public FormRenameTorrent(TorrentFile torrentFile)
+        private readonly TorrentFile _torrentFile;
+        public FormEdit(TorrentFile torrentFile)
         {
             InitializeComponent();
             _torrentFile = torrentFile;
@@ -23,6 +23,10 @@ namespace MovieTorrents
         private void FormRenameTorrent_Load(object sender, EventArgs e)
         {
             tbOldName.Text = tbNewName.Text = _torrentFile.name;
+            tbYear.Text = _torrentFile.year;
+            tbKeyName.Text = _torrentFile.keyname;
+            tbOtherName.Text = _torrentFile.otherName;
+            tbGenres.Text = _torrentFile.genres;
         }
 
         private void btOk_Click(object sender, EventArgs e)
@@ -35,7 +39,7 @@ namespace MovieTorrents
                 return;
             }
 
-            if (!_torrentFile.Rename(FormMain.DbConnectionString, newName, out var msg))
+            if (!_torrentFile.EditRecord(FormMain.DbConnectionString, newName,tbYear.Text,tbKeyName.Text,tbOtherName.Text,tbGenres.Text, out var msg))
             {
                 MessageBox.Show(msg, "错误", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
