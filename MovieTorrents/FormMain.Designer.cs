@@ -41,6 +41,17 @@
             this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
             this.tsmiFilterWatched = new System.Windows.Forms.ToolStripMenuItem();
             this.tsmiFilterNotWatched = new System.Windows.Forms.ToolStripMenuItem();
+            this.tsmiHideSameSubject = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem6 = new System.Windows.Forms.ToolStripSeparator();
+            this.tsmiLimit100 = new System.Windows.Forms.ToolStripMenuItem();
+            this.tsmiLimit200 = new System.Windows.Forms.ToolStripMenuItem();
+            this.tsmiLimit500 = new System.Windows.Forms.ToolStripMenuItem();
+            this.排序OToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.tsmiRatingDesc = new System.Windows.Forms.ToolStripMenuItem();
+            this.tsmiRatingAsc = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem5 = new System.Windows.Forms.ToolStripSeparator();
+            this.tsmiYearDesc = new System.Windows.Forms.ToolStripMenuItem();
+            this.tsmiYearAsc = new System.Windows.Forms.ToolStripMenuItem();
             this.tbSearchText = new System.Windows.Forms.TextBox();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.tssState = new System.Windows.Forms.ToolStripStatusLabel();
@@ -48,6 +59,7 @@
             this.lvContextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.tsmiSetWatched = new System.Windows.Forms.ToolStripMenuItem();
             this.tsmiSetSeelater = new System.Windows.Forms.ToolStripMenuItem();
+            this.tsmiSearchDouban = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem3 = new System.Windows.Forms.ToolStripSeparator();
             this.tsmiShowFileLocation = new System.Windows.Forms.ToolStripMenuItem();
             this.tsmiCopyName = new System.Windows.Forms.ToolStripMenuItem();
@@ -68,7 +80,7 @@
             this.lbKeyName = new System.Windows.Forms.Label();
             this.lbOtherName = new System.Windows.Forms.Label();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
-            this.tsmiSearchDouban = new System.Windows.Forms.ToolStripMenuItem();
+            this.tsmiLimit1000 = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.lvContextMenu.SuspendLayout();
@@ -79,7 +91,8 @@
             // 
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.文件FToolStripMenuItem,
-            this.过滤TToolStripMenuItem});
+            this.过滤TToolStripMenuItem,
+            this.排序OToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Size = new System.Drawing.Size(1273, 25);
@@ -130,7 +143,13 @@
             this.tsmiFilterSeelater,
             this.toolStripMenuItem1,
             this.tsmiFilterWatched,
-            this.tsmiFilterNotWatched});
+            this.tsmiFilterNotWatched,
+            this.tsmiHideSameSubject,
+            this.toolStripMenuItem6,
+            this.tsmiLimit100,
+            this.tsmiLimit200,
+            this.tsmiLimit500,
+            this.tsmiLimit1000});
             this.过滤TToolStripMenuItem.Name = "过滤TToolStripMenuItem";
             this.过滤TToolStripMenuItem.Size = new System.Drawing.Size(59, 21);
             this.过滤TToolStripMenuItem.Text = "过滤(&T)";
@@ -139,7 +158,7 @@
             // 
             this.tsmiFilterRecent.Name = "tsmiFilterRecent";
             this.tsmiFilterRecent.Size = new System.Drawing.Size(187, 22);
-            this.tsmiFilterRecent.Text = "最近更新的100个(&N)";
+            this.tsmiFilterRecent.Text = "最近添加(&N)";
             this.tsmiFilterRecent.Click += new System.EventHandler(this.tsmiFilterRecent_Click);
             // 
             // tsmiFilterSeelater
@@ -159,14 +178,99 @@
             this.tsmiFilterWatched.Name = "tsmiFilterWatched";
             this.tsmiFilterWatched.Size = new System.Drawing.Size(187, 22);
             this.tsmiFilterWatched.Text = "看过";
-            this.tsmiFilterWatched.Click += new System.EventHandler(this.tsmiFilterWatchedNotWatched_Click);
+            this.tsmiFilterWatched.Click += new System.EventHandler(this.tsmiFilterWatched_Click);
             // 
             // tsmiFilterNotWatched
             // 
             this.tsmiFilterNotWatched.Name = "tsmiFilterNotWatched";
             this.tsmiFilterNotWatched.Size = new System.Drawing.Size(187, 22);
             this.tsmiFilterNotWatched.Text = "没有看过";
-            this.tsmiFilterNotWatched.Click += new System.EventHandler(this.tsmiFilterWatchedNotWatched_Click);
+            this.tsmiFilterNotWatched.Click += new System.EventHandler(this.tsmiFilterNotWatched_Click);
+            // 
+            // tsmiHideSameSubject
+            // 
+            this.tsmiHideSameSubject.Checked = true;
+            this.tsmiHideSameSubject.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.tsmiHideSameSubject.Enabled = false;
+            this.tsmiHideSameSubject.Name = "tsmiHideSameSubject";
+            this.tsmiHideSameSubject.Size = new System.Drawing.Size(187, 22);
+            this.tsmiHideSameSubject.Text = "隐藏已看同名电影(&S)";
+            this.tsmiHideSameSubject.Click += new System.EventHandler(this.tsmiHideSameSubject_Click);
+            // 
+            // toolStripMenuItem6
+            // 
+            this.toolStripMenuItem6.Name = "toolStripMenuItem6";
+            this.toolStripMenuItem6.Size = new System.Drawing.Size(184, 6);
+            // 
+            // tsmiLimit100
+            // 
+            this.tsmiLimit100.Checked = true;
+            this.tsmiLimit100.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.tsmiLimit100.Name = "tsmiLimit100";
+            this.tsmiLimit100.Size = new System.Drawing.Size(187, 22);
+            this.tsmiLimit100.Text = "限制100条";
+            this.tsmiLimit100.Click += new System.EventHandler(this.tsmiLimit100_Click);
+            // 
+            // tsmiLimit200
+            // 
+            this.tsmiLimit200.Name = "tsmiLimit200";
+            this.tsmiLimit200.Size = new System.Drawing.Size(187, 22);
+            this.tsmiLimit200.Text = "限制200条";
+            this.tsmiLimit200.Click += new System.EventHandler(this.tsmiLimit200_Click);
+            // 
+            // tsmiLimit500
+            // 
+            this.tsmiLimit500.Name = "tsmiLimit500";
+            this.tsmiLimit500.Size = new System.Drawing.Size(187, 22);
+            this.tsmiLimit500.Text = "限制500条";
+            this.tsmiLimit500.Click += new System.EventHandler(this.tsmiLimit300_Click);
+            // 
+            // 排序OToolStripMenuItem
+            // 
+            this.排序OToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.tsmiRatingDesc,
+            this.tsmiRatingAsc,
+            this.toolStripMenuItem5,
+            this.tsmiYearDesc,
+            this.tsmiYearAsc});
+            this.排序OToolStripMenuItem.Name = "排序OToolStripMenuItem";
+            this.排序OToolStripMenuItem.Size = new System.Drawing.Size(62, 21);
+            this.排序OToolStripMenuItem.Text = "排序(&O)";
+            // 
+            // tsmiRatingDesc
+            // 
+            this.tsmiRatingDesc.Checked = true;
+            this.tsmiRatingDesc.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.tsmiRatingDesc.Name = "tsmiRatingDesc";
+            this.tsmiRatingDesc.Size = new System.Drawing.Size(113, 22);
+            this.tsmiRatingDesc.Text = "评分 -";
+            this.tsmiRatingDesc.Click += new System.EventHandler(this.tsmiRatingDesc_Click);
+            // 
+            // tsmiRatingAsc
+            // 
+            this.tsmiRatingAsc.Name = "tsmiRatingAsc";
+            this.tsmiRatingAsc.Size = new System.Drawing.Size(113, 22);
+            this.tsmiRatingAsc.Text = "评分 +";
+            this.tsmiRatingAsc.Click += new System.EventHandler(this.tsmiRatingAsc_Click);
+            // 
+            // toolStripMenuItem5
+            // 
+            this.toolStripMenuItem5.Name = "toolStripMenuItem5";
+            this.toolStripMenuItem5.Size = new System.Drawing.Size(110, 6);
+            // 
+            // tsmiYearDesc
+            // 
+            this.tsmiYearDesc.Name = "tsmiYearDesc";
+            this.tsmiYearDesc.Size = new System.Drawing.Size(113, 22);
+            this.tsmiYearDesc.Text = "年代 -";
+            this.tsmiYearDesc.Click += new System.EventHandler(this.tsmiYearDesc_Click);
+            // 
+            // tsmiYearAsc
+            // 
+            this.tsmiYearAsc.Name = "tsmiYearAsc";
+            this.tsmiYearAsc.Size = new System.Drawing.Size(113, 22);
+            this.tsmiYearAsc.Text = "年代 +";
+            this.tsmiYearAsc.Click += new System.EventHandler(this.tsmiYearAsc_Click);
             // 
             // tbSearchText
             // 
@@ -241,6 +345,14 @@
             this.tsmiSetSeelater.Size = new System.Drawing.Size(186, 22);
             this.tsmiSetSeelater.Text = "标记为稍后看(&L)";
             this.tsmiSetSeelater.Click += new System.EventHandler(this.tsmiSetSeelater_Click);
+            // 
+            // tsmiSearchDouban
+            // 
+            this.tsmiSearchDouban.Image = global::MovieTorrents.Properties.Resources.dou;
+            this.tsmiSearchDouban.Name = "tsmiSearchDouban";
+            this.tsmiSearchDouban.Size = new System.Drawing.Size(186, 22);
+            this.tsmiSearchDouban.Text = "搜索豆瓣信息(&S)";
+            this.tsmiSearchDouban.Click += new System.EventHandler(this.tsmiSearchDouban_Click);
             // 
             // toolStripMenuItem3
             // 
@@ -392,13 +504,12 @@
             this.pictureBox1.TabStop = false;
             this.pictureBox1.DoubleClick += new System.EventHandler(this.pictureBox1_DoubleClick);
             // 
-            // tsmiSearchDouban
+            // tsmiLimit1000
             // 
-            this.tsmiSearchDouban.Image = global::MovieTorrents.Properties.Resources.dou;
-            this.tsmiSearchDouban.Name = "tsmiSearchDouban";
-            this.tsmiSearchDouban.Size = new System.Drawing.Size(186, 22);
-            this.tsmiSearchDouban.Text = "搜索豆瓣信息(&S)";
-            this.tsmiSearchDouban.Click += new System.EventHandler(this.tsmiSearchDouban_Click);
+            this.tsmiLimit1000.Name = "tsmiLimit1000";
+            this.tsmiLimit1000.Size = new System.Drawing.Size(187, 22);
+            this.tsmiLimit1000.Text = "限制1000条";
+            this.tsmiLimit1000.Click += new System.EventHandler(this.tsmiLimit1000_Click);
             // 
             // FormMain
             // 
@@ -474,6 +585,18 @@
         private System.Windows.Forms.ToolStripMenuItem tsmiFilterSeelater;
         private System.Windows.Forms.Label lbKeyName;
         private System.Windows.Forms.Label lbOtherName;
+        private System.Windows.Forms.ToolStripMenuItem 排序OToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem tsmiRatingDesc;
+        private System.Windows.Forms.ToolStripMenuItem tsmiRatingAsc;
+        private System.Windows.Forms.ToolStripSeparator toolStripMenuItem5;
+        private System.Windows.Forms.ToolStripMenuItem tsmiYearDesc;
+        private System.Windows.Forms.ToolStripMenuItem tsmiYearAsc;
+        private System.Windows.Forms.ToolStripSeparator toolStripMenuItem6;
+        private System.Windows.Forms.ToolStripMenuItem tsmiLimit100;
+        private System.Windows.Forms.ToolStripMenuItem tsmiLimit200;
+        private System.Windows.Forms.ToolStripMenuItem tsmiLimit500;
+        private System.Windows.Forms.ToolStripMenuItem tsmiHideSameSubject;
+        private System.Windows.Forms.ToolStripMenuItem tsmiLimit1000;
     }
 }
 
