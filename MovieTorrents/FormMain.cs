@@ -531,12 +531,7 @@ namespace MovieTorrents
             var formRenameTorrent = new FormEdit(torrentFile);
             if (formRenameTorrent.ShowDialog() == DialogResult.Cancel) return;
 
-            lvItem.Text = torrentFile.name;
-            lvItem.SubItems[1].Text = torrentFile.year;
-
-            lbKeyName.Text = torrentFile.keyname;
-            lbOtherName.Text = torrentFile.otherName;
-            lbGenres.Text = torrentFile.genres;
+            RefreshSelected(torrentFile);
 
         }
 

@@ -19,7 +19,7 @@ namespace MovieTorrents
 {
     public partial class FormSearchDouban : Form
     {
-        private TorrentFile _torrentFile;
+        private readonly TorrentFile _torrentFile;
         public DoubanSubject DoubanSubject { get; private set; }
 
         public FormSearchDouban(TorrentFile torrentFile)
@@ -34,16 +34,20 @@ namespace MovieTorrents
 
             tbSearchText.Text = _torrentFile.ChineseName;
 
-            //DoSearcch();
+#if DEBUG
+            tbSearchText.Text = "https://movie.douban.com/subject/26811825/";
+#endif
         }
 
-        private void DoSearcch()
+        private void DoSearcch(bool searchId=false)
         {
             listView1.Items.Clear();
+            var subjects = searchId ? DoubanSubject.SearchById(tbSearchText.Text.Trim(), out var msg)
+                : DoubanSubject.SearchSuggest(tbSearchText.Text.Trim(), out msg);
+            //if(subjects.Count==0)
+            //    subjects = DoubanSubject.SearchSubject(tbSearchText.Text.Trim());
+            tbInfo.Text = msg;
 
-            var subjects = DoubanSubject.SearchSuggest(tbSearchText.Text.Trim());
-            if(subjects.Count==0)
-                subjects = DoubanSubject.SearchSubject(tbSearchText.Text.Trim());
             foreach (var subject in subjects)
             {
                 string[] row = {subject.title,
@@ -63,7 +67,10 @@ namespace MovieTorrents
             DoSearcch();
         }
 
-
+        private void btSearchId_Click(object sender, EventArgs e)
+        {
+            DoSearcch(true);
+        }
 
 
         private void listView1_SelectedIndexChanged(object sender, EventArgs e)
@@ -94,15 +101,13 @@ namespace MovieTorrents
             var subject = (DoubanSubject)listView1.SelectedItems[0].Tag;
             if (!subject.TryQueryDetail(out var msg))
             {
-                MessageBox.Show($"查找豆瓣详细信息失败：{msg}", "提示", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show($"查找豆瓣详细信息失败：{msg}", Properties.Resources.TextError, MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
-            if (_torrentFile.UpdateDoubanInfo(FormMain.DbConnectionString, subject))
-            {
-                DoubanSubject = subject;
-                DialogResult = DialogResult.OK;
-            }
+            if (!_torrentFile.UpdateDoubanInfo(FormMain.DbConnectionString, subject)) return;
+            DoubanSubject = subject;
+            DialogResult = DialogResult.OK;
 
         }
 
@@ -110,5 +115,7 @@ namespace MovieTorrents
         {
             if (e.KeyCode == Keys.Return) DoSearcch();
         }
+
+        
     }
 }

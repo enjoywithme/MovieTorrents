@@ -41,10 +41,9 @@ namespace MovieTorrents
                 return _img_local;
             } }
 
-        private static CookieContainer cookieContainer;
-        //<script type="application/ld+json"></script>
-        //regex: <script type="application\/ld\+json">([\s\S]*?)<\/script>    https://www.regextester.com/93588
-        private static Regex SubjectScriptJsonMatch = new Regex("<script type=\"application\\/ld\\+json\">([\\s\\S]*?)<\\/script>");
+
+        private static CookieContainer _cookieContainer;
+        private bool _triedDetail=false;
 
         public DoubanSubject()
         {
@@ -119,16 +118,18 @@ namespace MovieTorrents
 
         private static void BuildCookies()
         {
-            if(cookieContainer==null)
-                cookieContainer = new CookieContainer();
+            if(_cookieContainer==null)
+                _cookieContainer = new CookieContainer();
             var url = "https://movie.douban.com";
             var cookieData = GetCookies(url);
             if (cookieData != null)
-                cookieContainer.SetCookies(new Uri(url), cookieData.Replace("; ", ","));
+                _cookieContainer.SetCookies(new Uri(url), cookieData.Replace("; ", ","));
         }
 
-        public static List<DoubanSubject> SearchSuggest(string text)
+        public static List<DoubanSubject> SearchSuggest(string text,out string msg)
         {
+            msg = string.Empty;
+
             var list = new List<DoubanSubject>();
 
             var q = Uri.EscapeDataString(text);
@@ -143,7 +144,7 @@ namespace MovieTorrents
             try
             {
                 var request = (HttpWebRequest)WebRequest.Create(uri);
-                request.CookieContainer = cookieContainer;
+                request.CookieContainer = _cookieContainer;
                 request.Method = "GET";
                 request.Accept = "application/json; charset=utf-8";
                 var response = (HttpWebResponse)request.GetResponse();
@@ -156,6 +157,7 @@ namespace MovieTorrents
             catch (Exception e)
             {
                 Debug.WriteLine(e.Message);
+                msg = e.Message;
             }
 #else
             jsonText = File.ReadAllText("douban_suggest_sbuject.json");
@@ -189,7 +191,7 @@ namespace MovieTorrents
             }
             catch (Exception ex)
             {
-
+                msg = ex.Message;
             }
 
             return list;
@@ -204,9 +206,39 @@ namespace MovieTorrents
             return list;
         }
 
+        public static List<DoubanSubject> SearchById(string text,out string msg)
+        {
+            var subjectId = string.Empty;
+            var list = new List<DoubanSubject>();
+
+            var match = Regex.Match(text, "https:\\/\\/movie.douban.com\\/subject\\/(\\d+)",
+                RegexOptions.IgnoreCase);
+            if (match.Success) subjectId = match.Groups[1].Value;
+            else
+            {
+                match = Regex.Match(text, "(\\d+)");
+                if (match.Success) subjectId = match.Groups[1].Value;
+
+            }
+
+            if (string.IsNullOrEmpty(subjectId))
+                msg = "不正确的豆瓣ID";
+            else
+            {
+                var subject = new DoubanSubject() { id = subjectId };
+                subject.TryQueryDetail(out msg);
+                subject.title = subject.name;
+                subject.sub_title = subject.othername;
+                list.Add(subject);
+            }
+
+            return list;
+        }
         public bool TryQueryDetail(out string msg)
         {
             msg = string.Empty;
+
+            if (_triedDetail) return true;
 
             var sUrl = $"https://movie.douban.com/subject/{id}/";
             var uri = new Uri(sUrl);
@@ -220,20 +252,24 @@ namespace MovieTorrents
             try
             {
                 var request = (HttpWebRequest)WebRequest.Create(uri);
-                request.CookieContainer = cookieContainer;
+                request.CookieContainer = _cookieContainer;
                 request.Method = "GET";
                 var response = (HttpWebResponse)request.GetResponse();
 
                 using (var sr = new StreamReader(response.GetResponseStream()))
                 {
                     html = sr.ReadToEnd();
-                    Debug.WriteLine(html);
-                    File.WriteAllText("d:\\sample_subject.txt", html);
+                    //Debug.WriteLine(html);
+#if DEBUG
+                    File.WriteAllText(FormMain.CurrentPath + "\\temp\\sample_subject.txt", html);
+#endif
                 }
             }
             catch (Exception e)
             {
                 Debug.WriteLine(e.Message);
+                msg = e.Message;
+                return false;
             }
 #else
 
@@ -244,34 +280,43 @@ namespace MovieTorrents
             //又名:</span> 星际启示录(港) / 星际效应(台) / 星际空间 / 星际之间 / 星际远航 / 星际 / Flora's Letter<br/>
             var match = Regex.Match(html, "又名:<\\/span>([\\s\\S]*?)<br\\/>");
             if (match.Success) othername = match.Groups[1].Value;
+            
+            //<span class="year">(2014)</span>
+            match = Regex.Match(html, "<span class=\"year\">\\((\\d{4})\\)<\\/span>");
+            if (match.Success) year = match.Groups[1].Value;
 
-            match = SubjectScriptJsonMatch.Match(html);
+            // https://www.regextester.com/93588
+            //<script type="application/ld+json"></script>
+            match = Regex.Match(html, "<script type=\"application\\/ld\\+json\">([\\s\\S]*?)<\\/script>");
             if (!match.Success) return false;
             html = match.Groups[1].Value;
-            //html = html.Replace("<script type=\"application/ld+json\">","");//<script type="application/ld+json">
-            //html = html.Replace("</script>", "");
-
-            
+        
             //Debug.Print(html);
 
             try
             {
                 var jo = JObject.Parse(html);
                 name = (string)jo["name"];
+                if (string.IsNullOrEmpty(img_url)) img_url = (string)jo["image"];
+
                 var datePublished = (string)jo["datePublished"];
                 if (!string.IsNullOrEmpty(datePublished) && DateTime.TryParse(datePublished,out var d)){
                     year = d.Year.ToString();
                 }
+                
                 directors = string.Join("|", jo["director"].Select(t => (string)t["name"]).ToList());
                 casts = string.Join("|", jo["actor"].Select(t => (string) t["name"]).ToList());
                 genres =string.Join(" ",jo["genre"].Select(t => (string)t).ToList());
                 rating = (string) jo["aggregateRating"]["ratingValue"];
+
             }
             catch (Exception ex)
             {
                 msg = ex.Message;
                 return false;
             }
+
+            _triedDetail = true;
 
             return true;
         }

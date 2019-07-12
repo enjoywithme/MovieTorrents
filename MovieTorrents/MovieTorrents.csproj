@@ -126,7 +126,7 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
-    <None Include="douban_suggest_sbuject.json">
+    <None Include="temp\douban_suggest_sbuject.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="packages.config" />
@@ -147,7 +147,7 @@
     <Content Include="Movie.ico" />
     <None Include="README.md" />
     <None Include="Resources\dou.png" />
-    <Content Include="sample_subject.html">
+    <Content Include="temp\sample_subject_standard.html">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

@@ -34,10 +34,12 @@
             this.columnHeaderTitle1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeaderYear = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeaderType = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.btSearch = new System.Windows.Forms.Button();
+            this.btSearchName = new System.Windows.Forms.Button();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.btSave = new System.Windows.Forms.Button();
             this.tbOrigTitle = new System.Windows.Forms.TextBox();
+            this.btSearchId = new System.Windows.Forms.Button();
+            this.tbInfo = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -45,7 +47,7 @@
             // 
             this.tbSearchText.Location = new System.Drawing.Point(24, 13);
             this.tbSearchText.Name = "tbSearchText";
-            this.tbSearchText.Size = new System.Drawing.Size(643, 21);
+            this.tbSearchText.Size = new System.Drawing.Size(607, 21);
             this.tbSearchText.TabIndex = 0;
             this.tbSearchText.KeyDown += new System.Windows.Forms.KeyEventHandler(this.tbSearchText_KeyDown);
             // 
@@ -83,15 +85,15 @@
             // 
             this.columnHeaderType.Text = "类型";
             // 
-            // btSearch
+            // btSearchName
             // 
-            this.btSearch.Location = new System.Drawing.Point(674, 10);
-            this.btSearch.Name = "btSearch";
-            this.btSearch.Size = new System.Drawing.Size(75, 23);
-            this.btSearch.TabIndex = 2;
-            this.btSearch.Text = "搜素(&F)";
-            this.btSearch.UseVisualStyleBackColor = true;
-            this.btSearch.Click += new System.EventHandler(this.btSearch_Click);
+            this.btSearchName.Location = new System.Drawing.Point(637, 12);
+            this.btSearchName.Name = "btSearchName";
+            this.btSearchName.Size = new System.Drawing.Size(112, 23);
+            this.btSearchName.TabIndex = 2;
+            this.btSearchName.Text = "搜素名称(&F)";
+            this.btSearchName.UseVisualStyleBackColor = true;
+            this.btSearchName.Click += new System.EventHandler(this.btSearch_Click);
             // 
             // pictureBox1
             // 
@@ -118,18 +120,40 @@
             this.tbOrigTitle.Location = new System.Drawing.Point(24, 44);
             this.tbOrigTitle.Name = "tbOrigTitle";
             this.tbOrigTitle.ReadOnly = true;
-            this.tbOrigTitle.Size = new System.Drawing.Size(643, 21);
+            this.tbOrigTitle.Size = new System.Drawing.Size(607, 21);
             this.tbOrigTitle.TabIndex = 5;
+            // 
+            // btSearchId
+            // 
+            this.btSearchId.Location = new System.Drawing.Point(637, 42);
+            this.btSearchId.Name = "btSearchId";
+            this.btSearchId.Size = new System.Drawing.Size(112, 23);
+            this.btSearchId.TabIndex = 2;
+            this.btSearchId.Text = "ID查询(&S)";
+            this.btSearchId.UseVisualStyleBackColor = true;
+            this.btSearchId.Click += new System.EventHandler(this.btSearchId_Click);
+            // 
+            // tbInfo
+            // 
+            this.tbInfo.BackColor = System.Drawing.SystemColors.Info;
+            this.tbInfo.Location = new System.Drawing.Point(24, 394);
+            this.tbInfo.Multiline = true;
+            this.tbInfo.Name = "tbInfo";
+            this.tbInfo.ReadOnly = true;
+            this.tbInfo.Size = new System.Drawing.Size(725, 51);
+            this.tbInfo.TabIndex = 6;
             // 
             // FormSearchDouban
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(775, 398);
+            this.ClientSize = new System.Drawing.Size(766, 465);
+            this.Controls.Add(this.tbInfo);
             this.Controls.Add(this.tbOrigTitle);
             this.Controls.Add(this.btSave);
             this.Controls.Add(this.pictureBox1);
-            this.Controls.Add(this.btSearch);
+            this.Controls.Add(this.btSearchId);
+            this.Controls.Add(this.btSearchName);
             this.Controls.Add(this.listView1);
             this.Controls.Add(this.tbSearchText);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
@@ -153,10 +177,12 @@
         private System.Windows.Forms.ColumnHeader columnHeaderTitle;
         private System.Windows.Forms.ColumnHeader columnHeaderTitle1;
         private System.Windows.Forms.ColumnHeader columnHeaderYear;
-        private System.Windows.Forms.Button btSearch;
+        private System.Windows.Forms.Button btSearchName;
         private System.Windows.Forms.ColumnHeader columnHeaderType;
         private System.Windows.Forms.PictureBox pictureBox1;
         private System.Windows.Forms.Button btSave;
         private System.Windows.Forms.TextBox tbOrigTitle;
+        private System.Windows.Forms.Button btSearchId;
+        private System.Windows.Forms.TextBox tbInfo;
     }
 }
