@@ -502,7 +502,9 @@ namespace MovieTorrents
         //备份数据库文件
         private void BackupDbFile()
         {
-            var watched = TorrentFile.CountWatched(DbConnectionString);
+            var watched = TorrentFile.CountWatched(DbConnectionString,out var msg);
+            if(!string.IsNullOrEmpty(msg))
+                MessageBox.Show(msg, Properties.Resources.TextError, MessageBoxButtons.YesNo, MessageBoxIcon.Error);
             if (watched == -1) return;
 
             try
@@ -592,6 +594,7 @@ namespace MovieTorrents
                 return;
             }
 
+            
             if (_operTokenSource != null)
             {
                 _operTokenSource.Dispose();
@@ -738,12 +741,12 @@ where not exists (select 1 from tb_file where hdd_nid={_hdd_nid} and path=$path 
 
             using (var connection = new SQLiteConnection(DbConnectionString))
             {
-                await connection.OpenAsync();
+                await connection.OpenAsync(cancelToken);
                 using (var command = new SQLiteCommand("select file_nid,h.area || f.path || f.name || f.ext as fullname from tb_file as f INNER join tb_hdd as h on h.hdd_nid=f.hdd_nid", connection))
                 {
-                    using (var reader = await command.ExecuteReaderAsync())
+                    using (var reader = await command.ExecuteReaderAsync(cancelToken))
                     {
-                        while (await reader.ReadAsync())
+                        while (await reader.ReadAsync(cancelToken))
                         {
                             if (cancelToken.IsCancellationRequested) break;
 
@@ -976,12 +979,10 @@ where not exists (select 1 from tb_file where hdd_nid={_hdd_nid} and path=$path 
         #region
         private void lvResults_MouseClick(object sender, MouseEventArgs e)
         {
-            if (e.Button == MouseButtons.Right)
+            if (e.Button != MouseButtons.Right) return;
+            if (lvResults.FocusedItem.Bounds.Contains(e.Location))
             {
-                if (lvResults.FocusedItem.Bounds.Contains(e.Location))
-                {
-                    lvContextMenu.Show(Cursor.Position);
-                }
+                lvContextMenu.Show(Cursor.Position);
             }
         }
 
@@ -1019,10 +1020,13 @@ where not exists (select 1 from tb_file where hdd_nid={_hdd_nid} and path=$path 
             var lvItem = lvResults.SelectedItems[0];
             var torrentFile = (TorrentFile)lvItem.Tag;
             var deleteFile = (MessageBox.Show("同时删除文件？", Properties.Resources.TextHint, MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes);
-            if (torrentFile.DeleteFromDb(DbConnectionString, deleteFile))
+            if (!torrentFile.DeleteFromDb(DbConnectionString, deleteFile,out var msg))
             {
-                lvResults.Items.Remove(lvItem);
+                MessageBox.Show(msg, Properties.Resources.TextError, MessageBoxButtons.YesNo, MessageBoxIcon.Error);
+                return;
             }
+            lvResults.Items.Remove(lvItem);
+
         }
 
 
@@ -1055,7 +1059,11 @@ where not exists (select 1 from tb_file where hdd_nid={_hdd_nid} and path=$path 
             var lvItem = lvResults.SelectedItems[0];
             var torrentFile = (TorrentFile)lvItem.Tag;
 
-            if (!torrentFile.MarkSeelater(DbConnectionString)) return;
+            if (!torrentFile.MarkSeelater(DbConnectionString,out var msg))
+            {
+                MessageBox.Show(msg, Properties.Resources.TextError, MessageBoxButtons.YesNo, MessageBoxIcon.Error);
+                return;
+            }
             lvItem.SubItems[3].Text = "1";
 
         }
@@ -1082,12 +1090,46 @@ where not exists (select 1 from tb_file where hdd_nid={_hdd_nid} and path=$path 
             EditRecord();
         }
 
+        private void tsmiCopyDouban_Click(object sender, EventArgs e)
+        {
+            if (lvResults.CheckedItems.Count == 0)
+            {
+                MessageBox.Show("请勾选要拷贝豆瓣信息的原始项！", Properties.Resources.TextHint, MessageBoxButtons.OK,
+                    MessageBoxIcon.Asterisk);
+                return;
+            }
+            if (lvResults.CheckedItems.Count >1)
+            {
+                MessageBox.Show("请只勾选一项作为要拷贝豆瓣信息的原始项！", Properties.Resources.TextHint, MessageBoxButtons.OK,
+                    MessageBoxIcon.Asterisk);
+                return;
+            }
+
+            var checkedId = ((TorrentFile)lvResults.CheckedItems[0].Tag).fid;
+            var selectdIds = lvResults.SelectedItems.Cast<ListViewItem>().Select(x => ((TorrentFile) x.Tag).fid).ToList();
+            if (selectdIds.Count - (selectdIds.Contains(checkedId) ? 1 : 0)<=0)
+            {
+                MessageBox.Show("请选择除源项以外的更多项操作！", Properties.Resources.TextHint, MessageBoxButtons.OK,
+                    MessageBoxIcon.Asterisk);
+                return;
+            }
+
+            if (MessageBox.Show("确认拷贝豆瓣信息到所选记录？", Properties.Resources.TextHint, MessageBoxButtons.OKCancel, MessageBoxIcon.Question) == DialogResult.Cancel) return;
+
+            if (!TorrentFile.CopyDoubanInfo(DbConnectionString, checkedId, selectdIds, out var msg))
+            {
+                MessageBox.Show(msg, Properties.Resources.TextError, MessageBoxButtons.YesNo, MessageBoxIcon.Error);
+                return;
+            }
+
+            DoSearch();
+        }
 
 
 
 
         #endregion
 
-       
+
     }
 }

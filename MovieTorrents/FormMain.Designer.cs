@@ -46,6 +46,7 @@
             this.tsmiLimit100 = new System.Windows.Forms.ToolStripMenuItem();
             this.tsmiLimit200 = new System.Windows.Forms.ToolStripMenuItem();
             this.tsmiLimit500 = new System.Windows.Forms.ToolStripMenuItem();
+            this.tsmiLimit1000 = new System.Windows.Forms.ToolStripMenuItem();
             this.排序OToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tsmiRatingDesc = new System.Windows.Forms.ToolStripMenuItem();
             this.tsmiRatingAsc = new System.Windows.Forms.ToolStripMenuItem();
@@ -80,7 +81,7 @@
             this.lbKeyName = new System.Windows.Forms.Label();
             this.lbOtherName = new System.Windows.Forms.Label();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
-            this.tsmiLimit1000 = new System.Windows.Forms.ToolStripMenuItem();
+            this.tsmiCopyDouban = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.lvContextMenu.SuspendLayout();
@@ -225,6 +226,13 @@
             this.tsmiLimit500.Text = "限制500条";
             this.tsmiLimit500.Click += new System.EventHandler(this.tsmiLimit300_Click);
             // 
+            // tsmiLimit1000
+            // 
+            this.tsmiLimit1000.Name = "tsmiLimit1000";
+            this.tsmiLimit1000.Size = new System.Drawing.Size(187, 22);
+            this.tsmiLimit1000.Text = "限制1000条";
+            this.tsmiLimit1000.Click += new System.EventHandler(this.tsmiLimit1000_Click);
+            // 
             // 排序OToolStripMenuItem
             // 
             this.排序OToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -321,6 +329,7 @@
             this.tsmiSetWatched,
             this.tsmiSetSeelater,
             this.tsmiSearchDouban,
+            this.tsmiCopyDouban,
             this.toolStripMenuItem3,
             this.tsmiShowFileLocation,
             this.tsmiCopyName,
@@ -328,21 +337,21 @@
             this.toolStripMenuItem4,
             this.tsmiDelete});
             this.lvContextMenu.Name = "lvContextMenu";
-            this.lvContextMenu.Size = new System.Drawing.Size(187, 170);
+            this.lvContextMenu.Size = new System.Drawing.Size(213, 214);
             this.lvContextMenu.Text = "设置已看";
             this.lvContextMenu.Opening += new System.ComponentModel.CancelEventHandler(this.lvContextMenu_Opening);
             // 
             // tsmiSetWatched
             // 
             this.tsmiSetWatched.Name = "tsmiSetWatched";
-            this.tsmiSetWatched.Size = new System.Drawing.Size(186, 22);
+            this.tsmiSetWatched.Size = new System.Drawing.Size(212, 22);
             this.tsmiSetWatched.Text = "设置为已观看(&W)";
             this.tsmiSetWatched.Click += new System.EventHandler(this.tsmiSetWatched_Click);
             // 
             // tsmiSetSeelater
             // 
             this.tsmiSetSeelater.Name = "tsmiSetSeelater";
-            this.tsmiSetSeelater.Size = new System.Drawing.Size(186, 22);
+            this.tsmiSetSeelater.Size = new System.Drawing.Size(212, 22);
             this.tsmiSetSeelater.Text = "标记为稍后看(&L)";
             this.tsmiSetSeelater.Click += new System.EventHandler(this.tsmiSetSeelater_Click);
             // 
@@ -350,45 +359,45 @@
             // 
             this.tsmiSearchDouban.Image = global::MovieTorrents.Properties.Resources.dou;
             this.tsmiSearchDouban.Name = "tsmiSearchDouban";
-            this.tsmiSearchDouban.Size = new System.Drawing.Size(186, 22);
+            this.tsmiSearchDouban.Size = new System.Drawing.Size(212, 22);
             this.tsmiSearchDouban.Text = "搜索豆瓣信息(&S)";
             this.tsmiSearchDouban.Click += new System.EventHandler(this.tsmiSearchDouban_Click);
             // 
             // toolStripMenuItem3
             // 
             this.toolStripMenuItem3.Name = "toolStripMenuItem3";
-            this.toolStripMenuItem3.Size = new System.Drawing.Size(183, 6);
+            this.toolStripMenuItem3.Size = new System.Drawing.Size(209, 6);
             // 
             // tsmiShowFileLocation
             // 
             this.tsmiShowFileLocation.Name = "tsmiShowFileLocation";
-            this.tsmiShowFileLocation.Size = new System.Drawing.Size(186, 22);
+            this.tsmiShowFileLocation.Size = new System.Drawing.Size(212, 22);
             this.tsmiShowFileLocation.Text = "打开文件所在位置(&L)";
             this.tsmiShowFileLocation.Click += new System.EventHandler(this.tsmiShowFileLocation_Click);
             // 
             // tsmiCopyName
             // 
             this.tsmiCopyName.Name = "tsmiCopyName";
-            this.tsmiCopyName.Size = new System.Drawing.Size(186, 22);
+            this.tsmiCopyName.Size = new System.Drawing.Size(212, 22);
             this.tsmiCopyName.Text = "拷贝名称(&C)";
             this.tsmiCopyName.Click += new System.EventHandler(this.tsmiCopyName_Click);
             // 
             // tsmiCopyFile
             // 
             this.tsmiCopyFile.Name = "tsmiCopyFile";
-            this.tsmiCopyFile.Size = new System.Drawing.Size(186, 22);
+            this.tsmiCopyFile.Size = new System.Drawing.Size(212, 22);
             this.tsmiCopyFile.Text = "拷贝文件(&F)";
             this.tsmiCopyFile.Click += new System.EventHandler(this.tsmiCopyFile_Click);
             // 
             // toolStripMenuItem4
             // 
             this.toolStripMenuItem4.Name = "toolStripMenuItem4";
-            this.toolStripMenuItem4.Size = new System.Drawing.Size(183, 6);
+            this.toolStripMenuItem4.Size = new System.Drawing.Size(209, 6);
             // 
             // tsmiDelete
             // 
             this.tsmiDelete.Name = "tsmiDelete";
-            this.tsmiDelete.Size = new System.Drawing.Size(186, 22);
+            this.tsmiDelete.Size = new System.Drawing.Size(212, 22);
             this.tsmiDelete.Text = "删除(&D)";
             this.tsmiDelete.Click += new System.EventHandler(this.tsmiDelete_Click);
             // 
@@ -407,6 +416,7 @@
             this.lvResults.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.lvResults.CheckBoxes = true;
             this.lvResults.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnHeaderName,
             this.columnHeaderRating,
@@ -504,12 +514,12 @@
             this.pictureBox1.TabStop = false;
             this.pictureBox1.DoubleClick += new System.EventHandler(this.pictureBox1_DoubleClick);
             // 
-            // tsmiLimit1000
+            // tsmiCopyDouban
             // 
-            this.tsmiLimit1000.Name = "tsmiLimit1000";
-            this.tsmiLimit1000.Size = new System.Drawing.Size(187, 22);
-            this.tsmiLimit1000.Text = "限制1000条";
-            this.tsmiLimit1000.Click += new System.EventHandler(this.tsmiLimit1000_Click);
+            this.tsmiCopyDouban.Name = "tsmiCopyDouban";
+            this.tsmiCopyDouban.Size = new System.Drawing.Size(212, 22);
+            this.tsmiCopyDouban.Text = "设置豆瓣信息为勾选项(&K)";
+            this.tsmiCopyDouban.Click += new System.EventHandler(this.tsmiCopyDouban_Click);
             // 
             // FormMain
             // 
@@ -597,6 +607,7 @@
         private System.Windows.Forms.ToolStripMenuItem tsmiLimit500;
         private System.Windows.Forms.ToolStripMenuItem tsmiHideSameSubject;
         private System.Windows.Forms.ToolStripMenuItem tsmiLimit1000;
+        private System.Windows.Forms.ToolStripMenuItem tsmiCopyDouban;
     }
 }
 

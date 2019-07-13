@@ -32,10 +32,7 @@ namespace MovieTorrents
         public string posterpath { get; set; }
         public string doubanid { get; set; }
 
-        public string FullName { get
-            {
-                return area + path + name + ext;
-            } }
+        public string FullName => area + path + name + ext;
 
 
         public string RealPosterPath
@@ -102,8 +99,9 @@ namespace MovieTorrents
             }
         }
 
-        public bool MarkSeelater(string dbConnString)
+        public bool MarkSeelater(string dbConnString,out string msg)
         {
+            msg = string.Empty;
             var mDbConnection = new SQLiteConnection(dbConnString);
 
             var sql = $"update tb_file set seelater=1 where file_nid=$fid";
@@ -119,7 +117,7 @@ namespace MovieTorrents
                 }
                 catch (Exception e)
                 {
-                    MessageBox.Show(e.Message, "错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    msg = e.Message;
                     ok = false;
                 }
 
@@ -128,7 +126,7 @@ namespace MovieTorrents
             }
             catch (Exception e)
             {
-                MessageBox.Show(e.Message, "错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                msg=e.Message;
                 ok = false;
             }
 
@@ -136,20 +134,21 @@ namespace MovieTorrents
         }
 
 
-        public bool SetWatched(string dbConnString, DateTime watchDate,string comment)
+        public bool SetWatched(string dbConnString, DateTime watchDate,string comment,out string msg)
         {
+            msg = string.Empty;
             seedate =watchDate.ToString("yyyy-MM-dd");
             seecomment = comment;
-            var m_dbConnection = new SQLiteConnection(dbConnString);
+            var mDbConnection = new SQLiteConnection(dbConnString);
 
             var sql = $"update tb_file set seelater=0,seeflag=1,seedate=$seedate,seecomment=$comment where file_nid=$fid";
             var ok = true;
             try
             {
-                m_dbConnection.Open();
+                mDbConnection.Open();
                 try
                 {
-                    var command = new SQLiteCommand(sql, m_dbConnection);
+                    var command = new SQLiteCommand(sql, mDbConnection);
                     command.Parameters.AddWithValue("$seedate", seedate);
                     command.Parameters.AddWithValue("$comment", comment);
                     command.Parameters.AddWithValue("$fid", fid);
@@ -157,24 +156,25 @@ namespace MovieTorrents
                 }
                 catch (Exception e)
                 {
-                    MessageBox.Show(e.Message, "错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    msg = e.Message;
                     ok = false;
                 }
 
-                m_dbConnection.Close();
+                mDbConnection.Close();
 
             }
             catch (Exception e)
             {
-                MessageBox.Show(e.Message, "错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                msg = e.Message;
                 ok = false;
             }
 
             return ok;
         }
 
-        public bool DeleteFromDb(string dbConnString,bool deleteFile)
+        public bool DeleteFromDb(string dbConnString,bool deleteFile,out string msg)
         {
+            msg = string.Empty;
             var mDbConnection = new SQLiteConnection(dbConnString);
 
             var sql = $"delete from tb_file where file_nid=$fid";
@@ -193,7 +193,7 @@ namespace MovieTorrents
                 }
                 catch (Exception e)
                 {
-                    MessageBox.Show(e.Message, "错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    msg = e.Message;
                     ok = false;
                 }
 
@@ -202,7 +202,7 @@ namespace MovieTorrents
             }
             catch (Exception e)
             {
-                MessageBox.Show(e.Message, "错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                msg = e.Message;
                 ok = false;
             }
 
@@ -278,8 +278,9 @@ namespace MovieTorrents
             return true;
         }
 
-        public static long CountWatched(string dbConnString)
+        public static long CountWatched(string dbConnString,out string msg)
         {
+            msg = string.Empty;
             var connection = new SQLiteConnection(dbConnString);
             var sql = $"select count(*) as watched from filelist_view where seeflag=1";
             long watched = 0;
@@ -293,7 +294,7 @@ namespace MovieTorrents
                 }
                 catch (Exception e)
                 {
-                    MessageBox.Show(e.Message, "错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    msg=e.Message;
                     watched = -1;
                 }
 
@@ -302,15 +303,16 @@ namespace MovieTorrents
             }
             catch (Exception e)
             {
-                MessageBox.Show(e.Message, "错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                msg=e.Message;
                 watched = -1;
             }
 
             return watched;
         }
 
-        public bool UpdateDoubanInfo(string dbConnString,DoubanSubject subject)
+        public bool UpdateDoubanInfo(string dbConnString,DoubanSubject subject,out string msg)
         {
+            msg = string.Empty;
             var posterImageFileName = string.Empty;
 
             var mDbConnection = new SQLiteConnection(dbConnString);
@@ -345,7 +347,7 @@ rating=$rating,genres=$genres,directors=$directors,casts=$casts where file_nid=$
                 }
                 catch (Exception e)
                 {
-                    MessageBox.Show(e.Message, "错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    msg = e.Message;
                     ok = false;
                 }
 
@@ -356,7 +358,7 @@ rating=$rating,genres=$genres,directors=$directors,casts=$casts where file_nid=$
             }
             catch (Exception e)
             {
-                MessageBox.Show(e.Message, "错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                msg = e.Message;
                 ok = false;
             }
 
@@ -371,6 +373,57 @@ rating=$rating,genres=$genres,directors=$directors,casts=$casts where file_nid=$
 
 
             return true;
+        }
+
+        public static bool CopyDoubanInfo(string dbConnString,long sFid, List<long> dFids,out string msg)
+        {
+            msg = string.Empty;
+
+            if (dFids.Contains(sFid)) dFids.Remove(sFid);
+            var sFids = string.Join(",", dFids.Select(x => x.ToString()));
+
+
+            var mDbConnection = new SQLiteConnection(dbConnString);
+            var sql = $@"update tb_file set
+year=(select year from tb_file where file_nid=$fid),
+keyname=(select keyname from tb_file where file_nid=$fid),
+othername=(select othername from tb_file where file_nid=$fid),
+posterpath=(select posterpath from tb_file where file_nid=$fid),
+doubanid=(select doubanid from tb_file where file_nid=$fid),
+rating=(select rating from tb_file where file_nid=$fid),
+casts=(select casts from tb_file where file_nid=$fid),
+directors=(select directors from tb_file where file_nid=$fid),
+genres=(select genres from tb_file where file_nid=$fid)
+where file_nid in ({sFids})";
+            var ok = true;
+            try
+            {
+
+                mDbConnection.Open();
+                try
+                {
+                    var command = new SQLiteCommand(sql, mDbConnection);
+                    command.Parameters.AddWithValue("$fid", sFid);
+                    ok = command.ExecuteNonQuery()>0;
+                }
+                catch (Exception e)
+                {
+                    msg = e.Message;
+                    ok = false;
+                }
+
+                mDbConnection.Close();
+
+
+
+            }
+            catch (Exception e)
+            {
+                msg = e.Message;
+                ok = false;
+            }
+
+            return ok;
         }
 
         public void OpenDoubanLink()
