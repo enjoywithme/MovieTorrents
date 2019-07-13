@@ -69,5 +69,23 @@ namespace MovieTorrents.Properties {
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 错误.
+        /// </summary>
+        internal static string TextError {
+            get {
+                return ResourceManager.GetString("TextError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 提示.
+        /// </summary>
+        internal static string TextHint {
+            get {
+                return ResourceManager.GetString("TextHint", resourceCulture);
+            }
+        }
     }
 }
