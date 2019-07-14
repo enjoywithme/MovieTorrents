@@ -10,12 +10,12 @@ using System.Threading.Tasks;
 namespace MovieTorrents
 {
     //The code below is from https://www.codeproject.com/Articles/32908/C-Single-Instance-App-With-the-Ability-To-Restore
-    static public class SingleInstance
+    public static class SingleInstance
     {
         public static readonly int WM_SHOWFIRSTINSTANCE =
             WinApi.RegisterWindowMessage("WM_SHOWFIRSTINSTANCE|{0}", ProgramInfo.AssemblyGuid);
         static Mutex mutex;
-        static public bool Start()
+        public static bool Start()
         {
             bool onlyInstance = false;
             string mutexName = String.Format("Local\\{0}", ProgramInfo.AssemblyGuid);
@@ -27,7 +27,7 @@ namespace MovieTorrents
             mutex = new Mutex(true, mutexName, out onlyInstance);
             return onlyInstance;
         }
-        static public void ShowFirstInstance()
+        public static void ShowFirstInstance()
         {
             WinApi.PostMessage(
                 (IntPtr)WinApi.HWND_BROADCAST,
@@ -35,25 +35,30 @@ namespace MovieTorrents
                 IntPtr.Zero,
                 IntPtr.Zero);
         }
-        static public void Stop()
+        public static void Stop()
         {
             mutex.ReleaseMutex();
         }
     }
 
-    static public class WinApi
+    public static class WinApi
     {
         [DllImport("user32")]
         public static extern int RegisterWindowMessage(string message);
 
         public static int RegisterWindowMessage(string format, params object[] args)
         {
-            string message = String.Format(format, args);
+            var message = string.Format(format, args);
             return RegisterWindowMessage(message);
         }
 
         public const int HWND_BROADCAST = 0xffff;
         public const int SW_SHOWNORMAL = 1;
+        public const int ASFW_ANY = -1;
+        public const uint SPI_GETFOREGROUNDLOCKTIMEOUT = 0x2000;
+        public const uint SPI_SETFOREGROUNDLOCKTIMEOUT = 0x2001;
+        public const uint SPIF_SENDWININICHANGE = 0x02;
+        public const uint SPIF_UPDATEINIFILE = 0x01;
 
         [DllImport("user32")]
         public static extern bool PostMessage(IntPtr hwnd, int msg, IntPtr wparam, IntPtr lparam);
@@ -63,21 +68,82 @@ namespace MovieTorrents
 
         [DllImportAttribute("user32.dll")]
         public static extern bool SetForegroundWindow(IntPtr hWnd);
+        [DllImport("User32.dll", SetLastError = true)]
+        public static extern void SwitchToThisWindow(IntPtr hWnd, bool fAltTab);
+        [DllImport("user32.dll")]
+        private static extern IntPtr GetForegroundWindow();
+        [DllImport("kernel32.dll")]
+        public static extern uint GetCurrentThreadId();
+        [DllImport("user32.dll")]
+        static extern uint GetWindowThreadProcessId(IntPtr hWnd, IntPtr processId);
+        [DllImport("user32.dll")]
+        static extern bool AttachThreadInput(uint idAttach, uint idAttachTo,bool fAttach);
+        [DllImport("user32.dll", EntryPoint = "SystemParametersInfo", SetLastError = true)]
+        public static extern bool SystemParametersInfoGet(uint action, uint param, ref uint vparam, uint init);
+        [DllImport("user32.dll", EntryPoint = "SystemParametersInfo", SetLastError = true)]
+        public static extern bool SystemParametersInfoSet(uint action, uint param, uint vparam, uint init);
+        [DllImport("user32.dll")]
+        static extern bool AllowSetForegroundWindow(int dwProcessId);
 
         public static void ShowToFront(IntPtr window)
         {
             ShowWindow(window, SW_SHOWNORMAL);
             SetForegroundWindow(window);
+            SwitchToThisWindow(window, true);
+        }
+
+        //https://www.codeproject.com/Tips/76427/How-to-bring-window-to-top-with-SetForegroundWindo
+        //因为SetForegroudWindow 的使用限制，如果进程不是当前前景进程，上面的showToFront 只会让程序在任务栏上闪烁
+        // https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-setforegroundwindow
+        public static void ForceShowToFront(IntPtr hWnd)
+        {
+
+            //relation time of SetForegroundWindow lock
+            uint lockTimeOut = 0;
+            var hCurrWnd = GetForegroundWindow();
+            uint dwThisTid = GetCurrentThreadId(),
+            dwCurrTid = GetWindowThreadProcessId(hCurrWnd, IntPtr.Zero);
+
+            //we need to bypass some limitations from Microsoft :)
+            if (dwThisTid != dwCurrTid)
+            {
+
+                AttachThreadInput(dwThisTid, dwCurrTid,true);
+                SystemParametersInfoGet(SPI_GETFOREGROUNDLOCKTIMEOUT, 0, ref lockTimeOut, 0);
+                SystemParametersInfoSet(SPI_SETFOREGROUNDLOCKTIMEOUT, 0, 0, SPIF_SENDWININICHANGE | SPIF_UPDATEINIFILE);
+
+                AllowSetForegroundWindow(ASFW_ANY);
+            }
+
+
+            SetForegroundWindow(hWnd);
+
+            if (dwThisTid != dwCurrTid)
+            {
+
+                SystemParametersInfoSet(SPI_SETFOREGROUNDLOCKTIMEOUT, 0, lockTimeOut, SPIF_SENDWININICHANGE | SPIF_UPDATEINIFILE);
+
+                AttachThreadInput(dwThisTid, dwCurrTid, false);
+            }
+        }
+
+
+
+
+        public static bool IsActive(IntPtr handle)
+        {
+            var activeHandle = GetForegroundWindow();
+            return (activeHandle == handle);
         }
     }
 
-    static public class ProgramInfo
+    public static class ProgramInfo
     {
-        static public string AssemblyGuid
+        public static string AssemblyGuid
         {
             get
             {
-                object[] attributes = Assembly.GetEntryAssembly().GetCustomAttributes(typeof(System.Runtime.InteropServices.GuidAttribute), false);
+                var attributes = Assembly.GetEntryAssembly().GetCustomAttributes(typeof(System.Runtime.InteropServices.GuidAttribute), false);
                 if (attributes.Length == 0)
                 {
                     return String.Empty;
@@ -85,11 +151,11 @@ namespace MovieTorrents
                 return ((System.Runtime.InteropServices.GuidAttribute)attributes[0]).Value;
             }
         }
-        static public string AssemblyTitle
+        public static string AssemblyTitle
         {
             get
             {
-                object[] attributes = Assembly.GetEntryAssembly().GetCustomAttributes(typeof(AssemblyTitleAttribute), false);
+                var attributes = Assembly.GetEntryAssembly().GetCustomAttributes(typeof(AssemblyTitleAttribute), false);
                 if (attributes.Length > 0)
                 {
                     AssemblyTitleAttribute titleAttribute = (AssemblyTitleAttribute)attributes[0];
