@@ -86,10 +86,12 @@
             this.lbKeyName = new System.Windows.Forms.Label();
             this.lbOtherName = new System.Windows.Forms.Label();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
+            this.ultraDesktopAlert1 = new Infragistics.Win.Misc.UltraDesktopAlert(this.components);
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.lvContextMenu.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.ultraDesktopAlert1)).BeginInit();
             this.SuspendLayout();
             // 
             // menuStrip1
@@ -445,7 +447,6 @@
             this.notifyIcon1.BalloonTipTitle = "提示";
             this.notifyIcon1.Text = "Movie torrents";
             this.notifyIcon1.Visible = true;
-            this.notifyIcon1.BalloonTipClicked += new System.EventHandler(this.notifyIcon1_BalloonTipClicked);
             this.notifyIcon1.MouseClick += new System.Windows.Forms.MouseEventHandler(this.notifyIcon1_MouseClick);
             this.notifyIcon1.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.notifyIcon1_MouseDoubleClick);
             // 
@@ -552,6 +553,11 @@
             this.pictureBox1.TabStop = false;
             this.pictureBox1.DoubleClick += new System.EventHandler(this.pictureBox1_DoubleClick);
             // 
+            // ultraDesktopAlert1
+            // 
+            this.ultraDesktopAlert1.AutoCloseDelay = 2000;
+            this.ultraDesktopAlert1.DesktopAlertLinkClicked += new Infragistics.Win.Misc.DesktopAlertLinkClickedHandler(this.ultraDesktopAlert1_DesktopAlertLinkClicked);
+            // 
             // FormMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -579,6 +585,7 @@
             this.statusStrip1.PerformLayout();
             this.lvContextMenu.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.ultraDesktopAlert1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -642,6 +649,7 @@
         private System.Windows.Forms.ToolStripStatusLabel tsCurrentDir;
         private System.Windows.Forms.ToolStripDropDownButton tsButtonWatch;
         private System.Windows.Forms.ToolStripMenuItem tsmiToggleWatch;
+        private Infragistics.Win.Misc.UltraDesktopAlert ultraDesktopAlert1;
     }
 }
 

@@ -12,19 +12,17 @@ namespace MovieTorrents
     //The code below is from https://www.codeproject.com/Articles/32908/C-Single-Instance-App-With-the-Ability-To-Restore
     public static class SingleInstance
     {
-        public static readonly int WM_SHOWFIRSTINSTANCE =
-            WinApi.RegisterWindowMessage("WM_SHOWFIRSTINSTANCE|{0}", ProgramInfo.AssemblyGuid);
-        static Mutex mutex;
+        public static readonly int WM_SHOWFIRSTINSTANCE = WinApi.RegisterWindowMessage("WM_SHOWFIRSTINSTANCE|{0}", ProgramInfo.AssemblyGuid);
+        static Mutex _mutex;
         public static bool Start()
         {
-            bool onlyInstance = false;
-            string mutexName = String.Format("Local\\{0}", ProgramInfo.AssemblyGuid);
+            var mutexName = $"Local\\{ProgramInfo.AssemblyGuid}";
 
             // if you want your app to be limited to a single instance
             // across ALL SESSIONS (multiple users & terminal services), then use the following line instead:
             // string mutexName = String.Format("Global\\{0}", ProgramInfo.AssemblyGuid);
 
-            mutex = new Mutex(true, mutexName, out onlyInstance);
+            _mutex = new Mutex(true, mutexName, out var onlyInstance);
             return onlyInstance;
         }
         public static void ShowFirstInstance()
@@ -37,7 +35,7 @@ namespace MovieTorrents
         }
         public static void Stop()
         {
-            mutex.ReleaseMutex();
+            _mutex.ReleaseMutex();
         }
     }
 
@@ -85,11 +83,11 @@ namespace MovieTorrents
         [DllImport("user32.dll")]
         static extern bool AllowSetForegroundWindow(int dwProcessId);
 
-        public static void ShowToFront(IntPtr window)
+        public static void ShowToFront(IntPtr hWnd)
         {
-            ShowWindow(window, SW_SHOWNORMAL);
-            SetForegroundWindow(window);
-            SwitchToThisWindow(window, true);
+            ShowWindow(hWnd, SW_SHOWNORMAL);
+            SetForegroundWindow(hWnd);
+            SwitchToThisWindow(hWnd, true);
         }
 
         //https://www.codeproject.com/Tips/76427/How-to-bring-window-to-top-with-SetForegroundWindo
@@ -97,6 +95,7 @@ namespace MovieTorrents
         // https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-setforegroundwindow
         public static void ForceShowToFront(IntPtr hWnd)
         {
+            //ShowWindow(hWnd, SW_SHOWNORMAL);
 
             //relation time of SetForegroundWindow lock
             uint lockTimeOut = 0;
@@ -108,7 +107,7 @@ namespace MovieTorrents
             if (dwThisTid != dwCurrTid)
             {
 
-                AttachThreadInput(dwThisTid, dwCurrTid,true);
+                AttachThreadInput(dwCurrTid, dwThisTid,true);
                 SystemParametersInfoGet(SPI_GETFOREGROUNDLOCKTIMEOUT, 0, ref lockTimeOut, 0);
                 SystemParametersInfoSet(SPI_SETFOREGROUNDLOCKTIMEOUT, 0, 0, SPIF_SENDWININICHANGE | SPIF_UPDATEINIFILE);
 
@@ -123,8 +122,10 @@ namespace MovieTorrents
 
                 SystemParametersInfoSet(SPI_SETFOREGROUNDLOCKTIMEOUT, 0, lockTimeOut, SPIF_SENDWININICHANGE | SPIF_UPDATEINIFILE);
 
-                AttachThreadInput(dwThisTid, dwCurrTid, false);
+                AttachThreadInput( dwCurrTid, dwThisTid, false);
             }
+
+            ShowWindow(hWnd, SW_SHOWNORMAL);
         }
 
 

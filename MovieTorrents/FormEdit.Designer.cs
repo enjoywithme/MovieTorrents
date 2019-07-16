@@ -42,6 +42,11 @@
             this.tbOtherName = new System.Windows.Forms.TextBox();
             this.label6 = new System.Windows.Forms.Label();
             this.tbGenres = new System.Windows.Forms.TextBox();
+            this.tbComment = new System.Windows.Forms.TextBox();
+            this.label7 = new System.Windows.Forms.Label();
+            this.label8 = new System.Windows.Forms.Label();
+            this.dtPicker = new System.Windows.Forms.DateTimePicker();
+            this.cbWatched = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
             // label1
@@ -127,13 +132,13 @@
             this.tbKeyName.Location = new System.Drawing.Point(66, 151);
             this.tbKeyName.Multiline = true;
             this.tbKeyName.Name = "tbKeyName";
-            this.tbKeyName.Size = new System.Drawing.Size(381, 63);
+            this.tbKeyName.Size = new System.Drawing.Size(381, 37);
             this.tbKeyName.TabIndex = 1;
             // 
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(6, 234);
+            this.label5.Location = new System.Drawing.Point(6, 208);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(53, 12);
             this.label5.TabIndex = 0;
@@ -141,16 +146,16 @@
             // 
             // tbOtherName
             // 
-            this.tbOtherName.Location = new System.Drawing.Point(66, 231);
+            this.tbOtherName.Location = new System.Drawing.Point(66, 205);
             this.tbOtherName.Multiline = true;
             this.tbOtherName.Name = "tbOtherName";
-            this.tbOtherName.Size = new System.Drawing.Size(381, 63);
+            this.tbOtherName.Size = new System.Drawing.Size(381, 34);
             this.tbOtherName.TabIndex = 1;
             // 
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(30, 315);
+            this.label6.Location = new System.Drawing.Point(30, 260);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(29, 12);
             this.label6.TabIndex = 0;
@@ -158,16 +163,64 @@
             // 
             // tbGenres
             // 
-            this.tbGenres.Location = new System.Drawing.Point(66, 312);
+            this.tbGenres.Location = new System.Drawing.Point(66, 257);
             this.tbGenres.Name = "tbGenres";
             this.tbGenres.Size = new System.Drawing.Size(381, 21);
             this.tbGenres.TabIndex = 1;
+            // 
+            // tbComment
+            // 
+            this.tbComment.Location = new System.Drawing.Point(66, 325);
+            this.tbComment.Multiline = true;
+            this.tbComment.Name = "tbComment";
+            this.tbComment.Size = new System.Drawing.Size(381, 73);
+            this.tbComment.TabIndex = 6;
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(18, 325);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(29, 12);
+            this.label7.TabIndex = 4;
+            this.label7.Text = "评论";
+            // 
+            // label8
+            // 
+            this.label8.AutoSize = true;
+            this.label8.Location = new System.Drawing.Point(7, 294);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(53, 12);
+            this.label8.TabIndex = 5;
+            this.label8.Text = "观看日期";
+            // 
+            // dtPicker
+            // 
+            this.dtPicker.Location = new System.Drawing.Point(66, 288);
+            this.dtPicker.Name = "dtPicker";
+            this.dtPicker.Size = new System.Drawing.Size(200, 21);
+            this.dtPicker.TabIndex = 3;
+            // 
+            // cbWatched
+            // 
+            this.cbWatched.AutoSize = true;
+            this.cbWatched.Location = new System.Drawing.Point(369, 293);
+            this.cbWatched.Name = "cbWatched";
+            this.cbWatched.Size = new System.Drawing.Size(48, 16);
+            this.cbWatched.TabIndex = 7;
+            this.cbWatched.Text = "已看";
+            this.cbWatched.UseVisualStyleBackColor = true;
             // 
             // FormEdit
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(579, 370);
+            this.ClientSize = new System.Drawing.Size(579, 416);
+            this.Controls.Add(this.cbWatched);
+            this.Controls.Add(this.tbComment);
+            this.Controls.Add(this.label7);
+            this.Controls.Add(this.label8);
+            this.Controls.Add(this.dtPicker);
             this.Controls.Add(this.button2);
             this.Controls.Add(this.btOk);
             this.Controls.Add(this.tbOtherName);
@@ -211,5 +264,10 @@
         private System.Windows.Forms.TextBox tbOtherName;
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.TextBox tbGenres;
+        private System.Windows.Forms.TextBox tbComment;
+        private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.Label label8;
+        private System.Windows.Forms.DateTimePicker dtPicker;
+        private System.Windows.Forms.CheckBox cbWatched;
     }
 }

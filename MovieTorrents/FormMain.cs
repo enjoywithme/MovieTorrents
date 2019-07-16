@@ -54,6 +54,8 @@ namespace MovieTorrents
         private string _area;
         private string _shortRootPath;
 
+        //private System.Timers.Timer _tt;
+
 
         public FormMain()
         {
@@ -62,6 +64,10 @@ namespace MovieTorrents
 
         private void FormMain_Load(object sender, EventArgs e)
         {
+            //_tt = new System.Timers.Timer(5000);
+            //_tt.Elapsed += (o, j) => DisplayInfo("test");
+            //_tt.Enabled = true;
+
             CurrentPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
             if (!File.Exists($"{CurrentPath}\\zogvm.db"))
             {
@@ -106,6 +112,8 @@ namespace MovieTorrents
 #endif
         }
 
+        
+
         private void FormMain_FormClosing(object sender, FormClosingEventArgs e)
         {
             if (_currentOperation == OperationNone) return;
@@ -128,14 +136,14 @@ namespace MovieTorrents
                     tsButtonWatch.Image = Properties.Resources.Eye32;
                     tsButtonWatch.ToolTipText = "目录监视中";
                     tsmiToggleWatch.Text = "停止监视";
-                    DisplayInfo("目录监视已启动");
+                    DisplayInfo("目录监视已启动",false,false);
                     return;
                 }
 
                 tsButtonWatch.Image = Properties.Resources.EyeStop32;
                 tsButtonWatch.ToolTipText = "目录监视停止";
                 tsmiToggleWatch.Text = "启动监视";
-                DisplayInfo("目录监视已停止");
+                DisplayInfo("目录监视已停止",true);
             }
         }
         private FileSystemWatcher _watcher;
@@ -224,11 +232,15 @@ namespace MovieTorrents
 
             Task.Run(() => ProcessFileToBeAdded(new CancellationTokenSource().Token, filesToProcess)).ContinueWith(task =>
             {
-                if (!task.IsFaulted) return;
+                if (!task.IsFaulted)
+                {
+                    DoSearch();
+                    return;
+                }
                 var ex = task.Exception?.InnerException;
                 if (ex != null)
                     DisplayInfo(ex.Message, true);
-            }); ;
+            }); 
         }
         #endregion
 
@@ -283,7 +295,7 @@ namespace MovieTorrents
 
         }
 
-        private void DisplayInfo(string infoMsg = "", bool error = false)
+        private void DisplayInfo(string infoMsg = "", bool error = false, bool alert = true)
         {
             Invoke(new Action(() =>
             {
@@ -293,8 +305,8 @@ namespace MovieTorrents
                 else
                     tssState.Image = _currentOperation == OperationNone ? Properties.Resources.InfoGree32 : Properties.Resources.InfoYellow32;
 
-                if (notifyIcon1.Visible && !WinApi.IsActive(Handle) && !string.IsNullOrEmpty(infoMsg))
-                    notifyIcon1.ShowBalloonTip(2000, "Movie torrents", infoMsg, error ? ToolTipIcon.Error : ToolTipIcon.Info);
+                if (alert && !string.IsNullOrEmpty(infoMsg))
+                    ultraDesktopAlert1.Show("Movie torrents", infoMsg, error ? Properties.Resources.InfoRed32 : Properties.Resources.InfoGree32);
 
 
             }));
@@ -346,7 +358,7 @@ namespace MovieTorrents
             {
                 if (string.IsNullOrEmpty(text) || (text.Length <= 2 && text.All(x => (int)x <= 127)))
                 {
-                    DisplayInfo("输入的搜素文字过少");
+                    DisplayInfo("输入的搜素文字过少",false,false);
                     return;
                 }
             }
@@ -371,7 +383,7 @@ namespace MovieTorrents
 
             _quernyTokenSource = new CancellationTokenSource();
 
-            DisplayInfo("正在查询文件");
+            DisplayInfo("正在查询文件",false,false);
 
             Task.Run(() => ExecuteSearch(text, _quernyTokenSource.Token))
                 .ContinueWith(task =>
@@ -653,6 +665,10 @@ namespace MovieTorrents
 
             lvItem.SubItems[1].Text = torrentFile.rating.ToString(CultureInfo.InvariantCulture);
             lvItem.SubItems[2].Text = torrentFile.year;
+            lvItem.SubItems[3].Text = torrentFile.seelater.ToString();
+            lvItem.SubItems[4].Text = torrentFile.seeflag.ToString();
+            lvItem.SubItems[5].Text = torrentFile.seedate;
+            lvItem.SubItems[6].Text = torrentFile.seecomment;
 
             lbGenres.Text = torrentFile.genres;
             lbKeyName.Text = torrentFile.keyname;
@@ -723,7 +739,7 @@ namespace MovieTorrents
             var di = new DirectoryInfo(dirName);
             if (!di.Exists) return;
 
-            DisplayInfo("扫描文件中...");
+            DisplayInfo("扫描文件中...",false,false);
 
             var stopwatch = Stopwatch.StartNew();
 
@@ -845,7 +861,7 @@ where not exists (select 1 from tb_file where hdd_nid={_hdd_nid} and path=$path 
 
             _operTokenSource = new CancellationTokenSource();
 
-            DisplayInfo("清理无效文件中...");
+            DisplayInfo("清理无效文件中...",false,false);
 
 
             await Task.Run(() => DoClearFile(_operTokenSource.Token), _operTokenSource.Token)
@@ -933,22 +949,24 @@ where not exists (select 1 from tb_file where hdd_nid={_hdd_nid} and path=$path 
         #region 通知栏图标 
         protected override void WndProc(ref Message message)
         {
-            base.WndProc(ref message);
             if (message.Msg == SingleInstance.WM_SHOWFIRSTINSTANCE)
             {
                 ShowWindow();
             }
+            base.WndProc(ref message);
+            
 
         }
         public void ShowWindow()
         {
             _minimizedToTray = false;
-
+          
             Show();
-                WindowState = FormWindowState.Normal;
+            WindowState = FormWindowState.Normal;
 
+            WinApi.ForceShowToFront(Handle);
             Activate();
-            WinApi.ForceShowToFront(Handle); 
+
         }
 
         void MinimizeToTray()
@@ -967,7 +985,8 @@ where not exists (select 1 from tb_file where hdd_nid={_hdd_nid} and path=$path 
         {
             ShowWindow();
         }
-        private void notifyIcon1_BalloonTipClicked(object sender, EventArgs e)
+
+        private void ultraDesktopAlert1_DesktopAlertLinkClicked(object sender, Infragistics.Win.Misc.DesktopAlertLinkClickedEventArgs e)
         {
             ShowWindow();
         }
@@ -1002,14 +1021,14 @@ where not exists (select 1 from tb_file where hdd_nid={_hdd_nid} and path=$path 
         private void tsmiFilterRecent_Click(object sender, EventArgs e)
         {
             tsmiFilterRecent.Checked = !tsmiFilterRecent.Checked;
-            tbSearchText.Text = "";
+            if(tsmiFilterRecent.Checked) tbSearchText.Text = "";
             DoSearch();
         }
 
         private void tsmiFilterSeelater_Click(object sender, EventArgs e)
         {
             tsmiFilterSeelater.Checked = !tsmiFilterSeelater.Checked;
-            tbSearchText.Text = string.Empty;
+            if(tsmiFilterSeelater.Checked) tbSearchText.Text = string.Empty;
             DoSearch();
         }
 
@@ -1243,8 +1262,9 @@ where not exists (select 1 from tb_file where hdd_nid={_hdd_nid} and path=$path 
 
 
 
+
         #endregion
 
-
+        
     }
 }

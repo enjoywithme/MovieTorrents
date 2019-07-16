@@ -34,6 +34,12 @@ namespace MovieTorrents
 
         public string FullName => area + path + name + ext;
 
+        public DateTime SeeDate { get {
+            var seeDate = DateTime.Today;
+            if (!string.IsNullOrEmpty(seedate) && DateTime.TryParse(seedate, out var d))
+                seeDate = d;
+            return seeDate;
+        } }
 
         public string RealPosterPath
         {
@@ -211,6 +217,7 @@ namespace MovieTorrents
 
         public bool EditRecord(string dbConnString,string newName,string newYear,
             string newKeyName,string newOtherName,string newGenres,
+            bool newWatched,DateTime newWatchDate,string newSeeComment,
             out string msg)
         {
             msg = string.Empty;
@@ -227,10 +234,15 @@ namespace MovieTorrents
                     return false;
                 }
             }
-            
+
+            var watchDate =newWatched?newWatchDate.ToString("yyyy-MM-dd"):"";
+            var newSeelater = newWatched ? 0 : seelater;
 
             var mDbConnection = new SQLiteConnection(dbConnString);
-            var sql = @"update tb_file set name=$name,year=$year,keyname=$keyname,othername=$othername,genres=$genres where file_nid=$fid";
+            var sql = @"update tb_file set name=$name,year=$year,
+keyname=$keyname,othername=$othername,genres=$genres,
+seelater=$seelater,seeflag=$seeflag,seedate=$seedate,seecomment=$comment 
+where file_nid=$fid";
             var ok = true;
             try
             {
@@ -242,11 +254,16 @@ namespace MovieTorrents
                     if(reNameFile) File.Move(FullName, newFullName);
 
                     var command = new SQLiteCommand(sql, mDbConnection);
+                     
                     command.Parameters.AddWithValue("$name", newName);
                     command.Parameters.AddWithValue("$year", newYear);
                     command.Parameters.AddWithValue("$keyname", newKeyName);
                     command.Parameters.AddWithValue("$othername", newOtherName);
                     command.Parameters.AddWithValue("$genres", newGenres);
+                    command.Parameters.AddWithValue("seelater", newSeelater);
+                    command.Parameters.AddWithValue("$seeflag", newWatched?1:0);
+                    command.Parameters.AddWithValue("$seedate", watchDate);
+                    command.Parameters.AddWithValue("$comment", newSeeComment);
                     command.Parameters.AddWithValue("$fid", fid);
                     command.ExecuteNonQuery();
                 }
@@ -274,6 +291,10 @@ namespace MovieTorrents
             keyname = newKeyName;
             otherName = newOtherName;
             genres = newGenres;
+            seelater = newSeelater;
+            seeflag = newWatched ? 1 : 0;
+            seedate = watchDate;
+            seecomment = newSeeComment;
 
             return true;
         }
