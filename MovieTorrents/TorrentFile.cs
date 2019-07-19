@@ -105,12 +105,12 @@ namespace MovieTorrents
             }
         }
 
-        public bool MarkSeelater(string dbConnString,out string msg)
+        public bool ToggleSeelater(string dbConnString,out string msg)
         {
             msg = string.Empty;
             var mDbConnection = new SQLiteConnection(dbConnString);
 
-            var sql = $"update tb_file set seelater=1 where file_nid=$fid";
+            var sql = $"update tb_file set seelater = case seelater when 1 then 0 else 1 end where file_nid=$fid";
             var ok = true;
             try
             {

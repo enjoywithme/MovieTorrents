@@ -369,7 +369,7 @@
             this.toolStripMenuItem4,
             this.tsmiDelete});
             this.lvContextMenu.Name = "lvContextMenu";
-            this.lvContextMenu.Size = new System.Drawing.Size(213, 192);
+            this.lvContextMenu.Size = new System.Drawing.Size(213, 214);
             this.lvContextMenu.Text = "设置已看";
             this.lvContextMenu.Opening += new System.ComponentModel.CancelEventHandler(this.lvContextMenu_Opening);
             // 
@@ -384,7 +384,7 @@
             // 
             this.tsmiSetSeelater.Name = "tsmiSetSeelater";
             this.tsmiSetSeelater.Size = new System.Drawing.Size(212, 22);
-            this.tsmiSetSeelater.Text = "标记为稍后看(&L)";
+            this.tsmiSetSeelater.Text = "切换稍后看(&L)";
             this.tsmiSetSeelater.Click += new System.EventHandler(this.tsmiSetSeelater_Click);
             // 
             // tsmiSearchDouban
