@@ -87,6 +87,7 @@
             this.lbOtherName = new System.Windows.Forms.Label();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.ultraDesktopAlert1 = new Infragistics.Win.Misc.UltraDesktopAlert(this.components);
+            this.tsmiShowStatistics = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.lvContextMenu.SuspendLayout();
@@ -111,6 +112,7 @@
             this.文件FToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.tsmiScanFile,
             this.tsmiClearRecords,
+            this.tsmiShowStatistics,
             this.toolStripMenuItem2,
             this.tsmiExit});
             this.文件FToolStripMenuItem.Name = "文件FToolStripMenuItem";
@@ -120,26 +122,26 @@
             // tsmiScanFile
             // 
             this.tsmiScanFile.Name = "tsmiScanFile";
-            this.tsmiScanFile.Size = new System.Drawing.Size(164, 22);
+            this.tsmiScanFile.Size = new System.Drawing.Size(180, 22);
             this.tsmiScanFile.Text = "扫描种子文件(&S)";
             this.tsmiScanFile.Click += new System.EventHandler(this.tsmiScanFile_Click);
             // 
             // tsmiClearRecords
             // 
             this.tsmiClearRecords.Name = "tsmiClearRecords";
-            this.tsmiClearRecords.Size = new System.Drawing.Size(164, 22);
+            this.tsmiClearRecords.Size = new System.Drawing.Size(180, 22);
             this.tsmiClearRecords.Text = "清除无效记录(&C)";
             this.tsmiClearRecords.Click += new System.EventHandler(this.tsmiClearRecords_Click);
             // 
             // toolStripMenuItem2
             // 
             this.toolStripMenuItem2.Name = "toolStripMenuItem2";
-            this.toolStripMenuItem2.Size = new System.Drawing.Size(161, 6);
+            this.toolStripMenuItem2.Size = new System.Drawing.Size(177, 6);
             // 
             // tsmiExit
             // 
             this.tsmiExit.Name = "tsmiExit";
-            this.tsmiExit.Size = new System.Drawing.Size(164, 22);
+            this.tsmiExit.Size = new System.Drawing.Size(180, 22);
             this.tsmiExit.Text = "退出(X)";
             this.tsmiExit.Click += new System.EventHandler(this.tsmiExit_Click);
             // 
@@ -369,7 +371,7 @@
             this.toolStripMenuItem4,
             this.tsmiDelete});
             this.lvContextMenu.Name = "lvContextMenu";
-            this.lvContextMenu.Size = new System.Drawing.Size(213, 214);
+            this.lvContextMenu.Size = new System.Drawing.Size(213, 192);
             this.lvContextMenu.Text = "设置已看";
             this.lvContextMenu.Opening += new System.ComponentModel.CancelEventHandler(this.lvContextMenu_Opening);
             // 
@@ -465,6 +467,7 @@
             this.columnHeaderSeeDate,
             this.columnHeaderSeeComment});
             this.lvResults.FullRowSelect = true;
+            this.lvResults.HideSelection = false;
             this.lvResults.Location = new System.Drawing.Point(132, 52);
             this.lvResults.Name = "lvResults";
             this.lvResults.Size = new System.Drawing.Size(1141, 506);
@@ -558,6 +561,13 @@
             this.ultraDesktopAlert1.AutoCloseDelay = 2000;
             this.ultraDesktopAlert1.DesktopAlertLinkClicked += new Infragistics.Win.Misc.DesktopAlertLinkClickedHandler(this.ultraDesktopAlert1_DesktopAlertLinkClicked);
             // 
+            // tsmiShowStatistics
+            // 
+            this.tsmiShowStatistics.Name = "tsmiShowStatistics";
+            this.tsmiShowStatistics.Size = new System.Drawing.Size(180, 22);
+            this.tsmiShowStatistics.Text = "统计(&T)";
+            this.tsmiShowStatistics.Click += new System.EventHandler(this.tsmiShowStatistics_Click);
+            // 
             // FormMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -650,6 +660,7 @@
         private System.Windows.Forms.ToolStripDropDownButton tsButtonWatch;
         private System.Windows.Forms.ToolStripMenuItem tsmiToggleWatch;
         private Infragistics.Win.Misc.UltraDesktopAlert ultraDesktopAlert1;
+        private System.Windows.Forms.ToolStripMenuItem tsmiShowStatistics;
     }
 }
 

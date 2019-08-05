@@ -1275,7 +1275,7 @@ where not exists (select 1 from tb_file where hdd_nid={_hdd_nid} and path=$path 
 
             if (!TorrentFile.CopyDoubanInfo(DbConnectionString, checkedId, selectdIds, out var msg))
             {
-                MessageBox.Show(msg, Properties.Resources.TextError, MessageBoxButtons.YesNo, MessageBoxIcon.Error);
+                MessageBox.Show(msg, Properties.Resources.TextError, MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
 
@@ -1287,8 +1287,18 @@ where not exists (select 1 from tb_file where hdd_nid={_hdd_nid} and path=$path 
 
 
 
+
         #endregion
 
-
+        private void tsmiShowStatistics_Click(object sender, EventArgs e)
+        {
+            var result = TorrentFile.CountStatistics(DbConnectionString, out var msg);
+            if (!string.IsNullOrEmpty(msg))
+            {
+                MessageBox.Show(msg, Properties.Resources.TextError, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+            MessageBox.Show(result, Properties.Resources.TextHint, MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
     }
 }

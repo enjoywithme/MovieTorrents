@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Data.SQLite;
 using System.Diagnostics;
 using System.IO;
@@ -329,6 +330,54 @@ where file_nid=$fid";
             }
 
             return watched;
+        }
+
+        public static string CountStatistics(string dbConnString, out string msg)
+        {
+            msg = string.Empty;
+            var sb = new StringBuilder();
+            var connection = new SQLiteConnection(dbConnString);
+            var sql = $"select count(*) as watched from filelist_view where seeflag=1";
+            try
+            {
+                connection.Open();
+                try
+                {
+                    var command = new SQLiteCommand("select count(*) as total from filelist_view", connection);
+                    sb.AppendLine($"总共 {command.ExecuteScalar()} 种子文件");
+
+                    command = new SQLiteCommand("select count(*) from (select DISTINCT doubanid from filelist_view where doubanid<>'' and doubanid<>'0' and doubanid is not null)", connection);
+                    sb.AppendLine($"已知电影数 {command.ExecuteScalar()}（有豆瓣编号）");
+
+                    command = new SQLiteCommand("select count(*) as watched from filelist_view where seeflag=1", connection);
+                    sb.AppendLine($"已看 {command.ExecuteScalar()}");
+
+                    sb.AppendLine("过去5年观看数：");
+
+                    var thisYear = DateTime.Now.Year;
+                    command = new SQLiteCommand("select count(*) from filelist_view where strftime('%Y', seedate)=@year ", connection);
+                    command.Parameters.Add("@year", DbType.String, 10);
+                    command.Prepare();
+                    for (var i = 0; i < 5; i++)
+                    {
+                        command.Parameters["@year"].Value = (thisYear - i).ToString();
+                        sb.AppendLine($"{ thisYear - i} / {command.ExecuteScalar()}");
+                    }
+                }
+                catch (Exception e)
+                {
+                    msg = e.Message;
+                }
+
+                connection.Close();
+
+            }
+            catch (Exception e)
+            {
+                msg = e.Message;
+            }
+
+            return sb.ToString();
         }
 
         public bool UpdateDoubanInfo(string dbConnString,DoubanSubject subject,out string msg)
