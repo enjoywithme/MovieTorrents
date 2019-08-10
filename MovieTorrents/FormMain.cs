@@ -489,42 +489,47 @@ namespace MovieTorrents
                     sb.Append(" and  doubanid not in(select DISTINCT doubanid from tb_file where seeflag=1 and doubanid<>'')");
             }
 
-            //排序
-            var ordered = false;
+            //限制条数
+            var limitClause="";
+            if (tsmiLimit100.Checked)
+                limitClause = " limit 100";
+            else if (tsmiLimit200.Checked)
+                limitClause = " limit 200";
+            else if (tsmiLimit500.Checked)
+                limitClause = " limit 500";
+            else if (tsmiLimit1000.Checked)
+                limitClause = " limit 1000";
+
+            //最近观看特殊处理
             if (tsmiFilterRecent.Checked)
             {
+                sb.Insert(0, "select * from (");
                 sb.Append(" order by CreationTime desc");
-                ordered = true;
+                sb.Append(limitClause);
+                sb.Append(")");
             }
 
+            //排序
+            var ordered = false;
             if (tsmiRatingDesc.Checked)
             {
-                sb.Append(ordered ? ",rating desc" : " order by rating desc");
+                sb.Append(" order by rating desc");
                 ordered = true;
             }
-
-            if (tsmiRatingAsc.Checked)
+            else if (tsmiRatingAsc.Checked)
             {
-                sb.Append(ordered ? ",rating asc" : " order by rating asc");
+                sb.Append(" order by rating asc");
                 ordered = true;
             }
 
             if (tsmiYearDesc.Checked)
-            {
                 sb.Append(ordered ? ",year desc" : " order by year desc");
-                ordered = true;
-            }
-            if (tsmiYearAsc.Checked) sb.Append(ordered ? ",year asc" : " order by year asc");
+            else if (tsmiYearAsc.Checked)
+                sb.Append(ordered ? ",year asc" : " order by year asc");
 
-            //限制条数
-            if (tsmiLimit100.Checked)
-                sb.Append(" limit 100");
-            else if (tsmiLimit200.Checked)
-                sb.Append(" limit 200");
-            else if (tsmiLimit500.Checked)
-                sb.Append(" limit 500");
-            else if (tsmiLimit1000.Checked)
-                sb.Append(" limit 1000");
+            if (!tsmiFilterRecent.Checked)
+                sb.Append(limitClause);
+            
 
 
             Debug.WriteLine(sb.ToString());
