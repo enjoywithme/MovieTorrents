@@ -1201,11 +1201,7 @@ where not exists (select 1 from tb_file where hdd_nid={_hdd_nid} and path=$path 
 
             var formSetWatched = new FormSetWatched(torrentFile);
             if (formSetWatched.ShowDialog(this) == DialogResult.Cancel) return;
-            lvItem.SubItems[3].Text = "0";
-            lvItem.SubItems[4].Text = "1";
-            lvItem.SubItems[5].Text = torrentFile.seedate;
-            lvItem.SubItems[6].Text = torrentFile.seecomment;
-
+            RefreshSelected(torrentFile);
 
             //自动备份
             BackupDbFile();

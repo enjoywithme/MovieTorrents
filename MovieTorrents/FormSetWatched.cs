@@ -26,6 +26,9 @@ namespace MovieTorrents
                 return;
             }
 
+            _torrentFile.seelater = 0;
+            _torrentFile.seeflag = 1;
+
             DialogResult = DialogResult.OK;
         }
     }
