@@ -27,6 +27,8 @@ namespace MovieTorrents
         public static string DbConnectionString;
         private bool _minimizedToTray;
 
+        private FolderBrowserDialog folderBrowserDialog1;
+
         private CancellationTokenSource _quernyTokenSource;
         private CancellationTokenSource _operTokenSource;
 
@@ -1300,6 +1302,33 @@ where not exists (select 1 from tb_file where hdd_nid={_hdd_nid} and path=$path 
                 return;
             }
             MessageBox.Show(result, Properties.Resources.TextHint, MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
+
+        private void tsmiMove_Click(object sender, EventArgs e)
+        {
+            if (lvResults.SelectedItems.Count == 0) return;
+            if(folderBrowserDialog1==null) folderBrowserDialog1 = new FolderBrowserDialog();
+            folderBrowserDialog1.SelectedPath = TorrentFilePath;
+            if (folderBrowserDialog1.ShowDialog(this) == DialogResult.Cancel) return;
+            var selectedPath = folderBrowserDialog1.SelectedPath;
+            if (!selectedPath.StartsWith(TorrentFilePath, StringComparison.InvariantCultureIgnoreCase))
+            {
+                MessageBox.Show($"选择的目录必须是种子文件目录\"{TorrentFilePath}\"的子目录！", Properties.Resources.TextHint,
+                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            var errorMsg = "";
+            var moved = 0;
+            foreach (ListViewItem selectedItem in lvResults.SelectedItems)
+            {
+                var torrentFile = (TorrentFile) selectedItem.Tag;
+                if (!torrentFile.MoveTo(DbConnectionString, folderBrowserDialog1.SelectedPath, out var msg))
+                    errorMsg += msg;
+                else moved++;
+            }
+
+            MessageBox.Show($"成功移动{moved}条记录。\r\n{errorMsg}", Properties.Resources.TextHint,MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
     }
 }

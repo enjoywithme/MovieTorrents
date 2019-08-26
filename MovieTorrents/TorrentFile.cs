@@ -179,6 +179,49 @@ namespace MovieTorrents
             return ok;
         }
 
+        public bool MoveTo(string dbConnString, string destFolder, out string msg)
+        {
+            msg = string.Empty;
+            var mDbConnection = new SQLiteConnection(dbConnString);
+
+            var sql = $"update tb_file set path=$path where file_nid=$fid";
+            bool ok;
+            var newPath = destFolder.Substring(Path.GetPathRoot(destFolder).Length) + "\\";
+
+            try
+            {
+                mDbConnection.Open();
+                try
+                {
+                    
+                    var destFullName = destFolder +"\\" + name + ext;
+                    File.Move(FullName, destFullName);
+
+                    var command = new SQLiteCommand(sql, mDbConnection);
+                    command.Parameters.AddWithValue("$path", newPath);
+                    command.Parameters.AddWithValue("$fid", fid);
+                    ok = command.ExecuteNonQuery() > 0;
+                }
+                catch (Exception e)
+                {
+                    msg = e.Message;
+                    ok = false;
+                }
+
+                mDbConnection.Close();
+
+            }
+            catch (Exception e)
+            {
+                msg = e.Message;
+                ok = false;
+            }
+
+            if (ok) path = newPath;
+
+            return ok;
+        }
+
         public bool DeleteFromDb(string dbConnString,bool deleteFile,out string msg)
         {
             msg = string.Empty;

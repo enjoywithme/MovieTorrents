@@ -34,6 +34,7 @@
             this.文件FToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tsmiScanFile = new System.Windows.Forms.ToolStripMenuItem();
             this.tsmiClearRecords = new System.Windows.Forms.ToolStripMenuItem();
+            this.tsmiShowStatistics = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripSeparator();
             this.tsmiExit = new System.Windows.Forms.ToolStripMenuItem();
             this.过滤TToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -87,7 +88,7 @@
             this.lbOtherName = new System.Windows.Forms.Label();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.ultraDesktopAlert1 = new Infragistics.Win.Misc.UltraDesktopAlert(this.components);
-            this.tsmiShowStatistics = new System.Windows.Forms.ToolStripMenuItem();
+            this.tsmiMove = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.lvContextMenu.SuspendLayout();
@@ -122,26 +123,33 @@
             // tsmiScanFile
             // 
             this.tsmiScanFile.Name = "tsmiScanFile";
-            this.tsmiScanFile.Size = new System.Drawing.Size(180, 22);
+            this.tsmiScanFile.Size = new System.Drawing.Size(164, 22);
             this.tsmiScanFile.Text = "扫描种子文件(&S)";
             this.tsmiScanFile.Click += new System.EventHandler(this.tsmiScanFile_Click);
             // 
             // tsmiClearRecords
             // 
             this.tsmiClearRecords.Name = "tsmiClearRecords";
-            this.tsmiClearRecords.Size = new System.Drawing.Size(180, 22);
+            this.tsmiClearRecords.Size = new System.Drawing.Size(164, 22);
             this.tsmiClearRecords.Text = "清除无效记录(&C)";
             this.tsmiClearRecords.Click += new System.EventHandler(this.tsmiClearRecords_Click);
+            // 
+            // tsmiShowStatistics
+            // 
+            this.tsmiShowStatistics.Name = "tsmiShowStatistics";
+            this.tsmiShowStatistics.Size = new System.Drawing.Size(164, 22);
+            this.tsmiShowStatistics.Text = "统计(&T)";
+            this.tsmiShowStatistics.Click += new System.EventHandler(this.tsmiShowStatistics_Click);
             // 
             // toolStripMenuItem2
             // 
             this.toolStripMenuItem2.Name = "toolStripMenuItem2";
-            this.toolStripMenuItem2.Size = new System.Drawing.Size(177, 6);
+            this.toolStripMenuItem2.Size = new System.Drawing.Size(161, 6);
             // 
             // tsmiExit
             // 
             this.tsmiExit.Name = "tsmiExit";
-            this.tsmiExit.Size = new System.Drawing.Size(180, 22);
+            this.tsmiExit.Size = new System.Drawing.Size(164, 22);
             this.tsmiExit.Text = "退出(X)";
             this.tsmiExit.Click += new System.EventHandler(this.tsmiExit_Click);
             // 
@@ -369,9 +377,10 @@
             this.tsmiCopyName,
             this.tsmiCopyFile,
             this.toolStripMenuItem4,
+            this.tsmiMove,
             this.tsmiDelete});
             this.lvContextMenu.Name = "lvContextMenu";
-            this.lvContextMenu.Size = new System.Drawing.Size(213, 192);
+            this.lvContextMenu.Size = new System.Drawing.Size(213, 236);
             this.lvContextMenu.Text = "设置已看";
             this.lvContextMenu.Opening += new System.ComponentModel.CancelEventHandler(this.lvContextMenu_Opening);
             // 
@@ -561,12 +570,12 @@
             this.ultraDesktopAlert1.AutoCloseDelay = 2000;
             this.ultraDesktopAlert1.DesktopAlertLinkClicked += new Infragistics.Win.Misc.DesktopAlertLinkClickedHandler(this.ultraDesktopAlert1_DesktopAlertLinkClicked);
             // 
-            // tsmiShowStatistics
+            // tsmiMove
             // 
-            this.tsmiShowStatistics.Name = "tsmiShowStatistics";
-            this.tsmiShowStatistics.Size = new System.Drawing.Size(180, 22);
-            this.tsmiShowStatistics.Text = "统计(&T)";
-            this.tsmiShowStatistics.Click += new System.EventHandler(this.tsmiShowStatistics_Click);
+            this.tsmiMove.Name = "tsmiMove";
+            this.tsmiMove.Size = new System.Drawing.Size(212, 22);
+            this.tsmiMove.Text = "移动...(&M)";
+            this.tsmiMove.Click += new System.EventHandler(this.tsmiMove_Click);
             // 
             // FormMain
             // 
@@ -661,6 +670,7 @@
         private System.Windows.Forms.ToolStripMenuItem tsmiToggleWatch;
         private Infragistics.Win.Misc.UltraDesktopAlert ultraDesktopAlert1;
         private System.Windows.Forms.ToolStripMenuItem tsmiShowStatistics;
+        private System.Windows.Forms.ToolStripMenuItem tsmiMove;
     }
 }
 
