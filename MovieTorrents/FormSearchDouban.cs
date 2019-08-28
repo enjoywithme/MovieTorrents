@@ -35,7 +35,7 @@ namespace MovieTorrents
             tbSearchText.Text = _torrentFile.ChineseName;
 
 #if DEBUG
-            tbSearchText.Text = "https://movie.douban.com/subject/26811825/";
+            //tbSearchText.Text = "https://movie.douban.com/subject/26811825/";
 #endif
         }
 
@@ -120,6 +120,18 @@ namespace MovieTorrents
             if (e.KeyCode == Keys.Return) DoSearcch();
         }
 
-        
+        private void btnSearchBrowser_Click(object sender, EventArgs e)
+        {
+            var url = $"https://movie.douban.com/subject_search?search_text={Uri.EscapeUriString(tbSearchText.Text.Trim())}";
+            Process.Start(url);
+        }
+
+        private void FormSearchDouban_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Escape)
+            {
+                DialogResult = DialogResult.Cancel;
+            }
+        }
     }
 }

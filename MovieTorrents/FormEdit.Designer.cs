@@ -33,7 +33,7 @@
             this.label2 = new System.Windows.Forms.Label();
             this.tbNewName = new System.Windows.Forms.TextBox();
             this.btOk = new System.Windows.Forms.Button();
-            this.button2 = new System.Windows.Forms.Button();
+            this.btCancel = new System.Windows.Forms.Button();
             this.label3 = new System.Windows.Forms.Label();
             this.tbYear = new System.Windows.Forms.TextBox();
             this.label4 = new System.Windows.Forms.Label();
@@ -80,27 +80,27 @@
             this.tbNewName.Location = new System.Drawing.Point(66, 76);
             this.tbNewName.Name = "tbNewName";
             this.tbNewName.Size = new System.Drawing.Size(381, 21);
-            this.tbNewName.TabIndex = 1;
+            this.tbNewName.TabIndex = 0;
             // 
             // btOk
             // 
             this.btOk.Location = new System.Drawing.Point(476, 34);
             this.btOk.Name = "btOk";
             this.btOk.Size = new System.Drawing.Size(75, 23);
-            this.btOk.TabIndex = 2;
+            this.btOk.TabIndex = 8;
             this.btOk.Text = "确定(&O)";
             this.btOk.UseVisualStyleBackColor = true;
             this.btOk.Click += new System.EventHandler(this.btOk_Click);
             // 
-            // button2
+            // btCancel
             // 
-            this.button2.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.button2.Location = new System.Drawing.Point(476, 75);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(75, 23);
-            this.button2.TabIndex = 2;
-            this.button2.Text = "取消(&C)";
-            this.button2.UseVisualStyleBackColor = true;
+            this.btCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            this.btCancel.Location = new System.Drawing.Point(476, 75);
+            this.btCancel.Name = "btCancel";
+            this.btCancel.Size = new System.Drawing.Size(75, 23);
+            this.btCancel.TabIndex = 9;
+            this.btCancel.Text = "取消(&C)";
+            this.btCancel.UseVisualStyleBackColor = true;
             // 
             // label3
             // 
@@ -133,7 +133,7 @@
             this.tbKeyName.Multiline = true;
             this.tbKeyName.Name = "tbKeyName";
             this.tbKeyName.Size = new System.Drawing.Size(381, 37);
-            this.tbKeyName.TabIndex = 1;
+            this.tbKeyName.TabIndex = 2;
             // 
             // label5
             // 
@@ -150,7 +150,7 @@
             this.tbOtherName.Multiline = true;
             this.tbOtherName.Name = "tbOtherName";
             this.tbOtherName.Size = new System.Drawing.Size(381, 34);
-            this.tbOtherName.TabIndex = 1;
+            this.tbOtherName.TabIndex = 3;
             // 
             // label6
             // 
@@ -166,7 +166,7 @@
             this.tbGenres.Location = new System.Drawing.Point(66, 257);
             this.tbGenres.Name = "tbGenres";
             this.tbGenres.Size = new System.Drawing.Size(381, 21);
-            this.tbGenres.TabIndex = 1;
+            this.tbGenres.TabIndex = 4;
             // 
             // tbComment
             // 
@@ -199,7 +199,7 @@
             this.dtPicker.Location = new System.Drawing.Point(66, 288);
             this.dtPicker.Name = "dtPicker";
             this.dtPicker.Size = new System.Drawing.Size(200, 21);
-            this.dtPicker.TabIndex = 3;
+            this.dtPicker.TabIndex = 5;
             // 
             // cbWatched
             // 
@@ -215,13 +215,14 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.CancelButton = this.btCancel;
             this.ClientSize = new System.Drawing.Size(579, 416);
             this.Controls.Add(this.cbWatched);
             this.Controls.Add(this.tbComment);
             this.Controls.Add(this.label7);
             this.Controls.Add(this.label8);
             this.Controls.Add(this.dtPicker);
-            this.Controls.Add(this.button2);
+            this.Controls.Add(this.btCancel);
             this.Controls.Add(this.btOk);
             this.Controls.Add(this.tbOtherName);
             this.Controls.Add(this.label5);
@@ -255,7 +256,7 @@
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.TextBox tbNewName;
         private System.Windows.Forms.Button btOk;
-        private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.Button btCancel;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.TextBox tbYear;
         private System.Windows.Forms.Label label4;

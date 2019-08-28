@@ -40,6 +40,7 @@
             this.tbOrigTitle = new System.Windows.Forms.TextBox();
             this.btSearchId = new System.Windows.Forms.Button();
             this.tbInfo = new System.Windows.Forms.TextBox();
+            this.btnSearchBrowser = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -47,7 +48,7 @@
             // 
             this.tbSearchText.Location = new System.Drawing.Point(24, 13);
             this.tbSearchText.Name = "tbSearchText";
-            this.tbSearchText.Size = new System.Drawing.Size(607, 21);
+            this.tbSearchText.Size = new System.Drawing.Size(560, 21);
             this.tbSearchText.TabIndex = 0;
             this.tbSearchText.KeyDown += new System.Windows.Forms.KeyEventHandler(this.tbSearchText_KeyDown);
             // 
@@ -59,6 +60,7 @@
             this.columnHeaderYear,
             this.columnHeaderType});
             this.listView1.FullRowSelect = true;
+            this.listView1.HideSelection = false;
             this.listView1.Location = new System.Drawing.Point(179, 79);
             this.listView1.Name = "listView1";
             this.listView1.Size = new System.Drawing.Size(570, 300);
@@ -87,9 +89,9 @@
             // 
             // btSearchName
             // 
-            this.btSearchName.Location = new System.Drawing.Point(637, 12);
+            this.btSearchName.Location = new System.Drawing.Point(590, 13);
             this.btSearchName.Name = "btSearchName";
-            this.btSearchName.Size = new System.Drawing.Size(112, 23);
+            this.btSearchName.Size = new System.Drawing.Size(88, 23);
             this.btSearchName.TabIndex = 2;
             this.btSearchName.Text = "搜素名称(&F)";
             this.btSearchName.UseVisualStyleBackColor = true;
@@ -120,14 +122,14 @@
             this.tbOrigTitle.Location = new System.Drawing.Point(24, 44);
             this.tbOrigTitle.Name = "tbOrigTitle";
             this.tbOrigTitle.ReadOnly = true;
-            this.tbOrigTitle.Size = new System.Drawing.Size(607, 21);
+            this.tbOrigTitle.Size = new System.Drawing.Size(560, 21);
             this.tbOrigTitle.TabIndex = 5;
             // 
             // btSearchId
             // 
-            this.btSearchId.Location = new System.Drawing.Point(637, 42);
+            this.btSearchId.Location = new System.Drawing.Point(590, 42);
             this.btSearchId.Name = "btSearchId";
-            this.btSearchId.Size = new System.Drawing.Size(112, 23);
+            this.btSearchId.Size = new System.Drawing.Size(88, 23);
             this.btSearchId.TabIndex = 2;
             this.btSearchId.Text = "ID查询(&S)";
             this.btSearchId.UseVisualStyleBackColor = true;
@@ -143,11 +145,22 @@
             this.tbInfo.Size = new System.Drawing.Size(725, 51);
             this.tbInfo.TabIndex = 6;
             // 
+            // btnSearchBrowser
+            // 
+            this.btnSearchBrowser.Location = new System.Drawing.Point(684, 13);
+            this.btnSearchBrowser.Name = "btnSearchBrowser";
+            this.btnSearchBrowser.Size = new System.Drawing.Size(65, 52);
+            this.btnSearchBrowser.TabIndex = 7;
+            this.btnSearchBrowser.Text = "浏览器搜索（&B)";
+            this.btnSearchBrowser.UseVisualStyleBackColor = true;
+            this.btnSearchBrowser.Click += new System.EventHandler(this.btnSearchBrowser_Click);
+            // 
             // FormSearchDouban
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(766, 465);
+            this.Controls.Add(this.btnSearchBrowser);
             this.Controls.Add(this.tbInfo);
             this.Controls.Add(this.tbOrigTitle);
             this.Controls.Add(this.btSave);
@@ -157,6 +170,7 @@
             this.Controls.Add(this.listView1);
             this.Controls.Add(this.tbSearchText);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+            this.KeyPreview = true;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "FormSearchDouban";
@@ -164,6 +178,7 @@
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "搜索豆瓣信息";
             this.Load += new System.EventHandler(this.FormSearchDouban_Load);
+            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.FormSearchDouban_KeyDown);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -184,5 +199,6 @@
         private System.Windows.Forms.TextBox tbOrigTitle;
         private System.Windows.Forms.Button btSearchId;
         private System.Windows.Forms.TextBox tbInfo;
+        private System.Windows.Forms.Button btnSearchBrowser;
     }
 }

@@ -72,6 +72,7 @@
             this.tsmiCopyName = new System.Windows.Forms.ToolStripMenuItem();
             this.tsmiCopyFile = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem4 = new System.Windows.Forms.ToolStripSeparator();
+            this.tsmiMove = new System.Windows.Forms.ToolStripMenuItem();
             this.tsmiDelete = new System.Windows.Forms.ToolStripMenuItem();
             this.notifyIcon1 = new System.Windows.Forms.NotifyIcon(this.components);
             this.lvResults = new System.Windows.Forms.ListView();
@@ -88,7 +89,7 @@
             this.lbOtherName = new System.Windows.Forms.Label();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.ultraDesktopAlert1 = new Infragistics.Win.Misc.UltraDesktopAlert(this.components);
-            this.tsmiMove = new System.Windows.Forms.ToolStripMenuItem();
+            this.tsmiCopyPath = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.lvContextMenu.SuspendLayout();
@@ -375,12 +376,13 @@
             this.toolStripMenuItem3,
             this.tsmiShowFileLocation,
             this.tsmiCopyName,
+            this.tsmiCopyPath,
             this.tsmiCopyFile,
             this.toolStripMenuItem4,
             this.tsmiMove,
             this.tsmiDelete});
             this.lvContextMenu.Name = "lvContextMenu";
-            this.lvContextMenu.Size = new System.Drawing.Size(213, 236);
+            this.lvContextMenu.Size = new System.Drawing.Size(213, 258);
             this.lvContextMenu.Text = "设置已看";
             this.lvContextMenu.Opening += new System.ComponentModel.CancelEventHandler(this.lvContextMenu_Opening);
             // 
@@ -429,7 +431,7 @@
             // 
             this.tsmiCopyName.Name = "tsmiCopyName";
             this.tsmiCopyName.Size = new System.Drawing.Size(212, 22);
-            this.tsmiCopyName.Text = "拷贝名称(&C)";
+            this.tsmiCopyName.Text = "复制名称(&C)";
             this.tsmiCopyName.Click += new System.EventHandler(this.tsmiCopyName_Click);
             // 
             // tsmiCopyFile
@@ -443,6 +445,13 @@
             // 
             this.toolStripMenuItem4.Name = "toolStripMenuItem4";
             this.toolStripMenuItem4.Size = new System.Drawing.Size(209, 6);
+            // 
+            // tsmiMove
+            // 
+            this.tsmiMove.Name = "tsmiMove";
+            this.tsmiMove.Size = new System.Drawing.Size(212, 22);
+            this.tsmiMove.Text = "移动...(&M)";
+            this.tsmiMove.Click += new System.EventHandler(this.tsmiMove_Click);
             // 
             // tsmiDelete
             // 
@@ -570,12 +579,12 @@
             this.ultraDesktopAlert1.AutoCloseDelay = 2000;
             this.ultraDesktopAlert1.DesktopAlertLinkClicked += new Infragistics.Win.Misc.DesktopAlertLinkClickedHandler(this.ultraDesktopAlert1_DesktopAlertLinkClicked);
             // 
-            // tsmiMove
+            // tsmiCopyPath
             // 
-            this.tsmiMove.Name = "tsmiMove";
-            this.tsmiMove.Size = new System.Drawing.Size(212, 22);
-            this.tsmiMove.Text = "移动...(&M)";
-            this.tsmiMove.Click += new System.EventHandler(this.tsmiMove_Click);
+            this.tsmiCopyPath.Name = "tsmiCopyPath";
+            this.tsmiCopyPath.Size = new System.Drawing.Size(212, 22);
+            this.tsmiCopyPath.Text = "复制文件完整路径(&P)";
+            this.tsmiCopyPath.Click += new System.EventHandler(this.tsmiCopyPath_Click);
             // 
             // FormMain
             // 
@@ -671,6 +680,7 @@
         private Infragistics.Win.Misc.UltraDesktopAlert ultraDesktopAlert1;
         private System.Windows.Forms.ToolStripMenuItem tsmiShowStatistics;
         private System.Windows.Forms.ToolStripMenuItem tsmiMove;
+        private System.Windows.Forms.ToolStripMenuItem tsmiCopyPath;
     }
 }
 
