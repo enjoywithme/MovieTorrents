@@ -319,7 +319,11 @@ namespace MovieTorrents
                     tssState.Image = _currentOperation == OperationNone ? Properties.Resources.InfoGree32 : Properties.Resources.InfoYellow32;
 
                 if (alert && !string.IsNullOrEmpty(infoMsg))
-                    ultraDesktopAlert1.Show("Movie torrents", infoMsg, error ? Properties.Resources.InfoRed32 : Properties.Resources.InfoGree32);
+                {
+                    notifyIcon1.BalloonTipText = infoMsg;
+                    notifyIcon1.ShowBalloonTip(2000);
+                }
+                   
 
 
             }));
@@ -1015,10 +1019,7 @@ where not exists (select 1 from tb_file where hdd_nid={_hdd_nid} and path=$path 
             ShowWindow();
         }
 
-        private void ultraDesktopAlert1_DesktopAlertLinkClicked(object sender, Infragistics.Win.Misc.DesktopAlertLinkClickedEventArgs e)
-        {
-            ShowWindow();
-        }
+        
 
         private void FormMain_Resize(object sender, EventArgs e)
         {
@@ -1336,6 +1337,16 @@ where not exists (select 1 from tb_file where hdd_nid={_hdd_nid} and path=$path 
             MessageBox.Show(result, Properties.Resources.TextHint, MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
+        private void notifyIcon1_BalloonTipClicked(object sender, EventArgs e)
+        {
+            ShowWindow();
+        }
 
+        private void lvResults_ItemDrag(object sender, ItemDragEventArgs e)
+        {
+            var data = new DataObject(DataFormats.FileDrop, (from ListViewItem item in lvResults.SelectedItems select ((TorrentFile) item.Tag).FullName).ToArray());
+            lvResults.DoDragDrop(data, DragDropEffects.Copy);
+
+        }
     }
 }

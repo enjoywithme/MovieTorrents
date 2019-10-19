@@ -70,6 +70,7 @@
             this.toolStripMenuItem3 = new System.Windows.Forms.ToolStripSeparator();
             this.tsmiShowFileLocation = new System.Windows.Forms.ToolStripMenuItem();
             this.tsmiCopyName = new System.Windows.Forms.ToolStripMenuItem();
+            this.tsmiCopyPath = new System.Windows.Forms.ToolStripMenuItem();
             this.tsmiCopyFile = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem4 = new System.Windows.Forms.ToolStripSeparator();
             this.tsmiMove = new System.Windows.Forms.ToolStripMenuItem();
@@ -88,13 +89,10 @@
             this.lbKeyName = new System.Windows.Forms.Label();
             this.lbOtherName = new System.Windows.Forms.Label();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
-            this.ultraDesktopAlert1 = new Infragistics.Win.Misc.UltraDesktopAlert(this.components);
-            this.tsmiCopyPath = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.lvContextMenu.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.ultraDesktopAlert1)).BeginInit();
             this.SuspendLayout();
             // 
             // menuStrip1
@@ -382,7 +380,7 @@
             this.tsmiMove,
             this.tsmiDelete});
             this.lvContextMenu.Name = "lvContextMenu";
-            this.lvContextMenu.Size = new System.Drawing.Size(213, 258);
+            this.lvContextMenu.Size = new System.Drawing.Size(213, 236);
             this.lvContextMenu.Text = "设置已看";
             this.lvContextMenu.Opening += new System.ComponentModel.CancelEventHandler(this.lvContextMenu_Opening);
             // 
@@ -434,6 +432,13 @@
             this.tsmiCopyName.Text = "复制名称(&C)";
             this.tsmiCopyName.Click += new System.EventHandler(this.tsmiCopyName_Click);
             // 
+            // tsmiCopyPath
+            // 
+            this.tsmiCopyPath.Name = "tsmiCopyPath";
+            this.tsmiCopyPath.Size = new System.Drawing.Size(212, 22);
+            this.tsmiCopyPath.Text = "复制文件完整路径(&P)";
+            this.tsmiCopyPath.Click += new System.EventHandler(this.tsmiCopyPath_Click);
+            // 
             // tsmiCopyFile
             // 
             this.tsmiCopyFile.Name = "tsmiCopyFile";
@@ -467,6 +472,7 @@
             this.notifyIcon1.BalloonTipTitle = "提示";
             this.notifyIcon1.Text = "Movie torrents";
             this.notifyIcon1.Visible = true;
+            this.notifyIcon1.BalloonTipClicked += new System.EventHandler(this.notifyIcon1_BalloonTipClicked);
             this.notifyIcon1.MouseClick += new System.Windows.Forms.MouseEventHandler(this.notifyIcon1_MouseClick);
             this.notifyIcon1.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.notifyIcon1_MouseDoubleClick);
             // 
@@ -492,6 +498,7 @@
             this.lvResults.TabIndex = 5;
             this.lvResults.UseCompatibleStateImageBehavior = false;
             this.lvResults.View = System.Windows.Forms.View.Details;
+            this.lvResults.ItemDrag += new System.Windows.Forms.ItemDragEventHandler(this.lvResults_ItemDrag);
             this.lvResults.SelectedIndexChanged += new System.EventHandler(this.lvResults_SelectedIndexChanged);
             this.lvResults.MouseClick += new System.Windows.Forms.MouseEventHandler(this.lvResults_MouseClick);
             this.lvResults.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.lvResults_MouseDoubleClick);
@@ -574,18 +581,6 @@
             this.pictureBox1.TabStop = false;
             this.pictureBox1.DoubleClick += new System.EventHandler(this.pictureBox1_DoubleClick);
             // 
-            // ultraDesktopAlert1
-            // 
-            this.ultraDesktopAlert1.AutoCloseDelay = 2000;
-            this.ultraDesktopAlert1.DesktopAlertLinkClicked += new Infragistics.Win.Misc.DesktopAlertLinkClickedHandler(this.ultraDesktopAlert1_DesktopAlertLinkClicked);
-            // 
-            // tsmiCopyPath
-            // 
-            this.tsmiCopyPath.Name = "tsmiCopyPath";
-            this.tsmiCopyPath.Size = new System.Drawing.Size(212, 22);
-            this.tsmiCopyPath.Text = "复制文件完整路径(&P)";
-            this.tsmiCopyPath.Click += new System.EventHandler(this.tsmiCopyPath_Click);
-            // 
             // FormMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -613,7 +608,6 @@
             this.statusStrip1.PerformLayout();
             this.lvContextMenu.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.ultraDesktopAlert1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -677,7 +671,6 @@
         private System.Windows.Forms.ToolStripStatusLabel tsCurrentDir;
         private System.Windows.Forms.ToolStripDropDownButton tsButtonWatch;
         private System.Windows.Forms.ToolStripMenuItem tsmiToggleWatch;
-        private Infragistics.Win.Misc.UltraDesktopAlert ultraDesktopAlert1;
         private System.Windows.Forms.ToolStripMenuItem tsmiShowStatistics;
         private System.Windows.Forms.ToolStripMenuItem tsmiMove;
         private System.Windows.Forms.ToolStripMenuItem tsmiCopyPath;
