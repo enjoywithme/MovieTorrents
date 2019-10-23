@@ -479,7 +479,7 @@ namespace MovieTorrents
 
                     var pName = $"@p{command.Parameters.Count}";
                     command.Parameters.AddWithValue(pName, $"%{splits[i]}%");
-                    sb.Append($" and (name like {pName} or othername like {pName} or genres like {pName})");
+                    sb.Append($" and (name like {pName} or keyname like{pName} or othername like {pName} or genres like {pName} or seecomment like {pName})");
 
                 }
             }

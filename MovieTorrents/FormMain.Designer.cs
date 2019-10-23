@@ -55,7 +55,6 @@
             this.toolStripMenuItem5 = new System.Windows.Forms.ToolStripSeparator();
             this.tsmiYearDesc = new System.Windows.Forms.ToolStripMenuItem();
             this.tsmiYearAsc = new System.Windows.Forms.ToolStripMenuItem();
-            this.tbSearchText = new System.Windows.Forms.TextBox();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.tssState = new System.Windows.Forms.ToolStripStatusLabel();
             this.tssInfo = new System.Windows.Forms.ToolStripStatusLabel();
@@ -89,6 +88,7 @@
             this.lbKeyName = new System.Windows.Forms.Label();
             this.lbOtherName = new System.Windows.Forms.Label();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
+            this.tbSearchText = new System.Windows.Forms.ComboBox();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.lvContextMenu.SuspendLayout();
@@ -294,17 +294,6 @@
             this.tsmiYearAsc.Size = new System.Drawing.Size(113, 22);
             this.tsmiYearAsc.Text = "年代 +";
             this.tsmiYearAsc.Click += new System.EventHandler(this.tsmiYearAsc_Click);
-            // 
-            // tbSearchText
-            // 
-            this.tbSearchText.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.tbSearchText.Location = new System.Drawing.Point(0, 25);
-            this.tbSearchText.Name = "tbSearchText";
-            this.tbSearchText.Size = new System.Drawing.Size(1273, 21);
-            this.tbSearchText.TabIndex = 1;
-            this.tbSearchText.TextChanged += new System.EventHandler(this.tbSearchText_TextChanged);
-            this.tbSearchText.KeyDown += new System.Windows.Forms.KeyEventHandler(this.tbSearchText_KeyDown);
             // 
             // statusStrip1
             // 
@@ -581,11 +570,27 @@
             this.pictureBox1.TabStop = false;
             this.pictureBox1.DoubleClick += new System.EventHandler(this.pictureBox1_DoubleClick);
             // 
+            // tbSearchText
+            // 
+            this.tbSearchText.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.tbSearchText.FormattingEnabled = true;
+            this.tbSearchText.Items.AddRange(new object[] {
+            "rating:>9",
+            "rating:>8"});
+            this.tbSearchText.Location = new System.Drawing.Point(0, 29);
+            this.tbSearchText.Name = "tbSearchText";
+            this.tbSearchText.Size = new System.Drawing.Size(1273, 20);
+            this.tbSearchText.TabIndex = 7;
+            this.tbSearchText.TextChanged += new System.EventHandler(this.tbSearchText_TextChanged);
+            this.tbSearchText.KeyDown += new System.Windows.Forms.KeyEventHandler(this.tbSearchText_KeyDown);
+            // 
             // FormMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1273, 583);
+            this.Controls.Add(this.tbSearchText);
             this.Controls.Add(this.lbRating);
             this.Controls.Add(this.lbOtherName);
             this.Controls.Add(this.lbKeyName);
@@ -593,7 +598,6 @@
             this.Controls.Add(this.lvResults);
             this.Controls.Add(this.pictureBox1);
             this.Controls.Add(this.statusStrip1);
-            this.Controls.Add(this.tbSearchText);
             this.Controls.Add(this.menuStrip1);
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "FormMain";
@@ -618,7 +622,6 @@
         private System.Windows.Forms.MenuStrip menuStrip1;
         private System.Windows.Forms.ToolStripMenuItem 文件FToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem tsmiExit;
-        private System.Windows.Forms.TextBox tbSearchText;
         private System.Windows.Forms.StatusStrip statusStrip1;
         private System.Windows.Forms.ContextMenuStrip lvContextMenu;
         private System.Windows.Forms.ToolStripMenuItem tsmiSetWatched;
@@ -674,6 +677,7 @@
         private System.Windows.Forms.ToolStripMenuItem tsmiShowStatistics;
         private System.Windows.Forms.ToolStripMenuItem tsmiMove;
         private System.Windows.Forms.ToolStripMenuItem tsmiCopyPath;
+        private System.Windows.Forms.ComboBox tbSearchText;
     }
 }
 
