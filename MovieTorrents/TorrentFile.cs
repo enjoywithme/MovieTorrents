@@ -30,6 +30,7 @@ namespace MovieTorrents
         public string seedate { get; set; }
         public string seecomment { get; set; }
         public string genres { get; set; }
+        public string zone { get; set; }
         public string posterpath { get; set; }
         public string doubanid { get; set; }
 
@@ -259,7 +260,7 @@ namespace MovieTorrents
             return ok;
         }
 
-        public bool EditRecord(string dbConnString,string newName,string newYear,
+        public bool EditRecord(string dbConnString,string newName,string newYear,string newZone,
             string newKeyName,string newOtherName,string newGenres,
             bool newWatched,DateTime newWatchDate,string newSeeComment,
             out string msg)
@@ -283,7 +284,7 @@ namespace MovieTorrents
             var newSeelater = newWatched ? 0 : seelater;
 
             var mDbConnection = new SQLiteConnection(dbConnString);
-            var sql = @"update tb_file set name=$name,year=$year,
+            var sql = @"update tb_file set name=$name,year=$year,zone=$zone,
 keyname=$keyname,othername=$othername,genres=$genres,
 seelater=$seelater,seeflag=$seeflag,seedate=$seedate,seecomment=$comment 
 where file_nid=$fid";
@@ -301,6 +302,7 @@ where file_nid=$fid";
                      
                     command.Parameters.AddWithValue("$name", newName);
                     command.Parameters.AddWithValue("$year", newYear);
+                    command.Parameters.AddWithValue("$zone", newZone);
                     command.Parameters.AddWithValue("$keyname", newKeyName);
                     command.Parameters.AddWithValue("$othername", newOtherName);
                     command.Parameters.AddWithValue("$genres", newGenres);
@@ -332,6 +334,7 @@ where file_nid=$fid";
 
             name = newName;
             year = newYear;
+            zone = newZone;
             keyname = newKeyName;
             otherName = newOtherName;
             genres = newGenres;
@@ -429,7 +432,7 @@ where file_nid=$fid";
             var posterImageFileName = string.Empty;
 
             var mDbConnection = new SQLiteConnection(dbConnString);
-            var sql = @"update tb_file set year=$year,keyname=$keyname,othername=$othername,doubanid=$doubanid,posterpath=$posterpath,
+            var sql = @"update tb_file set year=$year,zone=$zone,keyname=$keyname,othername=$othername,doubanid=$doubanid,posterpath=$posterpath,
 rating=$rating,genres=$genres,directors=$directors,casts=$casts where file_nid=$fid";
             var ok = true;
             try
@@ -447,6 +450,7 @@ rating=$rating,genres=$genres,directors=$directors,casts=$casts where file_nid=$
                 {
                     var command = new SQLiteCommand(sql, mDbConnection);
                     command.Parameters.AddWithValue("$year", string.IsNullOrEmpty(subject.year)?year:subject.year);
+                    command.Parameters.AddWithValue("$zone", subject.zone);
                     command.Parameters.AddWithValue("$keyname", subject.name);
                     command.Parameters.AddWithValue("$othername", string.IsNullOrEmpty(subject.othername)?otherName:subject.othername);
                     command.Parameters.AddWithValue("$doubanid", subject.id);
@@ -480,6 +484,7 @@ rating=$rating,genres=$genres,directors=$directors,casts=$casts where file_nid=$
             keyname = subject.name;
             otherName = string.IsNullOrEmpty(subject.othername) ? otherName : subject.othername;
             year = string.IsNullOrEmpty(subject.year) ? year : subject.year;
+            zone = string.IsNullOrEmpty(subject.zone) ? zone : subject.zone;
             posterpath = posterImageFileName;
             doubanid = subject.id;
             rating = subject.Rating;

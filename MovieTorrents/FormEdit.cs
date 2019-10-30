@@ -24,6 +24,7 @@ namespace MovieTorrents
         {
             tbOldName.Text = tbNewName.Text = _torrentFile.name;
             tbYear.Text = _torrentFile.year;
+            tbZone.Text = _torrentFile.zone;
             tbKeyName.Text = _torrentFile.keyname;
             tbOtherName.Text = _torrentFile.otherName;
             tbGenres.Text = _torrentFile.genres;
@@ -43,7 +44,7 @@ namespace MovieTorrents
                 return;
             }
 
-            if (!_torrentFile.EditRecord(FormMain.DbConnectionString, newName,tbYear.Text,
+            if (!_torrentFile.EditRecord(FormMain.DbConnectionString, newName,tbYear.Text,tbZone.Text,
                 tbKeyName.Text,tbOtherName.Text,tbGenres.Text,
                 cbWatched.Checked,dtPicker.Value,tbComment.Text,
                 out var msg))

@@ -101,7 +101,7 @@ namespace MovieTorrents
             notifyIcon1.Icon = Icon;
 
 
-            lbGenres.Text = lbKeyName.Text = lbOtherName.Text = lbRating.Text = string.Empty;
+            lbGenres.Text = lbKeyName.Text = lbOtherName.Text = lbZone.Text = lbRating.Text = string.Empty;
 
             StartFileWatch();
 
@@ -576,6 +576,7 @@ namespace MovieTorrents
                                 ext = (string)reader["ext"],
                                 rating = (double)reader["rating"],
                                 year = GetReaderFieldString(reader, "year"),
+                                zone = GetReaderFieldString(reader, "zone"),
                                 seelater = (long)reader["seelater"],
                                 seeflag = (long)reader["seeflag"],
                                 posterpath = GetReaderFieldString(reader, "posterpath"),
@@ -670,7 +671,7 @@ namespace MovieTorrents
         }
         private void RefreshSelected(TorrentFile torrentFile = null)
         {
-            lbGenres.Text = lbRating.Text = lbOtherName.Text = lbKeyName.Text = null;
+            lbGenres.Text = lbRating.Text = lbOtherName.Text = lbKeyName.Text =lbZone.Text = null;
             if (pictureBox1.Image != null)
             {
                 pictureBox1.Image.Dispose();
@@ -694,6 +695,7 @@ namespace MovieTorrents
             lbGenres.Text = torrentFile.genres;
             lbKeyName.Text = torrentFile.keyname;
             lbOtherName.Text = torrentFile.otherName;
+            lbZone.Text = torrentFile.zone;
             lbRating.Text = Math.Abs(torrentFile.rating) < 0.0001 ? null : torrentFile.rating.ToString(CultureInfo.InvariantCulture);
 
             if (string.IsNullOrEmpty(torrentFile.RealPosterPath) || !File.Exists(torrentFile.RealPosterPath)) return;
@@ -997,7 +999,7 @@ where not exists (select 1 from tb_file where hdd_nid={_hdd_nid} and path=$path 
             Show();
             WindowState = FormWindowState.Normal;
 
-            WinApi.ForceShowToFront(Handle);
+            //WinApi.ForceShowToFront(Handle);
             Activate();
 
         }

@@ -23,6 +23,7 @@ namespace MovieTorrents
         public string othername { get; set; }
         public string type { get; set; }
         public string year { get; set; }
+        public string zone { get; set; }
         public string casts { get; set; }
         public string directors { get; set; }
         public string genres { get; set; }
@@ -160,7 +161,7 @@ namespace MovieTorrents
                 msg = e.Message;
             }
 #else
-            jsonText = File.ReadAllText("douban_suggest_sbuject.json");
+            jsonText = File.ReadAllText(FormMain.CurrentPath + "\\temp\\douban_suggest_sbuject.json");
 
 #endif
 
@@ -273,7 +274,7 @@ namespace MovieTorrents
             }
 #else
 
-            html = File.ReadAllText("sample_subject.html");
+            html = File.ReadAllText(FormMain.CurrentPath + "\\temp\\sample_subject_standard.html");
 #endif
 
             if (string.IsNullOrEmpty(html)) return false;
@@ -284,6 +285,10 @@ namespace MovieTorrents
             //<span class="year">(2014)</span>
             match = Regex.Match(html, "<span class=\"year\">\\((\\d{4})\\)<\\/span>");
             if (match.Success) year = match.Groups[1].Value;
+
+            //<span class="pl">制片国家/地区:</span> 美国 / 英国 / 加拿大 / 冰岛<br/>
+            match = Regex.Match(html, "地区:<\\/span>([\\s\\S]*?)<br\\/>");
+            if (match.Success) zone = match.Groups[1].Value;
 
             // https://www.regextester.com/93588
             //<script type="application/ld+json"></script>

@@ -89,6 +89,7 @@
             this.lbOtherName = new System.Windows.Forms.Label();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.tbSearchText = new System.Windows.Forms.ComboBox();
+            this.lbZone = new System.Windows.Forms.Label();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.lvContextMenu.SuspendLayout();
@@ -526,7 +527,7 @@
             // 
             // lbGenres
             // 
-            this.lbGenres.Location = new System.Drawing.Point(12, 472);
+            this.lbGenres.Location = new System.Drawing.Point(14, 445);
             this.lbGenres.Name = "lbGenres";
             this.lbGenres.Size = new System.Drawing.Size(98, 44);
             this.lbGenres.TabIndex = 1;
@@ -585,6 +586,15 @@
             this.tbSearchText.TextChanged += new System.EventHandler(this.tbSearchText_TextChanged);
             this.tbSearchText.KeyDown += new System.Windows.Forms.KeyEventHandler(this.tbSearchText_KeyDown);
             // 
+            // lbZone
+            // 
+            this.lbZone.Location = new System.Drawing.Point(12, 513);
+            this.lbZone.Name = "lbZone";
+            this.lbZone.Size = new System.Drawing.Size(98, 44);
+            this.lbZone.TabIndex = 1;
+            this.lbZone.Text = "zone";
+            this.lbZone.TextAlign = System.Drawing.ContentAlignment.TopCenter;
+            // 
             // FormMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -594,6 +604,7 @@
             this.Controls.Add(this.lbRating);
             this.Controls.Add(this.lbOtherName);
             this.Controls.Add(this.lbKeyName);
+            this.Controls.Add(this.lbZone);
             this.Controls.Add(this.lbGenres);
             this.Controls.Add(this.lvResults);
             this.Controls.Add(this.pictureBox1);
@@ -678,6 +689,7 @@
         private System.Windows.Forms.ToolStripMenuItem tsmiMove;
         private System.Windows.Forms.ToolStripMenuItem tsmiCopyPath;
         private System.Windows.Forms.ComboBox tbSearchText;
+        private System.Windows.Forms.Label lbZone;
     }
 }
 

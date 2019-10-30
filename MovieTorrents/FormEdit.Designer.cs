@@ -47,6 +47,8 @@
             this.label8 = new System.Windows.Forms.Label();
             this.dtPicker = new System.Windows.Forms.DateTimePicker();
             this.cbWatched = new System.Windows.Forms.CheckBox();
+            this.label9 = new System.Windows.Forms.Label();
+            this.tbZone = new System.Windows.Forms.TextBox();
             this.SuspendLayout();
             // 
             // label1
@@ -211,6 +213,22 @@
             this.cbWatched.Text = "已看";
             this.cbWatched.UseVisualStyleBackColor = true;
             // 
+            // label9
+            // 
+            this.label9.AutoSize = true;
+            this.label9.Location = new System.Drawing.Point(213, 115);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(53, 12);
+            this.label9.TabIndex = 0;
+            this.label9.Text = "制片地区";
+            // 
+            // tbZone
+            // 
+            this.tbZone.Location = new System.Drawing.Point(272, 112);
+            this.tbZone.Name = "tbZone";
+            this.tbZone.Size = new System.Drawing.Size(175, 21);
+            this.tbZone.TabIndex = 1;
+            // 
             // FormEdit
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -230,6 +248,8 @@
             this.Controls.Add(this.label4);
             this.Controls.Add(this.tbGenres);
             this.Controls.Add(this.label6);
+            this.Controls.Add(this.tbZone);
+            this.Controls.Add(this.label9);
             this.Controls.Add(this.tbYear);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.tbNewName);
@@ -270,5 +290,7 @@
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.DateTimePicker dtPicker;
         private System.Windows.Forms.CheckBox cbWatched;
+        private System.Windows.Forms.Label label9;
+        private System.Windows.Forms.TextBox tbZone;
     }
 }
