@@ -495,6 +495,13 @@ namespace MovieTorrents
                     sb.Append(" and  doubanid not in(select DISTINCT doubanid from tb_file where seeflag=1 and doubanid<>'')");
             }
 
+            if (tsmiFilterSeeNoWant.Checked)
+            {
+                sb.Append(" and seenowant=0");
+                if (tsmiHideSameSubject.Checked)
+                    sb.Append(" and  doubanid not in(select DISTINCT doubanid from tb_file where seenowant=1 and doubanid<>'')");
+            }
+
             //限制条数
             var limitClause="";
             if (tsmiLimit100.Checked)
@@ -578,6 +585,7 @@ namespace MovieTorrents
                                 year = GetReaderFieldString(reader, "year"),
                                 zone = GetReaderFieldString(reader, "zone"),
                                 seelater = (long)reader["seelater"],
+                                seenowant = (long)reader["seenowant"],
                                 seeflag = (long)reader["seeflag"],
                                 posterpath = GetReaderFieldString(reader, "posterpath"),
                                 genres = GetReaderFieldString(reader, "genres"),
@@ -607,6 +615,7 @@ namespace MovieTorrents
                                 torrentFile.rating.ToString(),
                                 torrentFile.year,
                                 torrentFile.seelater.ToString(),
+                                torrentFile.seenowant.ToString(),
                                 torrentFile.seeflag.ToString(),
                                 torrentFile.seedate,
                                 torrentFile.seecomment
@@ -688,9 +697,10 @@ namespace MovieTorrents
             lvItem.SubItems[1].Text = torrentFile.rating.ToString(CultureInfo.InvariantCulture);
             lvItem.SubItems[2].Text = torrentFile.year;
             lvItem.SubItems[3].Text = torrentFile.seelater.ToString();
-            lvItem.SubItems[4].Text = torrentFile.seeflag.ToString();
-            lvItem.SubItems[5].Text = torrentFile.seedate;
-            lvItem.SubItems[6].Text = torrentFile.seecomment;
+            lvItem.SubItems[4].Text = torrentFile.seenowant.ToString();
+            lvItem.SubItems[5].Text = torrentFile.seeflag.ToString();
+            lvItem.SubItems[6].Text = torrentFile.seedate;
+            lvItem.SubItems[7].Text = torrentFile.seecomment;
 
             lbGenres.Text = torrentFile.genres;
             lbKeyName.Text = torrentFile.keyname;
@@ -1067,13 +1077,13 @@ where not exists (select 1 from tb_file where hdd_nid={_hdd_nid} and path=$path 
         private void tsmiFilterWatched_Click(object sender, EventArgs e)
         {
             tsmiFilterWatched.Checked = !tsmiFilterWatched.Checked;
-            tsmiHideSameSubject.Enabled = tsmiFilterNotWatched.Checked && !tsmiFilterWatched.Checked;
+            tsmiHideSameSubject.Enabled = (tsmiFilterNotWatched.Checked || !tsmiFilterSeeNoWant.Checked) && !tsmiFilterWatched.Checked;
             DoSearch();
         }
         private void tsmiFilterNotWatched_Click(object sender, EventArgs e)
         {
             tsmiFilterNotWatched.Checked = !tsmiFilterNotWatched.Checked;
-            tsmiHideSameSubject.Enabled = tsmiFilterNotWatched.Checked && !tsmiFilterWatched.Checked;
+            tsmiHideSameSubject.Enabled = (tsmiFilterNotWatched.Checked || !tsmiFilterSeeNoWant.Checked) && !tsmiFilterWatched.Checked;
             DoSearch();
         }
         private void tsmiHideSameSubject_Click(object sender, EventArgs e)
@@ -1349,6 +1359,28 @@ where not exists (select 1 from tb_file where hdd_nid={_hdd_nid} and path=$path 
             var data = new DataObject(DataFormats.FileDrop, (from ListViewItem item in lvResults.SelectedItems select ((TorrentFile) item.Tag).FullName).ToArray());
             lvResults.DoDragDrop(data, DragDropEffects.Copy);
 
+        }
+
+        private void tsmiToggleSeeNoWant_Click(object sender, EventArgs e)
+        {
+            if (lvResults.SelectedItems.Count == 0) return;
+            var lvItem = lvResults.SelectedItems[0];
+            var torrentFile = (TorrentFile)lvItem.Tag;
+
+            if (!torrentFile.ToggleSeeNoWant(DbConnectionString, out var msg))
+            {
+                MessageBox.Show(msg, Properties.Resources.TextError, MessageBoxButtons.YesNo, MessageBoxIcon.Error);
+                return;
+            }
+
+            lvItem.SubItems[4].Text = torrentFile.seenowant.ToString();
+        }
+
+        private void tsmiFilterSeeNoWant_Click(object sender, EventArgs e)
+        {
+            tsmiFilterSeeNoWant.Checked = !tsmiFilterSeeNoWant.Checked;
+            tsmiHideSameSubject.Enabled = (tsmiFilterNotWatched.Checked || !tsmiFilterSeeNoWant.Checked) && !tsmiFilterWatched.Checked;
+            DoSearch();
         }
     }
 }

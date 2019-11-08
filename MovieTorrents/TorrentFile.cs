@@ -27,6 +27,7 @@ namespace MovieTorrents
         public string year { get; set; }
         public long seelater { get; set; }
         public long seeflag { get; set; }
+        public long seenowant { get; set; }
         public string seedate { get; set; }
         public string seecomment { get; set; }
         public string genres { get; set; }
@@ -135,6 +136,42 @@ namespace MovieTorrents
             catch (Exception e)
             {
                 msg=e.Message;
+                ok = false;
+            }
+
+            return ok;
+        }
+
+        public bool ToggleSeeNoWant(string dbConnString, out string msg)
+        {
+            msg = string.Empty;
+            var mDbConnection = new SQLiteConnection(dbConnString);
+
+            var sql = $"update tb_file set seenowant = case seenowant when 1 then 0 else 1 end where file_nid=$fid";
+            var ok = true;
+            try
+            {
+                mDbConnection.Open();
+                try
+                {
+                    var command = new SQLiteCommand(sql, mDbConnection);
+                    command.Parameters.AddWithValue("$fid", fid);
+                    command.ExecuteNonQuery();
+
+                    seenowant = seenowant == 1 ? 0 : 1;
+                }
+                catch (Exception e)
+                {
+                    msg = e.Message;
+                    ok = false;
+                }
+
+                mDbConnection.Close();
+
+            }
+            catch (Exception e)
+            {
+                msg = e.Message;
                 ok = false;
             }
 
@@ -511,7 +548,8 @@ doubanid=(select doubanid from tb_file where file_nid=$fid),
 rating=(select rating from tb_file where file_nid=$fid),
 casts=(select casts from tb_file where file_nid=$fid),
 directors=(select directors from tb_file where file_nid=$fid),
-genres=(select genres from tb_file where file_nid=$fid)
+genres=(select genres from tb_file where file_nid=$fid),
+zone=(select zone from tb_file where file_nid=$fid)
 where file_nid in ({sFids})";
             var ok = true;
             try
