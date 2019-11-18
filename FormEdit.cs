@@ -24,9 +24,14 @@ namespace MovieTorrents
         {
             tbOldName.Text = tbNewName.Text = _torrentFile.name;
             tbYear.Text = _torrentFile.year;
+            tbZone.Text = _torrentFile.zone;
             tbKeyName.Text = _torrentFile.keyname;
             tbOtherName.Text = _torrentFile.otherName;
             tbGenres.Text = _torrentFile.genres;
+            cbWatched.Checked = _torrentFile.seeflag == 1;
+            dtPicker.Value = _torrentFile.SeeDate;
+            tbComment.Text = _torrentFile.seecomment;
+
         }
 
         private void btOk_Click(object sender, EventArgs e)
@@ -39,7 +44,10 @@ namespace MovieTorrents
                 return;
             }
 
-            if (!_torrentFile.EditRecord(FormMain.DbConnectionString, newName,tbYear.Text,tbKeyName.Text,tbOtherName.Text,tbGenres.Text, out var msg))
+            if (!_torrentFile.EditRecord(FormMain.DbConnectionString, newName,tbYear.Text,tbZone.Text,
+                tbKeyName.Text,tbOtherName.Text,tbGenres.Text,
+                cbWatched.Checked,dtPicker.Value,tbComment.Text,
+                out var msg))
             {
                 MessageBox.Show(msg, "错误", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;

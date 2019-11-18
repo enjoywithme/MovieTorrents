@@ -33,7 +33,7 @@
             this.label2 = new System.Windows.Forms.Label();
             this.tbNewName = new System.Windows.Forms.TextBox();
             this.btOk = new System.Windows.Forms.Button();
-            this.button2 = new System.Windows.Forms.Button();
+            this.btCancel = new System.Windows.Forms.Button();
             this.label3 = new System.Windows.Forms.Label();
             this.tbYear = new System.Windows.Forms.TextBox();
             this.label4 = new System.Windows.Forms.Label();
@@ -42,6 +42,13 @@
             this.tbOtherName = new System.Windows.Forms.TextBox();
             this.label6 = new System.Windows.Forms.Label();
             this.tbGenres = new System.Windows.Forms.TextBox();
+            this.tbComment = new System.Windows.Forms.TextBox();
+            this.label7 = new System.Windows.Forms.Label();
+            this.label8 = new System.Windows.Forms.Label();
+            this.dtPicker = new System.Windows.Forms.DateTimePicker();
+            this.cbWatched = new System.Windows.Forms.CheckBox();
+            this.label9 = new System.Windows.Forms.Label();
+            this.tbZone = new System.Windows.Forms.TextBox();
             this.SuspendLayout();
             // 
             // label1
@@ -75,27 +82,27 @@
             this.tbNewName.Location = new System.Drawing.Point(66, 76);
             this.tbNewName.Name = "tbNewName";
             this.tbNewName.Size = new System.Drawing.Size(381, 21);
-            this.tbNewName.TabIndex = 1;
+            this.tbNewName.TabIndex = 0;
             // 
             // btOk
             // 
             this.btOk.Location = new System.Drawing.Point(476, 34);
             this.btOk.Name = "btOk";
             this.btOk.Size = new System.Drawing.Size(75, 23);
-            this.btOk.TabIndex = 2;
+            this.btOk.TabIndex = 8;
             this.btOk.Text = "确定(&O)";
             this.btOk.UseVisualStyleBackColor = true;
             this.btOk.Click += new System.EventHandler(this.btOk_Click);
             // 
-            // button2
+            // btCancel
             // 
-            this.button2.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.button2.Location = new System.Drawing.Point(476, 75);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(75, 23);
-            this.button2.TabIndex = 2;
-            this.button2.Text = "取消(&C)";
-            this.button2.UseVisualStyleBackColor = true;
+            this.btCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            this.btCancel.Location = new System.Drawing.Point(476, 75);
+            this.btCancel.Name = "btCancel";
+            this.btCancel.Size = new System.Drawing.Size(75, 23);
+            this.btCancel.TabIndex = 9;
+            this.btCancel.Text = "取消(&C)";
+            this.btCancel.UseVisualStyleBackColor = true;
             // 
             // label3
             // 
@@ -127,13 +134,13 @@
             this.tbKeyName.Location = new System.Drawing.Point(66, 151);
             this.tbKeyName.Multiline = true;
             this.tbKeyName.Name = "tbKeyName";
-            this.tbKeyName.Size = new System.Drawing.Size(381, 63);
-            this.tbKeyName.TabIndex = 1;
+            this.tbKeyName.Size = new System.Drawing.Size(381, 37);
+            this.tbKeyName.TabIndex = 2;
             // 
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(6, 234);
+            this.label5.Location = new System.Drawing.Point(6, 208);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(53, 12);
             this.label5.TabIndex = 0;
@@ -141,16 +148,16 @@
             // 
             // tbOtherName
             // 
-            this.tbOtherName.Location = new System.Drawing.Point(66, 231);
+            this.tbOtherName.Location = new System.Drawing.Point(66, 205);
             this.tbOtherName.Multiline = true;
             this.tbOtherName.Name = "tbOtherName";
-            this.tbOtherName.Size = new System.Drawing.Size(381, 63);
-            this.tbOtherName.TabIndex = 1;
+            this.tbOtherName.Size = new System.Drawing.Size(381, 34);
+            this.tbOtherName.TabIndex = 3;
             // 
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(30, 315);
+            this.label6.Location = new System.Drawing.Point(30, 260);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(29, 12);
             this.label6.TabIndex = 0;
@@ -158,17 +165,82 @@
             // 
             // tbGenres
             // 
-            this.tbGenres.Location = new System.Drawing.Point(66, 312);
+            this.tbGenres.Location = new System.Drawing.Point(66, 257);
             this.tbGenres.Name = "tbGenres";
             this.tbGenres.Size = new System.Drawing.Size(381, 21);
-            this.tbGenres.TabIndex = 1;
+            this.tbGenres.TabIndex = 4;
+            // 
+            // tbComment
+            // 
+            this.tbComment.Location = new System.Drawing.Point(66, 325);
+            this.tbComment.Multiline = true;
+            this.tbComment.Name = "tbComment";
+            this.tbComment.Size = new System.Drawing.Size(381, 73);
+            this.tbComment.TabIndex = 6;
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(18, 325);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(29, 12);
+            this.label7.TabIndex = 4;
+            this.label7.Text = "评论";
+            // 
+            // label8
+            // 
+            this.label8.AutoSize = true;
+            this.label8.Location = new System.Drawing.Point(7, 294);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(53, 12);
+            this.label8.TabIndex = 5;
+            this.label8.Text = "观看日期";
+            // 
+            // dtPicker
+            // 
+            this.dtPicker.Location = new System.Drawing.Point(66, 288);
+            this.dtPicker.Name = "dtPicker";
+            this.dtPicker.Size = new System.Drawing.Size(200, 21);
+            this.dtPicker.TabIndex = 5;
+            // 
+            // cbWatched
+            // 
+            this.cbWatched.AutoSize = true;
+            this.cbWatched.Location = new System.Drawing.Point(369, 293);
+            this.cbWatched.Name = "cbWatched";
+            this.cbWatched.Size = new System.Drawing.Size(48, 16);
+            this.cbWatched.TabIndex = 7;
+            this.cbWatched.Text = "已看";
+            this.cbWatched.UseVisualStyleBackColor = true;
+            // 
+            // label9
+            // 
+            this.label9.AutoSize = true;
+            this.label9.Location = new System.Drawing.Point(213, 115);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(53, 12);
+            this.label9.TabIndex = 0;
+            this.label9.Text = "制片地区";
+            // 
+            // tbZone
+            // 
+            this.tbZone.Location = new System.Drawing.Point(272, 112);
+            this.tbZone.Name = "tbZone";
+            this.tbZone.Size = new System.Drawing.Size(175, 21);
+            this.tbZone.TabIndex = 1;
             // 
             // FormEdit
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(579, 370);
-            this.Controls.Add(this.button2);
+            this.CancelButton = this.btCancel;
+            this.ClientSize = new System.Drawing.Size(579, 416);
+            this.Controls.Add(this.cbWatched);
+            this.Controls.Add(this.tbComment);
+            this.Controls.Add(this.label7);
+            this.Controls.Add(this.label8);
+            this.Controls.Add(this.dtPicker);
+            this.Controls.Add(this.btCancel);
             this.Controls.Add(this.btOk);
             this.Controls.Add(this.tbOtherName);
             this.Controls.Add(this.label5);
@@ -176,6 +248,8 @@
             this.Controls.Add(this.label4);
             this.Controls.Add(this.tbGenres);
             this.Controls.Add(this.label6);
+            this.Controls.Add(this.tbZone);
+            this.Controls.Add(this.label9);
             this.Controls.Add(this.tbYear);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.tbNewName);
@@ -202,7 +276,7 @@
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.TextBox tbNewName;
         private System.Windows.Forms.Button btOk;
-        private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.Button btCancel;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.TextBox tbYear;
         private System.Windows.Forms.Label label4;
@@ -211,5 +285,12 @@
         private System.Windows.Forms.TextBox tbOtherName;
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.TextBox tbGenres;
+        private System.Windows.Forms.TextBox tbComment;
+        private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.Label label8;
+        private System.Windows.Forms.DateTimePicker dtPicker;
+        private System.Windows.Forms.CheckBox cbWatched;
+        private System.Windows.Forms.Label label9;
+        private System.Windows.Forms.TextBox tbZone;
     }
 }

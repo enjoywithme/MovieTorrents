@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Data.SQLite;
 using System.Diagnostics;
 using System.IO;
@@ -26,14 +27,22 @@ namespace MovieTorrents
         public string year { get; set; }
         public long seelater { get; set; }
         public long seeflag { get; set; }
+        public long seenowant { get; set; }
         public string seedate { get; set; }
         public string seecomment { get; set; }
         public string genres { get; set; }
+        public string zone { get; set; }
         public string posterpath { get; set; }
         public string doubanid { get; set; }
 
         public string FullName => area + path + name + ext;
 
+        public DateTime SeeDate { get {
+            var seeDate = DateTime.Today;
+            if (!string.IsNullOrEmpty(seedate) && DateTime.TryParse(seedate, out var d))
+                seeDate = d;
+            return seeDate;
+        } }
 
         public string RealPosterPath
         {
@@ -99,12 +108,12 @@ namespace MovieTorrents
             }
         }
 
-        public bool MarkSeelater(string dbConnString,out string msg)
+        public bool ToggleSeelater(string dbConnString,out string msg)
         {
             msg = string.Empty;
             var mDbConnection = new SQLiteConnection(dbConnString);
 
-            var sql = $"update tb_file set seelater=1 where file_nid=$fid";
+            var sql = $"update tb_file set seelater = case seelater when 1 then 0 else 1 end where file_nid=$fid";
             var ok = true;
             try
             {
@@ -127,6 +136,42 @@ namespace MovieTorrents
             catch (Exception e)
             {
                 msg=e.Message;
+                ok = false;
+            }
+
+            return ok;
+        }
+
+        public bool ToggleSeeNoWant(string dbConnString, out string msg)
+        {
+            msg = string.Empty;
+            var mDbConnection = new SQLiteConnection(dbConnString);
+
+            var sql = $"update tb_file set seenowant = case seenowant when 1 then 0 else 1 end where file_nid=$fid";
+            var ok = true;
+            try
+            {
+                mDbConnection.Open();
+                try
+                {
+                    var command = new SQLiteCommand(sql, mDbConnection);
+                    command.Parameters.AddWithValue("$fid", fid);
+                    command.ExecuteNonQuery();
+
+                    seenowant = seenowant == 1 ? 0 : 1;
+                }
+                catch (Exception e)
+                {
+                    msg = e.Message;
+                    ok = false;
+                }
+
+                mDbConnection.Close();
+
+            }
+            catch (Exception e)
+            {
+                msg = e.Message;
                 ok = false;
             }
 
@@ -172,6 +217,49 @@ namespace MovieTorrents
             return ok;
         }
 
+        public bool MoveTo(string dbConnString, string destFolder, out string msg)
+        {
+            msg = string.Empty;
+            var mDbConnection = new SQLiteConnection(dbConnString);
+
+            var sql = $"update tb_file set path=$path where file_nid=$fid";
+            bool ok;
+            var newPath = destFolder.Substring(Path.GetPathRoot(destFolder).Length) + "\\";
+
+            try
+            {
+                mDbConnection.Open();
+                try
+                {
+                    
+                    var destFullName = destFolder +"\\" + name + ext;
+                    File.Move(FullName, destFullName);
+
+                    var command = new SQLiteCommand(sql, mDbConnection);
+                    command.Parameters.AddWithValue("$path", newPath);
+                    command.Parameters.AddWithValue("$fid", fid);
+                    ok = command.ExecuteNonQuery() > 0;
+                }
+                catch (Exception e)
+                {
+                    msg = e.Message;
+                    ok = false;
+                }
+
+                mDbConnection.Close();
+
+            }
+            catch (Exception e)
+            {
+                msg = e.Message;
+                ok = false;
+            }
+
+            if (ok) path = newPath;
+
+            return ok;
+        }
+
         public bool DeleteFromDb(string dbConnString,bool deleteFile,out string msg)
         {
             msg = string.Empty;
@@ -209,8 +297,9 @@ namespace MovieTorrents
             return ok;
         }
 
-        public bool EditRecord(string dbConnString,string newName,string newYear,
+        public bool EditRecord(string dbConnString,string newName,string newYear,string newZone,
             string newKeyName,string newOtherName,string newGenres,
+            bool newWatched,DateTime newWatchDate,string newSeeComment,
             out string msg)
         {
             msg = string.Empty;
@@ -227,10 +316,15 @@ namespace MovieTorrents
                     return false;
                 }
             }
-            
+
+            var watchDate =newWatched?newWatchDate.ToString("yyyy-MM-dd"):"";
+            var newSeelater = newWatched ? 0 : seelater;
 
             var mDbConnection = new SQLiteConnection(dbConnString);
-            var sql = @"update tb_file set name=$name,year=$year,keyname=$keyname,othername=$othername,genres=$genres where file_nid=$fid";
+            var sql = @"update tb_file set name=$name,year=$year,zone=$zone,
+keyname=$keyname,othername=$othername,genres=$genres,
+seelater=$seelater,seeflag=$seeflag,seedate=$seedate,seecomment=$comment 
+where file_nid=$fid";
             var ok = true;
             try
             {
@@ -242,11 +336,17 @@ namespace MovieTorrents
                     if(reNameFile) File.Move(FullName, newFullName);
 
                     var command = new SQLiteCommand(sql, mDbConnection);
+                     
                     command.Parameters.AddWithValue("$name", newName);
                     command.Parameters.AddWithValue("$year", newYear);
+                    command.Parameters.AddWithValue("$zone", newZone);
                     command.Parameters.AddWithValue("$keyname", newKeyName);
                     command.Parameters.AddWithValue("$othername", newOtherName);
                     command.Parameters.AddWithValue("$genres", newGenres);
+                    command.Parameters.AddWithValue("seelater", newSeelater);
+                    command.Parameters.AddWithValue("$seeflag", newWatched?1:0);
+                    command.Parameters.AddWithValue("$seedate", watchDate);
+                    command.Parameters.AddWithValue("$comment", newSeeComment);
                     command.Parameters.AddWithValue("$fid", fid);
                     command.ExecuteNonQuery();
                 }
@@ -271,9 +371,14 @@ namespace MovieTorrents
 
             name = newName;
             year = newYear;
+            zone = newZone;
             keyname = newKeyName;
             otherName = newOtherName;
             genres = newGenres;
+            seelater = newSeelater;
+            seeflag = newWatched ? 1 : 0;
+            seedate = watchDate;
+            seecomment = newSeeComment;
 
             return true;
         }
@@ -310,13 +415,61 @@ namespace MovieTorrents
             return watched;
         }
 
+        public static string CountStatistics(string dbConnString, out string msg)
+        {
+            msg = string.Empty;
+            var sb = new StringBuilder();
+            var connection = new SQLiteConnection(dbConnString);
+            var sql = $"select count(*) as watched from filelist_view where seeflag=1";
+            try
+            {
+                connection.Open();
+                try
+                {
+                    var command = new SQLiteCommand("select count(*) as total from filelist_view", connection);
+                    sb.AppendLine($"总共 {command.ExecuteScalar()} 种子文件");
+
+                    command = new SQLiteCommand("select count(*) from (select DISTINCT doubanid from filelist_view where doubanid<>'' and doubanid<>'0' and doubanid is not null)", connection);
+                    sb.AppendLine($"已知电影数 {command.ExecuteScalar()}（有豆瓣编号）");
+
+                    command = new SQLiteCommand("select count(*) as watched from filelist_view where seeflag=1", connection);
+                    sb.AppendLine($"已看 {command.ExecuteScalar()}");
+
+                    sb.AppendLine("过去5年观看数：");
+
+                    var thisYear = DateTime.Now.Year;
+                    command = new SQLiteCommand("select count(*) from filelist_view where strftime('%Y', seedate)=@year ", connection);
+                    command.Parameters.Add("@year", DbType.String, 10);
+                    command.Prepare();
+                    for (var i = 0; i < 5; i++)
+                    {
+                        command.Parameters["@year"].Value = (thisYear - i).ToString();
+                        sb.AppendLine($"{ thisYear - i} / {command.ExecuteScalar()}");
+                    }
+                }
+                catch (Exception e)
+                {
+                    msg = e.Message;
+                }
+
+                connection.Close();
+
+            }
+            catch (Exception e)
+            {
+                msg = e.Message;
+            }
+
+            return sb.ToString();
+        }
+
         public bool UpdateDoubanInfo(string dbConnString,DoubanSubject subject,out string msg)
         {
             msg = string.Empty;
             var posterImageFileName = string.Empty;
 
             var mDbConnection = new SQLiteConnection(dbConnString);
-            var sql = @"update tb_file set year=$year,keyname=$keyname,othername=$othername,doubanid=$doubanid,posterpath=$posterpath,
+            var sql = @"update tb_file set year=$year,zone=$zone,keyname=$keyname,othername=$othername,doubanid=$doubanid,posterpath=$posterpath,
 rating=$rating,genres=$genres,directors=$directors,casts=$casts where file_nid=$fid";
             var ok = true;
             try
@@ -334,6 +487,7 @@ rating=$rating,genres=$genres,directors=$directors,casts=$casts where file_nid=$
                 {
                     var command = new SQLiteCommand(sql, mDbConnection);
                     command.Parameters.AddWithValue("$year", string.IsNullOrEmpty(subject.year)?year:subject.year);
+                    command.Parameters.AddWithValue("$zone", subject.zone);
                     command.Parameters.AddWithValue("$keyname", subject.name);
                     command.Parameters.AddWithValue("$othername", string.IsNullOrEmpty(subject.othername)?otherName:subject.othername);
                     command.Parameters.AddWithValue("$doubanid", subject.id);
@@ -367,6 +521,7 @@ rating=$rating,genres=$genres,directors=$directors,casts=$casts where file_nid=$
             keyname = subject.name;
             otherName = string.IsNullOrEmpty(subject.othername) ? otherName : subject.othername;
             year = string.IsNullOrEmpty(subject.year) ? year : subject.year;
+            zone = string.IsNullOrEmpty(subject.zone) ? zone : subject.zone;
             posterpath = posterImageFileName;
             doubanid = subject.id;
             rating = subject.Rating;
@@ -393,7 +548,8 @@ doubanid=(select doubanid from tb_file where file_nid=$fid),
 rating=(select rating from tb_file where file_nid=$fid),
 casts=(select casts from tb_file where file_nid=$fid),
 directors=(select directors from tb_file where file_nid=$fid),
-genres=(select genres from tb_file where file_nid=$fid)
+genres=(select genres from tb_file where file_nid=$fid),
+zone=(select zone from tb_file where file_nid=$fid)
 where file_nid in ({sFids})";
             var ok = true;
             try

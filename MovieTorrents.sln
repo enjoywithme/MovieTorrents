@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.28307.168
+VisualStudioVersion = 15.0.28307.902
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MovieTorrents", "MovieTorrents.csproj", "{610C0ADD-78E8-4B12-88D8-B5BFDDAB375C}"
 EndProject
@@ -20,6 +20,6 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {CC5AA452-A89F-4237-B2AD-7338352BB8ED}
+		SolutionGuid = {21901035-ED91-4DAD-B9F6-3BEF73637951}
 	EndGlobalSection
 EndGlobal
