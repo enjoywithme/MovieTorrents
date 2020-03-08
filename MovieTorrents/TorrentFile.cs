@@ -57,7 +57,7 @@ namespace MovieTorrents
         private static string[] PRE_CLEARS = { "WEB_DL", "DD5.1", "[0-9]*(?:\\.[0-9]*)?[GM]B?" };
         private static Regex BAD_CHARS = new Regex(@"[\[.\]()_-]");
         private static string[] BAD_WORDS = { "1080P", "720P", "x26[45]", "H26[45]", "BluRay", "AC3", " DTS ", "2Audios?", "FLAME", "IMAX",
-            "中英字幕", "国英双语","国英音轨" };
+            "中英字幕", "国英双语","国英音轨","香港","动作","有广告","BT下载","国粤双语中英双字","中英双字","未删节特别版","特效英语中字" };
         private static string[] RELEASE_GROUPS = { "SPARKS", "CMCT", "FGT", "KOOK" };
         public string PurifiedName
         {

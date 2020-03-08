@@ -1382,5 +1382,10 @@ where not exists (select 1 from tb_file where hdd_nid={_hdd_nid} and path=$path 
             tsmiHideSameSubject.Enabled = (tsmiFilterNotWatched.Checked || !tsmiFilterSeeNoWant.Checked) && !tsmiFilterWatched.Checked;
             DoSearch();
         }
+
+        private void tsbSearchDouban_Click(object sender, EventArgs e)
+        {
+            tsmiSearchDouban_Click(sender, e);
+        }
     }
 }
