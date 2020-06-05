@@ -32,7 +32,11 @@ namespace MovieTorrents
         {
             tbOrigTitle.Text = "原标题：" +  _torrentFile.PurifiedName;
 
-            tbSearchText.Text = _torrentFile.ChineseName;
+            char[] s = {' '};
+            var splits = _torrentFile.ChineseName.Split(s);
+            tbSearchText.Text = splits[0];
+            if(!string.IsNullOrWhiteSpace(tbSearchText.Text))
+                DoSearcch();
 
 #if DEBUG
             //tbSearchText.Text = "https://movie.douban.com/subject/26811825/";
