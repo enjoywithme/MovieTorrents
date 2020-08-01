@@ -26,6 +26,8 @@ namespace MovieTorrents
         public static string CurrentPath;
         public static string DbConnectionString;
         private bool _minimizedToTray;
+        private FormBtBtt _formBtBtt;
+        
 
         private FolderBrowserDialog folderBrowserDialog1;
 
@@ -1386,6 +1388,12 @@ where not exists (select 1 from tb_file where hdd_nid={_hdd_nid} and path=$path 
         private void tsbSearchDouban_Click(object sender, EventArgs e)
         {
             tsmiSearchDouban_Click(sender, e);
+        }
+
+        private void tsmiBtbttDownload_Click(object sender, EventArgs e)
+        {
+            if(_formBtBtt==null) _formBtBtt = new FormBtBtt();
+            _formBtBtt?.Show();
         }
     }
 }
