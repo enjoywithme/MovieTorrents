@@ -55,7 +55,7 @@ namespace MovieTorrents
         private string _lastSearchText = string.Empty;
 
         private byte _hdd_nid;
-        private string _area;
+        public static string Area;
         private string _shortRootPath;
 
         //private System.Timers.Timer _tt;
@@ -86,15 +86,11 @@ namespace MovieTorrents
             if (!CheckTorrentPath(out var msg))
             {
                 MessageBox.Show($"数据库找不到种子目录\r\n{msg}", Properties.Resources.TextError, MessageBoxButtons.OK, MessageBoxIcon.Error);
-                Close();
-                return;
             }
 
-            if (!Directory.Exists(TorrentFilePath))
+            if (!string.IsNullOrEmpty(TorrentFilePath) && !Directory.Exists(TorrentFilePath))
             {
                 MessageBox.Show($"种子目录“{TorrentFilePath}”不存在!", Properties.Resources.TextError, MessageBoxButtons.OK, MessageBoxIcon.Error);
-                Close();
-                return;
             }
 
             tsCurrentDir.Text = $"种子目录[{TorrentFilePath}]";
@@ -120,7 +116,11 @@ namespace MovieTorrents
 
         private void FormMain_FormClosing(object sender, FormClosingEventArgs e)
         {
-            if (_currentOperation == OperationNone) return;
+            if (_currentOperation == OperationNone)
+            {
+                _formBtBtt?.Close();
+                return;
+            }
             MessageBox.Show("尚有操作在进行中，不能退出！", Properties.Resources.TextHint, MessageBoxButtons.OK, MessageBoxIcon.Warning);
             e.Cancel = true;
         }
@@ -156,6 +156,8 @@ namespace MovieTorrents
 
         private void StartFileWatch()
         {
+            if(string.IsNullOrEmpty(TorrentFilePath)) return;
+
             try
             {
                 _watcher = new FileSystemWatcher(TorrentFilePath)
@@ -210,6 +212,8 @@ namespace MovieTorrents
 
         public void CheckWatchStatus(object state)
         {
+            if(string.IsNullOrEmpty(TorrentFilePath)) return;
+
             if (_monitoredFilesToProcess.Count > 0)
             {
                 var filesToProcess = new BlockingCollection<TorrentFile>();
@@ -235,6 +239,7 @@ namespace MovieTorrents
 
 
             if (_isWatching) return;
+
             if (!Directory.Exists(TorrentFilePath)) return;
 
             StartFileWatch();
@@ -281,9 +286,9 @@ namespace MovieTorrents
                                 if (reader.Read())
                                 {
                                     _hdd_nid = (byte)reader.GetByte(0);// ["hdd_nid"];
-                                    _area = (string)reader["area"];
+                                    Area = (string)reader["area"];
                                     _shortRootPath = (string)reader["path"];
-                                    TorrentFilePath = _area + _shortRootPath;
+                                    TorrentFilePath = Area + _shortRootPath;
                                 }
                             }
 
@@ -577,7 +582,7 @@ namespace MovieTorrents
                             result.Add(new TorrentFile
                             {
                                 fid = (long)reader["file_nid"],
-                                area = _area,
+                                area = Area,
                                 path = (string)reader["path"],
                                 name = (string)reader["name"],
                                 keyname = GetReaderFieldString(reader, "keyname"),
@@ -1208,6 +1213,11 @@ where not exists (select 1 from tb_file where hdd_nid={_hdd_nid} and path=$path 
 
         private void tsmiMove_Click(object sender, EventArgs e)
         {
+            if (string.IsNullOrEmpty(TorrentFilePath))
+            {
+                MessageBox.Show("种子文件根目录没有配置", Properties.Resources.TextError, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
             if (lvResults.SelectedItems.Count == 0) return;
             if (folderBrowserDialog1 == null) folderBrowserDialog1 = new FolderBrowserDialog();
             folderBrowserDialog1.SelectedPath = TorrentFilePath;

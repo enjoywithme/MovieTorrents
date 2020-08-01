@@ -34,18 +34,29 @@
             this.lvResults = new System.Windows.Forms.ListView();
             this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader4 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader5 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.label1 = new System.Windows.Forms.Label();
             this.btnHomePage = new System.Windows.Forms.Button();
             this.btnNext = new System.Windows.Forms.Button();
             this.btnPrev = new System.Windows.Forms.Button();
             this.btDownload = new System.Windows.Forms.Button();
-            this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.columnHeader4 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.columnHeader5 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.tbProxy = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
             this.tbDownloadPath = new System.Windows.Forms.TextBox();
             this.label3 = new System.Windows.Forms.Label();
+            this.lvTorrents = new System.Windows.Forms.ListView();
+            this.columnHeaderName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeaderRating = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeaderYear = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeaderSeelater = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeaderSeenowant = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeaderSeen = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeaderSeeDate = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeaderSeeComment = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.btUnzip = new System.Windows.Forms.Button();
+            this.tbSearch = new System.Windows.Forms.TextBox();
             this.SuspendLayout();
             // 
             // tbUrl
@@ -82,10 +93,11 @@
             this.lvResults.HideSelection = false;
             this.lvResults.Location = new System.Drawing.Point(12, 163);
             this.lvResults.Name = "lvResults";
-            this.lvResults.Size = new System.Drawing.Size(834, 313);
+            this.lvResults.Size = new System.Drawing.Size(834, 130);
             this.lvResults.TabIndex = 3;
             this.lvResults.UseCompatibleStateImageBehavior = false;
             this.lvResults.View = System.Windows.Forms.View.Details;
+            this.lvResults.SelectedIndexChanged += new System.EventHandler(this.lvResults_SelectedIndexChanged);
             // 
             // columnHeader1
             // 
@@ -96,6 +108,20 @@
             // 
             this.columnHeader2.Text = "发布时间";
             this.columnHeader2.Width = 160;
+            // 
+            // columnHeader3
+            // 
+            this.columnHeader3.Text = "豆瓣评分";
+            // 
+            // columnHeader4
+            // 
+            this.columnHeader4.Text = "分类";
+            this.columnHeader4.Width = 160;
+            // 
+            // columnHeader5
+            // 
+            this.columnHeader5.Text = "标签";
+            this.columnHeader5.Width = 160;
             // 
             // label1
             // 
@@ -146,20 +172,6 @@
             this.btDownload.UseVisualStyleBackColor = true;
             this.btDownload.Click += new System.EventHandler(this.btDownload_Click);
             // 
-            // columnHeader3
-            // 
-            this.columnHeader3.Text = "豆瓣评分";
-            // 
-            // columnHeader4
-            // 
-            this.columnHeader4.Text = "分类";
-            this.columnHeader4.Width = 160;
-            // 
-            // columnHeader5
-            // 
-            this.columnHeader5.Text = "标签";
-            this.columnHeader5.Width = 160;
-            // 
             // tbProxy
             // 
             this.tbProxy.Location = new System.Drawing.Point(80, 97);
@@ -194,11 +206,91 @@
             this.label3.TabIndex = 4;
             this.label3.Text = "下载路径";
             // 
+            // lvTorrents
+            // 
+            this.lvTorrents.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.lvTorrents.CheckBoxes = true;
+            this.lvTorrents.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.columnHeaderName,
+            this.columnHeaderRating,
+            this.columnHeaderYear,
+            this.columnHeaderSeelater,
+            this.columnHeaderSeenowant,
+            this.columnHeaderSeen,
+            this.columnHeaderSeeDate,
+            this.columnHeaderSeeComment});
+            this.lvTorrents.FullRowSelect = true;
+            this.lvTorrents.HideSelection = false;
+            this.lvTorrents.Location = new System.Drawing.Point(12, 327);
+            this.lvTorrents.Name = "lvTorrents";
+            this.lvTorrents.Size = new System.Drawing.Size(834, 154);
+            this.lvTorrents.TabIndex = 6;
+            this.lvTorrents.UseCompatibleStateImageBehavior = false;
+            this.lvTorrents.View = System.Windows.Forms.View.Details;
+            // 
+            // columnHeaderName
+            // 
+            this.columnHeaderName.Text = "名称";
+            this.columnHeaderName.Width = 500;
+            // 
+            // columnHeaderRating
+            // 
+            this.columnHeaderRating.Text = "评分";
+            // 
+            // columnHeaderYear
+            // 
+            this.columnHeaderYear.Text = "年代";
+            this.columnHeaderYear.Width = 100;
+            // 
+            // columnHeaderSeelater
+            // 
+            this.columnHeaderSeelater.Text = "稍后看";
+            // 
+            // columnHeaderSeenowant
+            // 
+            this.columnHeaderSeenowant.Text = "不想看";
+            // 
+            // columnHeaderSeen
+            // 
+            this.columnHeaderSeen.Text = "看过";
+            // 
+            // columnHeaderSeeDate
+            // 
+            this.columnHeaderSeeDate.Text = "观看日期";
+            this.columnHeaderSeeDate.Width = 120;
+            // 
+            // columnHeaderSeeComment
+            // 
+            this.columnHeaderSeeComment.Text = "观看评论";
+            this.columnHeaderSeeComment.Width = 190;
+            // 
+            // btUnzip
+            // 
+            this.btUnzip.Location = new System.Drawing.Point(559, 115);
+            this.btUnzip.Name = "btUnzip";
+            this.btUnzip.Size = new System.Drawing.Size(75, 23);
+            this.btUnzip.TabIndex = 2;
+            this.btUnzip.Text = "处理zip";
+            this.btUnzip.UseVisualStyleBackColor = true;
+            this.btUnzip.Click += new System.EventHandler(this.btUnzip_Click);
+            // 
+            // tbSearch
+            // 
+            this.tbSearch.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.tbSearch.Location = new System.Drawing.Point(12, 299);
+            this.tbSearch.Name = "tbSearch";
+            this.tbSearch.Size = new System.Drawing.Size(496, 21);
+            this.tbSearch.TabIndex = 7;
+            this.tbSearch.TextChanged += new System.EventHandler(this.tbSearch_TextChanged);
+            // 
             // FormBtBtt
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(858, 488);
+            this.Controls.Add(this.tbSearch);
+            this.Controls.Add(this.lvTorrents);
             this.Controls.Add(this.btnPrev);
             this.Controls.Add(this.btnNext);
             this.Controls.Add(this.label3);
@@ -206,6 +298,7 @@
             this.Controls.Add(this.label1);
             this.Controls.Add(this.lvResults);
             this.Controls.Add(this.btnHomePage);
+            this.Controls.Add(this.btUnzip);
             this.Controls.Add(this.btDownload);
             this.Controls.Add(this.btnQuery);
             this.Controls.Add(this.tbDownloadPath);
@@ -216,6 +309,7 @@
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "BtBtt工具";
             this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FormBtBtt_FormClosing);
             this.Load += new System.EventHandler(this.FormBtBtt_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -241,5 +335,16 @@
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.TextBox tbDownloadPath;
         private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.ListView lvTorrents;
+        private System.Windows.Forms.ColumnHeader columnHeaderName;
+        private System.Windows.Forms.ColumnHeader columnHeaderRating;
+        private System.Windows.Forms.ColumnHeader columnHeaderYear;
+        private System.Windows.Forms.ColumnHeader columnHeaderSeelater;
+        private System.Windows.Forms.ColumnHeader columnHeaderSeenowant;
+        private System.Windows.Forms.ColumnHeader columnHeaderSeen;
+        private System.Windows.Forms.ColumnHeader columnHeaderSeeDate;
+        private System.Windows.Forms.ColumnHeader columnHeaderSeeComment;
+        private System.Windows.Forms.Button btUnzip;
+        private System.Windows.Forms.TextBox tbSearch;
     }
 }

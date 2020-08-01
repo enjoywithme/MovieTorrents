@@ -63,6 +63,9 @@ namespace MovieTorrents
                 listView1.Items.Add(new ListViewItem(row) { Tag = subject });
             }
 
+            if (listView1.Items.Count > 0)
+                listView1.Items[0].Selected = true;
+
         }
 
 

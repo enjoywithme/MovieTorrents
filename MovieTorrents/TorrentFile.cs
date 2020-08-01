@@ -8,13 +8,15 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using System.Web.UI.WebControls;
 using System.Windows.Forms;
+using MovieTorrents.Shared;
 
 namespace MovieTorrents
 {
     public class TorrentFile
     {
-        public long fid { get; set;}
+        public long fid { get; set; }
         public byte hdd_nid { get; set; }
         public string area { get; set; }
         public string path { get; set; }
@@ -37,12 +39,16 @@ namespace MovieTorrents
 
         public string FullName => area + path + name + ext;
 
-        public DateTime SeeDate { get {
-            var seeDate = DateTime.Today;
-            if (!string.IsNullOrEmpty(seedate) && DateTime.TryParse(seedate, out var d))
-                seeDate = d;
-            return seeDate;
-        } }
+        public DateTime SeeDate
+        {
+            get
+            {
+                var seeDate = DateTime.Today;
+                if (!string.IsNullOrEmpty(seedate) && DateTime.TryParse(seedate, out var d))
+                    seeDate = d;
+                return seeDate;
+            }
+        }
 
         public string RealPosterPath
         {
@@ -59,38 +65,39 @@ namespace MovieTorrents
         private static string[] BAD_WORDS = { "1080P", "720P", "x26[45]", "H26[45]", "BluRay", "AC3", " DTS ", "2Audios?", "FLAME", "IMAX",
             "中英","字幕", "国英","双语","音轨","香港","动作","有广告","BT下载","国粤双语中英双字","中英双字","未删节特别版","特效英语中字","中文" };
         private static string[] RELEASE_GROUPS = { "SPARKS", "CMCT", "FGT", "KOOK" };
-        public string PurifiedName
+
+        public static string PurifyName(string text)
         {
-            get
-            {
-                var cleaned = Regex.Replace(name, "\\b" + string.Join("\\b|\\b", PRE_CLEARS) + "\\b", "", RegexOptions.IgnoreCase);
-                cleaned = BAD_CHARS.Replace(cleaned, " ");
-                cleaned = Regex.Replace(cleaned, "\\b" + string.Join("\\b|\\b", BAD_WORDS) + "\\b", "", RegexOptions.IgnoreCase);
-                cleaned = Regex.Replace(cleaned, "\\b" + string.Join("\\b|\\b", RELEASE_GROUPS) + "\\b", "", RegexOptions.IgnoreCase);
-                return cleaned.Trim();
-            }
+            var cleaned = Regex.Replace(text, "\\b" + string.Join("\\b|\\b", PRE_CLEARS) + "\\b", "", RegexOptions.IgnoreCase);
+            cleaned = BAD_CHARS.Replace(cleaned, " ");
+            cleaned = Regex.Replace(cleaned, "\\b" + string.Join("\\b|\\b", BAD_WORDS) + "\\b", "", RegexOptions.IgnoreCase);
+            cleaned = Regex.Replace(cleaned, "\\b" + string.Join("\\b|\\b", RELEASE_GROUPS) + "\\b", "", RegexOptions.IgnoreCase);
+            return cleaned.Trim();
         }
+
+        public string PurifiedName => PurifyName(name);
+
         public string ChineseName
         {
             get
             {
                 var matches = Regex.Matches(PurifiedName, "[\u4e00-\u9fa5]+");
-                return string.Join(" ", matches.OfType<Match>().Where(m=>m.Success));
+                return string.Join(" ", matches.OfType<Match>().Where(m => m.Success));
             }
         }
 
-        
+
 
         public TorrentFile()
         {
-            
+
         }
 
         public TorrentFile(string fullName)
         {
             name = Path.GetFileNameWithoutExtension(fullName);
             var dir = Path.GetDirectoryName(fullName);
-            path = dir.Substring(Path.GetPathRoot(dir).Length)+"\\";
+            path = dir.Substring(Path.GetPathRoot(dir).Length) + "\\";
             ext = Path.GetExtension(fullName);
             filesize = new FileInfo(fullName).Length;
 
@@ -99,7 +106,7 @@ namespace MovieTorrents
             if (match.Success) year = match.Value;
         }
 
-        
+
         public void ShowInExplorer()
         {
             if (File.Exists(FullName))
@@ -108,7 +115,104 @@ namespace MovieTorrents
             }
         }
 
-        public bool ToggleSeelater(string dbConnString,out string msg)
+
+        private static SQLiteCommand BuildSearchCommand(string text)
+        {
+            var command = new SQLiteCommand();
+
+            var sb = new StringBuilder("select * from filelist_view where 1=1");
+
+            //处理搜索关键词
+            if (!string.IsNullOrEmpty(text))
+            {
+                var splits = text.Split(null);
+
+                for (var i = 0; i < splits.Length; i++)
+                {
+                    var pName = $"@p{command.Parameters.Count}";
+                    command.Parameters.AddWithValue(pName, $"%{splits[i]}%");
+                    sb.Append($" and (name like {pName} or keyname like{pName} or othername like {pName} or genres like {pName} or seecomment like {pName})");
+
+                }
+            }
+
+
+            //Debug.WriteLine(sb.ToString());
+
+            command.CommandText = sb.ToString();
+            return command;
+        }
+        public static IEnumerable<TorrentFile> Search(string dbConnString, string text, out string msg)
+        {
+            var result = new List<TorrentFile>();
+            var ok = true;
+            msg = "";
+            if (string.IsNullOrEmpty(text) || text.Length < 2)
+            {
+                msg = "搜索的内容太少！";
+                return null;
+            }
+
+
+            try
+            {
+                var connection = new SQLiteConnection(dbConnString);
+                connection.Open();
+
+                try
+                {
+                    var command = BuildSearchCommand(text);
+                    command.Connection = connection;
+
+                    using (var reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            result.Add(new TorrentFile
+                            {
+                                fid = (long)reader["file_nid"],
+                                area = FormMain.Area,
+                                path = (string)reader["path"],
+                                name = (string)reader["name"],
+                                keyname = reader.GetReaderFieldString("keyname"),
+                                otherName = reader.GetReaderFieldString("othername"),
+                                ext = (string)reader["ext"],
+                                rating = (double)reader["rating"],
+                                year = reader.GetReaderFieldString("year"),
+                                zone = reader.GetReaderFieldString("zone"),
+                                seelater = (long)reader["seelater"],
+                                seenowant = (long)reader["seenowant"],
+                                seeflag = (long)reader["seeflag"],
+                                posterpath = reader.GetReaderFieldString("posterpath"),
+                                genres = reader.GetReaderFieldString("genres"),
+                                doubanid = reader.GetReaderFieldString("doubanid"),
+                                seedate = reader.GetReaderFieldString("seedate"),
+                                seecomment = reader.GetReaderFieldString("seecomment")
+                            });
+
+                        }
+                    }
+                }
+                catch (Exception e)
+                {
+                    msg = e.Message;
+                    ok = false;
+                }
+                connection.Close();
+            }
+            catch (Exception e)
+            {
+                msg = e.Message;
+                ok = false;
+            }
+
+
+
+            return ok?result:null;
+        }
+
+
+        public bool ToggleSeelater(string dbConnString, out string msg)
         {
             msg = string.Empty;
             var mDbConnection = new SQLiteConnection(dbConnString);
@@ -135,7 +239,7 @@ namespace MovieTorrents
             }
             catch (Exception e)
             {
-                msg=e.Message;
+                msg = e.Message;
                 ok = false;
             }
 
@@ -179,10 +283,10 @@ namespace MovieTorrents
         }
 
 
-        public bool SetWatched(string dbConnString, DateTime watchDate,string comment,out string msg)
+        public bool SetWatched(string dbConnString, DateTime watchDate, string comment, out string msg)
         {
             msg = string.Empty;
-            seedate =watchDate.ToString("yyyy-MM-dd");
+            seedate = watchDate.ToString("yyyy-MM-dd");
             seecomment = comment;
             var mDbConnection = new SQLiteConnection(dbConnString);
 
@@ -231,8 +335,8 @@ namespace MovieTorrents
                 mDbConnection.Open();
                 try
                 {
-                    
-                    var destFullName = destFolder +"\\" + name + ext;
+
+                    var destFullName = destFolder + "\\" + name + ext;
                     File.Move(FullName, destFullName);
 
                     var command = new SQLiteCommand(sql, mDbConnection);
@@ -260,7 +364,7 @@ namespace MovieTorrents
             return ok;
         }
 
-        public bool DeleteFromDb(string dbConnString,bool deleteFile,out string msg)
+        public bool DeleteFromDb(string dbConnString, bool deleteFile, out string msg)
         {
             msg = string.Empty;
             var mDbConnection = new SQLiteConnection(dbConnString);
@@ -272,12 +376,12 @@ namespace MovieTorrents
                 mDbConnection.Open();
                 try
                 {
-                    if(deleteFile)
+                    if (deleteFile)
                         File.Delete(FullName);
 
                     var command = new SQLiteCommand(sql, mDbConnection);
                     command.Parameters.AddWithValue("$fid", fid);
-                    ok = command.ExecuteNonQuery()>0;
+                    ok = command.ExecuteNonQuery() > 0;
                 }
                 catch (Exception e)
                 {
@@ -297,9 +401,9 @@ namespace MovieTorrents
             return ok;
         }
 
-        public bool EditRecord(string dbConnString,string newName,string newYear,string newZone,
-            string newKeyName,string newOtherName,string newGenres,
-            bool newWatched,DateTime newWatchDate,string newSeeComment,
+        public bool EditRecord(string dbConnString, string newName, string newYear, string newZone,
+            string newKeyName, string newOtherName, string newGenres,
+            bool newWatched, DateTime newWatchDate, string newSeeComment,
             out string msg)
         {
             msg = string.Empty;
@@ -317,7 +421,7 @@ namespace MovieTorrents
                 }
             }
 
-            var watchDate =newWatched?newWatchDate.ToString("yyyy-MM-dd"):"";
+            var watchDate = newWatched ? newWatchDate.ToString("yyyy-MM-dd") : "";
             var newSeelater = newWatched ? 0 : seelater;
 
             var mDbConnection = new SQLiteConnection(dbConnString);
@@ -328,15 +432,15 @@ where file_nid=$fid";
             var ok = true;
             try
             {
-                
-               
+
+
                 mDbConnection.Open();
                 try
                 {
-                    if(reNameFile) File.Move(FullName, newFullName);
+                    if (reNameFile) File.Move(FullName, newFullName);
 
                     var command = new SQLiteCommand(sql, mDbConnection);
-                     
+
                     command.Parameters.AddWithValue("$name", newName);
                     command.Parameters.AddWithValue("$year", newYear);
                     command.Parameters.AddWithValue("$zone", newZone);
@@ -344,7 +448,7 @@ where file_nid=$fid";
                     command.Parameters.AddWithValue("$othername", newOtherName);
                     command.Parameters.AddWithValue("$genres", newGenres);
                     command.Parameters.AddWithValue("seelater", newSeelater);
-                    command.Parameters.AddWithValue("$seeflag", newWatched?1:0);
+                    command.Parameters.AddWithValue("$seeflag", newWatched ? 1 : 0);
                     command.Parameters.AddWithValue("$seedate", watchDate);
                     command.Parameters.AddWithValue("$comment", newSeeComment);
                     command.Parameters.AddWithValue("$fid", fid);
@@ -383,7 +487,7 @@ where file_nid=$fid";
             return true;
         }
 
-        public static long CountWatched(string dbConnString,out string msg)
+        public static long CountWatched(string dbConnString, out string msg)
         {
             msg = string.Empty;
             var connection = new SQLiteConnection(dbConnString);
@@ -395,11 +499,11 @@ where file_nid=$fid";
                 try
                 {
                     var command = new SQLiteCommand(sql, connection);
-                    watched =(long) command.ExecuteScalar();
+                    watched = (long)command.ExecuteScalar();
                 }
                 catch (Exception e)
                 {
-                    msg=e.Message;
+                    msg = e.Message;
                     watched = -1;
                 }
 
@@ -408,7 +512,7 @@ where file_nid=$fid";
             }
             catch (Exception e)
             {
-                msg=e.Message;
+                msg = e.Message;
                 watched = -1;
             }
 
@@ -463,7 +567,7 @@ where file_nid=$fid";
             return sb.ToString();
         }
 
-        public bool UpdateDoubanInfo(string dbConnString,DoubanSubject subject,out string msg)
+        public bool UpdateDoubanInfo(string dbConnString, DoubanSubject subject, out string msg)
         {
             msg = string.Empty;
             var posterImageFileName = string.Empty;
@@ -478,7 +582,7 @@ rating=$rating,genres=$genres,directors=$directors,casts=$casts where file_nid=$
                 if (!string.IsNullOrEmpty(subject.img_local))
                 {
                     posterImageFileName = FormMain.CurrentPath + "\\poster\\douban\\" + Path.GetFileName(subject.img_local);
-                    File.Copy(subject.img_local, posterImageFileName,true);
+                    File.Copy(subject.img_local, posterImageFileName, true);
                     posterImageFileName = posterImageFileName.Replace("\\", "/");//zogvm的路径使用正斜杠
                 }
 
@@ -486,15 +590,15 @@ rating=$rating,genres=$genres,directors=$directors,casts=$casts where file_nid=$
                 try
                 {
                     var command = new SQLiteCommand(sql, mDbConnection);
-                    command.Parameters.AddWithValue("$year", string.IsNullOrEmpty(subject.year)?year:subject.year);
+                    command.Parameters.AddWithValue("$year", string.IsNullOrEmpty(subject.year) ? year : subject.year);
                     command.Parameters.AddWithValue("$zone", subject.zone);
                     command.Parameters.AddWithValue("$keyname", subject.name);
-                    command.Parameters.AddWithValue("$othername", string.IsNullOrEmpty(subject.othername)?otherName:subject.othername);
+                    command.Parameters.AddWithValue("$othername", string.IsNullOrEmpty(subject.othername) ? otherName : subject.othername);
                     command.Parameters.AddWithValue("$doubanid", subject.id);
                     command.Parameters.AddWithValue("$posterpath", posterImageFileName);
                     command.Parameters.AddWithValue("$rating", subject.Rating);
                     command.Parameters.AddWithValue("$genres", subject.genres);
-                    command.Parameters.AddWithValue("$directors",subject.directors);
+                    command.Parameters.AddWithValue("$directors", subject.directors);
                     command.Parameters.AddWithValue("$casts", subject.casts);
                     command.Parameters.AddWithValue("$fid", fid);
                     command.ExecuteNonQuery();
@@ -530,7 +634,7 @@ rating=$rating,genres=$genres,directors=$directors,casts=$casts where file_nid=$
             return true;
         }
 
-        public static bool CopyDoubanInfo(string dbConnString,long sFid, List<long> dFids,out string msg)
+        public static bool CopyDoubanInfo(string dbConnString, long sFid, List<long> dFids, out string msg)
         {
             msg = string.Empty;
 
@@ -560,7 +664,7 @@ where file_nid in ({sFids})";
                 {
                     var command = new SQLiteCommand(sql, mDbConnection);
                     command.Parameters.AddWithValue("$fid", sFid);
-                    ok = command.ExecuteNonQuery()>0;
+                    ok = command.ExecuteNonQuery() > 0;
                 }
                 catch (Exception e)
                 {

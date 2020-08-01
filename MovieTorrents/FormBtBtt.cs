@@ -2,16 +2,21 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Data.SQLite;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Net;
+using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using AngleSharp.Html.Parser;
+using MovieTorrents.Shared;
 
 namespace MovieTorrents
 {
@@ -29,16 +34,23 @@ namespace MovieTorrents
             public string Tag { get; set; }
 
             public decimal Rating { get; private set; }
-                
+
 
             public void Parse()
             {
-                var b = decimal.TryParse(DouBanRating, out var result);
-                Rating = b?result:0;
+                if (!string.IsNullOrEmpty(DouBanRating) && decimal.TryParse(DouBanRating, out var result))
+                {
+                    Rating = result;
+                }
 
-                var i = Title.IndexOf(".");
-                if(i==-1) return;
-                Keyword = Title.Substring(0, i);
+
+                var title = TorrentFile.PurifyName(Title);
+                if (string.IsNullOrEmpty(title)) return;
+                var i = title.IndexOf("/", StringComparison.InvariantCultureIgnoreCase);
+                if (i == -1) i = title.IndexOf(":", StringComparison.InvariantCultureIgnoreCase);
+                if (i == -1) i = title.IndexOf(" ", StringComparison.InvariantCultureIgnoreCase);
+                if (i == -1) i = title.IndexOf(".", StringComparison.InvariantCultureIgnoreCase);
+                if (i > 0) Keyword = title.Substring(0, i);
             }
         }
 
@@ -54,6 +66,7 @@ namespace MovieTorrents
 #if DEBUG
             tbDownloadPath.Text = "x:\\temp";
 #endif
+
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -86,7 +99,7 @@ namespace MovieTorrents
                     var wp = new WebProxy(tbProxy.Text);
                     client.Proxy = wp;
                 }
-                
+
                 var htmlData = client.DownloadData(pageUrl);
                 var htmlCode = Encoding.UTF8.GetString(htmlData);
                 //File.WriteAllText("d:\\temp\\1.txt", htmlCode, Encoding.UTF8);
@@ -99,11 +112,11 @@ namespace MovieTorrents
                 {
                     var title = link.TextContent.Trim();
                     if (string.IsNullOrEmpty(title)) continue;
-                    
-                    var detailLink = link.Attributes["href"].Value;
-                    if(string.IsNullOrEmpty(detailLink)) continue;
 
-                    var btItem = new BtItem {Title = title};
+                    var detailLink = link.Attributes["href"].Value;
+                    if (string.IsNullOrEmpty(detailLink)) continue;
+
+                    var btItem = new BtItem { Title = title };
 
                     //下载具体页面
                     var pageData = client.DownloadData($"{BtHomeUrl}{detailLink}");
@@ -145,7 +158,7 @@ namespace MovieTorrents
                         btItem.Gene,
                         btItem.Tag
                     };
-                    
+
                     Debug.WriteLine($"{btItem.Title} {btItem.Keyword} {btItem.DouBanRating} {btItem.Rating}");
                     lvResults.Items.Add(new ListViewItem(row)
                     {
@@ -161,7 +174,7 @@ namespace MovieTorrents
 
         }
 
-        
+
 
         private string SanitizeFileName(string fileName)
         {
@@ -186,9 +199,11 @@ namespace MovieTorrents
         private void btnNext_Click(object sender, EventArgs e)
         {
             var match = Regex.Match(tbUrl.Text, $"{BtHomeUrl}index-index-page-([0-9]*).htm");
-            var p = match.Success? int.Parse(match.Groups[1].Value) + 1:2;
+            var p = match.Success ? int.Parse(match.Groups[1].Value) + 1 : 2;
 
             tbUrl.Text = $"{BtHomeUrl}index-index-page-{p}.htm";
+
+            btnQuery.PerformClick();
         }
 
         private void btnPrev_Click(object sender, EventArgs e)
@@ -196,16 +211,19 @@ namespace MovieTorrents
             var match = Regex.Match(tbUrl.Text, $"{BtHomeUrl}index-index-page-([0-9]*).htm");
             if (match.Success)
             {
-                var p =int.Parse(match.Groups[1].Value);
-                if (p > 2) 
+                var p = int.Parse(match.Groups[1].Value);
+                if (p > 2)
                 {
                     p--;
                     tbUrl.Text = $"{BtHomeUrl}index-index-page-{p}.htm";
+                    btnQuery.PerformClick();
+
                     return;
                 }
 
             }
             tbUrl.Text = BtHomeUrl;
+            btnQuery.PerformClick();
 
         }
 
@@ -229,12 +247,12 @@ namespace MovieTorrents
                     var btItem = (BtItem)checkedItem.Tag;
                     try
                     {
-                        DownloadAttachmentFile(client,$"{BtHomeUrl}{btItem.AttachmentUrl}", SanitizeFileName(btItem.Title));
+                        DownloadAttachmentFile(client, $"{BtHomeUrl}{btItem.AttachmentUrl}", SanitizeFileName(btItem.Title));
                         i++;
                     }
                     catch (Exception exception)
                     {
-                        msg +=  $"\r\n下载 {btItem.Title} 错误:{exception.Message}";
+                        msg += $"\r\n下载 {btItem.Title} 错误:{exception.Message}";
                     }
                 }
             }
@@ -283,6 +301,82 @@ namespace MovieTorrents
             {
                 streamWithFileBody.CopyTo(outputFileStream);
             }*/
+        }
+
+
+        private void lvResults_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (lvResults.SelectedItems.Count == 0) return;
+            var btItem = (BtItem)lvResults.SelectedItems[0].Tag;
+            tbSearch.Text = btItem.Keyword;
+
+        }
+
+        private void btUnzip_Click(object sender, EventArgs e)
+        {
+            var zipFiles = Directory.GetFiles(tbDownloadPath.Text).Where(s => Path.GetExtension(s).ToLowerInvariant() == ".zip");
+            var i = 0;
+            var msg = "";
+            foreach (var file in zipFiles)
+            {
+                try
+                {
+                    using (var zip = ZipFile.OpenRead(file))
+                    {
+                        var entry = zip.Entries.FirstOrDefault(et =>
+                            et.Name.EndsWith(".torrent", StringComparison.InvariantCultureIgnoreCase));
+                        if (entry == null)
+                        {
+                            msg += $"文件 {file} 不包含 torrent 文件。";
+                            continue;
+                        }
+                        entry.ExtractToFile(Path.Combine(tbDownloadPath.Text, Path.GetFileNameWithoutExtension(file) + ".torrent"));
+                    }
+
+                    i++;
+                }
+                catch (Exception exception)
+                {
+                    msg += $"\r\n解压 {file} 出错:{exception.Message}";
+                }
+
+            }
+
+            MessageBox.Show($"成功解压 {i} 个文件。{msg}", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
+
+        private void tbSearch_TextChanged(object sender, EventArgs e)
+        {
+            lvTorrents.Items.Clear();
+            var text = tbSearch.Text.Trim();
+            if (string.IsNullOrEmpty(text) || text.Length < 2) return;
+
+            var torrents = TorrentFile.Search(FormMain.DbConnectionString, tbSearch.Text, out var msg);
+            if (torrents == null)
+            {
+                MessageBox.Show(msg, "提示", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                return;
+            }
+            foreach (var torrentFile in torrents)
+            {
+                string[] row = { torrentFile.name,
+                    torrentFile.rating.ToString(),
+                    torrentFile.year,
+                    torrentFile.seelater.ToString(),
+                    torrentFile.seenowant.ToString(),
+                    torrentFile.seeflag.ToString(),
+                    torrentFile.seedate,
+                    torrentFile.seecomment
+                };
+                lvTorrents.Items.Add(new ListViewItem(row));
+            }
+        }
+
+        private void FormBtBtt_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (e.CloseReason != CloseReason.UserClosing) return;
+            e.Cancel = true;
+            Hide();
         }
     }
 }
