@@ -308,7 +308,7 @@ namespace MovieTorrents
         {
             if (lvResults.SelectedItems.Count == 0) return;
             var btItem = (BtItem)lvResults.SelectedItems[0].Tag;
-            tbSearch.Text = btItem.Keyword;
+            tbTitle.Text = btItem.Keyword;
 
         }
 
@@ -348,10 +348,10 @@ namespace MovieTorrents
         private void tbSearch_TextChanged(object sender, EventArgs e)
         {
             lvTorrents.Items.Clear();
-            var text = tbSearch.Text.Trim();
+            var text = tbTitle.Text.Trim();
             if (string.IsNullOrEmpty(text) || text.Length < 2) return;
 
-            var torrents = TorrentFile.Search(FormMain.DbConnectionString, tbSearch.Text, out var msg);
+            var torrents = TorrentFile.Search(FormMain.DbConnectionString, tbTitle.Text, out var msg);
             if (torrents == null)
             {
                 MessageBox.Show(msg, "提示", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
@@ -377,6 +377,13 @@ namespace MovieTorrents
             if (e.CloseReason != CloseReason.UserClosing) return;
             e.Cancel = true;
             Hide();
+        }
+
+        private void btSearch_Click(object sender, EventArgs e)
+        {
+            if(string.IsNullOrEmpty(tbSearch.Text)) return;
+            tbUrl.Text = $"https://www.btbtt.me/search-index-keyword-{tbSearch.Text}.htm";
+            QueryPage();
         }
     }
 }

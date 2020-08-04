@@ -56,12 +56,15 @@
             this.columnHeaderSeeDate = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeaderSeeComment = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.btUnzip = new System.Windows.Forms.Button();
+            this.tbTitle = new System.Windows.Forms.TextBox();
+            this.btnSearch = new System.Windows.Forms.Button();
             this.tbSearch = new System.Windows.Forms.TextBox();
+            this.label4 = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // tbUrl
             // 
-            this.tbUrl.Location = new System.Drawing.Point(80, 66);
+            this.tbUrl.Location = new System.Drawing.Point(80, 42);
             this.tbUrl.Name = "tbUrl";
             this.tbUrl.Size = new System.Drawing.Size(326, 21);
             this.tbUrl.TabIndex = 0;
@@ -69,7 +72,7 @@
             // 
             // btnQuery
             // 
-            this.btnQuery.Location = new System.Drawing.Point(433, 71);
+            this.btnQuery.Location = new System.Drawing.Point(433, 41);
             this.btnQuery.Name = "btnQuery";
             this.btnQuery.Size = new System.Drawing.Size(75, 23);
             this.btnQuery.TabIndex = 2;
@@ -126,7 +129,7 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(17, 71);
+            this.label1.Location = new System.Drawing.Point(17, 46);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(29, 12);
             this.label1.TabIndex = 4;
@@ -134,7 +137,7 @@
             // 
             // btnHomePage
             // 
-            this.btnHomePage.Location = new System.Drawing.Point(80, 22);
+            this.btnHomePage.Location = new System.Drawing.Point(78, 12);
             this.btnHomePage.Name = "btnHomePage";
             this.btnHomePage.Size = new System.Drawing.Size(75, 23);
             this.btnHomePage.TabIndex = 2;
@@ -144,7 +147,7 @@
             // 
             // btnNext
             // 
-            this.btnNext.Location = new System.Drawing.Point(185, 22);
+            this.btnNext.Location = new System.Drawing.Point(183, 12);
             this.btnNext.Name = "btnNext";
             this.btnNext.Size = new System.Drawing.Size(75, 23);
             this.btnNext.TabIndex = 5;
@@ -154,7 +157,7 @@
             // 
             // btnPrev
             // 
-            this.btnPrev.Location = new System.Drawing.Point(297, 22);
+            this.btnPrev.Location = new System.Drawing.Point(295, 12);
             this.btnPrev.Name = "btnPrev";
             this.btnPrev.Size = new System.Drawing.Size(75, 23);
             this.btnPrev.TabIndex = 5;
@@ -164,7 +167,7 @@
             // 
             // btDownload
             // 
-            this.btDownload.Location = new System.Drawing.Point(433, 115);
+            this.btDownload.Location = new System.Drawing.Point(433, 125);
             this.btDownload.Name = "btDownload";
             this.btDownload.Size = new System.Drawing.Size(75, 23);
             this.btDownload.TabIndex = 2;
@@ -174,7 +177,7 @@
             // 
             // tbProxy
             // 
-            this.tbProxy.Location = new System.Drawing.Point(80, 97);
+            this.tbProxy.Location = new System.Drawing.Point(80, 98);
             this.tbProxy.Name = "tbProxy";
             this.tbProxy.Size = new System.Drawing.Size(326, 21);
             this.tbProxy.TabIndex = 0;
@@ -183,7 +186,7 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(17, 101);
+            this.label2.Location = new System.Drawing.Point(17, 102);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(29, 12);
             this.label2.TabIndex = 4;
@@ -191,7 +194,7 @@
             // 
             // tbDownloadPath
             // 
-            this.tbDownloadPath.Location = new System.Drawing.Point(80, 127);
+            this.tbDownloadPath.Location = new System.Drawing.Point(80, 126);
             this.tbDownloadPath.Name = "tbDownloadPath";
             this.tbDownloadPath.Size = new System.Drawing.Size(326, 21);
             this.tbDownloadPath.TabIndex = 0;
@@ -200,7 +203,7 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(17, 131);
+            this.label3.Location = new System.Drawing.Point(17, 130);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(53, 12);
             this.label3.TabIndex = 4;
@@ -267,7 +270,7 @@
             // 
             // btUnzip
             // 
-            this.btUnzip.Location = new System.Drawing.Point(559, 115);
+            this.btUnzip.Location = new System.Drawing.Point(543, 125);
             this.btUnzip.Name = "btUnzip";
             this.btUnzip.Size = new System.Drawing.Size(75, 23);
             this.btUnzip.TabIndex = 2;
@@ -275,14 +278,40 @@
             this.btUnzip.UseVisualStyleBackColor = true;
             this.btUnzip.Click += new System.EventHandler(this.btUnzip_Click);
             // 
+            // tbTitle
+            // 
+            this.tbTitle.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.tbTitle.Location = new System.Drawing.Point(12, 299);
+            this.tbTitle.Name = "tbTitle";
+            this.tbTitle.Size = new System.Drawing.Size(496, 21);
+            this.tbTitle.TabIndex = 7;
+            this.tbTitle.TextChanged += new System.EventHandler(this.tbSearch_TextChanged);
+            // 
+            // btnSearch
+            // 
+            this.btnSearch.Location = new System.Drawing.Point(433, 69);
+            this.btnSearch.Name = "btnSearch";
+            this.btnSearch.Size = new System.Drawing.Size(75, 23);
+            this.btnSearch.TabIndex = 2;
+            this.btnSearch.Text = "搜索";
+            this.btnSearch.UseVisualStyleBackColor = true;
+            this.btnSearch.Click += new System.EventHandler(this.btSearch_Click);
+            // 
             // tbSearch
             // 
-            this.tbSearch.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.tbSearch.Location = new System.Drawing.Point(12, 299);
+            this.tbSearch.Location = new System.Drawing.Point(80, 70);
             this.tbSearch.Name = "tbSearch";
-            this.tbSearch.Size = new System.Drawing.Size(496, 21);
-            this.tbSearch.TabIndex = 7;
-            this.tbSearch.TextChanged += new System.EventHandler(this.tbSearch_TextChanged);
+            this.tbSearch.Size = new System.Drawing.Size(326, 21);
+            this.tbSearch.TabIndex = 8;
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(17, 74);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(29, 12);
+            this.label4.TabIndex = 4;
+            this.label4.Text = "搜索";
             // 
             // FormBtBtt
             // 
@@ -290,16 +319,19 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(858, 488);
             this.Controls.Add(this.tbSearch);
+            this.Controls.Add(this.tbTitle);
             this.Controls.Add(this.lvTorrents);
             this.Controls.Add(this.btnPrev);
             this.Controls.Add(this.btnNext);
             this.Controls.Add(this.label3);
+            this.Controls.Add(this.label4);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.lvResults);
             this.Controls.Add(this.btnHomePage);
             this.Controls.Add(this.btUnzip);
             this.Controls.Add(this.btDownload);
+            this.Controls.Add(this.btnSearch);
             this.Controls.Add(this.btnQuery);
             this.Controls.Add(this.tbDownloadPath);
             this.Controls.Add(this.tbProxy);
@@ -345,6 +377,9 @@
         private System.Windows.Forms.ColumnHeader columnHeaderSeeDate;
         private System.Windows.Forms.ColumnHeader columnHeaderSeeComment;
         private System.Windows.Forms.Button btUnzip;
+        private System.Windows.Forms.TextBox tbTitle;
+        private System.Windows.Forms.Button btnSearch;
         private System.Windows.Forms.TextBox tbSearch;
+        private System.Windows.Forms.Label label4;
     }
 }
