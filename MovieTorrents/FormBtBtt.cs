@@ -1,22 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Data.SQLite;
 using System.Diagnostics;
-using System.Drawing;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Net;
-using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using AngleSharp.Html.Parser;
-using MovieTorrents.Shared;
 
 namespace MovieTorrents
 {
@@ -32,6 +23,7 @@ namespace MovieTorrents
             public string Keyword { get; set; }
             public string Gene { get; set; }
             public string Tag { get; set; }
+            public int? Year { get; set; }
 
             public decimal Rating { get; private set; }
 
@@ -43,14 +35,19 @@ namespace MovieTorrents
                     Rating = result;
                 }
 
+                //年份
 
                 var title = TorrentFile.PurifyName(Title);
                 if (string.IsNullOrEmpty(title)) return;
+                var chinese = TorrentFile.ExtractChinese(title);
+                if (!string.IsNullOrEmpty(chinese)) title = chinese;
                 var i = title.IndexOf("/", StringComparison.InvariantCultureIgnoreCase);
                 if (i == -1) i = title.IndexOf(":", StringComparison.InvariantCultureIgnoreCase);
                 if (i == -1) i = title.IndexOf(" ", StringComparison.InvariantCultureIgnoreCase);
                 if (i == -1) i = title.IndexOf(".", StringComparison.InvariantCultureIgnoreCase);
-                if (i > 0) Keyword = title.Substring(0, i);
+                Keyword = i > 0 ? title.Substring(0, i) : title;
+
+                //查找
             }
         }
 
@@ -121,6 +118,7 @@ namespace MovieTorrents
                     //下载具体页面
                     var pageData = client.DownloadData($"{BtHomeUrl}{detailLink}");
                     var pageCode = Encoding.UTF8.GetString(pageData);
+                    //File.WriteAllText("d:\\temp\\2.txt", pageCode, Encoding.UTF8);
 
                     //查找豆瓣评分
                     var match = Regex.Match(pageCode, "豆瓣评分(.*)/10 from");
@@ -129,6 +127,10 @@ namespace MovieTorrents
                     //<span class="grey">发帖时间：</span><b>.*</b>
                     match = Regex.Match(pageCode, "<span class=\"grey\">发帖时间：</span><b>(.*)</b>");
                     btItem.PublishTime = match.Success ? match.Groups[1].Value : "";
+
+                    //◎年　　代　1954<br />
+                    match = Regex.Match(pageCode, "年　　代(.*?)<br />");
+                    if (match.Success && int.TryParse(match.Groups[1].Value, out var d)) btItem.Year = d;
 
                     //◎类　　别　剧情 / 喜剧 / 爱情 / 悬疑 / 音乐<br />
                     match = Regex.Match(pageCode, "类　　别(.*?)<br />");
@@ -163,7 +165,9 @@ namespace MovieTorrents
                     lvResults.Items.Add(new ListViewItem(row)
                     {
                         Tag = btItem,
-                        Checked = (btItem.Rating >= 7.0M)
+                        Checked = (btItem.Rating >= 7.0M && !TorrentFile.ExistInDb(FormMain.DbConnectionString, btItem.Keyword, btItem.Year) )
+                                  || btItem.Tag.Contains("情色")
+                                  
                     });
 
                 }
@@ -206,6 +210,7 @@ namespace MovieTorrents
             btnQuery.PerformClick();
         }
 
+        //上一页
         private void btnPrev_Click(object sender, EventArgs e)
         {
             var match = Regex.Match(tbUrl.Text, $"{BtHomeUrl}index-index-page-([0-9]*).htm");
@@ -227,6 +232,7 @@ namespace MovieTorrents
 
         }
 
+        //下载勾选的种子文件
         private void btDownload_Click(object sender, EventArgs e)
         {
             if (lvResults.CheckedItems.Count == 0) return;
@@ -262,6 +268,7 @@ namespace MovieTorrents
             MessageBox.Show(msg, "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
+        //下载种子附件
         private void DownloadAttachmentFile(WebClient client, string fileUrl, string fileName)
         {
             using (var rawStream = client.OpenRead(fileUrl))
@@ -279,6 +286,7 @@ namespace MovieTorrents
                 if (originalFileName.Length > 0)
                 {
                     fileName += Path.GetExtension(originalFileName);
+                    fileName = fileName.Replace("[BT下载]","");
                     var path = Path.Combine(tbDownloadPath.Text, fileName);
 
                     using (var outputFileStream = new FileStream(path, FileMode.Create))
@@ -309,6 +317,7 @@ namespace MovieTorrents
             if (lvResults.SelectedItems.Count == 0) return;
             var btItem = (BtItem)lvResults.SelectedItems[0].Tag;
             tbTitle.Text = btItem.Keyword;
+
 
         }
 

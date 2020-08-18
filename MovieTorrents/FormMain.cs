@@ -1274,7 +1274,7 @@ where not exists (select 1 from tb_file where hdd_nid={_hdd_nid} and path=$path 
             var lvItem = lvResults.SelectedItems[0];
             var torrentFile = (TorrentFile)lvItem.Tag;
 
-            if (!torrentFile.ToggleSeelater(DbConnectionString, out var msg))
+            if (!torrentFile.ToggleSeeLater(DbConnectionString, out var msg))
             {
                 MessageBox.Show(msg, Properties.Resources.TextError, MessageBoxButtons.YesNo, MessageBoxIcon.Error);
                 return;

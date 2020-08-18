@@ -62,8 +62,9 @@ namespace MovieTorrents
         private static Regex regex = new Regex(@"\d{4}");
         private static string[] PRE_CLEARS = { "WEB_DL", "DD5.1", "[0-9]*(?:\\.[0-9]*)?[GM]B?" };
         private static Regex BAD_CHARS = new Regex(@"[\[.\]()_-]");
-        private static string[] BAD_WORDS = { "1080P", "720P", "x26[45]", "H26[45]", "BluRay", "AC3", " DTS ", "2Audios?", "FLAME", "IMAX",
-            "中英","字幕", "国英","双语","音轨","香港","动作","有广告","BT下载","国粤双语中英双字","中英双字","未删节特别版","特效英语中字","中文" };
+        private static string[] BAD_WORDS = { "1080P", "720P", "x26[45]", "H26[45]", "BluRay", "AC3", " DTS ", "2Audios?", "FLAME", "IMAX","BD","MP4",
+            "中英","字幕", "国英","双语","音轨","香港","动作","有广告","BT下载","国粤双语中英双字","中英双字","未删节特别版","特效英语中字","中文"
+        };
         private static string[] RELEASE_GROUPS = { "SPARKS", "CMCT", "FGT", "KOOK" };
 
         public static string PurifyName(string text)
@@ -75,18 +76,16 @@ namespace MovieTorrents
             return cleaned.Trim();
         }
 
-        public string PurifiedName => PurifyName(name);
-
-        public string ChineseName
+        public static string ExtractChinese(string text)
         {
-            get
-            {
-                var matches = Regex.Matches(PurifiedName, "[\u4e00-\u9fa5]+");
-                return string.Join(" ", matches.OfType<Match>().Where(m => m.Success));
-            }
+            var matches = Regex.Matches(text, "[\u4e00-\u9fa5]+");
+            return string.Join(" ", matches.OfType<Match>().Where(m => m.Success));
         }
 
+        public string PurifiedName => PurifyName(name);
 
+        public string ChineseName => ExtractChinese(PurifiedName);
+       
 
         public TorrentFile()
         {
@@ -116,16 +115,17 @@ namespace MovieTorrents
         }
 
 
-        private static SQLiteCommand BuildSearchCommand(string text)
+        private static SQLiteCommand BuildSearchCommand(string searchText,string selectQuery="")
         {
             var command = new SQLiteCommand();
 
-            var sb = new StringBuilder("select * from filelist_view where 1=1");
+            var sb = new StringBuilder();
+            sb.Append(string.IsNullOrEmpty(selectQuery) ? "select * from filelist_view where 1=1" : selectQuery);
 
             //处理搜索关键词
-            if (!string.IsNullOrEmpty(text))
+            if (!string.IsNullOrEmpty(searchText))
             {
-                var splits = text.Split(null);
+                var splits = searchText.Split(null);
 
                 for (var i = 0; i < splits.Length; i++)
                 {
@@ -142,6 +142,7 @@ namespace MovieTorrents
             command.CommandText = sb.ToString();
             return command;
         }
+        //在数据库中搜索
         public static IEnumerable<TorrentFile> Search(string dbConnString, string text, out string msg)
         {
             var result = new List<TorrentFile>();
@@ -210,9 +211,55 @@ namespace MovieTorrents
 
             return ok?result:null;
         }
+        //检查数据库是否存在
+        public static bool ExistInDb(string dbConnString, string text,int? year=null)
+        {
+            if (string.IsNullOrEmpty(text)) return false;
+
+            var ok = true;
+            long result = 0;
+            try
+            {
+                var connection = new SQLiteConnection(dbConnString);
+                
+                connection.Open();
+
+                try
+                {
+                    var sql =
+                        "select count(*) from filelist_view where (name like $pName or keyname like $pName or othername like $pName)";
+                    if (year != null)
+                        sql += $" and year={year.Value}";
+
+                    var command = new SQLiteCommand(sql,connection);
+                    command.Parameters.AddWithValue("$pName", $"%{text}%");
+
+                    using (var reader = command.ExecuteReader())
+                    {
+                        if (reader.Read())
+                        {
+                            result = (long) reader[0];
+                        }
+                    }
+                }
+                catch (Exception e)
+                {
+                    Debug.WriteLine(e.Message);
+                    ok = false;
+                }
+                connection.Close();
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine(e.Message);
+                ok = false;
+            }
 
 
-        public bool ToggleSeelater(string dbConnString, out string msg)
+            return ok && result>0;
+        }
+
+        public bool ToggleSeeLater(string dbConnString, out string msg)
         {
             msg = string.Empty;
             var mDbConnection = new SQLiteConnection(dbConnString);
