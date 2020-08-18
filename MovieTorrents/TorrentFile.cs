@@ -227,7 +227,7 @@ namespace MovieTorrents
                 try
                 {
                     var sql =
-                        "select count(*) from filelist_view where (name like $pName or keyname like $pName or othername like $pName)";
+                        "select count(*) from filelist_view where (keyname like $pName or othername like $pName)";
                     if (year != null)
                         sql += $" and year={year.Value}";
 
@@ -259,6 +259,31 @@ namespace MovieTorrents
             return ok && result>0;
         }
 
+        //标准化最终的文件名
+        public static string NormalizeFileName(string fileName)
+        {
+            fileName = Regex.Replace(fileName, @"\s+", ".");//替换空白为.
+            if (fileName.StartsWith("[")) return fileName;
+            var regExpression = "[\u4e00-\u9fa5]";
+            var i = 0;
+            var hasChinese = false;
+            while (i < fileName.Length)
+            {
+                var c = fileName.Substring(i, 1);
+                if (Regex.IsMatch(c, regExpression))
+                {
+                    hasChinese = true;
+                }
+                else
+                {
+                    break;
+                }
+
+                i++;
+            }
+
+            return !hasChinese ? fileName : $"[{fileName.Substring(0, i)}]{fileName.Substring(i , fileName.Length - i)}";
+        }
         public bool ToggleSeeLater(string dbConnString, out string msg)
         {
             msg = string.Empty;

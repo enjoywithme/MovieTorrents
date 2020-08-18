@@ -25,18 +25,19 @@ namespace MovieTorrents
     {
         public static string CurrentPath;
         public static string DbConnectionString;
+        public static FormMain DefaultInstance { get; set; }
         private bool _minimizedToTray;
         private FormBtBtt _formBtBtt;
         
 
-        private FolderBrowserDialog folderBrowserDialog1;
+        private FolderBrowserDialog _folderBrowserDialog1;
 
-        private CancellationTokenSource _quernyTokenSource;
+        private CancellationTokenSource _queryTokenSource;
         private CancellationTokenSource _operTokenSource;
 
         private readonly List<string> _filterFields = new List<string> { "rating", "year" };
 
-        private string TorrentFilePath { get; set; }
+        public string TorrentFilePath { get; set; }
 
         private const int OperationNone = 0;
         private const int OperationQueryFile = 1;
@@ -68,6 +69,7 @@ namespace MovieTorrents
 
         private void FormMain_Load(object sender, EventArgs e)
         {
+            DefaultInstance = this;
             //_tt = new System.Timers.Timer(5000);
             //_tt.Elapsed += (o, j) => DisplayInfo("test");
             //_tt.Enabled = true;
@@ -397,18 +399,18 @@ namespace MovieTorrents
 
 
 
-            if (_quernyTokenSource != null)
+            if (_queryTokenSource != null)
             {
-                _quernyTokenSource.Cancel();
-                _quernyTokenSource.Dispose();
-                _quernyTokenSource = null;
+                _queryTokenSource.Cancel();
+                _queryTokenSource.Dispose();
+                _queryTokenSource = null;
             }
 
-            _quernyTokenSource = new CancellationTokenSource();
+            _queryTokenSource = new CancellationTokenSource();
 
             DisplayInfo("正在查询文件", false, false);
 
-            Task.Run(() => ExecuteSearch(text, _quernyTokenSource.Token))
+            Task.Run(() => ExecuteSearch(text, _queryTokenSource.Token))
                 .ContinueWith(task =>
                 {
                     Interlocked.Exchange(ref _currentOperation, OperationNone);
@@ -615,7 +617,7 @@ namespace MovieTorrents
             lvResults.Items.Clear();
             foreach (var torrentFile in torrentFiles)
             {
-                if (_quernyTokenSource != null && _quernyTokenSource.IsCancellationRequested)
+                if (_queryTokenSource != null && _queryTokenSource.IsCancellationRequested)
                     break;
 
                 string[] row = { torrentFile.name,
@@ -1219,10 +1221,10 @@ where not exists (select 1 from tb_file where hdd_nid={_hdd_nid} and path=$path 
                 return;
             }
             if (lvResults.SelectedItems.Count == 0) return;
-            if (folderBrowserDialog1 == null) folderBrowserDialog1 = new FolderBrowserDialog();
-            folderBrowserDialog1.SelectedPath = TorrentFilePath;
-            if (folderBrowserDialog1.ShowDialog(this) == DialogResult.Cancel) return;
-            var selectedPath = folderBrowserDialog1.SelectedPath;
+            if (_folderBrowserDialog1 == null) _folderBrowserDialog1 = new FolderBrowserDialog();
+            _folderBrowserDialog1.SelectedPath = TorrentFilePath;
+            if (_folderBrowserDialog1.ShowDialog(this) == DialogResult.Cancel) return;
+            var selectedPath = _folderBrowserDialog1.SelectedPath;
             if (!selectedPath.StartsWith(TorrentFilePath, StringComparison.InvariantCultureIgnoreCase))
             {
                 MessageBox.Show($"选择的目录必须是种子文件目录\"{TorrentFilePath}\"的子目录！", Properties.Resources.TextHint,
@@ -1235,7 +1237,7 @@ where not exists (select 1 from tb_file where hdd_nid={_hdd_nid} and path=$path 
             foreach (ListViewItem selectedItem in lvResults.SelectedItems)
             {
                 var torrentFile = (TorrentFile)selectedItem.Tag;
-                if (!torrentFile.MoveTo(DbConnectionString, folderBrowserDialog1.SelectedPath, out var msg))
+                if (!torrentFile.MoveTo(DbConnectionString, _folderBrowserDialog1.SelectedPath, out var msg))
                     errorMsg += msg;
                 else moved++;
             }

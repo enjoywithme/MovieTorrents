@@ -60,6 +60,7 @@
             this.btnSearch = new System.Windows.Forms.Button();
             this.tbSearch = new System.Windows.Forms.TextBox();
             this.label4 = new System.Windows.Forms.Label();
+            this.btArchiveTorrent = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // tbUrl
@@ -313,6 +314,15 @@
             this.label4.TabIndex = 4;
             this.label4.Text = "搜索";
             // 
+            // btArchiveTorrent
+            // 
+            this.btArchiveTorrent.Location = new System.Drawing.Point(648, 125);
+            this.btArchiveTorrent.Name = "btArchiveTorrent";
+            this.btArchiveTorrent.Size = new System.Drawing.Size(75, 23);
+            this.btArchiveTorrent.TabIndex = 2;
+            this.btArchiveTorrent.Text = "归档种子";
+            this.btArchiveTorrent.UseVisualStyleBackColor = true;
+            // 
             // FormBtBtt
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -329,6 +339,7 @@
             this.Controls.Add(this.label1);
             this.Controls.Add(this.lvResults);
             this.Controls.Add(this.btnHomePage);
+            this.Controls.Add(this.btArchiveTorrent);
             this.Controls.Add(this.btUnzip);
             this.Controls.Add(this.btDownload);
             this.Controls.Add(this.btnSearch);
@@ -381,5 +392,6 @@
         private System.Windows.Forms.Button btnSearch;
         private System.Windows.Forms.TextBox tbSearch;
         private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.Button btArchiveTorrent;
     }
 }

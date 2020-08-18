@@ -60,11 +60,13 @@ namespace MovieTorrents
         private void FormBtBtt_Load(object sender, EventArgs e)
         {
             tbUrl.Text = BtHomeUrl;
+            btArchiveTorrent.Click += BtArchiveTorrent_Click;
 #if DEBUG
             tbDownloadPath.Text = "x:\\temp";
 #endif
 
         }
+
 
         private void button1_Click(object sender, EventArgs e)
         {
@@ -321,6 +323,7 @@ namespace MovieTorrents
 
         }
 
+        //解压zip文件
         private void btUnzip_Click(object sender, EventArgs e)
         {
             var zipFiles = Directory.GetFiles(tbDownloadPath.Text).Where(s => Path.GetExtension(s).ToLowerInvariant() == ".zip");
@@ -340,6 +343,15 @@ namespace MovieTorrents
                             continue;
                         }
                         entry.ExtractToFile(Path.Combine(tbDownloadPath.Text, Path.GetFileNameWithoutExtension(file) + ".torrent"));
+                    }
+
+                    try
+                    {
+                        File.Delete(file);
+                    }
+                    catch (Exception exception)
+                    {
+                        msg += $"\r\n删除 {file} 出错:{exception.Message}";
                     }
 
                     i++;
@@ -393,6 +405,47 @@ namespace MovieTorrents
             if(string.IsNullOrEmpty(tbSearch.Text)) return;
             tbUrl.Text = $"https://www.btbtt.me/search-index-keyword-{tbSearch.Text}.htm";
             QueryPage();
+        }
+
+        //将目录下的种子文件转移到收藏目录
+        private void BtArchiveTorrent_Click(object sender, EventArgs e)
+        {
+            var msg = "";
+            var i = 0;
+            try
+            {
+                var files = Directory.GetFiles(tbDownloadPath.Text, "*.torrent");
+
+                foreach (var file in files)
+                {
+                    var destFileName = TorrentFile.NormalizeFileName(Path.GetFileName(file));
+                    destFileName = Path.Combine(FormMain.DefaultInstance.TorrentFilePath, destFileName);
+                    Debug.WriteLine(destFileName);
+
+                    if (File.Exists(destFileName))
+                    {
+                        msg += $"\r\n文件 {destFileName} 已经存在！";
+                        continue;
+                    }
+
+                    try
+                    {
+                        File.Move(file, destFileName);
+                        i++;
+                    }
+                    catch (Exception exception)
+                    {
+                        msg += $"\r\n{destFileName} {exception.Message}";
+                    }
+                }
+
+            }
+            catch (Exception exception)
+            {
+                msg += $"\r\n{exception.Message}";
+            }
+
+            MessageBox.Show($"成功转移 {i} 个文件。{msg}", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
     }
 }
