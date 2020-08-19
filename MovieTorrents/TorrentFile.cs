@@ -284,6 +284,37 @@ namespace MovieTorrents
 
             return !hasChinese ? fileName : $"[{fileName.Substring(0, i)}]{fileName.Substring(i , fileName.Length - i)}";
         }
+        //读取名称中的年份
+        public static int ExtractYear(string fileName)
+        {
+            var match = Regex.Match(fileName, "(\\d{4})");
+            if (!match.Success) return 0;
+            foreach (Group matchGroup in match.Groups)
+            {
+                var d = int.Parse(matchGroup.Value);
+                if(d==1080 || d==2160) continue;
+                return d;
+            }
+
+            return 0;
+        }
+
+        //返回归档年份子目录
+        public static string ArchiveYearSubPath(int year)
+        {
+            if (year >= 1910 && year <= 1930) return "1910-1930";
+            if (year >= 1931 && year <= 1950) return "1931-1950";
+            if (year >= 1951 && year <= 1960) return "1951-1960";
+            if (year >= 1961 && year <= 1970) return "1961-1970";
+            if (year >= 1971 && year <= 1980) return "1971-1980";
+            if (year >= 1981 && year <= 1990) return "1981-1990";
+            if (year >= 1991 && year <= 2000) return "1991-2000";
+            if (year >= 2001 && year <= 2010) return "2001-2010";
+
+            return year.ToString();
+
+        }
+
         public bool ToggleSeeLater(string dbConnString, out string msg)
         {
             msg = string.Empty;

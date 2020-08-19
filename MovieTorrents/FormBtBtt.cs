@@ -419,7 +419,16 @@ namespace MovieTorrents
                 foreach (var file in files)
                 {
                     var destFileName = TorrentFile.NormalizeFileName(Path.GetFileName(file));
-                    destFileName = Path.Combine(FormMain.DefaultInstance.TorrentFilePath, destFileName);
+                    var year = TorrentFile.ExtractYear(destFileName);
+                    if (year == 0)
+                    {
+                        msg += $"\r\n文件 {destFileName} 没有年份！";
+                        continue;
+                    }
+
+                    var destPath = Path.Combine(FormMain.DefaultInstance.TorrentFilePath,
+                        TorrentFile.ArchiveYearSubPath(year));
+                    destFileName = Path.Combine(destPath, destFileName);
                     Debug.WriteLine(destFileName);
 
                     if (File.Exists(destFileName))
