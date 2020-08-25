@@ -24,8 +24,8 @@ namespace CefBrowser
 
             Text = "CefSharp";
             WindowState = FormWindowState.Maximized;
-
-            CefSettings settings = new CefSharp.CefSettings
+            
+            var settings = new CefSettings
             {
                 CachePath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + @"\CEF"
             };
@@ -36,7 +36,6 @@ namespace CefBrowser
                 Dock = DockStyle.Fill,
             };
             toolStripContainer.ContentPanel.Controls.Add(_browser);
-
             _browser.IsBrowserInitializedChanged += OnIsBrowserInitializedChanged;
             _browser.LoadingStateChanged += OnLoadingStateChanged;
             _browser.ConsoleMessage += OnBrowserConsoleMessage;
@@ -50,14 +49,17 @@ namespace CefBrowser
             DisplayOutput(version);
         }
 
-        private void OnIsBrowserInitializedChanged(object sender, IsBrowserInitializedChangedEventArgs e)
+        private void _browser_IsBrowserInitializedChanged(object sender, EventArgs e)
         {
-            if(e.IsBrowserInitialized)
-            {
+            throw new NotImplementedException();
+        }
+
+        private void OnIsBrowserInitializedChanged(object sender, EventArgs e)
+        {
+            
                 var b = ((ChromiumWebBrowser)sender);
 
                 this.InvokeOnUiThreadIfRequired(() => b.Focus());
-            }
         }
 
         private void OnBrowserConsoleMessage(object sender, ConsoleMessageEventArgs args)
