@@ -8,6 +8,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using AngleSharp.Html.Parser;
+using MovieTorrents.Common;
 
 namespace MovieTorrents
 {
@@ -418,7 +419,7 @@ namespace MovieTorrents
 
                 foreach (var file in files)
                 {
-                    var destFileName = TorrentFile.NormalizeFileName(Path.GetFileName(file));
+                    var destFileName = Path.GetFileName(file).NormalizeTorrentFileName();
                     var year = TorrentFile.ExtractYear(destFileName);
                     if (year == 0)
                     {

@@ -16,6 +16,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using MovieTorrents.Common;
 using Exception = System.Exception;
 using Timer = System.Threading.Timer;
 
@@ -559,10 +560,7 @@ namespace MovieTorrents
             command.CommandText = sb.ToString();
             return command;
         }
-        private string GetReaderFieldString(DbDataReader reader, string fieldName)
-        {
-            return Convert.IsDBNull(reader[fieldName]) ? string.Empty : (string)reader[fieldName];
-        }
+       
         //执行搜索
         public async Task<IEnumerable<TorrentFile>> ExecuteSearch(string text, CancellationToken cancelToken)
         {
@@ -587,20 +585,20 @@ namespace MovieTorrents
                                 area = Area,
                                 path = (string)reader["path"],
                                 name = (string)reader["name"],
-                                keyname = GetReaderFieldString(reader, "keyname"),
-                                otherName = GetReaderFieldString(reader, "othername"),
+                                keyname = reader.GetReaderFieldString("keyname"),
+                                otherName = reader.GetReaderFieldString("othername"),
                                 ext = (string)reader["ext"],
                                 rating = (double)reader["rating"],
-                                year = GetReaderFieldString(reader, "year"),
-                                zone = GetReaderFieldString(reader, "zone"),
+                                year = reader.GetReaderFieldString("year"),
+                                zone = reader.GetReaderFieldString("zone"),
                                 seelater = (long)reader["seelater"],
                                 seenowant = (long)reader["seenowant"],
                                 seeflag = (long)reader["seeflag"],
-                                posterpath = GetReaderFieldString(reader, "posterpath"),
-                                genres = GetReaderFieldString(reader, "genres"),
-                                doubanid = GetReaderFieldString(reader, "doubanid"),
-                                seedate = GetReaderFieldString(reader, "seedate"),
-                                seecomment = GetReaderFieldString(reader, "seecomment")
+                                posterpath = reader.GetReaderFieldString("posterpath"),
+                                genres = reader.GetReaderFieldString("genres"),
+                                doubanid = reader.GetReaderFieldString("doubanid"),
+                                seedate = reader.GetReaderFieldString("seedate"),
+                                seecomment = reader.GetReaderFieldString("seecomment")
                             });
 
                         }

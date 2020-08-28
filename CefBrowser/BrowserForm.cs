@@ -220,7 +220,13 @@ if(heads.length>0 && articles.length>0)
 ";
             _browser.ExecuteScriptAsync(script);
 
-            SendKeys.Send("+^S");
+
+            //SendKeys.Send("+^S");//执行WizNote 抓取的快捷键
+
+            //拷贝文档
+            _browser.Copy();
+            ZeroDayDownArticle.SaveFromClipboard();
+
         }
     }
 }

@@ -73,6 +73,7 @@
     <Reference Include="UIAutomationTypes" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Common\Util.cs" />
     <Compile Include="DoubanSubject.cs" />
     <Compile Include="FormBtBtt.cs">
       <SubType>Form</SubType>
@@ -106,7 +107,6 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Shared\Utility.cs" />
     <Compile Include="SingleInstance.cs" />
     <Compile Include="TorrentFile.cs" />
     <EmbeddedResource Include="FormBtBtt.resx">
@@ -171,6 +171,12 @@
     <Content Include="temp\sample_subject_standard.html">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\mySharedLib\mySharedLib.csproj">
+      <Project>{5cf2aa19-7c87-4de1-8a6a-97041b373cec}</Project>
+      <Name>mySharedLib</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

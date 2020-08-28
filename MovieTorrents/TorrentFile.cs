@@ -7,10 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using System.Web.UI.WebControls;
-using System.Windows.Forms;
-using MovieTorrents.Shared;
+using MovieTorrents.Common;
 
 namespace MovieTorrents
 {
@@ -259,31 +256,7 @@ namespace MovieTorrents
             return ok && result>0;
         }
 
-        //标准化最终的文件名
-        public static string NormalizeFileName(string fileName)
-        {
-            fileName = Regex.Replace(fileName, @"\s+", ".");//替换空白为.
-            if (fileName.StartsWith("[")) return fileName;
-            var regExpression = "[\u4e00-\u9fa5]";
-            var i = 0;
-            var hasChinese = false;
-            while (i < fileName.Length)
-            {
-                var c = fileName.Substring(i, 1);
-                if (Regex.IsMatch(c, regExpression))
-                {
-                    hasChinese = true;
-                }
-                else
-                {
-                    break;
-                }
 
-                i++;
-            }
-
-            return !hasChinese ? fileName : $"[{fileName.Substring(0, i)}]{fileName.Substring(i , fileName.Length - i)}";
-        }
         //读取名称中的年份
         public static int ExtractYear(string fileName)
         {
