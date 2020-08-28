@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
@@ -37,11 +38,13 @@ namespace CefBrowser
         public string Version { get; private set; }
         public string Name { get; set; }
         public string DocFileName { get; private set; }
+        public string WizFolderLocation { get; private set; }
         public void Parse()
         {
             //查找url
             var match = Regex.Match(_html, "SourceURL:(.*)[^\\n]");
             Url = match.Success ? match.Groups[1].Value:"";
+            //File.WriteAllText("d:\\temp\\1.txt", _html, Encoding.UTF8);
 
             //抽取剪贴板正文
             Content = ExtractHtmlCopyHeader(Html);
@@ -87,7 +90,6 @@ namespace CefBrowser
                 MessageBox.Show("剪贴板没有html");
                 return;
             }
-
             var article = new ZeroDayDownArticle { Html = Clipboard.GetText(TextDataFormat.Html) };
             if (string.IsNullOrEmpty(article.Title))
             {
@@ -95,6 +97,23 @@ namespace CefBrowser
                 return;
             }
 
+            try
+            {
+                article.SaveToWiz();
+                MessageBox.Show($"保存成功!\r\n{article.Title}\r\n{article.WizFolderLocation}", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show(e.Message, "错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+
+
+        }
+
+        //保存为为知笔记文档
+        public void SaveToWiz()
+        {
             //打开数据库 https://www.wiz.cn/m/api/descriptions/IWizDatabase.html
             var dbPath = System.Configuration.ConfigurationManager.AppSettings["IndexDbPath"];
 #if DEBUG
@@ -112,24 +131,25 @@ namespace CefBrowser
 
             WizDocument document = null;
             //查找相同URL的文档
-            if (!string.IsNullOrEmpty(article.Url))
+            if (!string.IsNullOrEmpty(Url))
             {
-                var documents = (WizDocumentCollection)wizDb.DocumentsFromURL(article.Url);
+                var documents = (WizDocumentCollection)wizDb.DocumentsFromURL(Url);
                 if (documents.count > 0)
                     document = (WizDocument)documents[0];
             }
 
             //创建新文档
-            var folderLocation = System.Configuration.ConfigurationManager.AppSettings["DefaultFolder"];
+            WizFolderLocation = System.Configuration.ConfigurationManager.AppSettings["DefaultFolder"];
             if (document == null)
             {
 
                 //查找相似文档的目录
-                var splits = article.Name.Split();
+                var splits = Name.Split();
                 var firstWord = true;
                 var sb = new StringBuilder();
                 foreach (var split in splits)
                 {
+                    if(split.Length<=2) continue;
                     if (firstWord)
                     {
                         sb.Append($"DOCUMENT_TITLE like '%{split}%'");
@@ -142,25 +162,26 @@ namespace CefBrowser
                 var similarDocuments = (WizDocumentCollection)wizDb.DocumentsFromSQL(sb.ToString());
                 if (similarDocuments.count > 0)
                 {
-                    var similarDocument = (WizDocument) similarDocuments[0];
-                    folderLocation = similarDocument.Location;
+                    var similarDocument = (WizDocument)similarDocuments[0];
+                    WizFolderLocation = similarDocument.Location;
                 }
 
                 //Folder 对象 https://www.wiz.cn/m/api/descriptions/IWizFolder.html
-                var folder = (WizFolder)wizDb.GetFolderByLocation(folderLocation, false);
+                var folder = (WizFolder)wizDb.GetFolderByLocation(WizFolderLocation, false);
                 //在目录下创建文档
-                document = (WizDocument)folder.CreateDocument(article.Title, article.DocFileName, article.Url);
+                document = (WizDocument)folder.CreateDocument(Title, DocFileName, Url);
             }
-            
-            
+            else
+            {
+                WizFolderLocation = document.Location;
+            }
+
+
             var flag = wizUpdateDocumentIncludeScript;
-            document.UpdateDocument3(article.Content, flag);
-            document.Title = article.Title;
+            document.UpdateDocument3(Content, flag);
+            document.Title = Title;
 
             wizDb.Close();
-
-            MessageBox.Show($"成功保存到目录\"{document.Location}\"!", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
-
     }
 }

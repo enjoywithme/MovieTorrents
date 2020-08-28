@@ -3,9 +3,15 @@
 // Use of this source code is governed by a BSD-style license that can be found in the LICENSE file.
 
 using System;
+using System.Diagnostics;
+using System.IO;
+using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using WindowsInput;
 using WindowsInput.Native;
+using AngleSharp.Html.Parser;
 using CefBrowser.Controls;
 using CefSharp;
 using CefSharp.WinForms;
@@ -15,7 +21,7 @@ namespace CefBrowser
     public partial class BrowserForm : Form
     {
         private readonly ChromiumWebBrowser _browser;
-        private string ZerodayDownUrl = "www.0daydown.com";
+        private string _zerodayDownUrl = "www.0daydown.com";
         private bool _is0DayDown;
 
         public BrowserForm()
@@ -30,8 +36,10 @@ namespace CefBrowser
                 CachePath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + @"\CEF"
             };
             Cef.Initialize(settings);
-
-            _browser = new ChromiumWebBrowser(ZerodayDownUrl)
+#if DEBUG
+            _zerodayDownUrl = "https://www.0daydown.com/08/1394649.html";
+#endif
+            _browser = new ChromiumWebBrowser(_zerodayDownUrl)
             {
                 Dock = DockStyle.Fill,
             };
@@ -49,10 +57,7 @@ namespace CefBrowser
             DisplayOutput(version);
         }
 
-        private void _browser_IsBrowserInitializedChanged(object sender, EventArgs e)
-        {
-            throw new NotImplementedException();
-        }
+
 
         private void OnIsBrowserInitializedChanged(object sender, EventArgs e)
         {
@@ -91,7 +96,7 @@ namespace CefBrowser
             {
                 urlTextBox.Text = args.Address;
                 _is0DayDown =
-                    args.Address.IndexOf(ZerodayDownUrl, StringComparison.InvariantCultureIgnoreCase) >= 0;
+                    args.Address.IndexOf(_zerodayDownUrl, StringComparison.InvariantCultureIgnoreCase) >= 0;
                 
             });
         }
@@ -187,46 +192,61 @@ namespace CefBrowser
             _browser.ShowDevTools();
         }
 
-        private void tsbCapture0DayDown_Click(object sender, EventArgs e)
+        private async void tsbCapture0DayDown_Click(object sender, EventArgs e)
         {
-            var script = @"
-var s = document.getSelection();
-if(s.rangeCount > 0) s.removeAllRanges();
+
+            var mainFrame = _browser.GetBrowser().MainFrame;
+            //https://stackoverflow.com/questions/35890355/get-html-source-code-from-cefsharp-web-browser
+            //var htmlSource = await mainFrame.GetSourceAsync();
+            //Debug.WriteLine(htmlSource);
+            //File.WriteAllText("d:\\temp\\2.txt", htmlSource, Encoding.UTF8);
+
+            //var parser = new HtmlParser();
+            //var document = parser.ParseDocument(htmlSource);
+
+            //https://stackoverflow.com/questions/50688705/how-to-access-elements-with-cefsharp
+            //string EvaluateJavaScriptResult;
+
+            var task = mainFrame.EvaluateScriptAsync(@"(function() {
+            var s = document.getSelection();
+            if(s.rangeCount > 0) s.removeAllRanges();
 
 
-var heads = document.getElementsByClassName('article-header');
+            var heads = document.getElementsByClassName('article-header');
 
-var articles = document.getElementsByClassName('article-content');
+            var articles = document.getElementsByClassName('article-content');
 
-if(heads.length>0 && articles.length>0)
-{
-    var range = document.createRange();
-    range.setStartBefore(heads[0]);
-    range.setEndAfter(articles[0]);
-    s.addRange(range);
-    
-    
-    var e = new Event(""keydown"");
-    e.key=""s"";    // just enter the char you want to send 
-    e.keyCode=e.key.charCodeAt(0);
-    e.which=e.keyCode;
-    e.altKey=false;
-    e.ctrlKey=true;
-    e.shiftKey=true;
-    e.metaKey=false;
-    e.bubbles=true;
-    document.dispatchEvent(e);
-}
-";
-            _browser.ExecuteScriptAsync(script);
+            if(heads.length>0 && articles.length>0)
+            {
+                var range = document.createRange();
+                range.setStartBefore(heads[0]);
+                range.setEndAfter(articles[0]);
+                s.addRange(range);
+                /* Copy the text inside the text field */
+                document.execCommand(""copy"");
+            }
 
+            return 'ok'; })();",
+                null);
 
-            //SendKeys.Send("+^S");//执行WizNote 抓取的快捷键
+            await task.ContinueWith(t =>
+            {
+                if (t.IsFaulted) return;
+                //var response = t.Result;
+                //EvaluateJavaScriptResult = response.Success ? (response.Result.ToString() ?? "") : response.Message;
+                Clipboard.Clear();
 
-            //拷贝文档
-            _browser.Copy();
-            ZeroDayDownArticle.SaveFromClipboard();
+                //使用拷贝是因为拷贝的HTML会自动展开Stylesheet为内嵌
+                mainFrame.Copy();
 
+                //等待500ms执行，否则剪贴板可能没有数据
+                //不能使用Thread.SpinWait()，这个空转没有用
+                //部门使用Thread.Sleep()，会导致访问剪贴板死锁
+                mySharedLib.Utility.DelayAction(500, ZeroDayDownArticle.SaveFromClipboard);
+
+            }, TaskScheduler.FromCurrentSynchronizationContext());
+
+            
         }
     }
 }

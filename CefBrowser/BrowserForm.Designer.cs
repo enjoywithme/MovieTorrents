@@ -140,6 +140,7 @@
             // urlTextBox
             // 
             this.urlTextBox.AutoSize = false;
+            this.urlTextBox.Font = new System.Drawing.Font("Microsoft YaHei UI", 9F);
             this.urlTextBox.Name = "urlTextBox";
             this.urlTextBox.Size = new System.Drawing.Size(500, 25);
             this.urlTextBox.KeyUp += new System.Windows.Forms.KeyEventHandler(this.UrlTextBoxKeyUp);
