@@ -261,8 +261,10 @@ namespace CefBrowser
                 //部门使用Thread.Sleep()，会导致访问剪贴板死锁
                 mySharedLib.Utility.DelayAction(500, () =>
                 {
-                    var ok = ZeroDayDownArticle.SaveFromClipboard(out var msg);
-                    MessageBox.Show(msg, ok ? "提示" : "错误", MessageBoxButtons.OK,
+                    var article = new ZeroDayDownArticle();
+                    var ok = article.SaveFromClipboard(out var msg);
+
+                    MessageBox.Show($"{msg}\r\n{article.WizFolderLocation}\r\n{article.Title}", ok ? "提示" : "错误", MessageBoxButtons.OK,
                         ok ? MessageBoxIcon.Information : MessageBoxIcon.Error);
                 });
 

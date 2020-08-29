@@ -44,24 +44,22 @@ namespace ZeroDownLib
 
 
 
-        //从剪贴的html解析创建
-        public static ZeroDayDownArticle ParseFromPastHtml(string html)
+        //从剪贴的html解析
+        public void ParsePastHtml(string html)
         {
-            var article = new ZeroDayDownArticle();
-            article.Html = html;
+            Html = html;
 
             //查找url
             var match = Regex.Match(html, "SourceURL:(.*)[^\\n]");
-            article.Url = match.Success ? match.Groups[1].Value : "";
+            Url = match.Success ? match.Groups[1].Value : "";
             //File.WriteAllText("d:\\temp\\1.txt", _html, Encoding.UTF8);
 
             //抽取剪贴板正文
-            article.Content = ExtractHtmlCopyHeader(html);
+            Content = ExtractHtmlCopyHeader(html);
 
             //抽取0DayDown文章的标题
             match = Regex.Match(html, "<a(.*)>(.*?)</a></h1>");//非贪婪模式
-            article.Title = match.Success && match.Groups.Count == 3 ? match.Groups[2].Value : "";
-            return article;
+            Title = match.Success && match.Groups.Count == 3 ? match.Groups[2].Value : "";
         }
 
         //解析标题
@@ -98,15 +96,15 @@ namespace ZeroDownLib
         }
 
         //从剪贴板保存
-        public static bool SaveFromClipboard(out string msg)
+        public bool SaveFromClipboard(out string msg)
         {
             if (!Clipboard.ContainsText(TextDataFormat.Html))
             {
                 msg = "剪贴板没有html";
                 return false;
             }
-            var article = ZeroDayDownArticle.ParseFromPastHtml(Clipboard.GetText(TextDataFormat.Html));
-            if (string.IsNullOrEmpty(article.Title))
+            ParsePastHtml(Clipboard.GetText(TextDataFormat.Html));
+            if (string.IsNullOrEmpty(Title))
             {
                 msg = "没有找到文章标题";
                 return false;
@@ -114,8 +112,8 @@ namespace ZeroDownLib
 
             try
             {
-                article.SaveToWiz();
-                msg = $"保存成功!\r\n{article.WizFolderLocation}\r\n{article.Title}";
+                SaveToWiz();
+                msg = $"保存成功!";
 
             }
             catch (Exception e)

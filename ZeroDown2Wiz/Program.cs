@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using AngleSharp.Html.Parser;
 using CefSharp;
@@ -14,8 +15,8 @@ namespace ZeroDown2Wiz
 {
     class Program
     {
-        private static MainBrowser mainBrowser;
-        
+        private static MainBrowser _mainBrowser;
+        private static int _runningState=0;
 
         static void Main(string[] args)
         {
@@ -28,8 +29,7 @@ namespace ZeroDown2Wiz
             ZeroDayDownArticle.WizDbPath = System.Configuration.ConfigurationManager.AppSettings["IndexDbPath"];
             ZeroDayDownArticle.WizDefaultFolder = System.Configuration.ConfigurationManager.AppSettings["DefaultFolder"];
 
-
-
+            //配置cef
             var settings = new CefSettings()
             {
                 //By default CefSharp will use an in-memory cache, you need to specify a Cache Folder to persist data
@@ -39,10 +39,10 @@ namespace ZeroDown2Wiz
             //Perform dependency check to make sure all relevant resources are in our output directory.
             Cef.Initialize(settings, performDependencyCheck: true, browserProcessHandler: null);
 
-            // Load main browser to start page
-            mainBrowser = new MainBrowser();
-            mainBrowser.StartSearch();
-            Console.WriteLine($"Found {mainBrowser.Articles.Count} needed to save!");
+
+            // 初始化浏览器
+            _mainBrowser = new MainBrowser();
+            var t = new Timer(TimerCallback, null, 10*1000, 20*60*1000);//每隔20分钟搜索一次
 
             // We have to wait for something, otherwise the process will exit too soon.
             Console.ReadKey();
@@ -52,10 +52,21 @@ namespace ZeroDown2Wiz
             Cef.Shutdown();
 
         }
+        private static void TimerCallback(object o)
+        {
+            //https://docs.microsoft.com/en-us/dotnet/api/system.threading.interlocked?view=netcore-3.1
+            //0 indicates that the method is in use.
+            if (0 != Interlocked.Exchange(ref _runningState, 1))
+                return;
+            Log("------------Starting search-------------");
+            _mainBrowser.StartSearch();
+            Interlocked.Exchange(ref _runningState, 0);
+        }
 
-        
-
-        
+        private static void Log(string msg)
+        {
+            Console.WriteLine($"{DateTime.Now:hh:mm:ss}\tMain:{msg}");
+        }
 
     }
 }
