@@ -15,6 +15,7 @@ using AngleSharp.Html.Parser;
 using CefBrowser.Controls;
 using CefSharp;
 using CefSharp.WinForms;
+using ZeroDownLib;
 
 namespace CefBrowser
 {
@@ -36,10 +37,11 @@ namespace CefBrowser
                 CachePath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + @"\CEF"
             };
             Cef.Initialize(settings);
+            var startUrl = "https://0daydown.com";
 #if DEBUG
-            _zerodayDownUrl = "https://www.0daydown.com/08/1394649.html";
+            startUrl = "https://www.0daydown.com/08/1394649.html";
 #endif
-            _browser = new ChromiumWebBrowser(_zerodayDownUrl)
+            _browser = new ChromiumWebBrowser(startUrl)
             {
                 Dock = DockStyle.Fill,
             };
@@ -57,8 +59,15 @@ namespace CefBrowser
             DisplayOutput(version);
         }
 
+        private void BrowserForm_Load(object sender, EventArgs e)
+        {
+            ZeroDayDownArticle.WizDbPath = System.Configuration.ConfigurationManager.AppSettings["IndexDbPath"];
+            ZeroDayDownArticle.WizDefaultFolder = System.Configuration.ConfigurationManager.AppSettings["DefaultFolder"];
 
 
+        }
+
+        #region 浏览器事件
         private void OnIsBrowserInitializedChanged(object sender, EventArgs e)
         {
             
@@ -100,7 +109,10 @@ namespace CefBrowser
                 
             });
         }
+        #endregion
 
+        #region 工具栏按钮/菜单项
+        //设置工具栏按钮状态
         private void SetCanGoBack(bool canGoBack)
         {
             this.InvokeOnUiThreadIfRequired(() => backButton.Enabled = canGoBack);
@@ -146,7 +158,7 @@ namespace CefBrowser
             }
             urlTextBox.Width = Math.Max(0, width - urlTextBox.Margin.Horizontal - 18);
         }
-
+        //菜单
         private void ExitMenuItemClick(object sender, EventArgs e)
         {
             _browser.Dispose();
@@ -154,6 +166,12 @@ namespace CefBrowser
             Close();
         }
 
+        private void ShowDevToolsMenuItemClick(object sender, EventArgs e)
+        {
+            _browser.ShowDevTools();
+        }
+
+        //工具栏
         private void GoButtonClick(object sender, EventArgs e)
         {
             LoadUrl(urlTextBox.Text);
@@ -177,7 +195,9 @@ namespace CefBrowser
             }
 
             LoadUrl(urlTextBox.Text);
-        }
+        }        
+
+        #endregion
 
         private void LoadUrl(string url)
         {
@@ -187,10 +207,7 @@ namespace CefBrowser
             }
         }
 
-        private void ShowDevToolsMenuItemClick(object sender, EventArgs e)
-        {
-            _browser.ShowDevTools();
-        }
+
 
         private async void tsbCapture0DayDown_Click(object sender, EventArgs e)
         {
@@ -242,11 +259,18 @@ namespace CefBrowser
                 //等待500ms执行，否则剪贴板可能没有数据
                 //不能使用Thread.SpinWait()，这个空转没有用
                 //部门使用Thread.Sleep()，会导致访问剪贴板死锁
-                mySharedLib.Utility.DelayAction(500, ZeroDayDownArticle.SaveFromClipboard);
+                mySharedLib.Utility.DelayAction(500, () =>
+                {
+                    var ok = ZeroDayDownArticle.SaveFromClipboard(out var msg);
+                    MessageBox.Show(msg, ok ? "提示" : "错误", MessageBoxButtons.OK,
+                        ok ? MessageBoxIcon.Information : MessageBoxIcon.Error);
+                });
 
             }, TaskScheduler.FromCurrentSynchronizationContext());
 
             
         }
+
+        
     }
 }

@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Diagnostics;
-using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
-using WizKMCoreLib;
 using mySharedLib;
+using WizKMCoreLib;
 
-namespace CefBrowser
+namespace ZeroDownLib
 {
     public class ZeroDayDownArticle
     {
@@ -19,43 +18,59 @@ namespace CefBrowser
         private const int wizUpdateDocumentDonotDownloadFile = 0x0020;   //不从网络下载html里面的资源
         private const int wizUpdateDocumentAllowAutoGetContent = 0x0040;   //如果只保存正文，允许使用自动获得正文方式
 
-        private string _html;
+        public static string WizDbPath;
+        public static string WizDefaultFolder;
 
-        public string Html
+
+        public string Html { get; set; }
+        public string Url { get; set; }
+        public string Content { get; private set; }//净化后的html内容
+
+        private string _title;
+        public string Title
         {
-            get => _html;
+            get => _title;
             set
-
             {
-                _html = value;
-                Parse();
+                _title = value;
+                ParseTitle();
             }
-        }
+        } //完整标题，包含版本号
 
-        public string Url { get; private set; }
-        public string Content { get;private set; }
-        public string Title { get; private set; }
         public string Version { get; private set; }
-        public string Name { get; set; }
-        public string DocFileName { get; private set; }
+        public string Name { get; set; }//名称，不含版本号
+        public string DocFileName { get; private set; }//Wiz保存文件名
         public string WizFolderLocation { get; private set; }
-        public void Parse()
+
+
+
+        //从剪贴的html解析创建
+        public static ZeroDayDownArticle ParseFromPastHtml(string html)
         {
+            var article = new ZeroDayDownArticle();
+            article.Html = html;
+
             //查找url
-            var match = Regex.Match(_html, "SourceURL:(.*)[^\\n]");
-            Url = match.Success ? match.Groups[1].Value:"";
+            var match = Regex.Match(html, "SourceURL:(.*)[^\\n]");
+            article.Url = match.Success ? match.Groups[1].Value : "";
             //File.WriteAllText("d:\\temp\\1.txt", _html, Encoding.UTF8);
 
             //抽取剪贴板正文
-            Content = ExtractHtmlCopyHeader(Html);
+            article.Content = ExtractHtmlCopyHeader(html);
 
             //抽取0DayDown文章的标题
-            match = Regex.Match(Html, "<a(.*)>(.*?)</a></h1>");//非贪婪模式
-            Title = match.Success&&match.Groups.Count==3? match.Groups[2].Value:"";
+            match = Regex.Match(html, "<a(.*)>(.*?)</a></h1>");//非贪婪模式
+            article.Title = match.Success && match.Groups.Count == 3 ? match.Groups[2].Value : "";
+            return article;
+        }
+
+        //解析标题
+        public void ParseTitle()
+        {
 
             //抽取版本号
-            match = Regex.Match(Title, "\\s(\\d+.[^\\s]*)\\b");
-            Version = match.Success ? match.Groups[1].Value:"";
+            var match = Regex.Match(Title, "\\s(\\d+.[^\\s]*)\\b");
+            Version = match.Success ? match.Groups[1].Value : "";
             Debug.WriteLine($"Version={Version}");
 
             //名称
@@ -63,7 +78,7 @@ namespace CefBrowser
                 Name = Title;
             else
             {
-                var n = Title.IndexOf(Version,StringComparison.OrdinalIgnoreCase);
+                var n = Title.IndexOf(Version, StringComparison.OrdinalIgnoreCase);
                 Name = Title.Substring(0, n).Trim();
             }
 
@@ -83,44 +98,51 @@ namespace CefBrowser
         }
 
         //从剪贴板保存
-        public static void SaveFromClipboard()
+        public static bool SaveFromClipboard(out string msg)
         {
             if (!Clipboard.ContainsText(TextDataFormat.Html))
             {
-                MessageBox.Show("剪贴板没有html");
-                return;
+                msg = "剪贴板没有html";
+                return false;
             }
-            var article = new ZeroDayDownArticle { Html = Clipboard.GetText(TextDataFormat.Html) };
+            var article = ZeroDayDownArticle.ParseFromPastHtml(Clipboard.GetText(TextDataFormat.Html));
             if (string.IsNullOrEmpty(article.Title))
             {
-                MessageBox.Show("没有找到文章标题");
-                return;
+                msg = "没有找到文章标题";
+                return false;
             }
 
             try
             {
                 article.SaveToWiz();
-                MessageBox.Show($"保存成功!\r\n{article.Title}\r\n{article.WizFolderLocation}", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                msg = $"保存成功!\r\n{article.WizFolderLocation}\r\n{article.Title}";
 
             }
             catch (Exception e)
             {
-                MessageBox.Show(e.Message, "错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                msg = e.Message;
+                return false;
             }
 
-
+            return true;
         }
 
         //保存为为知笔记文档
+        //https://www.wiz.cn/zh-cn/m/api-summary.html
         public void SaveToWiz()
         {
             //打开数据库 https://www.wiz.cn/m/api/descriptions/IWizDatabase.html
-            var dbPath = System.Configuration.ConfigurationManager.AppSettings["IndexDbPath"];
+            //var dbPath = System.Configuration.ConfigurationManager.AppSettings["IndexDbPath"];
 #if DEBUG
-            dbPath = "C:\\Users\\duanxin\\Documents\\My Knowledge\\Data\\xxinduan@hotmail.com\\index.db";
+            WizDbPath = "C:\\Users\\duanxin\\Documents\\My Knowledge\\Data\\xxinduan@hotmail.com\\index.db";
 #endif
+            if (string.IsNullOrEmpty(WizDbPath))
+                throw new Exception("为知笔记数据库路径为空！");
+            if (string.IsNullOrEmpty(WizDefaultFolder))
+                throw new Exception("必须指定为知笔记默认保存文件夹！");
+
             var wizDb = new WizDatabaseClass();
-            wizDb.Open(dbPath);
+            wizDb.Open(WizDbPath);
 
             //列举文件夹
             //var folders = (WizFolderCollection)wizDb.Folders;
@@ -139,7 +161,7 @@ namespace CefBrowser
             }
 
             //创建新文档
-            WizFolderLocation = System.Configuration.ConfigurationManager.AppSettings["DefaultFolder"];
+            //WizFolderLocation = System.Configuration.ConfigurationManager.AppSettings["DefaultFolder"];
             if (document == null)
             {
 
@@ -149,7 +171,7 @@ namespace CefBrowser
                 var sb = new StringBuilder();
                 foreach (var split in splits)
                 {
-                    if(split.Length<=2) continue;
+                    if (split.Length <= 2) continue;
                     if (firstWord)
                     {
                         sb.Append($"DOCUMENT_TITLE like '%{split}%'");
@@ -171,17 +193,56 @@ namespace CefBrowser
                 //在目录下创建文档
                 document = (WizDocument)folder.CreateDocument(Title, DocFileName, Url);
             }
-            else
-            {
-                WizFolderLocation = document.Location;
-            }
+
+
 
 
             var flag = wizUpdateDocumentIncludeScript;
+            //更新文档内容、标题 https://www.wiz.cn/m/api/descriptions/IWizDocument.html
             document.UpdateDocument3(Content, flag);
             document.Title = Title;
+            WizFolderLocation = document.Location;
 
             wizDb.Close();
+        }
+
+        //检查wiz笔记数据库是否有同名同url的文章
+        public bool ExistsInWizDb()
+        {
+            var wizDb = new WizDatabaseClass();
+            wizDb.Open(WizDbPath);
+            var where = $"DOCUMENT_TITLE='{Title}' AND DOCUMENT_URL='{Url}'";
+            var documents = (WizDocumentCollection)wizDb.DocumentsFromSQL(where);
+            var yes = documents.count > 0;
+            wizDb.Close();
+            return yes;
+        }
+
+        //检查wiz笔记数据库是否有类似标题的文章
+        public bool SimilarInWizDb()
+        {
+            var splits = Name.Split();
+            var firstWord = true;
+            var sb = new StringBuilder();
+            foreach (var split in splits)
+            {
+                if (split.Length <= 2) continue;
+                if (firstWord)
+                {
+                    sb.Append($"DOCUMENT_TITLE like '%{split}%'");
+                    firstWord = false;
+                    continue;
+                }
+                sb.Append($"AND DOCUMENT_TITLE like '%{split}%'");
+            }
+
+            var wizDb = new WizDatabaseClass();
+            wizDb.Open(WizDbPath);
+
+            var similarDocuments = (WizDocumentCollection)wizDb.DocumentsFromSQL(sb.ToString());
+            var yes = similarDocuments.count > 0;
+            wizDb.Close();
+            return yes;
         }
     }
 }
