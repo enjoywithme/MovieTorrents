@@ -80,6 +80,11 @@ namespace ZeroDown2Wiz
                     null).ContinueWith(t =>
                 {
                     if (t.IsFaulted) return;
+                    if (Program.ApplicationExiting)
+                    {
+                        _isLoading = false;
+                        return;
+                    }
                     //Thread.CurrentThread.SetApartmentState(ApartmentState.STA);
                     //Clipboard.Clear();
 
@@ -124,6 +129,11 @@ namespace ZeroDown2Wiz
                         var aLinks = document.All.Where(a => a.LocalName == "a" && a.ParentElement.LocalName == "h2").ToArray();
                         foreach (var aLink in aLinks)
                         {
+                            if (Program.ApplicationExiting)
+                            {
+                                _isLoading = false;
+                                return;
+                            }
                             var article = new ZeroDayDownArticle
                             {
                                 Url = aLink.Attributes["href"].Value,
@@ -171,16 +181,18 @@ namespace ZeroDown2Wiz
             Console.ResetColor();
         }
 
-        private void WaitIdle()
+        private bool WaitIdle()
         {
             while (_isLoading || !_browserInitialized)
             {
                 Thread.Sleep(1000);
             }
+
+            return !Program.ApplicationExiting;
         }
         public void LoadUrl(string url)
         {
-            WaitIdle();
+            if(!WaitIdle()) return;
 
             Log($"Load {url}\r\n", ConsoleColor.Blue);
             _isLoading = true;
@@ -200,13 +212,13 @@ namespace ZeroDown2Wiz
                 var url = _currentPage == 1 ? StartUrl : $"{StartUrl}/page/{_currentPage}";
                 LoadUrl(url);
 
-                WaitIdle();
+            if(!WaitIdle()) return;
 
                 _currentPage++;
                 if (_currentPage == _maxSearchPages) break;
             }
 
-            WaitIdle();
+            if (!WaitIdle()) return;
 
             Log($"-------- {Articles.Count} articles to download---------\r\n", ConsoleColor.DarkRed);
             if (Articles.Count == 0) return;
@@ -214,11 +226,13 @@ namespace ZeroDown2Wiz
             //下载文章
             foreach (var article in Articles)
             {
-                WaitIdle();
+                if (!WaitIdle()) return;
 
                 LoadUrl(article.Url);
             }
+
             WaitIdle();
+
         }
     }
 }

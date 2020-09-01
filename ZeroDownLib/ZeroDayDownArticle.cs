@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
@@ -18,6 +20,7 @@ namespace ZeroDownLib
         private const int wizUpdateDocumentDonotDownloadFile = 0x0020;   //不从网络下载html里面的资源
         private const int wizUpdateDocumentAllowAutoGetContent = 0x0040;   //如果只保存正文，允许使用自动获得正文方式
 
+        private List<string> _similarSkipWords = new List<string>{"pro","ultimate"};
         public static string WizDbPath;
         public static string WizDefaultFolder;
 
@@ -224,7 +227,7 @@ namespace ZeroDownLib
             var sb = new StringBuilder();
             foreach (var split in splits)
             {
-                if (split.Length <= 2) continue;
+                if (split.Length <= 2 || _similarSkipWords.Any(x=>split.ToLower()==x)) continue;
                 if (firstWord)
                 {
                     sb.Append($"DOCUMENT_TITLE like '%{split}%'");
