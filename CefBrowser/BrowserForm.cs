@@ -5,6 +5,7 @@
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -54,11 +55,60 @@ namespace CefBrowser
             _browser.StatusMessage += OnBrowserStatusMessage;
             _browser.TitleChanged += OnBrowserTitleChanged;
             _browser.AddressChanged += OnBrowserAddressChanged;
+            _browser.FrameLoadEnd += _browser_FrameLoadEnd;
 
             var bitness = Environment.Is64BitProcess ? "x64" : "x86";
             var version =
                 $"Chromium: {Cef.ChromiumVersion}, CEF: {Cef.CefVersion}, CefSharp: {Cef.CefSharpVersion}, Environment: {bitness}";
             DisplayOutput(version);
+        }
+
+        private void _browser_FrameLoadEnd(object sender, FrameLoadEndEventArgs e)
+        {
+            var frame = _browser.GetMainFrame();
+            frame.GetSourceAsync().ContinueWith(t =>
+            {
+                var htmlSource = t.Result;
+                //File.WriteAllText("d:\\temp\\3.text",htmlSource,Encoding.UTF8);
+                try
+                {
+                    var parser = new HtmlParser();
+                    var document = parser.ParseDocument(htmlSource);
+                    var aLinks = document.All.Where(a => a.LocalName == "a" && a.ParentElement.LocalName == "h2").ToArray();
+                    foreach (var aLink in aLinks)
+                    {
+                        
+                        var article = new ZeroDayDownArticle
+                        {
+                            Url = aLink.Attributes["href"].Value,
+                            Title = aLink.InnerHtml
+                        };
+
+                        if (article.ExistsInWizDb())
+                        {
+                            var script = @"$('a').each(function(index,el) 
+{if($(el).html()==('" + article.Title + @"')) 
+$(el).css({'background-color':'green','color':'blue'});});";
+                            frame.ExecuteJavaScriptAsync(script);
+                        }
+                        else if (article.SimilarInWizDb())
+                        {
+                            var script = @"$('a').each(function(index,el) 
+{if($(el).html()==('" + article.Title + @"')) 
+$(el).css({'background-color':'yellow','color':'red'});});";
+                            frame.ExecuteJavaScriptAsync(script);
+                        }
+                        else
+                        {
+                        }
+                    }
+
+                }
+                catch (Exception exception)
+                {
+                    Debug.WriteLine($"=====Error====={exception.Message}\r\n");
+                }
+            });
         }
 
         private void BrowserForm_Load(object sender, EventArgs e)
