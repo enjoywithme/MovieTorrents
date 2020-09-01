@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Configuration;
 using System.Text.RegularExpressions;
 
 namespace mySharedLib
@@ -31,6 +32,20 @@ namespace mySharedLib
 
             timer.Interval = millisecond;
             timer.Start();
+        }
+
+        public static T GetSetting<T>(string key, T defaultValue = default(T)) where T : IConvertible
+        {
+            var val = ConfigurationManager.AppSettings[key] ?? "";
+            T result = defaultValue;
+            if (string.IsNullOrEmpty(val)) return result;
+            T typeDefault = default(T);
+            if (typeof(T) == typeof(string))
+            {
+                typeDefault = (T)(object)string.Empty;
+            }
+            result = (T)Convert.ChangeType(val, typeDefault.GetTypeCode());
+            return result;
         }
     }
 

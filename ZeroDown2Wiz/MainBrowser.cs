@@ -20,10 +20,10 @@ namespace ZeroDown2Wiz
         private bool _browserInitialized;
         private bool _isLoading;//ChromiumWebBrowser.IsLoading有点不靠谱
 
-        private int maxSearchPages = 5;
+        private readonly int _maxSearchPages;
         private int _currentPage = 1;
 
-        const string startUrl = "https:/www.0daydown.com";
+        const string StartUrl = "https:/www.0daydown.com";
 
         public List<ZeroDayDownArticle> Articles = new List<ZeroDayDownArticle>();
         public static bool ContinueSearch = true;
@@ -35,20 +35,22 @@ namespace ZeroDown2Wiz
             _browser.FrameLoadEnd += Browser_FrameLoadEnd;
             _browser.BrowserInitialized += Browser_BrowserInitialized;
 
-            Log("Created!");
+            _maxSearchPages = mySharedLib.Utility.GetSetting<int>("MaxSearchPage", 10);
+
+            Log("Created!\r\n");
 
         }
 
         private void Browser_BrowserInitialized(object sender, EventArgs e)
         {
-            Log("initialized!");
+            Log("initialized!\r\n");
 
             _browserInitialized = true;
         }
 
         private void Browser_FrameLoadEnd(object sender, FrameLoadEndEventArgs e)
         {
-            Log("Load ended!");
+            Log("Load ended!\r\n");
 
             var match = Regex.Match(e.Url, "0daydown.com/[\\d]+/.+\\.html");
             if (match.Success)//文章页
@@ -89,7 +91,17 @@ namespace ZeroDown2Wiz
                         {
                             var article = new ZeroDayDownArticle();
                             var ok = article.SaveFromClipboard(out var msg);
-                            Log($"{ok} {msg} {article.WizFolderLocation}/{article.Title}");
+                            if (!ok)
+                            {
+                                Log($"[Error]", ConsoleColor.Red, ConsoleColor.White);
+                                Log($"{msg}\r\n");
+                            }
+                            else
+                            {
+                                Log($"[Ok]", ConsoleColor.DarkGreen, ConsoleColor.White);
+                                Log($"{msg} {article.WizFolderLocation}/{article.Title}\r\n");
+
+                            }
                             _isLoading = false;
                         });
                     staThread.SetApartmentState(ApartmentState.STA);
@@ -105,37 +117,58 @@ namespace ZeroDown2Wiz
                 {
                     var htmlSource = t.Result;
                     //File.WriteAllText("d:\\temp\\3.text",htmlSource,Encoding.UTF8);
-
-                    var parser = new HtmlParser();
-                    var document = parser.ParseDocument(htmlSource);
-                    var aLinks = document.All.Where(a => a.LocalName == "a" && a.ParentElement.LocalName == "h2").ToArray();
-                    foreach (var aLink in aLinks)
+                    try
                     {
-                        var article = new ZeroDayDownArticle
+                        var parser = new HtmlParser();
+                        var document = parser.ParseDocument(htmlSource);
+                        var aLinks = document.All.Where(a => a.LocalName == "a" && a.ParentElement.LocalName == "h2").ToArray();
+                        foreach (var aLink in aLinks)
                         {
-                            Url = aLink.Attributes["href"].Value,
-                            Title = aLink.InnerHtml
-                        };
-                        Log($"{article.Title} {article.Url}");
+                            var article = new ZeroDayDownArticle
+                            {
+                                Url = aLink.Attributes["href"].Value,
+                                Title = aLink.InnerHtml
+                            };
 
-                        if (article.ExistsInWizDb())
-                        {
-                            ContinueSearch = false;
-                            Log("--------------SAVED---------");
+                            if (article.ExistsInWizDb())
+                            {
+                                ContinueSearch = false;
+                                Log("[SAVED]", ConsoleColor.DarkRed, ConsoleColor.DarkYellow);
+                                Log($"{article.Title}\r\n", outHeader: false);
+
+                            }
+                            else if (article.SimilarInWizDb())
+                            {
+                                Log($"{article.Title}\r\n", ConsoleColor.Green);
+                                Articles.Add(article);
+                            }
+                            else
+                            {
+                                Log($"{article.Title}\r\n");
+                            }
                         }
-                        else if (article.SimilarInWizDb()) Articles.Add(article);
 
+                    }
+                    catch (Exception exception)
+                    {
+                        Log($"=====Error====={exception.Message}\r\n", ConsoleColor.White, ConsoleColor.DarkRed);
                     }
 
                     _isLoading = false;
                 });
             }
-            
+
         }
 
-        private void Log(string msg)
+        private void Log(string msg, ConsoleColor foreColor = ConsoleColor.White,
+            ConsoleColor bgColor = ConsoleColor.Black, bool outHeader = true)
         {
-            Console.WriteLine($"{DateTime.Now:hh:mm:ss}\tBrowser:{msg}");
+            if (outHeader)
+                Console.Write($"{DateTime.Now:hh:mm:ss}\tBrowser:");
+            Console.ForegroundColor = foreColor;
+            Console.BackgroundColor = bgColor;
+            Console.Write(msg);
+            Console.ResetColor();
         }
 
         private void WaitIdle()
@@ -149,7 +182,7 @@ namespace ZeroDown2Wiz
         {
             WaitIdle();
 
-            Log($"Load {url}");
+            Log($"Load {url}\r\n", ConsoleColor.Blue);
             _isLoading = true;
             _browser.Load(url);
         }
@@ -158,25 +191,25 @@ namespace ZeroDown2Wiz
         {
             //搜索文章
             ContinueSearch = true;
-            _currentPage = 0;
+            _currentPage = 1;
             Articles.Clear();
             while (ContinueSearch)
             {
-                Log($"Page {_currentPage}");
+                Log($"-----Page {_currentPage}-------\r\n", ConsoleColor.Cyan);
 
-                var url = _currentPage == 1 ? startUrl : $"{startUrl}/page/{_currentPage}";
+                var url = _currentPage == 1 ? StartUrl : $"{StartUrl}/page/{_currentPage}";
                 LoadUrl(url);
-                
+
                 WaitIdle();
 
                 _currentPage++;
-                if (_currentPage == maxSearchPages) break;
+                if (_currentPage == _maxSearchPages) break;
             }
 
             WaitIdle();
 
-            Log($"-------- {Articles.Count} articles to download---------");
-            if(Articles.Count==0) return;
+            Log($"-------- {Articles.Count} articles to download---------\r\n", ConsoleColor.DarkRed);
+            if (Articles.Count == 0) return;
 
             //下载文章
             foreach (var article in Articles)

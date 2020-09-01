@@ -6,6 +6,7 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -23,6 +24,7 @@ namespace CefBrowser
     {
         private readonly ChromiumWebBrowser _browser;
         private string _zerodayDownUrl = "www.0daydown.com";
+        private const string ZeroDownPageUrlPattern = "0daydown.com/[\\d]+/.+\\.html";
         private bool _is0DayDown;
 
         public BrowserForm()
@@ -104,8 +106,8 @@ namespace CefBrowser
             this.InvokeOnUiThreadIfRequired(() =>
             {
                 urlTextBox.Text = args.Address;
-                _is0DayDown =
-                    args.Address.IndexOf(_zerodayDownUrl, StringComparison.InvariantCultureIgnoreCase) >= 0;
+                var match = Regex.Match(args.Address, ZeroDownPageUrlPattern);
+                _is0DayDown =match.Success;
                 
             });
         }
