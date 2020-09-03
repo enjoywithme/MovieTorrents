@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading;
 using System.Windows.Forms;
+using mySharedLib;
 
 namespace MovieTorrents
 {
@@ -19,44 +20,75 @@ namespace MovieTorrents
 #if DEBUG
             tbSearch.Text = "模范刑警";
 #endif
-
+            tbSearch.KeyDown += TbSearch_KeyDown;
+            tbUrl.KeyDown += TbUrl_KeyDown;
+            btLog.Click += BtLog_Click;
         }
 
+        private void TbUrl_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Return)
+                DoQuery();
+        }
+
+        private void BtLog_Click(object sender, EventArgs e)
+        {
+            if (!MyLog.OpenLog(out var msg))
+                MessageBox.Show(this, msg, "错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        }
+
+        private void TbSearch_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode != Keys.Return) return;
+            if (!CheckAutoDownloading()) return;
+            if (string.IsNullOrEmpty(tbSearch.Text.Trim())) return;
+            tbUrl.Text = BtBtItem.SearPageUrl(tbSearch.Text.Trim());
+            DoQuery();
+        }
 
         private void DoQuery()
         {
             var c = Cursor;
             Cursor = Cursors.WaitCursor;
-
-            lvResults.Items.Clear();
-            var btItems = BtBtItem.QueryPage(tbUrl.Text.Trim(), out var msg);
-            if (btItems == null)
+            try
             {
-                MessageBox.Show(msg, "错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-            else
-            {
-                foreach (var btItem in btItems)
+                lvResults.Items.Clear();
+                var btItems = BtBtItem.QueryPage(tbUrl.Text.Trim(), out var msg);
+                if (btItems == null)
                 {
-                    string[] row = { btItem.Title,
-                        btItem.PublishTime,
-                        btItem.DouBanRating,
-                        btItem.Gene,
-                        btItem.Tag
-                    };
-                    lvResults.Items.Add(new ListViewItem(row)
+                    MessageBox.Show(msg, "错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+                else
+                {
+                    foreach (var btItem in btItems)
                     {
-                        Tag = btItem,
-                        Checked = btItem.Checked
+                        string[] row =
+                        {
+                            btItem.Title,
+                            btItem.PublishTime,
+                            btItem.DouBanRating,
+                            btItem.Gene,
+                            btItem.Tag
+                        };
+                        lvResults.Items.Add(new ListViewItem(row)
+                        {
+                            Tag = btItem,
+                            Checked = btItem.Checked
 
-                    });
+                        });
+                    }
                 }
             }
-
-
-            Cursor = c;
-            Interlocked.Exchange(ref BtBtItem.AutoDownloadRunning, 0);
-
+            catch (Exception e)
+            {
+                MessageBox.Show(e.Message, "错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            finally
+            {
+                Cursor = c;
+                Interlocked.Exchange(ref BtBtItem.AutoDownloadRunning, 0);
+            }
+            
         }
 
 
@@ -154,14 +186,7 @@ namespace MovieTorrents
             Hide();
         }
 
-        private void btSearch_Click(object sender, EventArgs e)
-        {
-            if(!CheckAutoDownloading()) return;
-            if (string.IsNullOrEmpty(tbSearch.Text.Trim())) return;
-            tbUrl.Text = BtBtItem.SearPageUrl(tbSearch.Text.Trim());
-            DoQuery();
-        }
-
+       
         //检查是否正在自动下载
         private bool CheckAutoDownloading()
         {

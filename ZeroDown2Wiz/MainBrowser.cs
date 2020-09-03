@@ -144,7 +144,7 @@ namespace ZeroDown2Wiz
                             {
                                 ContinueSearch = false;
                                 Log("[SAVED]", ConsoleColor.DarkRed, ConsoleColor.DarkYellow);
-                                Log($"{article.Title}\r\n", outHeader: false);
+                                Log($"{article.Title}\r\n", printHeader: false);
 
                             }
                             else if (article.SimilarInWizDb())
@@ -171,9 +171,9 @@ namespace ZeroDown2Wiz
         }
 
         private void Log(string msg, ConsoleColor foreColor = ConsoleColor.White,
-            ConsoleColor bgColor = ConsoleColor.Black, bool outHeader = true)
+            ConsoleColor bgColor = ConsoleColor.Black, bool printHeader = true)
         {
-            if (outHeader)
+            if (printHeader)
                 Console.Write($"{DateTime.Now:hh:mm:ss}\tBrowser:");
             Console.ForegroundColor = foreColor;
             Console.BackgroundColor = bgColor;

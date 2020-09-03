@@ -117,7 +117,7 @@ namespace MovieTorrents
 
         private void FormMain_FormClosing(object sender, FormClosingEventArgs e)
         {
-            if (_currentOperation == OperationNone)
+            if (_currentOperation == OperationNone || 0 != Interlocked.Exchange(ref BtBtItem.AutoDownloadRunning, 1))
             {
                 _formBtBtt?.Close();
                 return;

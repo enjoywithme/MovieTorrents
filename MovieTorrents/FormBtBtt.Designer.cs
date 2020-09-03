@@ -51,11 +51,11 @@
             this.columnHeaderSeeComment = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.btUnzip = new System.Windows.Forms.Button();
             this.tbTitle = new System.Windows.Forms.TextBox();
-            this.btnSearch = new System.Windows.Forms.Button();
             this.tbSearch = new System.Windows.Forms.TextBox();
             this.label4 = new System.Windows.Forms.Label();
             this.btArchiveTorrent = new System.Windows.Forms.Button();
             this.cbAutoDownload = new System.Windows.Forms.CheckBox();
+            this.btLog = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // tbUrl
@@ -229,16 +229,6 @@
             this.tbTitle.TabIndex = 7;
             this.tbTitle.TextChanged += new System.EventHandler(this.tbSearch_TextChanged);
             // 
-            // btnSearch
-            // 
-            this.btnSearch.Location = new System.Drawing.Point(433, 69);
-            this.btnSearch.Name = "btnSearch";
-            this.btnSearch.Size = new System.Drawing.Size(75, 23);
-            this.btnSearch.TabIndex = 2;
-            this.btnSearch.Text = "搜索";
-            this.btnSearch.UseVisualStyleBackColor = true;
-            this.btnSearch.Click += new System.EventHandler(this.btSearch_Click);
-            // 
             // tbSearch
             // 
             this.tbSearch.Location = new System.Drawing.Point(80, 70);
@@ -266,8 +256,9 @@
             // 
             // cbAutoDownload
             // 
+            this.cbAutoDownload.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.cbAutoDownload.AutoSize = true;
-            this.cbAutoDownload.Location = new System.Drawing.Point(443, 29);
+            this.cbAutoDownload.Location = new System.Drawing.Point(660, 15);
             this.cbAutoDownload.Name = "cbAutoDownload";
             this.cbAutoDownload.Size = new System.Drawing.Size(96, 16);
             this.cbAutoDownload.TabIndex = 9;
@@ -275,11 +266,22 @@
             this.cbAutoDownload.UseVisualStyleBackColor = true;
             this.cbAutoDownload.CheckedChanged += new System.EventHandler(this.cbAutoDownload_CheckedChanged);
             // 
+            // btLog
+            // 
+            this.btLog.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btLog.Location = new System.Drawing.Point(771, 12);
+            this.btLog.Name = "btLog";
+            this.btLog.Size = new System.Drawing.Size(75, 23);
+            this.btLog.TabIndex = 10;
+            this.btLog.Text = "日志";
+            this.btLog.UseVisualStyleBackColor = true;
+            // 
             // FormBtBtt
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(858, 488);
+            this.Controls.Add(this.btLog);
             this.Controls.Add(this.cbAutoDownload);
             this.Controls.Add(this.tbSearch);
             this.Controls.Add(this.tbTitle);
@@ -292,7 +294,6 @@
             this.Controls.Add(this.btArchiveTorrent);
             this.Controls.Add(this.btUnzip);
             this.Controls.Add(this.btDownload);
-            this.Controls.Add(this.btnSearch);
             this.Controls.Add(this.tbUrl);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "FormBtBtt";
@@ -330,10 +331,10 @@
         private System.Windows.Forms.ColumnHeader columnHeaderSeeComment;
         private System.Windows.Forms.Button btUnzip;
         private System.Windows.Forms.TextBox tbTitle;
-        private System.Windows.Forms.Button btnSearch;
         private System.Windows.Forms.TextBox tbSearch;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Button btArchiveTorrent;
         private System.Windows.Forms.CheckBox cbAutoDownload;
+        private System.Windows.Forms.Button btLog;
     }
 }

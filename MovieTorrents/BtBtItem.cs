@@ -11,6 +11,7 @@ using System.Threading;
 using AngleSharp.Dom;
 using AngleSharp.Html.Parser;
 using mySharedLib;
+using Timer = System.Threading.Timer;
 
 namespace MovieTorrents
 {
@@ -48,7 +49,7 @@ namespace MovieTorrents
         static BtBtItem()
         {
             BtBtHomeUrl = Utility.GetSetting("BtBtHomeUrl", "https://www.btbtt.me/");
-            DownLoadRootPath = Utility.GetSetting("DownLoadPath", "f:\\temp");
+            DownLoadRootPath = Utility.GetSetting("DownLoadRootPath", "f:\\temp");
             WebProxy = Utility.GetSetting("WebProxy", "");
 
             AutoDownloadInterval = Utility.GetSetting("AutoDownloadInterval", 20);
@@ -57,6 +58,7 @@ namespace MovieTorrents
 #if DEBUG
             DownLoadRootPath = "x:\\temp";
 #endif
+
         }
 
         public void Parse()
@@ -353,6 +355,7 @@ namespace MovieTorrents
             {
                 var zipFiles = Directory.GetFiles(DownLoadRootPath)
                     .Where(s => Path.GetExtension(s).ToLowerInvariant() == ".zip");
+                MyLog.Log($"有{zipFiles.Count()}个zip 文件：{DownLoadRootPath}");
                 foreach (var file in zipFiles)
                 {
                     try
@@ -452,7 +455,7 @@ namespace MovieTorrents
         {
             if (0 != Interlocked.Exchange(ref AutoDownloadRunning, 1))
                 return;
-
+            MyLog.Log("=====自动下载开始运行======");
             try
             {
                 var items = new List<BtBtItem>();
@@ -467,56 +470,67 @@ namespace MovieTorrents
                         items.AddRange(searched);
 
                         //如果上次已经有查询，退出
-                        if (AutoDownloadLastTid!=0 && AutoDownloadLastPostDateTime != null)
-                        {
-                            if (searched.Any(x =>
+                        if (AutoDownloadLastTid!=0 
+                            && AutoDownloadLastPostDateTime != null
+                            && searched.Any(x =>
                                 x.tid == AutoDownloadLastTid && x.PostDateTime == AutoDownloadLastPostDateTime))
-                            {
-                                break;
-                            }
+                        {
+
+                            MyLog.Log("=====已抵达上次搜索文章，退出======");
+                            break;
                         }
 
                         //如果超过24小时的贴，退出
                         var now = DateTime.Now;
-                        if(searched.Any(x=>x.PostDateTime!=null && (now - x.PostDateTime.Value).TotalHours> AutoDownloadSearchHours))
+                        if (searched.Any(x =>
+                            x.PostDateTime != null &&
+                            (now - x.PostDateTime.Value).TotalHours > AutoDownloadSearchHours))
+                        {
+                            MyLog.Log($"====已搜索{AutoDownloadSearchHours}小时的文章，退出======");
                             break;
+                        }
 
                     }
 
                     pages++;
                     if(pages>AutoDownloadSearchPages) break;
                     pageUrl = NextPageUrl(pageUrl);
-                    Debug.WriteLine($"====Page {pages}====={pageUrl}");
+                    MyLog.Log($"====Page {pages}====={pageUrl}");
                 }
 
                 //记录最新查询的
-                var maxTid = items.Min(x => x.tid);
+                var maxTid = items.Max(x => x.tid);
                 var latestItem = items.FirstOrDefault(x => x.tid != 0 && x.tid == maxTid);
                 if (latestItem != null)
                 {
                     AutoDownloadLastPostDateTime = latestItem.PostDateTime;
                     AutoDownloadLastTid = latestItem.tid;
+                    MyLog.Log($"===Last item===={latestItem.Title}=={latestItem.tid}=={latestItem.PostDateTime}");
                 }
 
                 //下载附件
                 var checkedItems = items.Where(x => x.Checked).ToList();
+                var i = 0;
                 foreach (var btItem in checkedItems)
                 {
-                    btItem.DownLoadAttachments(out var msg);
+                    i+=btItem.DownLoadAttachments(out var msg);
                 }
+                MyLog.Log($"下载了 {i} 个文件");
             }
             catch (Exception e)
             {
-                Debug.WriteLine($"====Error===={e.Message}");
+                MyLog.Log($"====Error===={e.Message}");
             }
             finally
             {
                 Interlocked.Exchange(ref AutoDownloadRunning, 0);
-                Debug.WriteLine($"====AUTO DOWNLOAD===ENDING====");
+                MyLog.Log($"====AUTO DOWNLOAD===ENDING====");
 
             }
 
         }
+
+        
 
         //启动自动下载
         public static void EnableAutoDownload(bool bEnable)
@@ -528,7 +542,7 @@ namespace MovieTorrents
                     _autoDownloadTimer = new Timer(AutoDownloadCallback,null,Timeout.Infinite,Timeout.Infinite);
                 }
 
-                _autoDownloadTimer.Change(30 * 1000, AutoDownloadInterval * 60 * 1000);
+                _autoDownloadTimer.Change(10 * 1000, AutoDownloadInterval * 60 * 1000);
             }
             else
             {

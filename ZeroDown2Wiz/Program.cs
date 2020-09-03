@@ -13,6 +13,7 @@ using CefSharp.OffScreen;
 using ZeroDownLib;
 using Timer = System.Threading.Timer;
 using System.Drawing;
+using mySharedLib;
 
 namespace ZeroDown2Wiz
 {
@@ -22,12 +23,10 @@ namespace ZeroDown2Wiz
         private static int _runningState=0;
         public static bool ApplicationExiting;
 
-        static NotifyIcon notifyIcon;
-        static IntPtr processHandle;
-        static IntPtr WinShell;
-        static IntPtr WinDesktop;
-        static MenuItem HideMenu;
-        static MenuItem RestoreMenu;
+        static NotifyIcon _notifyIcon;
+        static IntPtr _consoleWindowHandle;
+        static MenuItem _hideMenu;
+        static MenuItem _restoreMenu;
 
         #region DLLImport
 
@@ -36,7 +35,8 @@ namespace ZeroDown2Wiz
         static extern bool AllocConsole();
         [DllImport("user32.dll")]
         public static extern int DeleteMenu(IntPtr hMenu, int nPosition, int wFlags);
-
+        [DllImport("user32.dll")]
+        static extern int SetWindowLong(IntPtr hWnd, int nIndex, uint dwNewLong);
         [DllImport("kernel32.dll", ExactSpelling = true)]
         private static extern IntPtr GetConsoleWindow();
         [DllImport("user32.dll", SetLastError = true)]
@@ -55,72 +55,56 @@ namespace ZeroDown2Wiz
         [DllImport("user32.dll")]
         private static extern IntPtr GetSystemMenu(IntPtr hWnd, bool bRevert);
         private const int MF_BYCOMMAND = 0x00000000;
-
         private const uint SC_CLOSE = 0xF060;
         private const uint MF_ENABLED = 0x00000000;
         private const uint MF_DISABLED = 0x00000002;
-
-        [DllImport("Kernel32")]
-        private static extern bool SetConsoleCtrlHandler(ConsoleEventHandler handler, bool add);
-
-        private delegate bool ConsoleEventHandler(CtrlType sig);
-        static ConsoleEventHandler _handler;
-
-        enum CtrlType
-        {
-            CTRL_C_EVENT = 0,
-            CTRL_BREAK_EVENT = 1,
-            CTRL_CLOSE_EVENT = 2,
-            CTRL_LOGOFF_EVENT = 5,
-            CTRL_SHUTDOWN_EVENT = 6
-        }
+        private const uint MF_GRAYED = 0x00000001;
+        
         #endregion
 
-        private static bool Handler(CtrlType sig)
-        {
-            
-            switch (sig)
-            {
-                case CtrlType.CTRL_C_EVENT:
-                case CtrlType.CTRL_LOGOFF_EVENT:
-                case CtrlType.CTRL_SHUTDOWN_EVENT:
-                case CtrlType.CTRL_CLOSE_EVENT:
-                default:
-                    ApplicationExiting = true;
-                    Application.Exit();
-                    return true;//不管什么返回值，程序5秒后退出
-            }
-        }
+        
 
         static void Main(string[] args)
         {
+            _consoleWindowHandle = GetConsoleWindow();
+           
+            //禁用桌面启动栏图标 https://stackoverflow.com/questions/39296364/how-to-hide-the-windows-10-taskbar-close-button-using-winapi
+            SetWindowLong(_consoleWindowHandle, -20, 0x00000080);
+            //禁用关闭按钮 https://stackoverflow.com/questions/6052992/how-can-i-disable-close-button-of-console-window-in-a-visual-studio-console-appl 
+            EnableMenuItem(GetSystemMenu(GetConsoleWindow(), false), SC_CLOSE, (uint)(MF_BYCOMMAND | MF_DISABLED | MF_GRAYED));
+
+            Console.ForegroundColor = ConsoleColor.Green;
+
+            //判断单进程
+            if (!SingleInstance.Start())
+            {
+                Console.WriteLine("The program is already running....");
+                Console.WriteLine("Press any key to quit.");
+                Console.ReadKey();
+                return;
+            }
+
             //图标区图标
-            notifyIcon = new NotifyIcon
+            _notifyIcon = new NotifyIcon
             {
                 Icon = Icon.ExtractAssociatedIcon(Application.ExecutablePath),
                 Text = Application.ProductName,
                 Visible = true
             };
+            _notifyIcon.MouseClick += _notifyIcon_MouseClick;
 
             var menu = new ContextMenu();
-            HideMenu = new MenuItem("Hide", Minimize_Click);
-            RestoreMenu = new MenuItem("Restore", Maximize_Click);
+            _hideMenu = new MenuItem("Hide", Minimize_Click);
+            _restoreMenu = new MenuItem("Restore", Maximize_Click);
 
-            menu.MenuItems.Add(RestoreMenu);
-            menu.MenuItems.Add(HideMenu);
+            menu.MenuItems.Add(_restoreMenu);
+            menu.MenuItems.Add(_hideMenu);
             menu.MenuItems.Add(new MenuItem("Exit", CleanExit));
+            _notifyIcon.ContextMenu = menu;
 
-            notifyIcon.ContextMenu = menu;
+            //隐藏主窗口
+            ShowConsoleWindow(false);
 
-            // Some biolerplate to react to close window event https://stackoverflow.com/questions/474679/capture-console-exit-c-sharp
-            _handler += Handler;
-            SetConsoleCtrlHandler(_handler, true);
-
-            //禁用关闭按钮 https://stackoverflow.com/questions/6052992/how-can-i-disable-close-button-of-console-window-in-a-visual-studio-console-appl 
-            //DeleteMenu(GetSystemMenu(GetConsoleWindow(), false), SC_CLOSE, MF_BYCOMMAND);
-            EnableMenuItem(GetSystemMenu(GetConsoleWindow(), false), SC_CLOSE, (uint)(MF_ENABLED | MF_DISABLED));
-
-            Console.ForegroundColor = ConsoleColor.Green;
             Console.WriteLine("This application will save 0daydown articles to WizNote.");
             Console.WriteLine("You may see Chromium debugging output, please wait...");
             //Console.WriteLine("Press <Q> to exit... ");
@@ -145,17 +129,9 @@ namespace ZeroDown2Wiz
             // 初始化浏览器
             _mainBrowser = new MainBrowser();
             var interval = mySharedLib.Utility.GetSetting("SearchInterval", 15);//分钟
-            var t = new Timer(TimerCallback, null, 10 * 1000,  interval * 60 * 1000);
+            var t = new Timer(TimerCallback, null, 10 * 1000, interval * 60 * 1000);
 
-            //隐藏主窗口
-            processHandle = GetConsoleWindow();
-            //ShowWindow(hWndConsole, SW_MINIMIZE);
-            //processHandle = Process.GetCurrentProcess().MainWindowHandle;
-            //WinShell = GetShellWindow();
-            //WinDesktop = GetDesktopWindow();
 
-            //Hide the Window
-            ResizeWindow(false);
             Application.Run();
 
             //等待搜索结束
@@ -171,7 +147,15 @@ namespace ZeroDown2Wiz
             Cef.Shutdown();
 
             Debug.WriteLine("-----------final exit---------------");
+
+            SingleInstance.Stop();
         }
+
+        private static void _notifyIcon_MouseClick(object sender, MouseEventArgs e)
+        {
+            ShowConsoleWindow(_restoreMenu.Enabled);
+        }
+
         private static void TimerCallback(object o)
         {
             //https://docs.microsoft.com/en-us/dotnet/api/system.threading.interlocked?view=netcore-3.1
@@ -193,36 +177,35 @@ namespace ZeroDown2Wiz
 
         private static void CleanExit(object sender, EventArgs e)
         {
-            notifyIcon.Visible = false;
+            _notifyIcon.Visible = false;
             Application.Exit();
         }
 
 
         static void Minimize_Click(object sender, EventArgs e)
         {
-            ResizeWindow(false);
+            ShowConsoleWindow(false);
         }
 
 
         static void Maximize_Click(object sender, EventArgs e)
         {
-            ResizeWindow();
+            ShowConsoleWindow();
         }
 
-        static void ResizeWindow(bool Restore = true)
+        static void ShowConsoleWindow(bool bShow = true)
         {
-            if (Restore)
+            if (bShow)
             {
-                RestoreMenu.Enabled = false;
-                HideMenu.Enabled = true;
-                //SetParent(processHandle, WinDesktop);
-                ShowWindow(processHandle, 1);
+                _restoreMenu.Enabled = false;
+                _hideMenu.Enabled = true;
+                ShowWindow(_consoleWindowHandle, 1);
             }
             else
             {
-                RestoreMenu.Enabled = true;
-                HideMenu.Enabled = false;
-                ShowWindow(processHandle, 0);
+                _restoreMenu.Enabled = true;
+                _hideMenu.Enabled = false;
+                ShowWindow(_consoleWindowHandle, 0);
             }
         }
     }
