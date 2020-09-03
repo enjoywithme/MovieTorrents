@@ -30,7 +30,6 @@
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormBtBtt));
             this.tbUrl = new System.Windows.Forms.TextBox();
-            this.btnQuery = new System.Windows.Forms.Button();
             this.lvResults = new System.Windows.Forms.ListView();
             this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -38,7 +37,6 @@
             this.columnHeader4 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader5 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.label1 = new System.Windows.Forms.Label();
-            this.btnHomePage = new System.Windows.Forms.Button();
             this.btnNext = new System.Windows.Forms.Button();
             this.btnPrev = new System.Windows.Forms.Button();
             this.btDownload = new System.Windows.Forms.Button();
@@ -70,16 +68,6 @@
             this.tbUrl.Size = new System.Drawing.Size(326, 21);
             this.tbUrl.TabIndex = 0;
             this.tbUrl.Text = "https://www.btbtt.me/index-index-page-4.htm";
-            // 
-            // btnQuery
-            // 
-            this.btnQuery.Location = new System.Drawing.Point(433, 41);
-            this.btnQuery.Name = "btnQuery";
-            this.btnQuery.Size = new System.Drawing.Size(75, 23);
-            this.btnQuery.TabIndex = 2;
-            this.btnQuery.Text = "查询";
-            this.btnQuery.UseVisualStyleBackColor = true;
-            this.btnQuery.Click += new System.EventHandler(this.button1_Click);
             // 
             // lvResults
             // 
@@ -136,16 +124,6 @@
             this.label1.TabIndex = 4;
             this.label1.Text = "网址";
             // 
-            // btnHomePage
-            // 
-            this.btnHomePage.Location = new System.Drawing.Point(78, 12);
-            this.btnHomePage.Name = "btnHomePage";
-            this.btnHomePage.Size = new System.Drawing.Size(75, 23);
-            this.btnHomePage.TabIndex = 2;
-            this.btnHomePage.Text = "首页";
-            this.btnHomePage.UseVisualStyleBackColor = true;
-            this.btnHomePage.Click += new System.EventHandler(this.btnHomePage_Click);
-            // 
             // btnNext
             // 
             this.btnNext.Location = new System.Drawing.Point(331, 12);
@@ -158,7 +136,7 @@
             // 
             // btnPrev
             // 
-            this.btnPrev.Location = new System.Drawing.Point(215, 12);
+            this.btnPrev.Location = new System.Drawing.Point(80, 12);
             this.btnPrev.Name = "btnPrev";
             this.btnPrev.Size = new System.Drawing.Size(75, 23);
             this.btnPrev.TabIndex = 5;
@@ -338,12 +316,10 @@
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.lvResults);
-            this.Controls.Add(this.btnHomePage);
             this.Controls.Add(this.btArchiveTorrent);
             this.Controls.Add(this.btUnzip);
             this.Controls.Add(this.btDownload);
             this.Controls.Add(this.btnSearch);
-            this.Controls.Add(this.btnQuery);
             this.Controls.Add(this.tbDownloadPath);
             this.Controls.Add(this.tbProxy);
             this.Controls.Add(this.tbUrl);
@@ -362,12 +338,10 @@
         #endregion
 
         private System.Windows.Forms.TextBox tbUrl;
-        private System.Windows.Forms.Button btnQuery;
         private System.Windows.Forms.ListView lvResults;
         private System.Windows.Forms.ColumnHeader columnHeader1;
         private System.Windows.Forms.ColumnHeader columnHeader2;
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.Button btnHomePage;
         private System.Windows.Forms.Button btnNext;
         private System.Windows.Forms.Button btnPrev;
         private System.Windows.Forms.Button btDownload;

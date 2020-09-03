@@ -1,14 +1,19 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Net;
+using System.Net.Mime;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Web;
 using System.Windows.Forms;
+using AngleSharp.Dom;
 using AngleSharp.Html.Parser;
 using MovieTorrents.Common;
+using mySharedLib;
 
 namespace MovieTorrents
 {
@@ -19,7 +24,8 @@ namespace MovieTorrents
         {
             public string Title { get; set; }
             public string DouBanRating { get; set; }
-            public string AttachmentUrl { get; set; }
+            //public string AttachmentUrl { get; set; }
+            public List<string> AttachmentUrls { get; set; } = new List<string>();
             public string PublishTime { get; set; }
             public string Keyword { get; set; }
             public string Gene { get; set; }
@@ -64,12 +70,13 @@ namespace MovieTorrents
             btArchiveTorrent.Click += BtArchiveTorrent_Click;
 #if DEBUG
             tbDownloadPath.Text = "x:\\temp";
+            tbSearch.Text = "模范刑警";
 #endif
 
         }
 
 
-        private void button1_Click(object sender, EventArgs e)
+        private void DoQuery()
         {
             var c = Cursor;
             Cursor = Cursors.WaitCursor;
@@ -123,8 +130,13 @@ namespace MovieTorrents
                     var pageCode = Encoding.UTF8.GetString(pageData);
                     //File.WriteAllText("d:\\temp\\2.txt", pageCode, Encoding.UTF8);
 
+                    //查找可能的完整标题
+                    var match = Regex.Match(pageCode, "<blockquote>帖子完整标题：(.+?)</blockquote>");
+                    if (match.Success)
+                        btItem.Title = match.Groups[1].Value;
+
                     //查找豆瓣评分
-                    var match = Regex.Match(pageCode, "豆瓣评分(.*)/10 from");
+                    match = Regex.Match(pageCode, "豆瓣评分(.*)/10 from");
                     btItem.DouBanRating = match.Success ? match.Groups[1].Value.Trim() : "";
 
                     //<span class="grey">发帖时间：</span><b>.*</b>
@@ -149,13 +161,20 @@ namespace MovieTorrents
                         a.LocalName == "a"
                         && a.HasAttribute("href")
                         && a.Attributes["href"].Value.Contains("attach-dialog-fid-")).ToArray();
-                    if (attachments.Length > 0)
+                    foreach (var attachment in attachments)
                     {
-                        Debug.Print(attachments[0].Attributes["href"].Value);
-                        var attachUrl = attachments[0].Attributes["href"].Value.Replace("dialog", "download");
-                        btItem.AttachmentUrl = attachUrl;
-                    }
+                        var attachmentName = attachment.Text().Trim();
+                        var attachmentUrl = attachment.Attributes["href"].Value;
 
+                        if (attachmentName.ToLower().EndsWith(".zip") || attachmentName.ToLower().EndsWith(".torrent"))
+                        {
+                            Debug.Print($"{attachmentName} {attachmentUrl}");
+
+                            btItem.AttachmentUrls.Add(attachmentUrl.Replace("dialog", "download"));
+                        }
+
+                    }
+                    
                     btItem.Parse();
                     string[] row = { btItem.Title,
                         btItem.PublishTime,
@@ -168,8 +187,8 @@ namespace MovieTorrents
                     lvResults.Items.Add(new ListViewItem(row)
                     {
                         Tag = btItem,
-                        Checked = (btItem.Rating >= 7.0M && !TorrentFile.ExistInDb(FormMain.DbConnectionString, btItem.Keyword, btItem.Year) )
-                                  || btItem.Tag.Contains("情色")
+                        Checked = (btItem.Rating >= 7.0M || btItem.Tag.Contains("情色")) && !TorrentFile.ExistInDb(FormMain.DbConnectionString, btItem.Keyword, btItem.Year) 
+                                  
                                   
                     });
 
@@ -197,19 +216,15 @@ namespace MovieTorrents
             return fileName;
         }
 
-        private void btnHomePage_Click(object sender, EventArgs e)
-        {
-            tbUrl.Text = BtHomeUrl;
-        }
-
+        
         private void btnNext_Click(object sender, EventArgs e)
         {
             var match = Regex.Match(tbUrl.Text, $"{BtHomeUrl}index-index-page-([0-9]*).htm");
-            var p = match.Success ? int.Parse(match.Groups[1].Value) + 1 : 2;
+            var p = match.Success ? int.Parse(match.Groups[1].Value) + 1 : 1;
 
             tbUrl.Text = $"{BtHomeUrl}index-index-page-{p}.htm";
 
-            btnQuery.PerformClick();
+            DoQuery();
         }
 
         //上一页
@@ -223,14 +238,14 @@ namespace MovieTorrents
                 {
                     p--;
                     tbUrl.Text = $"{BtHomeUrl}index-index-page-{p}.htm";
-                    btnQuery.PerformClick();
+                    DoQuery();
 
                     return;
                 }
 
             }
             tbUrl.Text = BtHomeUrl;
-            btnQuery.PerformClick();
+            DoQuery();
 
         }
 
@@ -255,8 +270,25 @@ namespace MovieTorrents
                     var btItem = (BtItem)checkedItem.Tag;
                     try
                     {
-                        DownloadAttachmentFile(client, $"{BtHomeUrl}{btItem.AttachmentUrl}", SanitizeFileName(btItem.Title));
-                        i++;
+                        var downloadPath = tbDownloadPath.Text;
+                        if (btItem.AttachmentUrls.Count == 1)
+                        {
+                            //如果只有一个附件，使用电影标题作为文件名
+                            DownloadAttachmentFile(client, $"{BtHomeUrl}{btItem.AttachmentUrls[0]}", downloadPath, SanitizeFileName(btItem.Title));
+                            i++;
+                        }
+                        else if(btItem.AttachmentUrls.Count>1)
+                        {
+                            //下载到标题下的子目录
+                            downloadPath = Path.Combine(downloadPath, SanitizeFileName(btItem.Title));
+                            Directory.CreateDirectory(downloadPath);
+                            foreach (var attachmentUrl in btItem.AttachmentUrls)
+                            {
+                                DownloadAttachmentFile(client, $"{BtHomeUrl}{attachmentUrl}", downloadPath);
+                                i++;
+                            }
+                        }
+
                     }
                     catch (Exception exception)
                     {
@@ -271,7 +303,7 @@ namespace MovieTorrents
         }
 
         //下载种子附件
-        private void DownloadAttachmentFile(WebClient client, string fileUrl, string fileName)
+        private void DownloadAttachmentFile(WebClient client, string fileUrl,string downloadPath, string fileName=null)
         {
             using (var rawStream = client.OpenRead(fileUrl))
             {
@@ -281,15 +313,26 @@ namespace MovieTorrents
                 var contentDisposition = client.ResponseHeaders["content-disposition"];
                 if (!string.IsNullOrEmpty(contentDisposition))
                 {
-                    var match = Regex.Match(contentDisposition, "filename=\"(.*)\"", RegexOptions.IgnoreCase);
+                    //参照 https://ithelp.ithome.com.tw/articles/10198852 的提示反编码
+                    var bytes = Encoding.GetEncoding("ISO-8859-1").GetBytes(contentDisposition);
+                    var disposition = Encoding.GetEncoding("UTF-8").GetString(bytes);
+                    Debug.WriteLine(disposition);
+
+                    var match = Regex.Match(disposition, "filename=\"(.*)\"", RegexOptions.IgnoreCase);
                     if (match.Success)
                         originalFileName = match.Groups[1].Value;
                 }
                 if (originalFileName.Length > 0)
                 {
-                    fileName += Path.GetExtension(originalFileName);
-                    fileName = fileName.Replace("[BT下载]","");
-                    var path = Path.Combine(tbDownloadPath.Text, fileName);
+                    if (string.IsNullOrEmpty(fileName))
+                        fileName = originalFileName;
+                    else
+                    {
+                        fileName += Path.GetExtension(originalFileName);
+                        fileName = fileName.Replace("[BT下载]", "");
+                    }
+                    
+                    var path = Path.Combine(downloadPath, fileName);
 
                     using (var outputFileStream = new FileStream(path, FileMode.Create))
                     {
