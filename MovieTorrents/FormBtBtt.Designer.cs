@@ -40,10 +40,6 @@
             this.btnNext = new System.Windows.Forms.Button();
             this.btnPrev = new System.Windows.Forms.Button();
             this.btDownload = new System.Windows.Forms.Button();
-            this.tbProxy = new System.Windows.Forms.TextBox();
-            this.label2 = new System.Windows.Forms.Label();
-            this.tbDownloadPath = new System.Windows.Forms.TextBox();
-            this.label3 = new System.Windows.Forms.Label();
             this.lvTorrents = new System.Windows.Forms.ListView();
             this.columnHeaderName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeaderRating = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -146,47 +142,13 @@
             // 
             // btDownload
             // 
-            this.btDownload.Location = new System.Drawing.Point(433, 125);
+            this.btDownload.Location = new System.Drawing.Point(80, 113);
             this.btDownload.Name = "btDownload";
             this.btDownload.Size = new System.Drawing.Size(75, 23);
             this.btDownload.TabIndex = 2;
             this.btDownload.Text = "下载";
             this.btDownload.UseVisualStyleBackColor = true;
             this.btDownload.Click += new System.EventHandler(this.btDownload_Click);
-            // 
-            // tbProxy
-            // 
-            this.tbProxy.Location = new System.Drawing.Point(80, 98);
-            this.tbProxy.Name = "tbProxy";
-            this.tbProxy.Size = new System.Drawing.Size(326, 21);
-            this.tbProxy.TabIndex = 0;
-            this.tbProxy.Text = "http://vd-win7-dx:9999";
-            // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(17, 102);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(29, 12);
-            this.label2.TabIndex = 4;
-            this.label2.Text = "代理";
-            // 
-            // tbDownloadPath
-            // 
-            this.tbDownloadPath.Location = new System.Drawing.Point(80, 126);
-            this.tbDownloadPath.Name = "tbDownloadPath";
-            this.tbDownloadPath.Size = new System.Drawing.Size(326, 21);
-            this.tbDownloadPath.TabIndex = 0;
-            this.tbDownloadPath.Text = "f:\\temp";
-            // 
-            // label3
-            // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(17, 130);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(53, 12);
-            this.label3.TabIndex = 4;
-            this.label3.Text = "下载路径";
             // 
             // lvTorrents
             // 
@@ -249,7 +211,7 @@
             // 
             // btUnzip
             // 
-            this.btUnzip.Location = new System.Drawing.Point(543, 125);
+            this.btUnzip.Location = new System.Drawing.Point(190, 113);
             this.btUnzip.Name = "btUnzip";
             this.btUnzip.Size = new System.Drawing.Size(75, 23);
             this.btUnzip.TabIndex = 2;
@@ -294,7 +256,7 @@
             // 
             // btArchiveTorrent
             // 
-            this.btArchiveTorrent.Location = new System.Drawing.Point(648, 125);
+            this.btArchiveTorrent.Location = new System.Drawing.Point(295, 113);
             this.btArchiveTorrent.Name = "btArchiveTorrent";
             this.btArchiveTorrent.Size = new System.Drawing.Size(75, 23);
             this.btArchiveTorrent.TabIndex = 2;
@@ -311,17 +273,13 @@
             this.Controls.Add(this.lvTorrents);
             this.Controls.Add(this.btnPrev);
             this.Controls.Add(this.btnNext);
-            this.Controls.Add(this.label3);
             this.Controls.Add(this.label4);
-            this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.lvResults);
             this.Controls.Add(this.btArchiveTorrent);
             this.Controls.Add(this.btUnzip);
             this.Controls.Add(this.btDownload);
             this.Controls.Add(this.btnSearch);
-            this.Controls.Add(this.tbDownloadPath);
-            this.Controls.Add(this.tbProxy);
             this.Controls.Add(this.tbUrl);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "FormBtBtt";
@@ -348,10 +306,6 @@
         private System.Windows.Forms.ColumnHeader columnHeader3;
         private System.Windows.Forms.ColumnHeader columnHeader4;
         private System.Windows.Forms.ColumnHeader columnHeader5;
-        private System.Windows.Forms.TextBox tbProxy;
-        private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.TextBox tbDownloadPath;
-        private System.Windows.Forms.Label label3;
         private System.Windows.Forms.ListView lvTorrents;
         private System.Windows.Forms.ColumnHeader columnHeaderName;
         private System.Windows.Forms.ColumnHeader columnHeaderRating;

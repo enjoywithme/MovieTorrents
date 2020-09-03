@@ -73,7 +73,8 @@
     <Reference Include="UIAutomationTypes" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Common\Util.cs" />
+    <Compile Include="BtBtItem.cs" />
+    <Compile Include="Common\Common.cs" />
     <Compile Include="DoubanSubject.cs" />
     <Compile Include="FormBtBtt.cs">
       <SubType>Form</SubType>
@@ -158,6 +159,9 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="BAD_WORDS.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Movie.ico" />
     <None Include="README.md" />
     <None Include="Resources\dou.png" />

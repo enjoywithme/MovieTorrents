@@ -4,14 +4,12 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Data;
-using System.Data.Common;
 using System.Data.SQLite;
 using System.Diagnostics;
 using System.Drawing;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -28,7 +26,6 @@ namespace MovieTorrents
         public static string CurrentPath;
         public static string DbConnectionString;
         public static FormMain DefaultInstance { get; set; }
-        private bool _minimizedToTray;
         private FormBtBtt _formBtBtt;
         
 
@@ -76,7 +73,7 @@ namespace MovieTorrents
             //_tt.Elapsed += (o, j) => DisplayInfo("test");
             //_tt.Enabled = true;
 
-            CurrentPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+            CurrentPath = Utility.ExecutingAssemblyPath();
             if (!File.Exists($"{CurrentPath}\\zogvm.db"))
             {
                 MessageBox.Show($"数据库文件不存在！\r\n{CurrentPath}\\zogvm.db", Properties.Resources.TextError, MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -263,7 +260,7 @@ namespace MovieTorrents
             //添加一个文件会发现生成2个事件，https://blogs.msdn.microsoft.com/ahamza/2006/02/04/filesystemwatcher-generates-duplicate-events-how-to-workaround/ 
             Debug.WriteLine($"File monitored added:{e.FullPath}");
 
-            _monitoredFilesToProcess.Add(new TorrentFile(e.FullPath));
+            _monitoredFilesToProcess.Add(TorrentFile.FromFullPath(e.FullPath));
 
         }
         #endregion
@@ -791,7 +788,7 @@ namespace MovieTorrents
                 //Debug.WriteLine(fi.Extension);
                 try
                 {
-                    filesToProcess.TryAdd(new TorrentFile(fi.FullName), 2, token);
+                    filesToProcess.TryAdd(TorrentFile.FromFullPath(fi.FullName), 2, token);
                 }
                 catch (OperationCanceledException e)
                 {
@@ -1012,8 +1009,6 @@ where not exists (select 1 from tb_file where hdd_nid={_hdd_nid} and path=$path 
         }
         public void ShowWindow()
         {
-            _minimizedToTray = false;
-
             Show();
             WindowState = FormWindowState.Normal;
 
@@ -1027,7 +1022,6 @@ where not exists (select 1 from tb_file where hdd_nid={_hdd_nid} and path=$path 
             notifyIcon1.Visible = true;
             //WindowState = FormWindowState.Minimized;
             Hide();
-            _minimizedToTray = true;
         }
 
         private void notifyIcon1_MouseDoubleClick(object sender, MouseEventArgs e)

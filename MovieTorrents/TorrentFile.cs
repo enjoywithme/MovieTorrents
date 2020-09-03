@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using MovieTorrents.Common;
+using mySharedLib;
 
 namespace MovieTorrents
 {
@@ -18,7 +19,20 @@ namespace MovieTorrents
         public string area { get; set; }
         public string path { get; set; }
         public string keyname { get; set; }
-        public string name { get; set; }
+
+        private string _name;
+        public string name
+        {
+            get=>_name;
+            set
+            {
+                _name = value;
+                PurifiedName = _name.Purify();
+                ChineseName = PurifiedName.ExtractChinese();
+                Debug.WriteLine(PurifiedName);
+            }
+        }
+
         public string otherName { get; set; }
         public string ext { get; set; }
         public long filesize { get; set; }
@@ -35,6 +49,10 @@ namespace MovieTorrents
         public string doubanid { get; set; }
 
         public string FullName => area + path + name + ext;
+
+        public string PurifiedName { get; set; }
+
+        public string ChineseName { get; set; }
 
         public DateTime SeeDate
         {
@@ -56,50 +74,19 @@ namespace MovieTorrents
             }
         }
 
-        private static Regex regex = new Regex(@"\d{4}");
-        private static string[] PRE_CLEARS = { "WEB_DL", "DD5.1", "[0-9]*(?:\\.[0-9]*)?[GM]B?" };
-        private static Regex BAD_CHARS = new Regex(@"[\[.\]()_-]");
-        private static string[] BAD_WORDS = { "1080P", "720P", "x26[45]", "H26[45]", "BluRay", "AC3", " DTS ", "2Audios?", "FLAME", "IMAX","BD","MP4",
-            "中英","字幕", "国英","双语","音轨","香港","动作","有广告","BT下载","国粤双语中英双字","中英双字","未删节特别版","特效英语中字","中文"
-        };
-        private static string[] RELEASE_GROUPS = { "SPARKS", "CMCT", "FGT", "KOOK" };
+        
 
-        public static string PurifyName(string text)
+        public static TorrentFile FromFullPath(string fullName)
         {
-            var cleaned = Regex.Replace(text, "\\b" + string.Join("\\b|\\b", PRE_CLEARS) + "\\b", "", RegexOptions.IgnoreCase);
-            cleaned = BAD_CHARS.Replace(cleaned, " ");
-            cleaned = Regex.Replace(cleaned, "\\b" + string.Join("\\b|\\b", BAD_WORDS) + "\\b", "", RegexOptions.IgnoreCase);
-            cleaned = Regex.Replace(cleaned, "\\b" + string.Join("\\b|\\b", RELEASE_GROUPS) + "\\b", "", RegexOptions.IgnoreCase);
-            return cleaned.Trim();
-        }
-
-        public static string ExtractChinese(string text)
-        {
-            var matches = Regex.Matches(text, "[\u4e00-\u9fa5]+");
-            return string.Join(" ", matches.OfType<Match>().Where(m => m.Success));
-        }
-
-        public string PurifiedName => PurifyName(name);
-
-        public string ChineseName => ExtractChinese(PurifiedName);
-       
-
-        public TorrentFile()
-        {
-
-        }
-
-        public TorrentFile(string fullName)
-        {
-            name = Path.GetFileNameWithoutExtension(fullName);
+            var torrentFile = new TorrentFile {name = Path.GetFileNameWithoutExtension(fullName)};
             var dir = Path.GetDirectoryName(fullName);
-            path = dir.Substring(Path.GetPathRoot(dir).Length) + "\\";
-            ext = Path.GetExtension(fullName);
-            filesize = new FileInfo(fullName).Length;
+            torrentFile.path = dir.Substring(Path.GetPathRoot(dir).Length) + "\\";
+            torrentFile.ext = Path.GetExtension(fullName);
+            torrentFile.filesize = new FileInfo(fullName).Length;
 
-            year = string.Empty;
-            var match = regex.Match(name);
-            if (match.Success) year = match.Value;
+            var yr = torrentFile.name.ExtractYear();
+            torrentFile.year = yr == 0 ? "" : yr.ToString();
+            return torrentFile;
         }
 
 
@@ -256,21 +243,6 @@ namespace MovieTorrents
             return ok && result>0;
         }
 
-
-        //读取名称中的年份
-        public static int ExtractYear(string fileName)
-        {
-            var match = Regex.Match(fileName, "(\\d{4})");
-            if (!match.Success) return 0;
-            foreach (Group matchGroup in match.Groups)
-            {
-                var d = int.Parse(matchGroup.Value);
-                if(d==1080 || d==2160) continue;
-                return d;
-            }
-
-            return 0;
-        }
 
         //返回归档年份子目录
         public static string ArchiveYearSubPath(int year)

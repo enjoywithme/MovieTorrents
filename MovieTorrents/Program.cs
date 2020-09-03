@@ -30,7 +30,7 @@ namespace MovieTorrents
 
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-
+           
             try
             {
                 Application.Run(new FormMain());
