@@ -55,6 +55,7 @@
             this.tbSearch = new System.Windows.Forms.TextBox();
             this.label4 = new System.Windows.Forms.Label();
             this.btArchiveTorrent = new System.Windows.Forms.Button();
+            this.cbAutoDownload = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
             // tbUrl
@@ -263,11 +264,23 @@
             this.btArchiveTorrent.Text = "归档种子";
             this.btArchiveTorrent.UseVisualStyleBackColor = true;
             // 
+            // cbAutoDownload
+            // 
+            this.cbAutoDownload.AutoSize = true;
+            this.cbAutoDownload.Location = new System.Drawing.Point(443, 29);
+            this.cbAutoDownload.Name = "cbAutoDownload";
+            this.cbAutoDownload.Size = new System.Drawing.Size(96, 16);
+            this.cbAutoDownload.TabIndex = 9;
+            this.cbAutoDownload.Text = "启用自动下载";
+            this.cbAutoDownload.UseVisualStyleBackColor = true;
+            this.cbAutoDownload.CheckedChanged += new System.EventHandler(this.cbAutoDownload_CheckedChanged);
+            // 
             // FormBtBtt
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(858, 488);
+            this.Controls.Add(this.cbAutoDownload);
             this.Controls.Add(this.tbSearch);
             this.Controls.Add(this.tbTitle);
             this.Controls.Add(this.lvTorrents);
@@ -321,5 +334,6 @@
         private System.Windows.Forms.TextBox tbSearch;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Button btArchiveTorrent;
+        private System.Windows.Forms.CheckBox cbAutoDownload;
     }
 }

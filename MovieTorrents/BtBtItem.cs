@@ -7,11 +7,9 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using System.Windows.Forms;
+using System.Threading;
 using AngleSharp.Dom;
 using AngleSharp.Html.Parser;
-using MovieTorrents.Common;
 using mySharedLib;
 
 namespace MovieTorrents
@@ -22,18 +20,26 @@ namespace MovieTorrents
         public static string DownLoadRootPath;
         public static string WebProxy { get; set; }
 
+        //自动下载
+        public static int AutoDownloadInterval;
+        public static int AutoDownloadSearchPages;
+        public static int AutoDownloadSearchHours;
+        public static int AutoDownloadRunning = 0;
+        public static int AutoDownloadLastTid;
+        public static DateTime? AutoDownloadLastPostDateTime;
+        private static Timer _autoDownloadTimer;
 
+        //成员
         public string Title { get; set; }
-
         public string DouBanRating { get; set; }
-
-        //public string AttachmentUrl { get; set; }
         public List<string> AttachmentUrls { get; set; } = new List<string>();
         public string PublishTime { get; set; }
         public string Keyword { get; set; }
         public string Gene { get; set; }
         public string Tag { get; set; }
         public int? Year { get; set; }
+        public int tid { get; set; }
+        public DateTime? PostDateTime { get; set; }
         public bool Checked { get; set; } //是否勾选
 
         public decimal Rating { get; private set; }
@@ -44,6 +50,10 @@ namespace MovieTorrents
             BtBtHomeUrl = Utility.GetSetting("BtBtHomeUrl", "https://www.btbtt.me/");
             DownLoadRootPath = Utility.GetSetting("DownLoadPath", "f:\\temp");
             WebProxy = Utility.GetSetting("WebProxy", "");
+
+            AutoDownloadInterval = Utility.GetSetting("AutoDownloadInterval", 20);
+            AutoDownloadSearchPages = Utility.GetSetting("AutoDownloadSearchPages", 10);
+            AutoDownloadSearchHours = Utility.GetSetting("AutoDownloadSearchHours", 24);
 #if DEBUG
             DownLoadRootPath = "x:\\temp";
 #endif
@@ -128,7 +138,10 @@ namespace MovieTorrents
             }
 
             var items = new List<BtBtItem>();
-            var parser = new HtmlParser();
+            var parser = new HtmlParser(new HtmlParserOptions
+            {
+                IsKeepingSourceReferences = true,
+            });//保留元素在文章中的位置 https://anglesharp.github.io/docs/Questions.html#can-i-retrieve-the-positions-of-elements-in-the-source-code
 
             try
             {
@@ -141,20 +154,31 @@ namespace MovieTorrents
                     //File.WriteAllText("d:\\temp\\1.txt", htmlCode, Encoding.UTF8);
                     //var htmlCode = File.ReadAllText("d:\\temp\\1.txt");
                     var document = parser.ParseDocument(htmlCode);
+                    var topDiv = document.All.Where(d => d.LocalName == "div" && d.ClassList.Contains("bg2")).ToArray();//置顶帖分割线
 
                     var links = document.All.Where(a => a.LocalName == "a" && a.ClassList.Contains("subject_link"));
                     foreach (var link in links)
                     {
+                        //略过置顶帖
+                        if(topDiv.Length>0 && link.SourceReference.Position.Position<topDiv[0].SourceReference.Position.Position)
+                            continue;
+                        
                         var title = link.TextContent.Trim();
                         if (string.IsNullOrEmpty(title)) continue;
-
+                     
                         var detailLink = link.Attributes["href"].Value;
                         if (string.IsNullOrEmpty(detailLink)) continue;
 
                         var btItem = new BtBtItem {Title = title};
 
+                        //试图查找tid,lastpost
+                        var threadTable = link.Ancestors().OfType<IElement>()
+                            .Where(a => a.LocalName == "table" && a.Attributes.Any(b => b.Name == "tid")).ToArray();
+                        if (threadTable.Length > 0 && int.TryParse(threadTable[0].Attributes["tid"].Value,out var tid))
+                            btItem.tid = tid;
+
                         //下载具体页面
-                        var pageData = client.DownloadData($"{BtBtHomeUrl}{detailLink}");
+                            var pageData = client.DownloadData($"{BtBtHomeUrl}{detailLink}");
                         var pageCode = Encoding.UTF8.GetString(pageData);
                         //File.WriteAllText("d:\\temp\\2.txt", pageCode, Encoding.UTF8);
 
@@ -183,6 +207,11 @@ namespace MovieTorrents
                         match = Regex.Match(pageCode, "标　　签(.*?)<br />");
                         btItem.Tag = match.Success ? match.Groups[1].Value.Trim() : "";
 
+                        //发帖时间
+                        match = Regex.Match(pageCode, "<span class=\"grey\">发帖时间：</span><b>(.*?)</b>");
+                        if (match.Success && DateTime.TryParse(match.Groups[1].Value, out var dt))
+                            btItem.PostDateTime = dt;
+
                         //附件 <a href="attach-dialog-fid-1183-aid-5138072.htm" target="_blank" rel="nofollow"><img src="/view/image/filetype/zip.gif" width="16" height="16" />The.Red.Squirrel.1993.1080p.BluRay.x264-USURY.zip</a>
                         var documentItem = parser.ParseDocument(pageCode);
                         var attachments = documentItem.All.Where(a =>
@@ -196,7 +225,6 @@ namespace MovieTorrents
 
                             if (!attachmentName.ToLower().EndsWith(".zip") &&
                                 !attachmentName.ToLower().EndsWith(".torrent")) continue;
-                            Debug.Print($"{attachmentName} {attachmentUrl}");
 
                             btItem.AttachmentUrls.Add(attachmentUrl.Replace("dialog", "download"));
 
@@ -207,7 +235,7 @@ namespace MovieTorrents
 
 
 
-                        Debug.WriteLine($"{btItem.Title} {btItem.Keyword} {btItem.DouBanRating} {btItem.Rating}");
+                        Debug.WriteLine($"{btItem.Title} {btItem.Keyword} {btItem.DouBanRating} {btItem.Rating} {btItem.tid} {btItem.PostDateTime}");
 
 
                     }
@@ -285,7 +313,7 @@ namespace MovieTorrents
                     //参照 https://ithelp.ithome.com.tw/articles/10198852 的提示反编码
                     var bytes = Encoding.GetEncoding("ISO-8859-1").GetBytes(contentDisposition);
                     var disposition = Encoding.GetEncoding("UTF-8").GetString(bytes);
-                    Debug.WriteLine(disposition);
+                    //Debug.WriteLine(disposition);
 
                     var match = Regex.Match(disposition, "filename=\"(.*)\"", RegexOptions.IgnoreCase);
                     if (match.Success)
@@ -417,6 +445,97 @@ namespace MovieTorrents
             }
 
             return i;
+        }
+
+        //自动下载
+        public static void AutoDownloadCallback(object o)
+        {
+            if (0 != Interlocked.Exchange(ref AutoDownloadRunning, 1))
+                return;
+
+            try
+            {
+                var items = new List<BtBtItem>();
+
+                var pages = 0;
+                var pageUrl = BtBtHomeUrl;
+                while (true)
+                {
+                    var searched = QueryPage(pageUrl,out var msg);
+                    if (searched != null)
+                    {
+                        items.AddRange(searched);
+
+                        //如果上次已经有查询，退出
+                        if (AutoDownloadLastTid!=0 && AutoDownloadLastPostDateTime != null)
+                        {
+                            if (searched.Any(x =>
+                                x.tid == AutoDownloadLastTid && x.PostDateTime == AutoDownloadLastPostDateTime))
+                            {
+                                break;
+                            }
+                        }
+
+                        //如果超过24小时的贴，退出
+                        var now = DateTime.Now;
+                        if(searched.Any(x=>x.PostDateTime!=null && (now - x.PostDateTime.Value).TotalHours> AutoDownloadSearchHours))
+                            break;
+
+                    }
+
+                    pages++;
+                    if(pages>AutoDownloadSearchPages) break;
+                    pageUrl = NextPageUrl(pageUrl);
+                    Debug.WriteLine($"====Page {pages}====={pageUrl}");
+                }
+
+                //记录最新查询的
+                var maxTid = items.Min(x => x.tid);
+                var latestItem = items.FirstOrDefault(x => x.tid != 0 && x.tid == maxTid);
+                if (latestItem != null)
+                {
+                    AutoDownloadLastPostDateTime = latestItem.PostDateTime;
+                    AutoDownloadLastTid = latestItem.tid;
+                }
+
+                //下载附件
+                var checkedItems = items.Where(x => x.Checked).ToList();
+                foreach (var btItem in checkedItems)
+                {
+                    btItem.DownLoadAttachments(out var msg);
+                }
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine($"====Error===={e.Message}");
+            }
+            finally
+            {
+                Interlocked.Exchange(ref AutoDownloadRunning, 0);
+                Debug.WriteLine($"====AUTO DOWNLOAD===ENDING====");
+
+            }
+
+        }
+
+        //启动自动下载
+        public static void EnableAutoDownload(bool bEnable)
+        {
+            if (bEnable)
+            {
+                if (_autoDownloadTimer == null)
+                {
+                    _autoDownloadTimer = new Timer(AutoDownloadCallback,null,Timeout.Infinite,Timeout.Infinite);
+                }
+
+                _autoDownloadTimer.Change(30 * 1000, AutoDownloadInterval * 60 * 1000);
+            }
+            else
+            {
+                if(_autoDownloadTimer==null) return;
+                _autoDownloadTimer.Change(Timeout.Infinite, Timeout.Infinite);
+
+            }
         }
     }
 }

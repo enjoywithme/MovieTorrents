@@ -29,7 +29,6 @@ namespace MovieTorrents
                 _name = value;
                 PurifiedName = _name.Purify();
                 ChineseName = PurifiedName.ExtractChinese();
-                Debug.WriteLine(PurifiedName);
             }
         }
 

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using System.Windows.Forms;
 
 namespace MovieTorrents
@@ -54,6 +55,7 @@ namespace MovieTorrents
 
 
             Cursor = c;
+            Interlocked.Exchange(ref BtBtItem.AutoDownloadRunning, 0);
 
         }
 
@@ -61,6 +63,8 @@ namespace MovieTorrents
         //下一页
         private void btnNext_Click(object sender, EventArgs e)
         {
+            if (!CheckAutoDownloading()) return;
+
             tbUrl.Text = BtBtItem.NextPageUrl(tbUrl.Text);
             DoQuery();
         }
@@ -68,6 +72,8 @@ namespace MovieTorrents
         //上一页
         private void btnPrev_Click(object sender, EventArgs e)
         {
+            if (!CheckAutoDownloading()) return;
+
             tbUrl.Text = BtBtItem.PrevPageUrl(tbUrl.Text);
             DoQuery();
 
@@ -76,6 +82,8 @@ namespace MovieTorrents
         //下载勾选的种子文件
         private void btDownload_Click(object sender, EventArgs e)
         {
+            if (!CheckAutoDownloading()) return;
+
             if (lvResults.CheckedItems.Count == 0) return;
             var c = Cursor;
             Cursor = Cursors.WaitCursor;
@@ -93,6 +101,8 @@ namespace MovieTorrents
 
             message = $"下载了{i}个文件。{message}";
             MessageBox.Show(message, "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            Interlocked.Exchange(ref BtBtItem.AutoDownloadRunning, 0);
+
         }
 
 
@@ -101,8 +111,6 @@ namespace MovieTorrents
             if (lvResults.SelectedItems.Count == 0) return;
             var btItem = (BtBtItem)lvResults.SelectedItems[0].Tag;
             tbTitle.Text = btItem.Keyword;
-
-
         }
 
         //解压zip文件
@@ -148,9 +156,19 @@ namespace MovieTorrents
 
         private void btSearch_Click(object sender, EventArgs e)
         {
+            if(!CheckAutoDownloading()) return;
             if (string.IsNullOrEmpty(tbSearch.Text.Trim())) return;
             tbUrl.Text = BtBtItem.SearPageUrl(tbSearch.Text.Trim());
             DoQuery();
+        }
+
+        //检查是否正在自动下载
+        private bool CheckAutoDownloading()
+        {
+            if (0 == Interlocked.Exchange(ref BtBtItem.AutoDownloadRunning, 1)) return true;
+            MessageBox.Show("自动下载正在运行，稍后重试。","提示",MessageBoxButtons.OK,MessageBoxIcon.Asterisk);
+            return false;
+
         }
 
         //将目录下的种子文件转移到收藏目录
@@ -158,6 +176,11 @@ namespace MovieTorrents
         {
             var i = BtBtItem.ArchiveTorrentFiles(out var msg);
             MessageBox.Show($"成功转移 {i} 个文件。{msg}", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
+
+        private void cbAutoDownload_CheckedChanged(object sender, EventArgs e)
+        {
+            BtBtItem.EnableAutoDownload(cbAutoDownload.Checked);
         }
     }
 }
