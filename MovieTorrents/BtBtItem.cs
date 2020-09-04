@@ -424,14 +424,15 @@ namespace MovieTorrents
                     destFileName = Path.Combine(destPath, destFileName);
                     Debug.WriteLine(destFileName);
 
-                    if (File.Exists(destFileName))
-                    {
-                        msg += $"\r\n文件 {destFileName} 已经存在！";
-                        continue;
-                    }
-
                     try
                     {
+                        if (File.Exists(destFileName))
+                        {
+                            msg += $"\r\n文件 {destFileName} 已经存在！";
+                            File.Delete(file);
+                            continue;
+                        }
+
                         File.Move(file, destFileName);
                         i++;
                     }

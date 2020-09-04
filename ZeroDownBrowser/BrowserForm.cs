@@ -14,6 +14,7 @@ using System.Windows.Forms;
 using AngleSharp.Html.Parser;
 using CefSharp;
 using CefSharp.WinForms;
+using mySharedLib;
 using ZeroDownBrowser.Controls;
 using ZeroDownLib;
 
@@ -36,9 +37,6 @@ namespace ZeroDownBrowser
 
         #region Form主要函数
 
-        
-
-        #endregion
         public BrowserForm()
         {
             InitializeComponent();
@@ -52,6 +50,7 @@ namespace ZeroDownBrowser
 
             FormClosing += BrowserForm_FormClosing;
             FormClosed += BrowserForm_FormClosed;
+            Resize += BrowserForm_Resize;
 
             _offDownloadTimer = new System.Threading.Timer(TimerCallback, null, Timeout.Infinite, Timeout.Infinite);
             _searchInterval = mySharedLib.Utility.GetSetting("SearchInterval", 15) * 60 * 1000;
@@ -76,6 +75,12 @@ namespace ZeroDownBrowser
 
         }
 
+        private void BrowserForm_Resize(object sender, EventArgs e)
+        {
+            if (WindowState != FormWindowState.Minimized) return;
+            ShowWindow(false);
+        }
+
         private void BrowserForm_FormClosed(object sender, FormClosedEventArgs e)
         {
             _notifyIcon.Visible = false;
@@ -93,6 +98,16 @@ namespace ZeroDownBrowser
                 Thread.Sleep(2000);
             }
         }
+        protected override void WndProc(ref Message message)
+        {
+            if (message.Msg == SingleInstance.WM_SHOWFIRSTINSTANCE)
+            {
+                ShowWindow();
+            }
+            base.WndProc(ref message);
+        }
+        #endregion
+
 
         //初始化
         private void Initialize()
@@ -267,6 +282,8 @@ $(el).css({'background-color':'yellow','color':'red'});});";
                 _restoreMenu.Enabled = false;
                 _hideMenu.Enabled = true;
                 Show();
+                if (WindowState == FormWindowState.Minimized)
+                    WindowState = FormWindowState.Maximized;
             }
             else
             {
