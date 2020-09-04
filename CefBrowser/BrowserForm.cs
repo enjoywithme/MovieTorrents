@@ -37,7 +37,7 @@ namespace CefBrowser
             
             var settings = new CefSettings
             {
-                CachePath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + @"\CEF"
+                CachePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "CEF")
             };
             Cef.Initialize(settings);
             var startUrl = "https://0daydown.com";

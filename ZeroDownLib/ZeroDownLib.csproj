@@ -64,6 +64,9 @@
     <Content Include="Lib\WizKMCore.idl" />
     <Content Include="Lib\WizKMCoreLib.dll" />
     <Content Include="ReadMe.txt" />
+    <Content Include="VersionSkipWords.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\mySharedLib\mySharedLib.csproj">

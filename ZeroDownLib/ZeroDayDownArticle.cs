@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -20,7 +21,7 @@ namespace ZeroDownLib
         private const int wizUpdateDocumentDonotDownloadFile = 0x0020;   //不从网络下载html里面的资源
         private const int wizUpdateDocumentAllowAutoGetContent = 0x0040;   //如果只保存正文，允许使用自动获得正文方式
 
-        private List<string> _similarSkipWords = new List<string>{"pro","ultimate"};
+        private static readonly List<string> SimilarSkipWords = new List<string>{"pro","ultimate"};
         public static string WizDbPath;
         public static string WizDefaultFolder;
 
@@ -45,7 +46,12 @@ namespace ZeroDownLib
         public string DocFileName { get; private set; }//Wiz保存文件名
         public string WizFolderLocation { get; private set; }
 
-
+        static ZeroDayDownArticle()
+        {
+            var skipWordsFile = Path.Combine(mySharedLib.Utility.ExecutingAssemblyPath(), "VersionSkipWords.txt");
+            if (File.Exists(skipWordsFile))
+                SimilarSkipWords.AddRange(File.ReadAllLines(skipWordsFile));
+        }
 
         //从剪贴的html解析
         public void ParsePastHtml(string html)
@@ -70,7 +76,7 @@ namespace ZeroDownLib
         {
 
             //抽取版本号
-            var match = Regex.Match(Title, "\\s(\\d+.[^\\s]*)\\b");
+            var match = Regex.Match(Title, "\\sv?(\\d+.[^\\s]*)\\b");
             Version = match.Success ? match.Groups[1].Value : "";
             Debug.WriteLine($"Version={Version}");
 
@@ -227,7 +233,7 @@ namespace ZeroDownLib
             var sb = new StringBuilder();
             foreach (var split in splits)
             {
-                if (split.Length <= 2 || _similarSkipWords.Any(x=>split.ToLower()==x)) continue;
+                if (split.Length <= 2 || SimilarSkipWords.Any(x=>split.ToLower()==x)) continue;
                 if (firstWord)
                 {
                     sb.Append($"DOCUMENT_TITLE like '%{split}%'");
