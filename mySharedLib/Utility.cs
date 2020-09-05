@@ -14,13 +14,6 @@ namespace mySharedLib
     public static class Utility
     {
 
-        private static string[] PRE_CLEARS = { "WEB_DL", "DD5.1", "[0-9]*(?:\\.[0-9]*)?[GM]B?" };
-        private static Regex BAD_CHARS = new Regex(@"[\[.\]()_-]");
-        private static string[] BAD_WORDS = { "1080P", "720P", "x26[45]", "H26[45]", "BluRay", "AC3", " DTS ", "2Audios?", "FLAME", "IMAX","BD","MP4",
-            "中英","字幕", "国英","双语","音轨","香港","动作","有广告","BT下载","国粤双语中英双字","中英双字","未删节特别版","特效英语中字","中文"
-        };
-        private static string[] RELEASE_GROUPS = { "SPARKS", "CMCT", "FGT", "KOOK" };
-
         //标准化文件名
         public static string MakeValidFileName(this string name)
         {
@@ -96,25 +89,11 @@ namespace mySharedLib
         {
             fileName = Regex.Replace(fileName, @"\s+", ".");//替换空白为.
             if (fileName.StartsWith("[")) return fileName;
-            var regExpression = "[\u4e00-\u9fa5]";
-            var i = 0;
-            var hasChinese = false;
-            while (i < fileName.Length)
-            {
-                var c = fileName.Substring(i, 1);
-                if (Regex.IsMatch(c, regExpression))
-                {
-                    hasChinese = true;
-                }
-                else
-                {
-                    break;
-                }
+            var match = Regex.Match(fileName, "(^[\\u4e00-\\u9fa5：·]+\\d?)");
+            if (!match.Success) return fileName;
+            var i = match.Groups[1].Length;
+            return $"[{fileName.Substring(0, i)}]{fileName.Substring(i, fileName.Length - i)}";
 
-                i++;
-            }
-
-            return !hasChinese ? fileName : $"[{fileName.Substring(0, i)}]{fileName.Substring(i, fileName.Length - i)}";
         }
 
         //去除非法文件名
@@ -131,8 +110,8 @@ namespace mySharedLib
         //抽取字符串中的中文
         public static string ExtractChinese(this string text)
         {
-            var matches = Regex.Matches(text, "[\u4e00-\u9fa5]+");
-            return String.Join(" ", matches.OfType<Match>().Where(m => m.Success));
+            var matches = Regex.Matches(text, "([\\u4e00-\\u9fa5：·]+\\d?)");
+            return string.Join(" ", matches.OfType<Match>().Where(m => m.Success));
         }
 
         //查找字符串的第一个年份

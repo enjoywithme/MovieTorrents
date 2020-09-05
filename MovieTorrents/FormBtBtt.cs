@@ -20,9 +20,18 @@ namespace MovieTorrents
 #if DEBUG
             tbSearch.Text = "模范刑警";
 #endif
+            Resize += FormBtBtt_Resize;
             tbSearch.KeyDown += TbSearch_KeyDown;
             tbUrl.KeyDown += TbUrl_KeyDown;
             btLog.Click += BtLog_Click;
+        }
+
+        private void FormBtBtt_Resize(object sender, EventArgs e)
+        {
+            if (WindowState == FormWindowState.Minimized)
+            {
+                Hide();
+            }
         }
 
         private void TbUrl_KeyDown(object sender, KeyEventArgs e)

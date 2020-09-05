@@ -61,7 +61,7 @@ namespace MovieTorrents
 
         }
 
-        public void Parse()
+        public void Parse(bool checkInDb=true)
         {
             if (!string.IsNullOrEmpty(DouBanRating) && decimal.TryParse(DouBanRating, out var result))
             {
@@ -80,10 +80,11 @@ namespace MovieTorrents
             Keyword = i > 0 ? title.Substring(0, i) : title;
 
             //判断是否勾选此项
-            Checked = (Rating >= 7.0M || Tag.Contains("情色")) &&
-                      !TorrentFile.ExistInDb(FormMain.DbConnectionString, Keyword, Year);
+            Checked = (Rating >= 7.0M || Tag.Contains("情色")) && 
+                      (!checkInDb || !TorrentFile.ExistInDb(FormMain.DbConnectionString, Keyword, Year));
 
         }
+
 
         //下一页url
         public static string NextPageUrl(string pageUrl)
@@ -124,7 +125,7 @@ namespace MovieTorrents
         }
 
         //查询页面上的文章
-        public static List<BtBtItem> QueryPage(string pageUrl, out string msg)
+        public static List<BtBtItem> QueryPage(string pageUrl, out string msg,bool checkInDb = true)
         {
             msg = string.Empty;
             if (string.IsNullOrEmpty(pageUrl))
@@ -232,7 +233,7 @@ namespace MovieTorrents
 
                         }
 
-                        btItem.Parse();
+                        btItem.Parse(checkInDb);
                         items.Add(btItem);
 
 
@@ -465,7 +466,7 @@ namespace MovieTorrents
                 var pageUrl = BtBtHomeUrl;
                 while (true)
                 {
-                    var searched = QueryPage(pageUrl,out var msg);
+                    var searched = QueryPage(pageUrl,out var msg,false);
                     if (searched != null)
                     {
                         items.AddRange(searched);

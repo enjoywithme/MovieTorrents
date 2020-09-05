@@ -171,6 +171,7 @@
     <None Include="Resources\InfoGree32.png" />
     <None Include="Resources\InfoRed32.png" />
     <None Include="Resources\InfoYellow32.png" />
+    <None Include="Resources\BTBT.ico" />
     <Content Include="temp\sample_subject_standard.html">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

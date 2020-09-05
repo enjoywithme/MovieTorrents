@@ -98,13 +98,13 @@
             this.toolStrip1.Dock = System.Windows.Forms.DockStyle.None;
             this.toolStrip1.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
             this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.tsbShowLog,
-            this.toolStripSeparator1,
             this.backButton,
             this.forwardButton,
             this.tsbCapture0DayDown,
             this.urlTextBox,
-            this.goButton});
+            this.goButton,
+            this.toolStripSeparator1,
+            this.tsbShowLog});
             this.toolStrip1.Location = new System.Drawing.Point(0, 0);
             this.toolStrip1.Name = "toolStrip1";
             this.toolStrip1.Padding = new System.Windows.Forms.Padding(0);

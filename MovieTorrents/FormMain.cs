@@ -1398,7 +1398,8 @@ where not exists (select 1 from tb_file where hdd_nid={_hdd_nid} and path=$path 
         private void tsmiBtbttDownload_Click(object sender, EventArgs e)
         {
             if(_formBtBtt==null) _formBtBtt = new FormBtBtt();
-            _formBtBtt?.Show();
+            _formBtBtt.Show();
+            _formBtBtt.WindowState = FormWindowState.Maximized;
         }
     }
 }
