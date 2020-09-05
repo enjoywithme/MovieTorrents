@@ -44,15 +44,34 @@ namespace mySharedLib
         public static T GetSetting<T>(string key, T defaultValue = default(T)) where T : IConvertible
         {
             var val = ConfigurationManager.AppSettings[key] ?? "";
-            T result = defaultValue;
-            if (String.IsNullOrEmpty(val)) return result;
-            T typeDefault = default(T);
+            var result = defaultValue;
+            if (string.IsNullOrEmpty(val)) return result;
+            var typeDefault = default(T);
             if (typeof(T) == typeof(string))
             {
-                typeDefault = (T)(object)String.Empty;
+                typeDefault = (T)(object)string.Empty;
             }
             result = (T)Convert.ChangeType(val, typeDefault.GetTypeCode());
             return result;
+        }
+
+        //保存配置到app.config https://www.codeproject.com/Articles/14744/Read-Write-App-Config-File-with-NET-2-0?display=Print
+        public static void SaveSetting(string key, string value)
+        {
+            // Open App.Config of executable
+            var config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
+
+            if (config.AppSettings.Settings.AllKeys.Contains(key))
+                config.AppSettings.Settings[key].Value = value;
+            else
+                // Add an Application Setting.
+                config.AppSettings.Settings.Add(key,value);
+
+            // Save the changes in App.config file.
+            config.Save(ConfigurationSaveMode.Modified);
+
+            // Force a reload of a changed section.
+            ConfigurationManager.RefreshSection("appSettings");
         }
 
         //清洗字符串
@@ -89,7 +108,7 @@ namespace mySharedLib
         {
             fileName = Regex.Replace(fileName, @"\s+", ".");//替换空白为.
             if (fileName.StartsWith("[")) return fileName;
-            var match = Regex.Match(fileName, "(^[\\u4e00-\\u9fa5：·]+\\d?)");
+            var match = Regex.Match(fileName, "(^[^\\.]+?[\\u4e00-\\u9fa5：·]+\\d?)\\.");
             if (!match.Success) return fileName;
             var i = match.Groups[1].Length;
             return $"[{fileName.Substring(0, i)}]{fileName.Substring(i, fileName.Length - i)}";
@@ -107,11 +126,11 @@ namespace mySharedLib
             return invalid.Aggregate(fileName, (current, c) => current.Replace(c.ToString(), ""));
         }
 
-        //抽取字符串中的中文
-        public static string ExtractChinese(this string text)
+        //抽取字符串中含中文标题
+        public static string ExtractChineseTitle(this string text)
         {
-            var matches = Regex.Matches(text, "([\\u4e00-\\u9fa5：·]+\\d?)");
-            return string.Join(" ", matches.OfType<Match>().Where(m => m.Success));
+            var match = Regex.Match(text, "^\\[?([^\\.]+?[\\u4e00-\\u9fa5：·]+\\d?)\\]?");
+            return match.Success ? match.Groups[1].Value : "";
         }
 
         //查找字符串的第一个年份

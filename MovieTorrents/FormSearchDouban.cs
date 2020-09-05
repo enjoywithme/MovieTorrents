@@ -31,10 +31,7 @@ namespace MovieTorrents
         private void FormSearchDouban_Load(object sender, EventArgs e)
         {
             tbOrigTitle.Text = "原标题：" +  _torrentFile.PurifiedName;
-
-            char[] s = {' '};
-            var splits = _torrentFile.ChineseName.Split(s);
-            tbSearchText.Text = splits[0];
+            tbSearchText.Text = _torrentFile.ChineseName;
             if(!string.IsNullOrWhiteSpace(tbSearchText.Text))
                 DoSearcch();
 

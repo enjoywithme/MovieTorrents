@@ -107,10 +107,6 @@
     <Reference Include="WindowsInput, Version=1.0.4.0, Culture=neutral, PublicKeyToken=9b287f7dc5073cad, processorArchitecture=MSIL">
       <HintPath>..\packages\InputSimulator.1.0.4.0\lib\net20\WindowsInput.dll</HintPath>
     </Reference>
-    <Reference Include="WizKMCoreLib">
-      <HintPath>..\..\..\temp\wiz\WizKMCoreLib.dll</HintPath>
-      <EmbedInteropTypes>False</EmbedInteropTypes>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BrowserForm.cs">
@@ -166,6 +162,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Chromium-blue.ico" />
+    <Content Include="myClipper.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\mySharedLib\mySharedLib.csproj">

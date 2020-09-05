@@ -53,8 +53,23 @@ namespace ZeroDownLib
                 SimilarSkipWords.AddRange(File.ReadAllLines(skipWordsFile));
         }
 
+        public ZeroDayDownArticle()
+        {
+
+        }
+
+        public ZeroDayDownArticle(string html, string url)
+        {
+            Content = html;
+            Url = url;
+
+            //抽取0DayDown文章的标题
+            var match = Regex.Match(html, "<a(.*)>(.*?)</a></h1>");//非贪婪模式
+            Title = match.Success && match.Groups.Count == 3 ? match.Groups[2].Value : "";
+        }
+
         //从剪贴的html解析
-        public void ParsePastHtml(string html)
+        public void ParsePasteHtml(string html)
         {
             Html = html;
 
@@ -112,7 +127,7 @@ namespace ZeroDownLib
                 msg = "剪贴板没有html";
                 return false;
             }
-            ParsePastHtml(Clipboard.GetText(TextDataFormat.Html));
+            ParsePasteHtml(Clipboard.GetText(TextDataFormat.Html));
             if (string.IsNullOrEmpty(Title))
             {
                 msg = "没有找到文章标题";

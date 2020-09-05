@@ -25,9 +25,9 @@ namespace MovieTorrents
         public static int AutoDownloadInterval;
         public static int AutoDownloadSearchPages;
         public static int AutoDownloadSearchHours;
-        public static int AutoDownloadRunning = 0;
+        public static int AutoDownloadRunning;
         public static int AutoDownloadLastTid;
-        public static DateTime? AutoDownloadLastPostDateTime;
+        public static DateTime AutoDownloadLastPostDateTime;
         private static Timer _autoDownloadTimer;
 
         //成员
@@ -48,13 +48,16 @@ namespace MovieTorrents
 
         static BtBtItem()
         {
-            BtBtHomeUrl = Utility.GetSetting("BtBtHomeUrl", "https://www.btbtt.me/");
-            DownLoadRootPath = Utility.GetSetting("DownLoadRootPath", "f:\\temp");
-            WebProxy = Utility.GetSetting("WebProxy", "");
+            BtBtHomeUrl = Utility.GetSetting(nameof(BtBtHomeUrl), "https://www.btbtt.me/");
+            DownLoadRootPath = Utility.GetSetting(nameof(DownLoadRootPath), "f:\\temp");
+            WebProxy = Utility.GetSetting(nameof(WebProxy), "");
 
-            AutoDownloadInterval = Utility.GetSetting("AutoDownloadInterval", 20);
-            AutoDownloadSearchPages = Utility.GetSetting("AutoDownloadSearchPages", 10);
-            AutoDownloadSearchHours = Utility.GetSetting("AutoDownloadSearchHours", 24);
+            AutoDownloadInterval = Utility.GetSetting(nameof(AutoDownloadInterval), 20);
+            AutoDownloadSearchPages = Utility.GetSetting(nameof(AutoDownloadSearchPages), 10);
+            AutoDownloadSearchHours = Utility.GetSetting(nameof(AutoDownloadSearchHours), 24);
+
+            AutoDownloadLastTid = Utility.GetSetting(nameof(AutoDownloadLastTid), 0);
+            AutoDownloadLastPostDateTime = Utility.GetSetting<DateTime>(nameof(AutoDownloadLastPostDateTime));
 #if DEBUG
             DownLoadRootPath = "x:\\temp";
 #endif
@@ -71,7 +74,7 @@ namespace MovieTorrents
             //年份
             var title = Title.Purify();
             if (string.IsNullOrEmpty(title)) return;
-            var chinese = title.ExtractChinese();
+            var chinese = title.ExtractChineseTitle();
             if (!string.IsNullOrEmpty(chinese)) title = chinese;
             var i = title.IndexOf("/", StringComparison.InvariantCultureIgnoreCase);
             if (i == -1) i = title.IndexOf(":", StringComparison.InvariantCultureIgnoreCase);
@@ -473,7 +476,7 @@ namespace MovieTorrents
 
                         //如果上次已经有查询，退出
                         if (AutoDownloadLastTid!=0 
-                            && AutoDownloadLastPostDateTime != null
+                            && AutoDownloadLastPostDateTime != default(DateTime)
                             && searched.Any(x =>
                                 x.tid == AutoDownloadLastTid && x.PostDateTime == AutoDownloadLastPostDateTime))
                         {
@@ -485,8 +488,7 @@ namespace MovieTorrents
                         //如果超过24小时的贴，退出
                         var now = DateTime.Now;
                         if (searched.Any(x =>
-                            x.PostDateTime != null &&
-                            (now - x.PostDateTime.Value).TotalHours > AutoDownloadSearchHours))
+                            x.PostDateTime != null && (now - x.PostDateTime.Value).TotalHours > AutoDownloadSearchHours))
                         {
                             MyLog.Log($"====已搜索{AutoDownloadSearchHours}小时的文章，退出======");
                             break;
@@ -503,10 +505,12 @@ namespace MovieTorrents
                 //记录最新查询的
                 var maxTid = items.Max(x => x.tid);
                 var latestItem = items.FirstOrDefault(x => x.tid != 0 && x.tid == maxTid);
-                if (latestItem != null)
+                if (latestItem?.PostDateTime != null)
                 {
-                    AutoDownloadLastPostDateTime = latestItem.PostDateTime;
+                    AutoDownloadLastPostDateTime = latestItem.PostDateTime.Value;
                     AutoDownloadLastTid = latestItem.tid;
+                    Utility.SaveSetting(nameof(AutoDownloadLastPostDateTime),AutoDownloadLastPostDateTime.ToString("yyyy-MM-dd HH:mm:ss"));
+                    Utility.SaveSetting(nameof(AutoDownloadLastTid),AutoDownloadLastTid.ToString());
                     MyLog.Log($"===Last item===={latestItem.Title}=={latestItem.tid}=={latestItem.PostDateTime}");
                 }
 

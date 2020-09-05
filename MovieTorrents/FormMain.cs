@@ -1400,6 +1400,7 @@ where not exists (select 1 from tb_file where hdd_nid={_hdd_nid} and path=$path 
             if(_formBtBtt==null) _formBtBtt = new FormBtBtt();
             _formBtBtt.Show();
             _formBtBtt.WindowState = FormWindowState.Maximized;
+            _formBtBtt.BringToFront();
         }
     }
 }

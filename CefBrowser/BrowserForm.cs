@@ -17,6 +17,7 @@ using AngleSharp.Html.Parser;
 using CefBrowser.Controls;
 using CefSharp;
 using CefSharp.WinForms;
+using mySharedLib;
 using ZeroDownLib;
 
 namespace CefBrowser
@@ -27,6 +28,9 @@ namespace CefBrowser
         private string _zerodayDownUrl = "www.0daydown.com";
         private const string ZeroDownPageUrlPattern = "0daydown.com/[\\d]+/.+\\.html";
         private bool _is0DayDown;
+
+        private string _clipperJs;
+
 
         public BrowserForm()
         {
@@ -61,6 +65,9 @@ namespace CefBrowser
             var version =
                 $"Chromium: {Cef.ChromiumVersion}, CEF: {Cef.CefVersion}, CefSharp: {Cef.CefSharpVersion}, Environment: {bitness}";
             DisplayOutput(version);
+
+
+            _clipperJs = File.ReadAllText(Path.Combine(Utility.ExecutingAssemblyPath(), "myClipper.js"));
         }
 
         private void _browser_FrameLoadEnd(object sender, FrameLoadEndEventArgs e)
@@ -259,12 +266,16 @@ $(el).css({'background-color':'yellow','color':'red'});});";
             }
         }
 
-
+        private void ShowSaveResult(bool ok, string msg)
+        {
+            MessageBox.Show($"{msg}", ok ? "提示" : "错误", MessageBoxButtons.OK, ok ? MessageBoxIcon.Information : MessageBoxIcon.Error);
+        }
 
         private async void tsbCapture0DayDown_Click(object sender, EventArgs e)
         {
 
             var mainFrame = _browser.GetBrowser().MainFrame;
+            var url = mainFrame.Url;
             //https://stackoverflow.com/questions/35890355/get-html-source-code-from-cefsharp-web-browser
             //var htmlSource = await mainFrame.GetSourceAsync();
             //Debug.WriteLine(htmlSource);
@@ -276,27 +287,7 @@ $(el).css({'background-color':'yellow','color':'red'});});";
             //https://stackoverflow.com/questions/50688705/how-to-access-elements-with-cefsharp
             //string EvaluateJavaScriptResult;
 
-            var task = mainFrame.EvaluateScriptAsync(@"(function() {
-            var s = document.getSelection();
-            if(s.rangeCount > 0) s.removeAllRanges();
-
-
-            var heads = document.getElementsByClassName('article-header');
-
-            var articles = document.getElementsByClassName('article-content');
-
-            if(heads.length>0 && articles.length>0)
-            {
-                var range = document.createRange();
-                range.setStartBefore(heads[0]);
-                range.setEndAfter(articles[0]);
-                s.addRange(range);
-                /* Copy the text inside the text field */
-                document.execCommand(""copy"");
-            }
-
-            return 'ok'; })();",
-                null);
+            var task = mainFrame.EvaluateScriptAsync(_clipperJs, null);
 
             await task.ContinueWith(t =>
             {
@@ -305,20 +296,36 @@ $(el).css({'background-color':'yellow','color':'red'});});";
                 //EvaluateJavaScriptResult = response.Success ? (response.Result.ToString() ?? "") : response.Message;
                 Clipboard.Clear();
 
-                //使用拷贝是因为拷贝的HTML会自动展开Stylesheet为内嵌
-                mainFrame.Copy();
-
-                //等待500ms执行，否则剪贴板可能没有数据
-                //不能使用Thread.SpinWait()，这个空转没有用
-                //部门使用Thread.Sleep()，会导致访问剪贴板死锁
-                mySharedLib.Utility.DelayAction(500, () =>
+                if(t.Result?.Result == null) return;
+                var html = Regex.Replace((string) t.Result.Result, "&quot;", "'");
+                var article = new ZeroDayDownArticle(html,url);
+                try
                 {
-                    var article = new ZeroDayDownArticle();
-                    var ok = article.SaveFromClipboard(out var msg);
+                    article.SaveToWiz();
+                    File.WriteAllText("d:\\temp\\1.html",html);
+                    this.InvokeOnUiThreadIfRequired(() => ShowSaveResult(true, $"保存成功！\r\n{article.WizFolderLocation}\r\n{article.Title}"));
 
-                    MessageBox.Show($"{msg}\r\n{article.WizFolderLocation}\r\n{article.Title}", ok ? "提示" : "错误", MessageBoxButtons.OK,
-                        ok ? MessageBoxIcon.Information : MessageBoxIcon.Error);
-                });
+                }
+                catch (Exception exception)
+                {
+                    this.InvokeOnUiThreadIfRequired(() => ShowSaveResult(false, exception.Message));
+
+                }
+
+                //使用拷贝是因为拷贝的HTML会自动展开Stylesheet为内嵌
+                //mainFrame.Copy();
+
+                ////等待500ms执行，否则剪贴板可能没有数据
+                ////不能使用Thread.SpinWait()，这个空转没有用
+                ////部门使用Thread.Sleep()，会导致访问剪贴板死锁
+                //mySharedLib.Utility.DelayAction(500, () =>
+                //{
+                //    var article = new ZeroDayDownArticle();
+                //    var ok = article.SaveFromClipboard(out var msg);
+
+                //    MessageBox.Show($"{msg}\r\n{article.WizFolderLocation}\r\n{article.Title}", ok ? "提示" : "错误", MessageBoxButtons.OK,
+                //        ok ? MessageBoxIcon.Information : MessageBoxIcon.Error);
+                //});
 
             }, TaskScheduler.FromCurrentSynchronizationContext());
 
