@@ -162,9 +162,6 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Chromium-blue.ico" />
-    <Content Include="myClipper.js">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\mySharedLib\mySharedLib.csproj">

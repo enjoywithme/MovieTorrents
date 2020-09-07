@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
 using AngleSharp.Html.Parser;
 using CefSharp;
+using mySharedLib;
 using ZeroDownLib;
 
 namespace ZeroDownBrowser
@@ -17,6 +19,8 @@ namespace ZeroDownBrowser
 
         private readonly int _maxSearchPages;
         private int _currentPage = 1;
+        private string _clipperJs;
+
 
         public List<ZeroDayDownArticle> Articles = new List<ZeroDayDownArticle>();
         public static bool ContinueSearch = true;
@@ -28,49 +32,31 @@ namespace ZeroDownBrowser
             _browser.FrameLoadEnd += Browser_FrameLoadEnd;
             _browser.BrowserInitialized += Browser_BrowserInitialized;
 
-            _maxSearchPages = mySharedLib.Utility.GetSetting<int>("MaxSearchPage", 10);
+            _maxSearchPages = Utility.GetSetting<int>("MaxSearchPage", 10);
+            _clipperJs = File.ReadAllText(Path.Combine(Utility.ExecutingAssemblyPath(), "myClipper.js"));
 
-            Log("Created!");
+            //Log("Created!");
 
         }
 
         private void Browser_BrowserInitialized(object sender, EventArgs e)
         {
-            Log("initialized!");
+            //Log("initialized!");
 
             _browserInitialized = true;
         }
 
         private void Browser_FrameLoadEnd(object sender, FrameLoadEndEventArgs e)
         {
-            Log("Load ended!");
+            //Log("Load ended!");
 
             var match = Regex.Match(e.Url, "0daydown.com/[\\d]+/.+\\.html");
             if (match.Success)//文章页
             {
                 var mainFrame = _browser.GetBrowser().MainFrame;
+                var url = mainFrame.Url;
 
-                mainFrame.EvaluateScriptAsync(@"(function() {
-            var s = document.getSelection();
-            if(s.rangeCount > 0) s.removeAllRanges();
-
-
-            var heads = document.getElementsByClassName('article-header');
-
-            var articles = document.getElementsByClassName('article-content');
-
-            if(heads.length>0 && articles.length>0)
-            {
-                var range = document.createRange();
-                range.setStartBefore(heads[0]);
-                range.setEndAfter(articles[0]);
-                s.addRange(range);
-                /* Copy the text inside the text field */
-                document.execCommand(""copy"");
-            }
-
-            return 'ok'; })();",
-                    null).ContinueWith(t =>
+                mainFrame.EvaluateScriptAsync(_clipperJs, null).ContinueWith(t =>
                 {
                     if (t.IsFaulted) return;
                     if (BrowserForm.ApplicationExiting)
@@ -78,31 +64,21 @@ namespace ZeroDownBrowser
                         _isLoading = false;
                         return;
                     }
-                    //Thread.CurrentThread.SetApartmentState(ApartmentState.STA);
-                    //Clipboard.Clear();
 
-                    mainFrame.Copy();
-                    //在非主线程中访问剪贴板
-                    //https://stackoverflow.com/questions/47344799/how-to-get-clipboard-data-in-non-main-thread
-                    var staThread = new Thread(
-                        delegate ()
-                        {
-                            var article = new ZeroDayDownArticle();
-                            var ok = article.SaveFromClipboard(out var msg);
-                            if (!ok)
-                            {
-                                Log($"[Error] {msg}");
-                            }
-                            else
-                            {
-                                Log($"[Ok] {msg} {article.WizFolderLocation}/{article.Title}");
+                    if (t.Result?.Result == null) return;
+                    var html = Regex.Replace((string)t.Result.Result, "&quot;", "'");
+                    var article = new ZeroDayDownArticle(html, url);
+                    try
+                    {
+                        article.SaveToWiz();
+                        Log($"[OK] 保存成功！{article.WizFolderLocation} {article.Title}");
 
-                            }
-                            _isLoading = false;
-                        });
-                    staThread.SetApartmentState(ApartmentState.STA);
-                    staThread.Start();
-                    staThread.Join();
+                    }
+                    catch (Exception exception)
+                    {
+                        Log($"[Error] 保存{article.Title} 失败：{exception.Message}");
+
+                    }
 
                 });
 

@@ -119,6 +119,7 @@ namespace ZeroDownBrowser
             {
                 CachePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "CEF")
             };
+            settings.CefCommandLineArgs.Add("proxy-server", Utility.GetSetting("proxy-server", ""));
             Cef.Initialize(settings);
 
             var startUrl = Program.ZeroDownHomeUrl;

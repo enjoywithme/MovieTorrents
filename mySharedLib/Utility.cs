@@ -108,7 +108,7 @@ namespace mySharedLib
         {
             fileName = Regex.Replace(fileName, @"\s+", ".");//替换空白为.
             if (fileName.StartsWith("[")) return fileName;
-            var match = Regex.Match(fileName, "(^[^\\.]+?[\\u4e00-\\u9fa5：·]+\\d?)\\.");
+            var match = Regex.Match(fileName, "(^[^\\.]+?[\\u4e00-\\u9fa5：·]+\\d*)\\.");
             if (!match.Success) return fileName;
             var i = match.Groups[1].Length;
             return $"[{fileName.Substring(0, i)}]{fileName.Substring(i, fileName.Length - i)}";
@@ -129,7 +129,7 @@ namespace mySharedLib
         //抽取字符串中含中文标题
         public static string ExtractChineseTitle(this string text)
         {
-            var match = Regex.Match(text, "^\\[?([^\\.]+?[\\u4e00-\\u9fa5：·]+\\d?)\\]?");
+            var match = Regex.Match(text, "^\\[?([^\\.]+?[\\u4e00-\\u9fa5：·]+\\d*)\\]?");
             return match.Success ? match.Groups[1].Value : "";
         }
 
