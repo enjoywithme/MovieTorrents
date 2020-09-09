@@ -28,7 +28,7 @@ namespace MovieTorrents
             {
                 _name = value;
                 PurifiedName = _name.Purify();
-                ChineseName = _name.ExtractChineseTitle();
+                FirstName = PurifiedName.ExtractFirstToken();
             }
         }
 
@@ -51,7 +51,7 @@ namespace MovieTorrents
 
         public string PurifiedName { get; set; }
 
-        public string ChineseName { get; set; }
+        public string FirstName { get; set; }
 
         public DateTime SeeDate
         {

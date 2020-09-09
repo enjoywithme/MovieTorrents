@@ -75,7 +75,7 @@ namespace mySharedLib
         }
 
         //清洗字符串
-        public static string Purify(this string text)
+        public static string Purify(this string text,string replace=" ")
         {
             var badWordsFilePath = Path.Combine(ExecutingAssemblyPath(), "BAD_WORDS.txt");
             if (File.Exists(badWordsFilePath))
@@ -83,8 +83,19 @@ namespace mySharedLib
                 var badWords = File.ReadAllLines(badWordsFilePath);
                 foreach (var badWord in badWords)
                 {
-                    if(string.IsNullOrEmpty(badWord.Trim())) continue;
-                    text =  Regex.Replace(text, badWord.Trim(), " ", RegexOptions.IgnoreCase);
+                    if (string.IsNullOrEmpty(badWord.Trim())) continue;
+
+                    var splits = badWord.Split();
+                    switch (splits.Length)
+                    {
+                        case 0:
+                            continue;
+                        case 2:
+                            replace = splits[1];
+                            break;
+                    }
+
+                    text =  Regex.Replace(text, badWord.Trim(), replace, RegexOptions.IgnoreCase);
                 }
             }
             //var cleaned = Regex.Replace(text, "\\b" + String.Join("\\b|\\b", PRE_CLEARS) + "\\b", "", RegexOptions.IgnoreCase);
@@ -108,7 +119,7 @@ namespace mySharedLib
         {
             fileName = Regex.Replace(fileName, @"\s+", ".");//替换空白为.
             if (fileName.StartsWith("[")) return fileName;
-            var match = Regex.Match(fileName, "(^[^\\.]+?[\\u4e00-\\u9fa5：·]+\\d*)\\.");
+            var match = Regex.Match(fileName, "(^[^\\.]*?[\\u4e00-\\u9fa5：·]+\\d*)\\.");
             if (!match.Success) return fileName;
             var i = match.Groups[1].Length;
             return $"[{fileName.Substring(0, i)}]{fileName.Substring(i, fileName.Length - i)}";
@@ -126,10 +137,10 @@ namespace mySharedLib
             return invalid.Aggregate(fileName, (current, c) => current.Replace(c.ToString(), ""));
         }
 
-        //抽取字符串中含中文标题
-        public static string ExtractChineseTitle(this string text)
+        //抽取空格隔开的第一个字节
+        public static string ExtractFirstToken(this string text)
         {
-            var match = Regex.Match(text, "^\\[?([^\\.]+?[\\u4e00-\\u9fa5：·]+\\d*)\\]?");
+            var match = Regex.Match(text, "^(.+?)\\s");
             return match.Success ? match.Groups[1].Value : "";
         }
 

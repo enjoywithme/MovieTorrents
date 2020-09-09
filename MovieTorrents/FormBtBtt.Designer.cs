@@ -51,7 +51,7 @@
             this.columnHeaderSeeComment = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.btUnzip = new System.Windows.Forms.Button();
             this.tbTitle = new System.Windows.Forms.TextBox();
-            this.tbSearch = new System.Windows.Forms.TextBox();
+            this.tbSearch = new MovieTorrents.TextBoxWithPasteEvent();
             this.label4 = new System.Windows.Forms.Label();
             this.btArchiveTorrent = new System.Windows.Forms.Button();
             this.cbAutoDownload = new System.Windows.Forms.CheckBox();
@@ -80,9 +80,9 @@
             this.columnHeader5});
             this.lvResults.FullRowSelect = true;
             this.lvResults.HideSelection = false;
-            this.lvResults.Location = new System.Drawing.Point(12, 163);
+            this.lvResults.Location = new System.Drawing.Point(12, 115);
             this.lvResults.Name = "lvResults";
-            this.lvResults.Size = new System.Drawing.Size(834, 130);
+            this.lvResults.Size = new System.Drawing.Size(834, 178);
             this.lvResults.TabIndex = 3;
             this.lvResults.UseCompatibleStateImageBehavior = false;
             this.lvResults.View = System.Windows.Forms.View.Details;
@@ -143,7 +143,8 @@
             // 
             // btDownload
             // 
-            this.btDownload.Location = new System.Drawing.Point(80, 113);
+            this.btDownload.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.btDownload.Location = new System.Drawing.Point(537, 297);
             this.btDownload.Name = "btDownload";
             this.btDownload.Size = new System.Drawing.Size(75, 23);
             this.btDownload.TabIndex = 2;
@@ -212,7 +213,7 @@
             // 
             // btUnzip
             // 
-            this.btUnzip.Location = new System.Drawing.Point(190, 113);
+            this.btUnzip.Location = new System.Drawing.Point(433, 42);
             this.btUnzip.Name = "btUnzip";
             this.btUnzip.Size = new System.Drawing.Size(75, 23);
             this.btUnzip.TabIndex = 2;
@@ -247,7 +248,7 @@
             // 
             // btArchiveTorrent
             // 
-            this.btArchiveTorrent.Location = new System.Drawing.Point(295, 113);
+            this.btArchiveTorrent.Location = new System.Drawing.Point(433, 74);
             this.btArchiveTorrent.Name = "btArchiveTorrent";
             this.btArchiveTorrent.Size = new System.Drawing.Size(75, 23);
             this.btArchiveTorrent.TabIndex = 2;
@@ -331,7 +332,7 @@
         private System.Windows.Forms.ColumnHeader columnHeaderSeeComment;
         private System.Windows.Forms.Button btUnzip;
         private System.Windows.Forms.TextBox tbTitle;
-        private System.Windows.Forms.TextBox tbSearch;
+        private MovieTorrents.TextBoxWithPasteEvent tbSearch;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Button btArchiveTorrent;
         private System.Windows.Forms.CheckBox cbAutoDownload;

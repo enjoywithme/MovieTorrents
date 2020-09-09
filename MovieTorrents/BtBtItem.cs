@@ -31,7 +31,18 @@ namespace MovieTorrents
         private static Timer _autoDownloadTimer;
 
         //成员
-        public string Title { get; set; }
+        private string _title;
+
+        public string Title
+        {
+            get => _title;
+            set
+            {
+                _title = value;
+                Keyword = _title.Purify().ExtractFirstToken();
+            }
+        }
+
         public string DouBanRating { get; set; }
         public List<string> AttachmentUrls { get; set; } = new List<string>();
         public string PublishTime { get; set; }
@@ -70,17 +81,6 @@ namespace MovieTorrents
             {
                 Rating = result;
             }
-
-            //年份
-            var title = Title.Purify();
-            if (string.IsNullOrEmpty(title)) return;
-            var chinese = title.ExtractChineseTitle();
-            if (!string.IsNullOrEmpty(chinese)) title = chinese;
-            var i = title.IndexOf("/", StringComparison.InvariantCultureIgnoreCase);
-            if (i == -1) i = title.IndexOf(":", StringComparison.InvariantCultureIgnoreCase);
-            if (i == -1) i = title.IndexOf(" ", StringComparison.InvariantCultureIgnoreCase);
-            if (i == -1) i = title.IndexOf(".", StringComparison.InvariantCultureIgnoreCase);
-            Keyword = i > 0 ? title.Substring(0, i) : title;
 
             //判断是否勾选此项
             Checked = (Rating >= 7.0M || Tag.Contains("情色")) && 

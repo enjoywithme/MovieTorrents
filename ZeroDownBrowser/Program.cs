@@ -26,6 +26,14 @@ namespace ZeroDownBrowser
                 return;
             }
 
+            //https://stackoverflow.com/questions/10202987/in-c-sharp-how-to-collect-stack-trace-of-program-crash
+            var currentDomain = default(AppDomain);
+            currentDomain = AppDomain.CurrentDomain;
+            // Handler for unhandled exceptions.
+            currentDomain.UnhandledException += GlobalUnhandledExceptionHandler;
+            // Handler for exceptions in threads behind forms.
+            System.Windows.Forms.Application.ThreadException += GlobalThreadExceptionHandler;
+
             ZeroDownHomeUrl = Utility.GetSetting("ZeroDownHomeUrl", "www.0daydown.com");
             ZeroDownPageUrlPattern =
                 Utility.GetSetting("ZeroDownPageUrlPattern", "0daydown.com/[\\d]+/.+\\.html");
@@ -44,6 +52,18 @@ namespace ZeroDownBrowser
             {
                 SingleInstance.Stop();
             }
+        }
+
+        private static void GlobalUnhandledExceptionHandler(object sender, UnhandledExceptionEventArgs e)
+        {
+            var ex = (Exception)e.ExceptionObject;
+            MyLog.Log(ex.Message + "\n" + ex.StackTrace);
+        }
+
+        private static void GlobalThreadExceptionHandler(object sender, System.Threading.ThreadExceptionEventArgs e)
+        {
+            var ex = e.Exception;
+            MyLog.Log(ex.Message + "\n" + ex.StackTrace);
         }
     }
 }

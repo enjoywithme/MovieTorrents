@@ -22,8 +22,15 @@ namespace MovieTorrents
 #endif
             Resize += FormBtBtt_Resize;
             tbSearch.KeyDown += TbSearch_KeyDown;
+            tbSearch.Pasted += TbSearch_Pasted;
             tbUrl.KeyDown += TbUrl_KeyDown;
             btLog.Click += BtLog_Click;
+        }
+
+        private void TbSearch_Pasted(object sender, ClipboardEventArgs e)
+        {
+            tbSearch.Text = e.ClipboardText;
+            DoSearch();
         }
 
         private void FormBtBtt_Resize(object sender, EventArgs e)
@@ -49,12 +56,16 @@ namespace MovieTorrents
         private void TbSearch_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode != Keys.Return) return;
+            DoSearch();
+        }
+
+        private void DoSearch()
+        {
             if (!CheckAutoDownloading()) return;
             if (string.IsNullOrEmpty(tbSearch.Text.Trim())) return;
             tbUrl.Text = BtBtItem.SearPageUrl(tbSearch.Text.Trim());
             DoQuery();
         }
-
         private void DoQuery()
         {
             var c = Cursor;
