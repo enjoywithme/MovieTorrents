@@ -53,7 +53,7 @@ namespace ZeroDownBrowser
             Resize += BrowserForm_Resize;
 
             _offDownloadTimer = new System.Threading.Timer(TimerCallback, null, Timeout.Infinite, Timeout.Infinite);
-            _searchInterval = mySharedLib.Utility.GetSetting("SearchInterval", 15) * 60 * 1000;
+            _searchInterval = Utility.GetSetting("SearchInterval", 15) * 60 * 1000;
 
             //图标区图标
             _notifyIcon = new NotifyIcon
@@ -72,6 +72,9 @@ namespace ZeroDownBrowser
             menu.MenuItems.Add(_hideMenu);
             menu.MenuItems.Add(new MenuItem("Exit", CleanExit));
             _notifyIcon.ContextMenu = menu;
+
+            startAutoSaveToWizNoteToolStripMenuItem.Click += startAutoSaveToWizNoteToolStripMenuItem_Click;
+            startAutoSaveToWizNoteToolStripMenuItem.Enabled = true;
 
         }
 
@@ -328,6 +331,14 @@ $(el).css({'background-color':'yellow','color':'red'});});";
             urlTextBox.Width = Math.Max(0, width - urlTextBox.Margin.Horizontal - 18);
         }
         //菜单
+        private void startAutoSaveToWizNoteToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (startAutoSaveToWizNoteToolStripMenuItem.Checked)
+                _offDownloadTimer.Change(Timeout.Infinite, Timeout.Infinite);
+            else
+                _offDownloadTimer.Change(5000, _searchInterval);
+            startAutoSaveToWizNoteToolStripMenuItem.Checked = !startAutoSaveToWizNoteToolStripMenuItem.Checked;
+        }
         private void ExitMenuItemClick(object sender, EventArgs e)
         {
 
@@ -339,14 +350,6 @@ $(el).css({'background-color':'yellow','color':'red'});});";
             _mainBrowser.ShowDevTools();
         }
 
-        private void startAutoSaveToWizNoteToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            if (startAutoSaveToWizNoteToolStripMenuItem.Checked)
-                _offDownloadTimer.Change(Timeout.Infinite, Timeout.Infinite);
-            else
-                _offDownloadTimer.Change(5000, _searchInterval);
-            startAutoSaveToWizNoteToolStripMenuItem.Checked = !startAutoSaveToWizNoteToolStripMenuItem.Checked;
-        }
         private void showLogToolStripMenuItem_Click(object sender, EventArgs e)
         {
             ShowLog();

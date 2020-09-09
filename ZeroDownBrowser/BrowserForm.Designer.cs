@@ -33,13 +33,13 @@
             this.statusLabel = new System.Windows.Forms.Label();
             this.outputLabel = new System.Windows.Forms.Label();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
-            this.tsbShowLog = new System.Windows.Forms.ToolStripButton();
-            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.backButton = new System.Windows.Forms.ToolStripButton();
             this.forwardButton = new System.Windows.Forms.ToolStripButton();
             this.tsbCapture0DayDown = new System.Windows.Forms.ToolStripButton();
             this.urlTextBox = new System.Windows.Forms.ToolStripTextBox();
             this.goButton = new System.Windows.Forms.ToolStripButton();
+            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+            this.tsbShowLog = new System.Windows.Forms.ToolStripButton();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.startAutoSaveToWizNoteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -113,20 +113,6 @@
             this.toolStrip1.TabIndex = 0;
             this.toolStrip1.Layout += new System.Windows.Forms.LayoutEventHandler(this.HandleToolStripLayout);
             // 
-            // tsbShowLog
-            // 
-            this.tsbShowLog.Image = global::ZeroDownBrowser.Properties.Resources.Column_one_16;
-            this.tsbShowLog.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.tsbShowLog.Name = "tsbShowLog";
-            this.tsbShowLog.Size = new System.Drawing.Size(50, 22);
-            this.tsbShowLog.Text = "Log";
-            this.tsbShowLog.Click += new System.EventHandler(this.tsbShowLog_Click);
-            // 
-            // toolStripSeparator1
-            // 
-            this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(6, 25);
-            // 
             // backButton
             // 
             this.backButton.Enabled = false;
@@ -174,6 +160,20 @@
             this.goButton.Text = "Go";
             this.goButton.Click += new System.EventHandler(this.GoButtonClick);
             // 
+            // toolStripSeparator1
+            // 
+            this.toolStripSeparator1.Name = "toolStripSeparator1";
+            this.toolStripSeparator1.Size = new System.Drawing.Size(6, 25);
+            // 
+            // tsbShowLog
+            // 
+            this.tsbShowLog.Image = global::ZeroDownBrowser.Properties.Resources.Column_one_16;
+            this.tsbShowLog.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tsbShowLog.Name = "tsbShowLog";
+            this.tsbShowLog.Size = new System.Drawing.Size(50, 22);
+            this.tsbShowLog.Text = "Log";
+            this.tsbShowLog.Click += new System.EventHandler(this.tsbShowLog_Click);
+            // 
             // menuStrip1
             // 
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -198,10 +198,10 @@
             // 
             // startAutoSaveToWizNoteToolStripMenuItem
             // 
+            this.startAutoSaveToWizNoteToolStripMenuItem.Enabled = false;
             this.startAutoSaveToWizNoteToolStripMenuItem.Name = "startAutoSaveToWizNoteToolStripMenuItem";
             this.startAutoSaveToWizNoteToolStripMenuItem.Size = new System.Drawing.Size(245, 22);
             this.startAutoSaveToWizNoteToolStripMenuItem.Text = "Enable auto save to WizNote";
-            this.startAutoSaveToWizNoteToolStripMenuItem.Click += new System.EventHandler(this.startAutoSaveToWizNoteToolStripMenuItem_Click);
             // 
             // showLogToolStripMenuItem
             // 
