@@ -113,6 +113,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="0daydown.ico" />
+    <None Include="Resources\Lightning16.png" />
     <None Include="README.md" />
     <None Include="Resources\Column_one_16.png" />
     <None Include="Resources\Database_save_16.png" />

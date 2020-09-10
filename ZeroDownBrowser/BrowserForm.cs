@@ -76,6 +76,20 @@ namespace ZeroDownBrowser
             startAutoSaveToWizNoteToolStripMenuItem.Click += startAutoSaveToWizNoteToolStripMenuItem_Click;
             startAutoSaveToWizNoteToolStripMenuItem.Enabled = true;
 
+            tsbAutoDownloadNow.Click += TsbAutoDownloadNow_Click;
+            tsbAutoDownloadNow.Enabled = true;
+
+        }
+
+        private void TsbAutoDownloadNow_Click(object sender, EventArgs e)
+        {
+            if (0 != Interlocked.Exchange(ref _offDownloadRunning, 1))
+            {
+                MessageBox.Show("自动下载正在运行，稍后重试！", "提示", MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
+                return;
+            }
+
+            Task.Run(DownloadArticles);
         }
 
         private void BrowserForm_Resize(object sender, EventArgs e)
@@ -157,6 +171,11 @@ namespace ZeroDownBrowser
             //0 indicates that the method is in use.
             if (0 != Interlocked.Exchange(ref _offDownloadRunning, 1))
                 return;
+            DownloadArticles();
+        }
+
+        private void DownloadArticles()
+        {
             try
             {
                 mySharedLib.MyLog.Log("------------Starting search-------------");
@@ -170,7 +189,6 @@ namespace ZeroDownBrowser
             {
                 Interlocked.Exchange(ref _offDownloadRunning, 0);
             }
-
         }
 
 

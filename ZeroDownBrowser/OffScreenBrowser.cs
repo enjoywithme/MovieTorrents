@@ -19,7 +19,7 @@ namespace ZeroDownBrowser
 
         private readonly int _maxSearchPages;
         private int _currentPage = 1;
-        private string _clipperJs;
+        private readonly string _clipperJs;
 
 
         public List<ZeroDayDownArticle> Articles = new List<ZeroDayDownArticle>();
@@ -79,6 +79,8 @@ namespace ZeroDownBrowser
                         Log($"[Error] 保存{article.Title} 失败：{exception.Message}");
 
                     }
+                    _isLoading = false;
+
 
                 });
 
@@ -122,6 +124,7 @@ namespace ZeroDownBrowser
                             {
                                 Log($"{article.Title}");
                             }
+
                         }
 
                     }
@@ -131,6 +134,7 @@ namespace ZeroDownBrowser
                     }
 
                     _isLoading = false;
+
                 });
             }
 

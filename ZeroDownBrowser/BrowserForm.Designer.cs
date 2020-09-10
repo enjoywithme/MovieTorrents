@@ -33,13 +33,8 @@
             this.statusLabel = new System.Windows.Forms.Label();
             this.outputLabel = new System.Windows.Forms.Label();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
-            this.backButton = new System.Windows.Forms.ToolStripButton();
-            this.forwardButton = new System.Windows.Forms.ToolStripButton();
-            this.tsbCapture0DayDown = new System.Windows.Forms.ToolStripButton();
             this.urlTextBox = new System.Windows.Forms.ToolStripTextBox();
-            this.goButton = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
-            this.tsbShowLog = new System.Windows.Forms.ToolStripButton();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.startAutoSaveToWizNoteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -47,6 +42,12 @@
             this.showDevToolsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.backButton = new System.Windows.Forms.ToolStripButton();
+            this.forwardButton = new System.Windows.Forms.ToolStripButton();
+            this.tsbAutoDownloadNow = new System.Windows.Forms.ToolStripButton();
+            this.tsbCapture0DayDown = new System.Windows.Forms.ToolStripButton();
+            this.goButton = new System.Windows.Forms.ToolStripButton();
+            this.tsbShowLog = new System.Windows.Forms.ToolStripButton();
             this.toolStripContainer.ContentPanel.SuspendLayout();
             this.toolStripContainer.TopToolStripPanel.SuspendLayout();
             this.toolStripContainer.SuspendLayout();
@@ -100,6 +101,7 @@
             this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.backButton,
             this.forwardButton,
+            this.tsbAutoDownloadNow,
             this.tsbCapture0DayDown,
             this.urlTextBox,
             this.goButton,
@@ -113,36 +115,6 @@
             this.toolStrip1.TabIndex = 0;
             this.toolStrip1.Layout += new System.Windows.Forms.LayoutEventHandler(this.HandleToolStripLayout);
             // 
-            // backButton
-            // 
-            this.backButton.Enabled = false;
-            this.backButton.Image = global::ZeroDownBrowser.Properties.Resources.nav_left_green;
-            this.backButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.backButton.Name = "backButton";
-            this.backButton.Size = new System.Drawing.Size(56, 22);
-            this.backButton.Text = "Back";
-            this.backButton.Click += new System.EventHandler(this.BackButtonClick);
-            // 
-            // forwardButton
-            // 
-            this.forwardButton.Enabled = false;
-            this.forwardButton.Image = global::ZeroDownBrowser.Properties.Resources.nav_right_green;
-            this.forwardButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.forwardButton.Name = "forwardButton";
-            this.forwardButton.Size = new System.Drawing.Size(76, 22);
-            this.forwardButton.Text = "Forward";
-            this.forwardButton.Click += new System.EventHandler(this.ForwardButtonClick);
-            // 
-            // tsbCapture0DayDown
-            // 
-            this.tsbCapture0DayDown.Enabled = false;
-            this.tsbCapture0DayDown.Image = global::ZeroDownBrowser.Properties.Resources.Database_save_16;
-            this.tsbCapture0DayDown.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.tsbCapture0DayDown.Name = "tsbCapture0DayDown";
-            this.tsbCapture0DayDown.Size = new System.Drawing.Size(125, 22);
-            this.tsbCapture0DayDown.Text = "Save to WizNote";
-            this.tsbCapture0DayDown.Click += new System.EventHandler(this.tsbCapture0DayDown_Click);
-            // 
             // urlTextBox
             // 
             this.urlTextBox.AutoSize = false;
@@ -151,28 +123,10 @@
             this.urlTextBox.Size = new System.Drawing.Size(500, 25);
             this.urlTextBox.KeyUp += new System.Windows.Forms.KeyEventHandler(this.UrlTextBoxKeyUp);
             // 
-            // goButton
-            // 
-            this.goButton.Image = global::ZeroDownBrowser.Properties.Resources.nav_plain_green;
-            this.goButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.goButton.Name = "goButton";
-            this.goButton.Size = new System.Drawing.Size(45, 22);
-            this.goButton.Text = "Go";
-            this.goButton.Click += new System.EventHandler(this.GoButtonClick);
-            // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
             this.toolStripSeparator1.Size = new System.Drawing.Size(6, 25);
-            // 
-            // tsbShowLog
-            // 
-            this.tsbShowLog.Image = global::ZeroDownBrowser.Properties.Resources.Column_one_16;
-            this.tsbShowLog.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.tsbShowLog.Name = "tsbShowLog";
-            this.tsbShowLog.Size = new System.Drawing.Size(50, 22);
-            this.tsbShowLog.Text = "Log";
-            this.tsbShowLog.Click += new System.EventHandler(this.tsbShowLog_Click);
             // 
             // menuStrip1
             // 
@@ -229,6 +183,63 @@
             this.exitToolStripMenuItem.Text = "Exit";
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.ExitMenuItemClick);
             // 
+            // backButton
+            // 
+            this.backButton.Enabled = false;
+            this.backButton.Image = global::ZeroDownBrowser.Properties.Resources.nav_left_green;
+            this.backButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.backButton.Name = "backButton";
+            this.backButton.Size = new System.Drawing.Size(56, 22);
+            this.backButton.Text = "Back";
+            this.backButton.Click += new System.EventHandler(this.BackButtonClick);
+            // 
+            // forwardButton
+            // 
+            this.forwardButton.Enabled = false;
+            this.forwardButton.Image = global::ZeroDownBrowser.Properties.Resources.nav_right_green;
+            this.forwardButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.forwardButton.Name = "forwardButton";
+            this.forwardButton.Size = new System.Drawing.Size(76, 22);
+            this.forwardButton.Text = "Forward";
+            this.forwardButton.Click += new System.EventHandler(this.ForwardButtonClick);
+            // 
+            // tsbAutoDownloadNow
+            // 
+            this.tsbAutoDownloadNow.Enabled = false;
+            this.tsbAutoDownloadNow.Image = global::ZeroDownBrowser.Properties.Resources.Lightning16;
+            this.tsbAutoDownloadNow.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tsbAutoDownloadNow.Name = "tsbAutoDownloadNow";
+            this.tsbAutoDownloadNow.Size = new System.Drawing.Size(115, 22);
+            this.tsbAutoDownloadNow.Text = "Download now";
+            // 
+            // tsbCapture0DayDown
+            // 
+            this.tsbCapture0DayDown.Enabled = false;
+            this.tsbCapture0DayDown.Image = global::ZeroDownBrowser.Properties.Resources.Database_save_16;
+            this.tsbCapture0DayDown.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tsbCapture0DayDown.Name = "tsbCapture0DayDown";
+            this.tsbCapture0DayDown.Size = new System.Drawing.Size(125, 22);
+            this.tsbCapture0DayDown.Text = "Save to WizNote";
+            this.tsbCapture0DayDown.Click += new System.EventHandler(this.tsbCapture0DayDown_Click);
+            // 
+            // goButton
+            // 
+            this.goButton.Image = global::ZeroDownBrowser.Properties.Resources.nav_plain_green;
+            this.goButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.goButton.Name = "goButton";
+            this.goButton.Size = new System.Drawing.Size(45, 21);
+            this.goButton.Text = "Go";
+            this.goButton.Click += new System.EventHandler(this.GoButtonClick);
+            // 
+            // tsbShowLog
+            // 
+            this.tsbShowLog.Image = global::ZeroDownBrowser.Properties.Resources.Column_one_16;
+            this.tsbShowLog.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tsbShowLog.Name = "tsbShowLog";
+            this.tsbShowLog.Size = new System.Drawing.Size(50, 21);
+            this.tsbShowLog.Text = "Log";
+            this.tsbShowLog.Click += new System.EventHandler(this.tsbShowLog_Click);
+            // 
             // BrowserForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -276,5 +287,6 @@
         private System.Windows.Forms.ToolStripMenuItem showLogToolStripMenuItem;
         private System.Windows.Forms.ToolStripButton tsbShowLog;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
+        private System.Windows.Forms.ToolStripButton tsbAutoDownloadNow;
     }
 }
