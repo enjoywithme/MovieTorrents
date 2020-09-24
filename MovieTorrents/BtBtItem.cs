@@ -502,6 +502,17 @@ namespace MovieTorrents
                     MyLog.Log($"====Page {pages}====={pageUrl}");
                 }
 
+                //下载附件
+                var checkedItems = items.Where(x => x.Checked 
+                                                    &&(x.tid==0 ||AutoDownloadLastTid==0 ||x.tid>AutoDownloadLastTid)
+                                                    ).ToList();
+                var i = 0;
+                foreach (var btItem in checkedItems)
+                {
+                    i+=btItem.DownLoadAttachments(out var msg);
+                }
+                MyLog.Log($"下载了 {i} 个文件");
+
                 //记录最新查询的
                 var maxTid = items.Max(x => x.tid);
                 var latestItem = items.FirstOrDefault(x => x.tid != 0 && x.tid == maxTid);
@@ -509,19 +520,10 @@ namespace MovieTorrents
                 {
                     AutoDownloadLastPostDateTime = latestItem.PostDateTime.Value;
                     AutoDownloadLastTid = latestItem.tid;
-                    Utility.SaveSetting(nameof(AutoDownloadLastPostDateTime),AutoDownloadLastPostDateTime.ToString("yyyy-MM-dd HH:mm:ss"));
-                    Utility.SaveSetting(nameof(AutoDownloadLastTid),AutoDownloadLastTid.ToString());
+                    Utility.SaveSetting(nameof(AutoDownloadLastPostDateTime), AutoDownloadLastPostDateTime.ToString("yyyy-MM-dd HH:mm:ss"));
+                    Utility.SaveSetting(nameof(AutoDownloadLastTid), AutoDownloadLastTid.ToString());
                     MyLog.Log($"===Last item===={latestItem.Title}=={latestItem.tid}=={latestItem.PostDateTime}");
                 }
-
-                //下载附件
-                var checkedItems = items.Where(x => x.Checked).ToList();
-                var i = 0;
-                foreach (var btItem in checkedItems)
-                {
-                    i+=btItem.DownLoadAttachments(out var msg);
-                }
-                MyLog.Log($"下载了 {i} 个文件");
             }
             catch (Exception e)
             {

@@ -1193,16 +1193,21 @@ where not exists (select 1 from tb_file where hdd_nid={_hdd_nid} and path=$path 
             if (lvResults.SelectedItems.Count == 0) return;
 
             if (MessageBox.Show("确定删除选中的记录？", Properties.Resources.TextHint, MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.No) return;
-
-            var lvItem = lvResults.SelectedItems[0];
-            var torrentFile = (TorrentFile)lvItem.Tag;
             var deleteFile = (MessageBox.Show("同时删除文件？", Properties.Resources.TextHint, MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes);
-            if (!torrentFile.DeleteFromDb(DbConnectionString, deleteFile, out var msg))
+
+            var msgs = "";
+            foreach (ListViewItem lvItem in lvResults.SelectedItems)
             {
-                MessageBox.Show(msg, Properties.Resources.TextError, MessageBoxButtons.YesNo, MessageBoxIcon.Error);
-                return;
+                var torrentFile = (TorrentFile)lvItem.Tag;
+                if (!torrentFile.DeleteFromDb(DbConnectionString, deleteFile, out var msg))
+                {
+                    msgs += $"{msg}\r\n";
+                    continue;
+                }
+                lvResults.Items.Remove(lvItem);
             }
-            lvResults.Items.Remove(lvItem);
+            MessageBox.Show(msgs, Properties.Resources.TextError, MessageBoxButtons.YesNo, MessageBoxIcon.Error);
+
 
         }
 
