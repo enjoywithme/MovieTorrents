@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SQLite;
 using System.Diagnostics;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -73,7 +74,7 @@ namespace MovieTorrents
             }
         }
 
-        
+        public Color ForeColor => string.IsNullOrWhiteSpace(doubanid) ? Color.Firebrick : Color.Black;
 
         public static TorrentFile FromFullPath(string fullName)
         {

@@ -627,7 +627,8 @@ namespace MovieTorrents
                             };
                 lvResults.Items.Add(new ListViewItem(row)
                 {
-                    Tag = torrentFile
+                    Tag = torrentFile,
+                    ForeColor = torrentFile.ForeColor
                 });
 
                 //Debug.Print(torrentFile.GetPurifiedChineseName());
@@ -698,7 +699,7 @@ namespace MovieTorrents
             if (torrentFile == null) torrentFile = (TorrentFile)lvItem.Tag;
 
             lvItem.Text = torrentFile.name;
-
+            lvItem.ForeColor = torrentFile.ForeColor;
             lvItem.SubItems[1].Text = torrentFile.rating.ToString(CultureInfo.InvariantCulture);
             lvItem.SubItems[2].Text = torrentFile.year;
             lvItem.SubItems[3].Text = torrentFile.seelater.ToString();
@@ -1206,7 +1207,8 @@ where not exists (select 1 from tb_file where hdd_nid={_hdd_nid} and path=$path 
                 }
                 lvResults.Items.Remove(lvItem);
             }
-            MessageBox.Show(msgs, Properties.Resources.TextError, MessageBoxButtons.YesNo, MessageBoxIcon.Error);
+            if(!string.IsNullOrEmpty(msgs))
+                MessageBox.Show(msgs, Properties.Resources.TextError, MessageBoxButtons.YesNo, MessageBoxIcon.Error);
 
 
         }
