@@ -94,9 +94,10 @@
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.lbZone = new System.Windows.Forms.Label();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
-            this.tsbSearchDouban = new System.Windows.Forms.ToolStripButton();
             this.toolStripButton1 = new System.Windows.Forms.ToolStripButton();
+            this.tsbSearchDouban = new System.Windows.Forms.ToolStripButton();
             this.tbSearchText = new System.Windows.Forms.ComboBox();
+            this.tsmiLimit2000 = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.lvContextMenu.SuspendLayout();
@@ -181,7 +182,8 @@
             this.tsmiLimit100,
             this.tsmiLimit200,
             this.tsmiLimit500,
-            this.tsmiLimit1000});
+            this.tsmiLimit1000,
+            this.tsmiLimit2000});
             this.过滤TToolStripMenuItem.Name = "过滤TToolStripMenuItem";
             this.过滤TToolStripMenuItem.Size = new System.Drawing.Size(59, 21);
             this.过滤TToolStripMenuItem.Text = "过滤(&T)";
@@ -626,16 +628,6 @@
             this.toolStrip1.TabIndex = 8;
             this.toolStrip1.Text = "toolStrip1";
             // 
-            // tsbSearchDouban
-            // 
-            this.tsbSearchDouban.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.tsbSearchDouban.Image = global::MovieTorrents.Properties.Resources.dou;
-            this.tsbSearchDouban.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.tsbSearchDouban.Name = "tsbSearchDouban";
-            this.tsbSearchDouban.Size = new System.Drawing.Size(23, 22);
-            this.tsbSearchDouban.Text = "搜索豆瓣";
-            this.tsbSearchDouban.Click += new System.EventHandler(this.tsbSearchDouban_Click);
-            // 
             // toolStripButton1
             // 
             this.toolStripButton1.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
@@ -645,6 +637,16 @@
             this.toolStripButton1.Size = new System.Drawing.Size(23, 22);
             this.toolStripButton1.Text = "BtBTT下载";
             this.toolStripButton1.Click += new System.EventHandler(this.tsmiBtbttDownload_Click);
+            // 
+            // tsbSearchDouban
+            // 
+            this.tsbSearchDouban.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.tsbSearchDouban.Image = global::MovieTorrents.Properties.Resources.dou;
+            this.tsbSearchDouban.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tsbSearchDouban.Name = "tsbSearchDouban";
+            this.tsbSearchDouban.Size = new System.Drawing.Size(23, 22);
+            this.tsbSearchDouban.Text = "搜索豆瓣";
+            this.tsbSearchDouban.Click += new System.EventHandler(this.tsbSearchDouban_Click);
             // 
             // tbSearchText
             // 
@@ -658,6 +660,13 @@
             this.tbSearchText.Size = new System.Drawing.Size(1273, 20);
             this.tbSearchText.TabIndex = 9;
             this.tbSearchText.TextChanged += new System.EventHandler(this.tbSearchText_TextChanged);
+            // 
+            // tsmiLimit2000
+            // 
+            this.tsmiLimit2000.Name = "tsmiLimit2000";
+            this.tsmiLimit2000.Size = new System.Drawing.Size(187, 22);
+            this.tsmiLimit2000.Text = "限制2000条";
+            this.tsmiLimit2000.Click += new System.EventHandler(this.tsmiLimit2000_Click);
             // 
             // FormMain
             // 
@@ -764,6 +773,7 @@
         private System.Windows.Forms.ToolStripButton tsbSearchDouban;
         private System.Windows.Forms.ComboBox tbSearchText;
         private System.Windows.Forms.ToolStripButton toolStripButton1;
+        private System.Windows.Forms.ToolStripMenuItem tsmiLimit2000;
     }
 }
 

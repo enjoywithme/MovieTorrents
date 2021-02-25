@@ -27,7 +27,7 @@ namespace MovieTorrents
         public static string DbConnectionString;
         public static FormMain DefaultInstance { get; set; }
         private FormBtBtt _formBtBtt;
-        
+
 
         private FolderBrowserDialog _folderBrowserDialog1;
 
@@ -157,7 +157,7 @@ namespace MovieTorrents
 
         private void StartFileWatch()
         {
-            if(string.IsNullOrEmpty(TorrentFilePath)) return;
+            if (string.IsNullOrEmpty(TorrentFilePath)) return;
 
             try
             {
@@ -213,7 +213,7 @@ namespace MovieTorrents
 
         public void CheckWatchStatus(object state)
         {
-            if(string.IsNullOrEmpty(TorrentFilePath)) return;
+            if (string.IsNullOrEmpty(TorrentFilePath)) return;
 
             if (_monitoredFilesToProcess.Count > 0)
             {
@@ -331,7 +331,7 @@ namespace MovieTorrents
                     notifyIcon1.BalloonTipText = infoMsg;
                     notifyIcon1.ShowBalloonTip(2000);
                 }
-                   
+
 
 
             }));
@@ -511,7 +511,7 @@ namespace MovieTorrents
             }
 
             //限制条数
-            var limitClause="";
+            var limitClause = "";
             if (tsmiLimit100.Checked)
                 limitClause = " limit 100";
             else if (tsmiLimit200.Checked)
@@ -520,6 +520,8 @@ namespace MovieTorrents
                 limitClause = " limit 500";
             else if (tsmiLimit1000.Checked)
                 limitClause = " limit 1000";
+            else if (tsmiLimit2000.Checked)
+                limitClause = " limit 2000";
 
             //最近观看特殊处理
             if (tsmiFilterRecent.Checked)
@@ -550,7 +552,7 @@ namespace MovieTorrents
 
             if (!tsmiFilterRecent.Checked)
                 sb.Append(limitClause);
-            
+
 
 
             Debug.WriteLine(sb.ToString());
@@ -558,7 +560,7 @@ namespace MovieTorrents
             command.CommandText = sb.ToString();
             return command;
         }
-       
+
         //执行搜索
         public async Task<IEnumerable<TorrentFile>> ExecuteSearch(string text, CancellationToken cancelToken)
         {
@@ -686,7 +688,7 @@ namespace MovieTorrents
         }
         private void RefreshSelected(TorrentFile torrentFile = null)
         {
-            lbGenres.Text = lbRating.Text = lbOtherName.Text = lbKeyName.Text =lbZone.Text = null;
+            lbGenres.Text = lbRating.Text = lbOtherName.Text = lbKeyName.Text = lbZone.Text = null;
             if (pictureBox1.Image != null)
             {
                 pictureBox1.Image.Dispose();
@@ -1034,7 +1036,7 @@ where not exists (select 1 from tb_file where hdd_nid={_hdd_nid} and path=$path 
             ShowWindow();
         }
 
-        
+
 
         private void FormMain_Resize(object sender, EventArgs e)
         {
@@ -1097,28 +1099,35 @@ where not exists (select 1 from tb_file where hdd_nid={_hdd_nid} and path=$path 
         private void tsmiLimit100_Click(object sender, EventArgs e)
         {
             tsmiLimit100.Checked = true;
-            tsmiLimit200.Checked = tsmiLimit500.Checked = tsmiLimit1000.Checked = false;
+            tsmiLimit200.Checked = tsmiLimit500.Checked = tsmiLimit1000.Checked = tsmiLimit2000.Checked = false;
             DoSearch();
         }
 
         private void tsmiLimit200_Click(object sender, EventArgs e)
         {
             tsmiLimit200.Checked = true;
-            tsmiLimit100.Checked = tsmiLimit500.Checked = tsmiLimit1000.Checked = false;
+            tsmiLimit100.Checked = tsmiLimit500.Checked = tsmiLimit1000.Checked = tsmiLimit2000.Checked = false;
             DoSearch();
         }
 
         private void tsmiLimit300_Click(object sender, EventArgs e)
         {
             tsmiLimit500.Checked = true;
-            tsmiLimit100.Checked = tsmiLimit200.Checked = tsmiLimit1000.Checked = false;
+            tsmiLimit100.Checked = tsmiLimit200.Checked = tsmiLimit1000.Checked = tsmiLimit2000.Checked = false;
             DoSearch();
         }
 
         private void tsmiLimit1000_Click(object sender, EventArgs e)
         {
             tsmiLimit1000.Checked = true;
-            tsmiLimit100.Checked = tsmiLimit200.Checked = tsmiLimit500.Checked = false;
+            tsmiLimit100.Checked = tsmiLimit200.Checked = tsmiLimit500.Checked = tsmiLimit2000.Checked = false;
+            DoSearch();
+        }
+
+        private void tsmiLimit2000_Click(object sender, EventArgs e)
+        {
+            tsmiLimit2000.Checked = true;
+            tsmiLimit100.Checked = tsmiLimit200.Checked = tsmiLimit500.Checked = tsmiLimit1000.Checked = false;
             DoSearch();
         }
         #endregion
@@ -1207,7 +1216,7 @@ where not exists (select 1 from tb_file where hdd_nid={_hdd_nid} and path=$path 
                 }
                 lvResults.Items.Remove(lvItem);
             }
-            if(!string.IsNullOrEmpty(msgs))
+            if (!string.IsNullOrEmpty(msgs))
                 MessageBox.Show(msgs, Properties.Resources.TextError, MessageBoxButtons.YesNo, MessageBoxIcon.Error);
 
 
@@ -1370,7 +1379,7 @@ where not exists (select 1 from tb_file where hdd_nid={_hdd_nid} and path=$path 
 
         private void lvResults_ItemDrag(object sender, ItemDragEventArgs e)
         {
-            var data = new DataObject(DataFormats.FileDrop, (from ListViewItem item in lvResults.SelectedItems select ((TorrentFile) item.Tag).FullName).ToArray());
+            var data = new DataObject(DataFormats.FileDrop, (from ListViewItem item in lvResults.SelectedItems select ((TorrentFile)item.Tag).FullName).ToArray());
             lvResults.DoDragDrop(data, DragDropEffects.Copy);
 
         }
@@ -1404,10 +1413,12 @@ where not exists (select 1 from tb_file where hdd_nid={_hdd_nid} and path=$path 
 
         private void tsmiBtbttDownload_Click(object sender, EventArgs e)
         {
-            if(_formBtBtt==null) _formBtBtt = new FormBtBtt();
+            if (_formBtBtt == null) _formBtBtt = new FormBtBtt();
             _formBtBtt.Show();
             _formBtBtt.WindowState = FormWindowState.Maximized;
             _formBtBtt.BringToFront();
         }
+
+        
     }
 }
