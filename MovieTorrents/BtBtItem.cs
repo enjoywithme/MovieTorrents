@@ -113,7 +113,7 @@ namespace MovieTorrents
         //搜索页url
         public static string SearPageUrl(string searchText)
         {
-            return $"https://www.btbtt.me/search-index-keyword-{searchText}.htm";
+            return $"{BtBtHomeUrl}search-index-keyword-{searchText}.htm";
         }
 
         //构造webclient
