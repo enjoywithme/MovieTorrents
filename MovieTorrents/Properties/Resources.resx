@@ -124,6 +124,9 @@
   <data name="InfoRed32" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\InfoRed32.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="BTBT" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\BTBT.ico;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="TextHint" xml:space="preserve">
     <value>提示</value>
   </data>
@@ -136,6 +139,9 @@
   <data name="TextError" xml:space="preserve">
     <value>错误</value>
   </data>
+  <data name="search32" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\search32.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="dou" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\dou.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
@@ -145,7 +151,7 @@
   <data name="InfoGree32" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\InfoGree32.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="BTBT" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\BTBT.ico;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="search16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\search16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
 </root>

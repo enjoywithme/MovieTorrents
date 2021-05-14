@@ -1419,6 +1419,18 @@ where not exists (select 1 from tb_file where hdd_nid={_hdd_nid} and path=$path 
             _formBtBtt.BringToFront();
         }
 
-        
+        private void tsbFindSimilar_Click(object sender, EventArgs e)
+        {
+            if (lvResults.SelectedItems.Count == 0) return;
+            var lvItem = lvResults.SelectedItems[0];
+            var torrentFile = (TorrentFile)lvItem.Tag;
+
+            tbSearchText.Text = torrentFile.FirstName;
+        }
+
+        private void btClearSearch_Click(object sender, EventArgs e)
+        {
+            tbSearchText.Text = "";
+        }
     }
 }

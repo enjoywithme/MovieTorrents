@@ -51,6 +51,7 @@
             this.tsmiLimit200 = new System.Windows.Forms.ToolStripMenuItem();
             this.tsmiLimit500 = new System.Windows.Forms.ToolStripMenuItem();
             this.tsmiLimit1000 = new System.Windows.Forms.ToolStripMenuItem();
+            this.tsmiLimit2000 = new System.Windows.Forms.ToolStripMenuItem();
             this.排序OToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tsmiRatingDesc = new System.Windows.Forms.ToolStripMenuItem();
             this.tsmiRatingAsc = new System.Windows.Forms.ToolStripMenuItem();
@@ -96,8 +97,9 @@
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.toolStripButton1 = new System.Windows.Forms.ToolStripButton();
             this.tsbSearchDouban = new System.Windows.Forms.ToolStripButton();
+            this.tsbFindSimilar = new System.Windows.Forms.ToolStripButton();
             this.tbSearchText = new System.Windows.Forms.ComboBox();
-            this.tsmiLimit2000 = new System.Windows.Forms.ToolStripMenuItem();
+            this.btClearSearch = new System.Windows.Forms.Button();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.lvContextMenu.SuspendLayout();
@@ -272,6 +274,13 @@
             this.tsmiLimit1000.Size = new System.Drawing.Size(187, 22);
             this.tsmiLimit1000.Text = "限制1000条";
             this.tsmiLimit1000.Click += new System.EventHandler(this.tsmiLimit1000_Click);
+            // 
+            // tsmiLimit2000
+            // 
+            this.tsmiLimit2000.Name = "tsmiLimit2000";
+            this.tsmiLimit2000.Size = new System.Drawing.Size(187, 22);
+            this.tsmiLimit2000.Text = "限制2000条";
+            this.tsmiLimit2000.Click += new System.EventHandler(this.tsmiLimit2000_Click);
             // 
             // 排序OToolStripMenuItem
             // 
@@ -620,6 +629,7 @@
             // toolStrip1
             // 
             this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.tsbFindSimilar,
             this.toolStripButton1,
             this.tsbSearchDouban});
             this.toolStrip1.Location = new System.Drawing.Point(0, 25);
@@ -648,31 +658,47 @@
             this.tsbSearchDouban.Text = "搜索豆瓣";
             this.tsbSearchDouban.Click += new System.EventHandler(this.tsbSearchDouban_Click);
             // 
+            // tsbFindSimilar
+            // 
+            this.tsbFindSimilar.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.tsbFindSimilar.Image = global::MovieTorrents.Properties.Resources.search16;
+            this.tsbFindSimilar.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tsbFindSimilar.Name = "tsbFindSimilar";
+            this.tsbFindSimilar.Size = new System.Drawing.Size(23, 22);
+            this.tsbFindSimilar.Text = "搜索类似电影";
+            this.tsbFindSimilar.Click += new System.EventHandler(this.tsbFindSimilar_Click);
+            // 
             // tbSearchText
             // 
-            this.tbSearchText.Dock = System.Windows.Forms.DockStyle.Top;
+            this.tbSearchText.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.tbSearchText.FormattingEnabled = true;
             this.tbSearchText.Items.AddRange(new object[] {
             "rating:>9",
-            "rating:>8"});
-            this.tbSearchText.Location = new System.Drawing.Point(0, 50);
+            "rating:>8",
+            "rating:0"});
+            this.tbSearchText.Location = new System.Drawing.Point(30, 48);
             this.tbSearchText.Name = "tbSearchText";
-            this.tbSearchText.Size = new System.Drawing.Size(1273, 20);
+            this.tbSearchText.Size = new System.Drawing.Size(1231, 20);
             this.tbSearchText.TabIndex = 9;
             this.tbSearchText.TextChanged += new System.EventHandler(this.tbSearchText_TextChanged);
             // 
-            // tsmiLimit2000
+            // btClearSearch
             // 
-            this.tsmiLimit2000.Name = "tsmiLimit2000";
-            this.tsmiLimit2000.Size = new System.Drawing.Size(187, 22);
-            this.tsmiLimit2000.Text = "限制2000条";
-            this.tsmiLimit2000.Click += new System.EventHandler(this.tsmiLimit2000_Click);
+            this.btClearSearch.Location = new System.Drawing.Point(4, 47);
+            this.btClearSearch.Name = "btClearSearch";
+            this.btClearSearch.Size = new System.Drawing.Size(22, 22);
+            this.btClearSearch.TabIndex = 10;
+            this.btClearSearch.Text = "X";
+            this.btClearSearch.UseVisualStyleBackColor = true;
+            this.btClearSearch.Click += new System.EventHandler(this.btClearSearch_Click);
             // 
             // FormMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1273, 583);
+            this.Controls.Add(this.btClearSearch);
             this.Controls.Add(this.tbSearchText);
             this.Controls.Add(this.toolStrip1);
             this.Controls.Add(this.lbRating);
@@ -774,6 +800,8 @@
         private System.Windows.Forms.ComboBox tbSearchText;
         private System.Windows.Forms.ToolStripButton toolStripButton1;
         private System.Windows.Forms.ToolStripMenuItem tsmiLimit2000;
+        private System.Windows.Forms.ToolStripButton tsbFindSimilar;
+        private System.Windows.Forms.Button btClearSearch;
     }
 }
 
