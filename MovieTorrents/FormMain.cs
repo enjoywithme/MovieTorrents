@@ -101,6 +101,7 @@ namespace MovieTorrents
 
 
             lbGenres.Text = lbKeyName.Text = lbOtherName.Text = lbZone.Text = lbRating.Text = string.Empty;
+            tsSummary.Text = $"加载了0 个文件，0 已知项目。";
 
             StartFileWatch();
 
@@ -611,6 +612,8 @@ namespace MovieTorrents
         //更新列表
         private void UpdateListView(IEnumerable<TorrentFile> torrentFiles)
         {
+            var totalFiles = torrentFiles.Count();
+            var totalItems = torrentFiles.Where(x=>!string.IsNullOrEmpty(x.doubanid)).GroupBy(x => x.doubanid).Count();
             lvResults.BeginUpdate();
             lvResults.Items.Clear();
             foreach (var torrentFile in torrentFiles)
@@ -639,6 +642,7 @@ namespace MovieTorrents
 
             lvResults.EndUpdate();
 
+            tsSummary.Text = $"加载了{totalFiles} 个文件，{totalItems} 已知项目。";
         }
 
         #endregion

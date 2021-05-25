@@ -95,11 +95,12 @@
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.lbZone = new System.Windows.Forms.Label();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
+            this.tsbFindSimilar = new System.Windows.Forms.ToolStripButton();
             this.toolStripButton1 = new System.Windows.Forms.ToolStripButton();
             this.tsbSearchDouban = new System.Windows.Forms.ToolStripButton();
-            this.tsbFindSimilar = new System.Windows.Forms.ToolStripButton();
             this.tbSearchText = new System.Windows.Forms.ComboBox();
             this.btClearSearch = new System.Windows.Forms.Button();
+            this.tsSummary = new System.Windows.Forms.ToolStripStatusLabel();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.lvContextMenu.SuspendLayout();
@@ -334,6 +335,7 @@
             this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.tssState,
             this.tssInfo,
+            this.tsSummary,
             this.tsCurrentDir,
             this.tsButtonWatch});
             this.statusStrip1.Location = new System.Drawing.Point(0, 557);
@@ -355,7 +357,7 @@
             // 
             this.tssInfo.AutoSize = false;
             this.tssInfo.Name = "tssInfo";
-            this.tssInfo.Size = new System.Drawing.Size(1149, 21);
+            this.tssInfo.Size = new System.Drawing.Size(1118, 21);
             this.tssInfo.Spring = true;
             this.tssInfo.Text = "空闲";
             this.tssInfo.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -638,6 +640,16 @@
             this.toolStrip1.TabIndex = 8;
             this.toolStrip1.Text = "toolStrip1";
             // 
+            // tsbFindSimilar
+            // 
+            this.tsbFindSimilar.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.tsbFindSimilar.Image = global::MovieTorrents.Properties.Resources.search16;
+            this.tsbFindSimilar.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tsbFindSimilar.Name = "tsbFindSimilar";
+            this.tsbFindSimilar.Size = new System.Drawing.Size(23, 22);
+            this.tsbFindSimilar.Text = "搜索类似电影";
+            this.tsbFindSimilar.Click += new System.EventHandler(this.tsbFindSimilar_Click);
+            // 
             // toolStripButton1
             // 
             this.toolStripButton1.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
@@ -657,16 +669,6 @@
             this.tsbSearchDouban.Size = new System.Drawing.Size(23, 22);
             this.tsbSearchDouban.Text = "搜索豆瓣";
             this.tsbSearchDouban.Click += new System.EventHandler(this.tsbSearchDouban_Click);
-            // 
-            // tsbFindSimilar
-            // 
-            this.tsbFindSimilar.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.tsbFindSimilar.Image = global::MovieTorrents.Properties.Resources.search16;
-            this.tsbFindSimilar.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.tsbFindSimilar.Name = "tsbFindSimilar";
-            this.tsbFindSimilar.Size = new System.Drawing.Size(23, 22);
-            this.tsbFindSimilar.Text = "搜索类似电影";
-            this.tsbFindSimilar.Click += new System.EventHandler(this.tsbFindSimilar_Click);
             // 
             // tbSearchText
             // 
@@ -692,6 +694,15 @@
             this.btClearSearch.Text = "X";
             this.btClearSearch.UseVisualStyleBackColor = true;
             this.btClearSearch.Click += new System.EventHandler(this.btClearSearch_Click);
+            // 
+            // tsSummary
+            // 
+            this.tsSummary.BorderSides = ((System.Windows.Forms.ToolStripStatusLabelBorderSides)((((System.Windows.Forms.ToolStripStatusLabelBorderSides.Left | System.Windows.Forms.ToolStripStatusLabelBorderSides.Top) 
+            | System.Windows.Forms.ToolStripStatusLabelBorderSides.Right) 
+            | System.Windows.Forms.ToolStripStatusLabelBorderSides.Bottom)));
+            this.tsSummary.BorderStyle = System.Windows.Forms.Border3DStyle.Etched;
+            this.tsSummary.Name = "tsSummary";
+            this.tsSummary.Size = new System.Drawing.Size(4, 21);
             // 
             // FormMain
             // 
@@ -802,6 +813,7 @@
         private System.Windows.Forms.ToolStripMenuItem tsmiLimit2000;
         private System.Windows.Forms.ToolStripButton tsbFindSimilar;
         private System.Windows.Forms.Button btClearSearch;
+        private System.Windows.Forms.ToolStripStatusLabel tsSummary;
     }
 }
 
