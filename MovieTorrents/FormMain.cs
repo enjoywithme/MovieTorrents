@@ -465,7 +465,17 @@ namespace MovieTorrents
                     break;
             }
 
-            if (string.IsNullOrEmpty(greaterLess)) greaterLess = "=";
+            if (string.IsNullOrEmpty(greaterLess)) 
+                greaterLess = "=";
+            else switch (greaterLess)
+            {
+                case ">":
+                    greaterLess = ">=";
+                    break;
+                case "<":
+                    greaterLess = "<=";
+                    break;
+            }
             var pName = $"@p{command.Parameters.Count}";
             sb.Append($" and {fldName}{greaterLess}{pName}");
             command.Parameters.AddWithValue(pName, oValue);

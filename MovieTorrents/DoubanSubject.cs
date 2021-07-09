@@ -141,7 +141,7 @@ namespace MovieTorrents
             BuildCookies();
             
             var jsonText = string.Empty;
-#if !DEBUG
+#if !LOCALTEST
             try
             {
                 var request = (HttpWebRequest)WebRequest.Create(uri);
@@ -249,7 +249,7 @@ namespace MovieTorrents
 
             var html = string.Empty;
 
-#if !DEBUG
+#if !LOCALTEST
             try
             {
                 var request = (HttpWebRequest)WebRequest.Create(uri);
