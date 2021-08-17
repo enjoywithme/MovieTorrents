@@ -689,7 +689,7 @@ namespace MovieTorrents
             var lvItem = lvResults.SelectedItems[0];
             var torrentFile = (TorrentFile)lvItem.Tag;
             var formRenameTorrent = new FormEdit(torrentFile);
-            if (formRenameTorrent.ShowDialog() == DialogResult.Cancel) return;
+            if (formRenameTorrent.ShowDialog(this) == DialogResult.Cancel) return;
 
             RefreshSelected(torrentFile);
 
@@ -1207,7 +1207,7 @@ where not exists (select 1 from tb_file where hdd_nid={_hdd_nid} and path=$path 
             var lvItem = lvResults.SelectedItems[0];
             var torrentFile = (TorrentFile)lvItem.Tag;
             var formSearchDouban = new FormSearchDouban(torrentFile);
-            if (formSearchDouban.ShowDialog() == DialogResult.Cancel) return;
+            if (formSearchDouban.ShowDialog(this) == DialogResult.Cancel) return;
 
             RefreshSelected(torrentFile);
         }

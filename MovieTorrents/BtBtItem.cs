@@ -92,22 +92,61 @@ namespace MovieTorrents
         //下一页url
         public static string NextPageUrl(string pageUrl)
         {
-            var match = Regex.Match(pageUrl, $"{BtBtHomeUrl}index-index-page-([0-9]*).htm");
-            var p = match.Success ? int.Parse(match.Groups[1].Value) + 1 : 1;
+            //搜索下一页
+            var match = Regex.Match(pageUrl, $"{BtBtHomeUrl}search-index-fid-0-orderby-timedesc-daterage-0-keyword-(.*)-page-([0-9]*).htm");
+            if (match.Success)
+            {
+                if (!int.TryParse(match.Groups[2].Value, out var p)) return pageUrl;
+                p += 1;
+                return
+                    $"{BtBtHomeUrl}search-index-fid-0-orderby-timedesc-daterage-0-keyword-{match.Groups[1].Value}-page-{p}.htm";
+            }
 
-            return $"{BtBtHomeUrl}index-index-page-{p}.htm";
+            //搜索第二页
+            match = Regex.Match(pageUrl, $"{BtBtHomeUrl}search-index-keyword-(.*).htm");
+            if(match.Success)
+                return $"{BtBtHomeUrl}search-index-fid-0-orderby-timedesc-daterage-0-keyword-{match.Groups[1].Value}-page-2.htm";
+
+            //主页下一页
+            match = Regex.Match(pageUrl, $"{BtBtHomeUrl}index-index-page-([0-9]*).htm");
+            if (match.Success)
+            {
+                var p = int.Parse(match.Groups[1].Value) + 1;
+                return $"{BtBtHomeUrl}index-index-page-{p}.htm";
+            }
+
+            return $"{BtBtHomeUrl}index-index-page-2.htm";
         }
 
         //上一页url
         public static string PrevPageUrl(string pageUrl)
         {
-            var match = Regex.Match(pageUrl, $"{BtBtHomeUrl}index-index-page-([0-9]*).htm");
-            if (!match.Success) return BtBtHomeUrl;
-            var p = int.Parse(match.Groups[1].Value);
-            if (p <= 2) return BtBtHomeUrl;
-            p--;
-            return $"{BtBtHomeUrl}index-index-page-{p}.htm";
+            //搜索前一页
+            var match = Regex.Match(pageUrl, $"{BtBtHomeUrl}search-index-fid-0-orderby-timedesc-daterage-0-keyword-(.*)-page-([0-9]*).htm");
+            if (match.Success)
+            {
+                if (!int.TryParse(match.Groups[2].Value, out var p)) return pageUrl;
+                if (p == 2) return $"{BtBtHomeUrl}search-index-keyword-{match.Groups[1].Value}.htm";
+                p -= 1;
+                return $"{BtBtHomeUrl}search-index-fid-0-orderby-timedesc-daterage-0-keyword-{match.Groups[1].Value}-page-{p}.htm";
+            }
 
+            //搜索当前页
+            match = Regex.Match(pageUrl, $"{BtBtHomeUrl}search-index-keyword-(.*).htm");
+            if (match.Success) return pageUrl;
+
+            //主页下一页
+            match = Regex.Match(pageUrl, $"{BtBtHomeUrl}index-index-page-([0-9]*).htm");
+            if (match.Success)
+            {
+
+                var p = int.Parse(match.Groups[1].Value);
+                if (p <= 2) return BtBtHomeUrl;
+                p--;
+                return $"{BtBtHomeUrl}index-index-page-{p}.htm";
+            }
+
+            return BtBtHomeUrl;
         }
 
         //搜索页url

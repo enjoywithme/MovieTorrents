@@ -175,6 +175,7 @@
             this.MinimizeBox = false;
             this.Name = "FormSearchDouban";
             this.ShowInTaskbar = false;
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "搜索豆瓣信息";
             this.Load += new System.EventHandler(this.FormSearchDouban_Load);
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.FormSearchDouban_KeyDown);
