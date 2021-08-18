@@ -1220,7 +1220,7 @@ where not exists (select 1 from tb_file where hdd_nid={_hdd_nid} and path=$path 
             var deleteFile = (MessageBox.Show("同时删除文件？", Properties.Resources.TextHint, MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes);
 
             var msgs = "";
-            foreach (ListViewItem lvItem in lvResults.SelectedItems)
+            foreach (ListViewItem lvItem in lvResults.CheckedItems)
             {
                 var torrentFile = (TorrentFile)lvItem.Tag;
                 if (!torrentFile.DeleteFromDb(DbConnectionString, deleteFile, out var msg))
