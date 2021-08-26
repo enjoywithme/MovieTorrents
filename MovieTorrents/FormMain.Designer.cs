@@ -61,6 +61,7 @@
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.tssState = new System.Windows.Forms.ToolStripStatusLabel();
             this.tssInfo = new System.Windows.Forms.ToolStripStatusLabel();
+            this.tsSummary = new System.Windows.Forms.ToolStripStatusLabel();
             this.tsCurrentDir = new System.Windows.Forms.ToolStripStatusLabel();
             this.tsButtonWatch = new System.Windows.Forms.ToolStripDropDownButton();
             this.tsmiToggleWatch = new System.Windows.Forms.ToolStripMenuItem();
@@ -98,9 +99,18 @@
             this.tsbFindSimilar = new System.Windows.Forms.ToolStripButton();
             this.toolStripButton1 = new System.Windows.Forms.ToolStripButton();
             this.tsbSearchDouban = new System.Windows.Forms.ToolStripButton();
+            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+            this.tsbDelete = new System.Windows.Forms.ToolStripButton();
+            this.tsbCopyDouban = new System.Windows.Forms.ToolStripButton();
             this.tbSearchText = new System.Windows.Forms.ComboBox();
             this.btClearSearch = new System.Windows.Forms.Button();
-            this.tsSummary = new System.Windows.Forms.ToolStripStatusLabel();
+            this.tsbMove = new System.Windows.Forms.ToolStripButton();
+            this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
+            this.tsbRating0 = new System.Windows.Forms.ToolStripButton();
+            this.tsbRating8 = new System.Windows.Forms.ToolStripButton();
+            this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
+            this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
+            this.tsbRating9 = new System.Windows.Forms.ToolStripButton();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.lvContextMenu.SuspendLayout();
@@ -357,10 +367,19 @@
             // 
             this.tssInfo.AutoSize = false;
             this.tssInfo.Name = "tssInfo";
-            this.tssInfo.Size = new System.Drawing.Size(1118, 21);
+            this.tssInfo.Size = new System.Drawing.Size(1145, 21);
             this.tssInfo.Spring = true;
             this.tssInfo.Text = "空闲";
             this.tssInfo.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // tsSummary
+            // 
+            this.tsSummary.BorderSides = ((System.Windows.Forms.ToolStripStatusLabelBorderSides)((((System.Windows.Forms.ToolStripStatusLabelBorderSides.Left | System.Windows.Forms.ToolStripStatusLabelBorderSides.Top) 
+            | System.Windows.Forms.ToolStripStatusLabelBorderSides.Right) 
+            | System.Windows.Forms.ToolStripStatusLabelBorderSides.Bottom)));
+            this.tsSummary.BorderStyle = System.Windows.Forms.Border3DStyle.Etched;
+            this.tsSummary.Name = "tsSummary";
+            this.tsSummary.Size = new System.Drawing.Size(4, 21);
             // 
             // tsCurrentDir
             // 
@@ -441,6 +460,7 @@
             // 
             // tsmiCopyDouban
             // 
+            this.tsmiCopyDouban.Image = global::MovieTorrents.Properties.Resources.Blogs;
             this.tsmiCopyDouban.Name = "tsmiCopyDouban";
             this.tsmiCopyDouban.Size = new System.Drawing.Size(212, 22);
             this.tsmiCopyDouban.Text = "设置豆瓣信息为勾选项(&K)";
@@ -486,6 +506,7 @@
             // 
             // tsmiMove
             // 
+            this.tsmiMove.Image = global::MovieTorrents.Properties.Resources.Move_To_Folder;
             this.tsmiMove.Name = "tsmiMove";
             this.tsmiMove.Size = new System.Drawing.Size(212, 22);
             this.tsmiMove.Text = "移动...(&M)";
@@ -633,7 +654,17 @@
             this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.tsbFindSimilar,
             this.toolStripButton1,
-            this.tsbSearchDouban});
+            this.tsbSearchDouban,
+            this.toolStripSeparator1,
+            this.tsbDelete,
+            this.tsbCopyDouban,
+            this.tsbMove,
+            this.toolStripSeparator2,
+            this.tsbRating0,
+            this.toolStripSeparator3,
+            this.tsbRating8,
+            this.toolStripSeparator4,
+            this.tsbRating9});
             this.toolStrip1.Location = new System.Drawing.Point(0, 25);
             this.toolStrip1.Name = "toolStrip1";
             this.toolStrip1.Size = new System.Drawing.Size(1273, 25);
@@ -670,6 +701,30 @@
             this.tsbSearchDouban.Text = "搜索豆瓣";
             this.tsbSearchDouban.Click += new System.EventHandler(this.tsbSearchDouban_Click);
             // 
+            // toolStripSeparator1
+            // 
+            this.toolStripSeparator1.Name = "toolStripSeparator1";
+            this.toolStripSeparator1.Size = new System.Drawing.Size(6, 25);
+            // 
+            // tsbDelete
+            // 
+            this.tsbDelete.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.tsbDelete.Image = global::MovieTorrents.Properties.Resources.Delete;
+            this.tsbDelete.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tsbDelete.Name = "tsbDelete";
+            this.tsbDelete.Size = new System.Drawing.Size(23, 22);
+            this.tsbDelete.Text = "删除";
+            // 
+            // tsbCopyDouban
+            // 
+            this.tsbCopyDouban.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.tsbCopyDouban.Image = global::MovieTorrents.Properties.Resources.Blogs;
+            this.tsbCopyDouban.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tsbCopyDouban.Name = "tsbCopyDouban";
+            this.tsbCopyDouban.Size = new System.Drawing.Size(23, 22);
+            this.tsbCopyDouban.Text = "拷贝信息";
+            this.tsbCopyDouban.ToolTipText = "设置豆瓣信息为勾选项";
+            // 
             // tbSearchText
             // 
             this.tbSearchText.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
@@ -695,14 +750,56 @@
             this.btClearSearch.UseVisualStyleBackColor = true;
             this.btClearSearch.Click += new System.EventHandler(this.btClearSearch_Click);
             // 
-            // tsSummary
+            // tsbMove
             // 
-            this.tsSummary.BorderSides = ((System.Windows.Forms.ToolStripStatusLabelBorderSides)((((System.Windows.Forms.ToolStripStatusLabelBorderSides.Left | System.Windows.Forms.ToolStripStatusLabelBorderSides.Top) 
-            | System.Windows.Forms.ToolStripStatusLabelBorderSides.Right) 
-            | System.Windows.Forms.ToolStripStatusLabelBorderSides.Bottom)));
-            this.tsSummary.BorderStyle = System.Windows.Forms.Border3DStyle.Etched;
-            this.tsSummary.Name = "tsSummary";
-            this.tsSummary.Size = new System.Drawing.Size(4, 21);
+            this.tsbMove.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.tsbMove.Image = global::MovieTorrents.Properties.Resources.Move_To_Folder;
+            this.tsbMove.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tsbMove.Name = "tsbMove";
+            this.tsbMove.Size = new System.Drawing.Size(23, 22);
+            this.tsbMove.Text = "移动";
+            // 
+            // toolStripSeparator2
+            // 
+            this.toolStripSeparator2.Name = "toolStripSeparator2";
+            this.toolStripSeparator2.Size = new System.Drawing.Size(6, 25);
+            // 
+            // tsbRating0
+            // 
+            this.tsbRating0.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.tsbRating0.Image = ((System.Drawing.Image)(resources.GetObject("tsbRating0.Image")));
+            this.tsbRating0.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tsbRating0.Name = "tsbRating0";
+            this.tsbRating0.Size = new System.Drawing.Size(65, 22);
+            this.tsbRating0.Text = "Rating=0";
+            // 
+            // tsbRating8
+            // 
+            this.tsbRating8.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.tsbRating8.Image = ((System.Drawing.Image)(resources.GetObject("tsbRating8.Image")));
+            this.tsbRating8.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tsbRating8.Name = "tsbRating8";
+            this.tsbRating8.Size = new System.Drawing.Size(65, 22);
+            this.tsbRating8.Text = "Rating>8";
+            // 
+            // toolStripSeparator3
+            // 
+            this.toolStripSeparator3.Name = "toolStripSeparator3";
+            this.toolStripSeparator3.Size = new System.Drawing.Size(6, 25);
+            // 
+            // toolStripSeparator4
+            // 
+            this.toolStripSeparator4.Name = "toolStripSeparator4";
+            this.toolStripSeparator4.Size = new System.Drawing.Size(6, 25);
+            // 
+            // tsbRating9
+            // 
+            this.tsbRating9.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.tsbRating9.Image = ((System.Drawing.Image)(resources.GetObject("tsbRating9.Image")));
+            this.tsbRating9.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tsbRating9.Name = "tsbRating9";
+            this.tsbRating9.Size = new System.Drawing.Size(65, 22);
+            this.tsbRating9.Text = "Rating>9";
             // 
             // FormMain
             // 
@@ -814,6 +911,16 @@
         private System.Windows.Forms.ToolStripButton tsbFindSimilar;
         private System.Windows.Forms.Button btClearSearch;
         private System.Windows.Forms.ToolStripStatusLabel tsSummary;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
+        private System.Windows.Forms.ToolStripButton tsbDelete;
+        private System.Windows.Forms.ToolStripButton tsbCopyDouban;
+        private System.Windows.Forms.ToolStripButton tsbMove;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
+        private System.Windows.Forms.ToolStripButton tsbRating0;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
+        private System.Windows.Forms.ToolStripButton tsbRating8;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator4;
+        private System.Windows.Forms.ToolStripButton tsbRating9;
     }
 }
 

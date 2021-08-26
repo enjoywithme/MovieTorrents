@@ -106,6 +106,15 @@ namespace MovieTorrents
             StartFileWatch();
 
 
+
+            tsbDelete.Click += tsmiDelete_Click;//删除
+            tsbCopyDouban.Click += tsmiCopyDouban_Click;//拷贝豆瓣信息
+            tsbMove.Click += tsmiMove_Click;//移动到文件夹
+
+            tsbRating0.Click += (o, a) => { tbSearchText.Text = "Rating:0";};
+            tsbRating8.Click += (o, a) => { tbSearchText.Text = "Rating:>8"; };
+            tsbRating9.Click += (o, a) => { tbSearchText.Text = "Rating:>9"; };
+
             //var d1 = DateTime.MinValue;
             //var d2 = DateTime.Parse("2018-09-10 14:05:04");
             //Debug.WriteLine((d2 - d1).TotalMilliseconds / 1000);
@@ -1216,8 +1225,9 @@ where not exists (select 1 from tb_file where hdd_nid={_hdd_nid} and path=$path 
         {
             if (lvResults.SelectedItems.Count == 0) return;
 
-            if (MessageBox.Show("确定删除选中的记录？", Properties.Resources.TextHint, MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.No) return;
-            var deleteFile = (MessageBox.Show("同时删除文件？", Properties.Resources.TextHint, MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes);
+            var ret =MessageBox.Show("确定删除选中的记录？\r\n选择是同时删除文件\r\n否仅删除记录", Properties.Resources.TextHint, MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning);
+            if (ret == DialogResult.Cancel) return;
+            var deleteFile = ret == DialogResult.Yes;
 
             var msgs = "";
             foreach (ListViewItem lvItem in lvResults.CheckedItems)

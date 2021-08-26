@@ -118,32 +118,41 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="InfoYellow32" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\InfoYellow32.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="InfoRed32" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\InfoRed32.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="BTBT" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\BTBT.ico;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="TextHint" xml:space="preserve">
-    <value>提示</value>
-  </data>
-  <data name="EyeStop32" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\EyeStop32.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="Eye32" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Eye32.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="TextError" xml:space="preserve">
-    <value>错误</value>
-  </data>
   <data name="search32" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\search32.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="dou" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\dou.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Page-Copy" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Page-Copy.ico;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="InfoRed32" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\InfoRed32.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="TextError" xml:space="preserve">
+    <value>错误</value>
+  </data>
+  <data name="Delete" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Delete.ico;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="search16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\search16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="EyeStop32" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\EyeStop32.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="BTBT" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\BTBT.ico;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Eye32" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Eye32.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="InfoYellow32" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\InfoYellow32.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="TextHint" xml:space="preserve">
+    <value>提示</value>
   </data>
   <data name="InfoBlue32" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\InfoBlue32.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -151,7 +160,10 @@
   <data name="InfoGree32" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\InfoGree32.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="search16" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\search16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="Blogs" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Blogs.ico;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Move-To-Folder" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Move-To-Folder.ico;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
 </root>
