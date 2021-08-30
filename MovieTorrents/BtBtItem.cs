@@ -233,7 +233,7 @@ namespace MovieTorrents
                             btItem.Title = match.Groups[1].Value;
 
                         //查找豆瓣评分
-                        match = Regex.Match(pageCode, "豆瓣评分(.*)/10 from");
+                        match = Regex.Match(pageCode, "豆瓣评分(.*)/10");
                         btItem.DouBanRating = match.Success ? match.Groups[1].Value.Trim() : "";
 
                         //<span class="grey">发帖时间：</span><b>.*</b>

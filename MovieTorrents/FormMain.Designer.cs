@@ -652,14 +652,14 @@
             // toolStrip1
             // 
             this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.tsbFindSimilar,
             this.toolStripButton1,
-            this.tsbSearchDouban,
             this.toolStripSeparator1,
-            this.tsbDelete,
-            this.tsbCopyDouban,
             this.tsbMove,
+            this.tsbDelete,
+            this.tsbSearchDouban,
+            this.tsbCopyDouban,
             this.toolStripSeparator2,
+            this.tsbFindSimilar,
             this.tsbRating0,
             this.toolStripSeparator3,
             this.tsbRating8,

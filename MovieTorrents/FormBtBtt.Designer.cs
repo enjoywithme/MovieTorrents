@@ -49,13 +49,14 @@
             this.columnHeaderSeen = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeaderSeeDate = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeaderSeeComment = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.btUnzip = new System.Windows.Forms.Button();
             this.tbTitle = new System.Windows.Forms.TextBox();
-            this.tbSearch = new MovieTorrents.TextBoxWithPasteEvent();
             this.label4 = new System.Windows.Forms.Label();
             this.btArchiveTorrent = new System.Windows.Forms.Button();
             this.cbAutoDownload = new System.Windows.Forms.CheckBox();
             this.btLog = new System.Windows.Forms.Button();
+            this.btClearLog = new System.Windows.Forms.Button();
+            this.btHomePage = new System.Windows.Forms.Button();
+            this.tbSearch = new MovieTorrents.TextBoxWithPasteEvent();
             this.SuspendLayout();
             // 
             // tbUrl
@@ -123,7 +124,7 @@
             // 
             // btnNext
             // 
-            this.btnNext.Location = new System.Drawing.Point(331, 12);
+            this.btnNext.Location = new System.Drawing.Point(330, 12);
             this.btnNext.Name = "btnNext";
             this.btnNext.Size = new System.Drawing.Size(75, 23);
             this.btnNext.TabIndex = 5;
@@ -133,7 +134,7 @@
             // 
             // btnPrev
             // 
-            this.btnPrev.Location = new System.Drawing.Point(80, 12);
+            this.btnPrev.Location = new System.Drawing.Point(205, 11);
             this.btnPrev.Name = "btnPrev";
             this.btnPrev.Size = new System.Drawing.Size(75, 23);
             this.btnPrev.TabIndex = 5;
@@ -211,16 +212,6 @@
             this.columnHeaderSeeComment.Text = "观看评论";
             this.columnHeaderSeeComment.Width = 190;
             // 
-            // btUnzip
-            // 
-            this.btUnzip.Location = new System.Drawing.Point(433, 42);
-            this.btUnzip.Name = "btUnzip";
-            this.btUnzip.Size = new System.Drawing.Size(75, 23);
-            this.btUnzip.TabIndex = 2;
-            this.btUnzip.Text = "处理zip";
-            this.btUnzip.UseVisualStyleBackColor = true;
-            this.btUnzip.Click += new System.EventHandler(this.btUnzip_Click);
-            // 
             // tbTitle
             // 
             this.tbTitle.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
@@ -229,13 +220,6 @@
             this.tbTitle.Size = new System.Drawing.Size(496, 21);
             this.tbTitle.TabIndex = 7;
             this.tbTitle.TextChanged += new System.EventHandler(this.tbSearch_TextChanged);
-            // 
-            // tbSearch
-            // 
-            this.tbSearch.Location = new System.Drawing.Point(80, 70);
-            this.tbSearch.Name = "tbSearch";
-            this.tbSearch.Size = new System.Drawing.Size(326, 21);
-            this.tbSearch.TabIndex = 8;
             // 
             // label4
             // 
@@ -274,26 +258,54 @@
             this.btLog.Name = "btLog";
             this.btLog.Size = new System.Drawing.Size(75, 23);
             this.btLog.TabIndex = 10;
-            this.btLog.Text = "日志";
+            this.btLog.Text = "显示日志";
             this.btLog.UseVisualStyleBackColor = true;
+            // 
+            // btClearLog
+            // 
+            this.btClearLog.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btClearLog.Location = new System.Drawing.Point(771, 46);
+            this.btClearLog.Name = "btClearLog";
+            this.btClearLog.Size = new System.Drawing.Size(75, 23);
+            this.btClearLog.TabIndex = 10;
+            this.btClearLog.Text = "清除日志";
+            this.btClearLog.UseVisualStyleBackColor = true;
+            // 
+            // btHomePage
+            // 
+            this.btHomePage.Location = new System.Drawing.Point(80, 11);
+            this.btHomePage.Name = "btHomePage";
+            this.btHomePage.Size = new System.Drawing.Size(75, 23);
+            this.btHomePage.TabIndex = 5;
+            this.btHomePage.Text = "首页";
+            this.btHomePage.UseVisualStyleBackColor = true;
+            this.btHomePage.Click += new System.EventHandler(this.btnPrev_Click);
+            // 
+            // tbSearch
+            // 
+            this.tbSearch.Location = new System.Drawing.Point(80, 70);
+            this.tbSearch.Name = "tbSearch";
+            this.tbSearch.Size = new System.Drawing.Size(326, 21);
+            this.tbSearch.TabIndex = 8;
             // 
             // FormBtBtt
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(858, 488);
+            this.Controls.Add(this.btClearLog);
             this.Controls.Add(this.btLog);
             this.Controls.Add(this.cbAutoDownload);
             this.Controls.Add(this.tbSearch);
             this.Controls.Add(this.tbTitle);
             this.Controls.Add(this.lvTorrents);
+            this.Controls.Add(this.btHomePage);
             this.Controls.Add(this.btnPrev);
             this.Controls.Add(this.btnNext);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.lvResults);
             this.Controls.Add(this.btArchiveTorrent);
-            this.Controls.Add(this.btUnzip);
             this.Controls.Add(this.btDownload);
             this.Controls.Add(this.tbUrl);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
@@ -330,12 +342,13 @@
         private System.Windows.Forms.ColumnHeader columnHeaderSeen;
         private System.Windows.Forms.ColumnHeader columnHeaderSeeDate;
         private System.Windows.Forms.ColumnHeader columnHeaderSeeComment;
-        private System.Windows.Forms.Button btUnzip;
         private System.Windows.Forms.TextBox tbTitle;
         private MovieTorrents.TextBoxWithPasteEvent tbSearch;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Button btArchiveTorrent;
         private System.Windows.Forms.CheckBox cbAutoDownload;
         private System.Windows.Forms.Button btLog;
+        private System.Windows.Forms.Button btClearLog;
+        private System.Windows.Forms.Button btHomePage;
     }
 }

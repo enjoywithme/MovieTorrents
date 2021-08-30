@@ -1223,9 +1223,14 @@ where not exists (select 1 from tb_file where hdd_nid={_hdd_nid} and path=$path 
 
         private void tsmiDelete_Click(object sender, EventArgs e)
         {
-            if (lvResults.SelectedItems.Count == 0) return;
+            if (lvResults.SelectedItems.Count == 0)
+            {
+                MessageBox.Show("没有勾选任何记录！", Properties.Resources.TextHint, MessageBoxButtons.OK,
+                    MessageBoxIcon.Exclamation);
+                return;
+            }
 
-            var ret =MessageBox.Show("确定删除选中的记录？\r\n选择是同时删除文件\r\n否仅删除记录", Properties.Resources.TextHint, MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning);
+            var ret =MessageBox.Show("确定删除勾选的记录？\r\n选择是同时删除文件\r\n否仅删除记录", Properties.Resources.TextHint, MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning);
             if (ret == DialogResult.Cancel) return;
             var deleteFile = ret == DialogResult.Yes;
 

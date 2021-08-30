@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Threading;
 using System.Windows.Forms;
 using mySharedLib;
@@ -25,6 +26,19 @@ namespace MovieTorrents
             tbSearch.Pasted += TbSearch_Pasted;
             tbUrl.KeyDown += TbUrl_KeyDown;
             btLog.Click += BtLog_Click;
+            btClearLog.Click += BtClearLog_Click;
+            btHomePage.Click += BtHomePage_Click;
+        }
+
+        private void BtHomePage_Click(object sender, EventArgs e)
+        {
+            tbUrl.Text = BtBtItem.BtBtHomeUrl;
+            DoQuery();
+        }
+
+        private void BtClearLog_Click(object sender, EventArgs e)
+        {
+            MyLog.ClearLog();
         }
 
         private void TbSearch_Pasted(object sender, ClipboardEventArgs e)
@@ -165,12 +179,7 @@ namespace MovieTorrents
             tbTitle.Text = btItem.Keyword;
         }
 
-        //解压zip文件
-        private void btUnzip_Click(object sender, EventArgs e)
-        {
-            var i = BtBtItem.ExtractZipFiles(out var msg);
-            MessageBox.Show($"成功解压 {i} 个文件。{msg}", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
-        }
+
 
         private void tbSearch_TextChanged(object sender, EventArgs e)
         {
@@ -219,8 +228,11 @@ namespace MovieTorrents
         //将目录下的种子文件转移到收藏目录
         private void BtArchiveTorrent_Click(object sender, EventArgs e)
         {
-            var i = BtBtItem.ArchiveTorrentFiles(out var msg);
-            MessageBox.Show($"成功转移 {i} 个文件。{msg}", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            var i1 = BtBtItem.ExtractZipFiles(out var msg1);
+            var i2 = BtBtItem.ArchiveTorrentFiles(out var msg2);
+            MessageBox.Show($"成功解压 {i1} 个文件。{msg1}\r\n成功转移 {i2} 个文件。{msg2}", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+
         }
 
         private void cbAutoDownload_CheckedChanged(object sender, EventArgs e)

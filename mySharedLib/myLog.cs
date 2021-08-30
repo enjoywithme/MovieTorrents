@@ -49,5 +49,13 @@ namespace mySharedLib
 
             return true;
         }
+
+        public static void ClearLog()
+        {
+            if (!File.Exists(LogFilePath)) return;
+            var fileStream = File.Open(LogFilePath,FileMode.Open);
+            fileStream.SetLength(0);
+            fileStream.Close(); // This flushes the content, too.
+        }
     }
 }
