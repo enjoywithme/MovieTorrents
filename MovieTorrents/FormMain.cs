@@ -3,18 +3,14 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
-using System.Data;
-using System.Data.SQLite;
 using System.Diagnostics;
 using System.Drawing;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using MovieTorrents.Common;
 using mySharedLib;
 using Exception = System.Exception;
 using Timer = System.Threading.Timer;
@@ -23,20 +19,15 @@ namespace MovieTorrents
 {
     public partial class FormMain : Form
     {
-        public static string CurrentPath;
-        public static string DbConnectionString;
         public static FormMain DefaultInstance { get; set; }
         private FormBtBtt _formBtBtt;
 
 
-        private FolderBrowserDialog _folderBrowserDialog1;
 
         private CancellationTokenSource _queryTokenSource;
         private CancellationTokenSource _operTokenSource;
 
-        private readonly List<string> _filterFields = new List<string> { "rating", "year" };
-
-        public string TorrentFilePath { get; set; }
+        private ToolStripMenuItem[] _limitMenuItems;
 
         private const int OperationNone = 0;
         private const int OperationQueryFile = 1;
@@ -54,9 +45,7 @@ namespace MovieTorrents
         private int _currentOperation = 0;
         private string _lastSearchText = string.Empty;
 
-        private byte _hdd_nid;
-        public static string Area;
-        private string _shortRootPath;
+
 
         //private System.Timers.Timer _tt;
 
@@ -68,33 +57,22 @@ namespace MovieTorrents
 
         private void FormMain_Load(object sender, EventArgs e)
         {
-            DefaultInstance = this;
             //_tt = new System.Timers.Timer(5000);
             //_tt.Elapsed += (o, j) => DisplayInfo("test");
             //_tt.Enabled = true;
 
-            CurrentPath = Utility.ExecutingAssemblyPath();
-            if (!File.Exists($"{CurrentPath}\\zogvm.db"))
+            if (!TorrentFile.CheckTorrentPath(out var msg))
             {
-                MessageBox.Show($"数据库文件不存在！\r\n{CurrentPath}\\zogvm.db", Properties.Resources.TextError, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(msg, Properties.Resources.TextError, MessageBoxButtons.OK, MessageBoxIcon.Error);
                 Close();
-                return;
             }
 
-
-            DbConnectionString = $"Data Source ={CurrentPath}//zogvm.db; Version = 3; ";
-
-            if (!CheckTorrentPath(out var msg))
+            if (!string.IsNullOrEmpty(TorrentFile.TorrentFilePath) && !Directory.Exists(TorrentFile.TorrentFilePath))
             {
-                MessageBox.Show($"数据库找不到种子目录\r\n{msg}", Properties.Resources.TextError, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show($"种子目录“{TorrentFile.TorrentFilePath}”不存在!", Properties.Resources.TextError, MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
 
-            if (!string.IsNullOrEmpty(TorrentFilePath) && !Directory.Exists(TorrentFilePath))
-            {
-                MessageBox.Show($"种子目录“{TorrentFilePath}”不存在!", Properties.Resources.TextError, MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-
-            tsCurrentDir.Text = $"种子目录[{TorrentFilePath}]";
+            tsCurrentDir.Text = $"种子目录[{TorrentFile.TorrentFilePath}]";
 
             Icon = Icon.ExtractAssociatedIcon(Application.ExecutablePath);
             notifyIcon1.Icon = Icon;
@@ -104,6 +82,13 @@ namespace MovieTorrents
             tsSummary.Text = $"加载了0 个文件，0 已知项目。";
 
             StartFileWatch();
+
+            //查询limit菜单项
+            _limitMenuItems = new[] { tsmiLimit100, tsmiLimit200, tsmiLimit500, tsmiLimit1000, tsmiLimit2000 };
+            foreach (var menuItem in _limitMenuItems)
+            {
+                menuItem.Click += tsmiLimit_Click;
+            }
 
 
 
@@ -167,11 +152,11 @@ namespace MovieTorrents
 
         private void StartFileWatch()
         {
-            if (string.IsNullOrEmpty(TorrentFilePath)) return;
+            if (string.IsNullOrEmpty(TorrentFile.TorrentFilePath)) return;
 
             try
             {
-                _watcher = new FileSystemWatcher(TorrentFilePath)
+                _watcher = new FileSystemWatcher(TorrentFile.TorrentFilePath)
                 {
                     IncludeSubdirectories = true,
                     NotifyFilter = NotifyFilters.FileName,
@@ -223,7 +208,7 @@ namespace MovieTorrents
 
         public void CheckWatchStatus(object state)
         {
-            if (string.IsNullOrEmpty(TorrentFilePath)) return;
+            if (string.IsNullOrEmpty(TorrentFile.TorrentFilePath)) return;
 
             if (_monitoredFilesToProcess.Count > 0)
             {
@@ -251,7 +236,7 @@ namespace MovieTorrents
 
             if (_isWatching) return;
 
-            if (!Directory.Exists(TorrentFilePath)) return;
+            if (!Directory.Exists(TorrentFile.TorrentFilePath)) return;
 
             StartFileWatch();
         }
@@ -278,53 +263,7 @@ namespace MovieTorrents
         //辅助函数
         #region 辅助函数
 
-        private bool CheckTorrentPath(out string msg)
-        {
-            var ok = true;
-            msg = string.Empty;
-            using (var connection = new SQLiteConnection(DbConnectionString))
-            {
-                var sql = $"select d.hdd_nid,area,path from tb_dir as d inner join tb_hdd as h on h.hdd_nid=d.hdd_nid  limit 1";
-                try
-                {
-                    connection.Open();
-                    try
-                    {
-                        using (var command = new SQLiteCommand(sql, connection))
-                        {
-                            using (var reader = command.ExecuteReader())
-                            {
-                                if (reader.Read())
-                                {
-                                    _hdd_nid = (byte)reader.GetByte(0);// ["hdd_nid"];
-                                    Area = (string)reader["area"];
-                                    _shortRootPath = (string)reader["path"];
-                                    TorrentFilePath = Area + _shortRootPath;
-                                }
-                            }
 
-                        }
-
-                    }
-                    catch (Exception e)
-                    {
-                        ok = false;
-                        msg = e.Message;
-                    }
-
-                    connection.Close();
-
-                }
-                catch (Exception e)
-                {
-                    ok = false;
-                    msg = e.Message;
-                }
-            }
-
-            return ok;
-
-        }
 
         private void DisplayInfo(string infoMsg = "", bool error = false, bool alert = true)
         {
@@ -419,229 +358,45 @@ namespace MovieTorrents
 
             DisplayInfo("正在查询文件", false, false);
 
-            Task.Run(() => ExecuteSearch(text, _queryTokenSource.Token))
-                .ContinueWith(task =>
+            Task.Run( async () =>
+            {
+                var (torrents,msg) = await TorrentFile.ExecuteSearch(text, _queryTokenSource.Token);
+                Interlocked.Exchange(ref _currentOperation, OperationNone);
+
+                if (!string.IsNullOrEmpty(msg))
                 {
-                    Interlocked.Exchange(ref _currentOperation, OperationNone);
-
-                    if (task.IsFaulted)
-                    {
-                        var ex = task.Exception?.InnerException;
-                        if (ex != null)
-                            DisplayInfo(ex.Message, true);
-                        //        Invoke(new Action(() => MessageBox.Show(ex.Message, Properties.Resources.TextError,
-                        //            MessageBoxButtons.OK, MessageBoxIcon.Error)));
-                    }
-
-                    else if (task.IsCanceled) { }
-                    else Invoke(new Action(() =>
-                    {
-                        UpdateListView(task.Result);
-                        DisplayInfo();
-                    }));
-
-                });
-
-        }
-        //构造搜索SQL
-        private bool ProcessFilterFields(SQLiteCommand command, StringBuilder sb, string text)
-        {
-            if (!text.Contains(":")) return false;
-            var splits = text.Split(':');
-            if (splits.Length != 2) return false;
-            var fldName = splits[0].ToLower();
-            if (!_filterFields.Contains(fldName)) return false;
-            var greaterLess = string.Empty;
-            var fldValue = splits[1];
-            if (fldValue.StartsWith(">") || fldValue.StartsWith("<"))
-            {
-                greaterLess = fldValue.Substring(0, 1);
-                fldValue = fldValue.Substring(1, fldValue.Length - 1);
-            }
-
-            object oValue = null;
-            switch (fldName)
-            {
-                case "rating":
-                    if (!double.TryParse(fldValue, out var d) || d < 0)
-                        throw new Exception($"错误的查询格式：“{text}”");
-                    oValue = d;
-                    break;
-                case "year":
-                    if (!int.TryParse(fldValue, out var i) || i < 1900)
-                        throw new Exception($"错误的查询格式：“{text}”");
-                    oValue = i.ToString();
-                    break;
-            }
-
-            if (string.IsNullOrEmpty(greaterLess)) 
-                greaterLess = "=";
-            else switch (greaterLess)
-            {
-                case ">":
-                    greaterLess = ">=";
-                    break;
-                case "<":
-                    greaterLess = "<=";
-                    break;
-            }
-            var pName = $"@p{command.Parameters.Count}";
-            sb.Append($" and {fldName}{greaterLess}{pName}");
-            command.Parameters.AddWithValue(pName, oValue);
-            return true;
-        }
-        private SQLiteCommand BuildSearchCommand(string text)
-        {
-            var command = new SQLiteCommand();
-
-            var sb = new StringBuilder("select * from filelist_view where 1=1");
-
-            //处理搜索关键词
-            if (!string.IsNullOrEmpty(text))
-            {
-                var splits = text.Split(null);
-
-                for (var i = 0; i < splits.Length; i++)
-                {
-                    if (ProcessFilterFields(command, sb, splits[i])) continue;
-
-                    var pName = $"@p{command.Parameters.Count}";
-                    command.Parameters.AddWithValue(pName, $"%{splits[i]}%");
-                    sb.Append($" and (name like {pName} or keyname like{pName} or othername like {pName} or genres like {pName} or seecomment like {pName})");
-
+                    DisplayInfo(msg,true);
+                    return;
                 }
-            }
 
-
-            //过滤
-            if (tsmiFilterSeelater.Checked) sb.Append(" and seelater=1");
-            if (tsmiFilterWatched.Checked && !tsmiFilterNotWatched.Checked) sb.Append(" and seeflag=1");
-            if (tsmiFilterNotWatched.Checked && !tsmiFilterWatched.Checked)
-            {
-                sb.Append(" and seeflag=0");
-                if (tsmiHideSameSubject.Checked)
-                    sb.Append(" and  doubanid not in(select DISTINCT doubanid from tb_file where seeflag=1 and doubanid<>'')");
-            }
-
-            if (tsmiFilterSeeNoWant.Checked)
-            {
-                sb.Append(" and seenowant=0");
-                if (tsmiHideSameSubject.Checked)
-                    sb.Append(" and  doubanid not in(select DISTINCT doubanid from tb_file where seenowant=1 and doubanid<>'')");
-            }
-
-            //限制条数
-            var limitClause = "";
-            if (tsmiLimit100.Checked)
-                limitClause = " limit 100";
-            else if (tsmiLimit200.Checked)
-                limitClause = " limit 200";
-            else if (tsmiLimit500.Checked)
-                limitClause = " limit 500";
-            else if (tsmiLimit1000.Checked)
-                limitClause = " limit 1000";
-            else if (tsmiLimit2000.Checked)
-                limitClause = " limit 2000";
-
-            //最近观看特殊处理
-            if (tsmiFilterRecent.Checked)
-            {
-                sb.Insert(0, "select * from (");
-                sb.Append(" order by CreationTime desc");
-                sb.Append(limitClause);
-                sb.Append(")");
-            }
-
-            //排序
-            var ordered = false;
-            if (tsmiRatingDesc.Checked)
-            {
-                sb.Append(" order by rating desc");
-                ordered = true;
-            }
-            else if (tsmiRatingAsc.Checked)
-            {
-                sb.Append(" order by rating asc");
-                ordered = true;
-            }
-
-            if (tsmiYearDesc.Checked)
-                sb.Append(ordered ? ",year desc" : " order by year desc");
-            else if (tsmiYearAsc.Checked)
-                sb.Append(ordered ? ",year asc" : " order by year asc");
-
-            if (!tsmiFilterRecent.Checked)
-                sb.Append(limitClause);
-
-
-
-            Debug.WriteLine(sb.ToString());
-
-            command.CommandText = sb.ToString();
-            return command;
-        }
-
-        //执行搜索
-        public async Task<IEnumerable<TorrentFile>> ExecuteSearch(string text, CancellationToken cancelToken)
-        {
-            var result = new List<TorrentFile>();
-
-            using (var connection = new SQLiteConnection(DbConnectionString))
-            {
-
-                using (var command = BuildSearchCommand(text))
+                BeginInvoke(new Action(() =>
                 {
-                    command.Connection = connection;
+                    UpdateListView(torrents);
+                    DisplayInfo();
+                }));
 
-                    await connection.OpenAsync(cancelToken);
+            });
 
-                    using (var reader = await command.ExecuteReaderAsync(cancelToken))
-                    {
-                        while (await reader.ReadAsync(cancelToken))
-                        {
-                            result.Add(new TorrentFile
-                            {
-                                fid = (long)reader["file_nid"],
-                                area = Area,
-                                path = (string)reader["path"],
-                                name = (string)reader["name"],
-                                keyname = reader.GetReaderFieldString("keyname"),
-                                otherName = reader.GetReaderFieldString("othername"),
-                                ext = (string)reader["ext"],
-                                rating = (double)reader["rating"],
-                                year = reader.GetReaderFieldString("year"),
-                                zone = reader.GetReaderFieldString("zone"),
-                                seelater = (long)reader["seelater"],
-                                seenowant = (long)reader["seenowant"],
-                                seeflag = (long)reader["seeflag"],
-                                posterpath = reader.GetReaderFieldString("posterpath"),
-                                genres = reader.GetReaderFieldString("genres"),
-                                doubanid = reader.GetReaderFieldString("doubanid"),
-                                seedate = reader.GetReaderFieldString("seedate"),
-                                seecomment = reader.GetReaderFieldString("seecomment")
-                            });
 
-                        }
-                    }
-                }
-            }
-
-            return result;
         }
+
+
+
         //更新列表
         private void UpdateListView(IEnumerable<TorrentFile> torrentFiles)
         {
-            var totalFiles = torrentFiles.Count();
-            var totalItems = torrentFiles.Where(x=>!string.IsNullOrEmpty(x.doubanid)).GroupBy(x => x.doubanid).Count();
+            var files = torrentFiles.ToList();
+            var totalFiles = files.Count();
+            var totalItems = files.Where(x=>!string.IsNullOrEmpty(x.doubanid)).GroupBy(x => x.doubanid).Count();
             lvResults.BeginUpdate();
             lvResults.Items.Clear();
-            foreach (var torrentFile in torrentFiles)
+            foreach (var torrentFile in files)
             {
                 if (_queryTokenSource != null && _queryTokenSource.IsCancellationRequested)
                     break;
 
                 string[] row = { torrentFile.name,
-                                torrentFile.rating.ToString(),
+                                torrentFile.rating.ToString(CultureInfo.InvariantCulture),
                                 torrentFile.year,
                                 torrentFile.seelater.ToString(),
                                 torrentFile.seenowant.ToString(),
@@ -669,23 +424,9 @@ namespace MovieTorrents
         //备份数据库文件
         private void BackupDbFile()
         {
-            var watched = TorrentFile.CountWatched(DbConnectionString, out var msg);
-            if (!string.IsNullOrEmpty(msg))
-                MessageBox.Show(msg, Properties.Resources.TextError, MessageBoxButtons.YesNo, MessageBoxIcon.Error);
-            if (watched == -1) return;
-
-            try
-            {
-                File.Copy($"{ CurrentPath}\\zogvm.db", "E:\\MyWinDoc\\My Movies\\zogvm.db", true);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message, "错误", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                return;
-            }
-
-
-            MessageBox.Show($"备份--OK\r\n观看了{watched}个", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            var ret = TorrentFile.BackupDbFile(out var msg);
+            
+            MessageBox.Show(msg, ret?"提示":"错误", MessageBoxButtons.OK, ret?MessageBoxIcon.Information:MessageBoxIcon.Error);
 
 
         }
@@ -750,14 +491,14 @@ namespace MovieTorrents
         #region 扫描种子文件
         private void ScanTorrentFile()
         {
-            if (string.IsNullOrEmpty(TorrentFilePath))
+            if (string.IsNullOrEmpty(TorrentFile.TorrentFilePath))
             {
                 MessageBox.Show("种子文件根目录没有配置", Properties.Resources.TextError, MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
-            if (!Directory.Exists(TorrentFilePath))
+            if (!Directory.Exists(TorrentFile.TorrentFilePath))
             {
-                MessageBox.Show($"种子文件根目录\"{TorrentFilePath}\"不存在！", Properties.Resources.TextError, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show($"种子文件根目录\"{TorrentFile.TorrentFilePath}\"不存在！", Properties.Resources.TextError, MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
@@ -780,7 +521,7 @@ namespace MovieTorrents
 
 
 
-            Task.Run(() => DoScanFile(TorrentFilePath, _operTokenSource.Token, filesToProcess)).ContinueWith(task =>
+            Task.Run(() => DoScanFile(TorrentFile.TorrentFilePath, _operTokenSource.Token, filesToProcess)).ContinueWith(task =>
             {
                 if (!task.IsFaulted) return;
                 if (task.Exception?.InnerException != null) DisplayInfo($"扫描文件出错：{task.Exception.InnerException.Message}", true);
@@ -836,7 +577,7 @@ namespace MovieTorrents
         }
 
         //处理文件队列
-        private void ProcessFileToBeAdded(CancellationToken token, BlockingCollection<TorrentFile> filesToProces)
+        private void ProcessFileToBeAdded(CancellationToken token, BlockingCollection<TorrentFile> filesToProcess)
         {
             while (true)
             {
@@ -847,64 +588,11 @@ namespace MovieTorrents
             }
 
 
-            var fileAdded = 0;
-            var fileProcessed = 0;
+            int fileAdded;
+            int fileProcessed;
 
             var stopWatch = Stopwatch.StartNew();
-
-            using (var connection = new SQLiteConnection(DbConnectionString))
-            {
-                connection.Open();
-
-                using (var commandInsert = new SQLiteCommand($@"insert into tb_file
-(hdd_nid,path,name,ext,year,filesize,CreationTime,LastWriteTime,LastOpenTime,maintype,resolutionW,resolutionH,filetime,bitrateKbps,zidian_sound,zidian_sub)
-select {_hdd_nid},$path,$name,$ext,$year,$filesize,$n,$n,$n,0,0,0,0,0,'',''
-where not exists (select 1 from tb_file where hdd_nid={_hdd_nid} and path=$path and name=$name and ext=$ext)", connection))
-                {
-                    commandInsert.Parameters.Add("$path", DbType.String, 520);
-                    commandInsert.Parameters.Add("$name", DbType.String, 520);
-                    commandInsert.Parameters.Add("$ext", DbType.String, 32);
-                    commandInsert.Parameters.Add("$year", DbType.String, 16);
-                    commandInsert.Parameters.Add("$filesize", DbType.Int64);
-                    commandInsert.Parameters.Add("$n", DbType.Int64);
-
-                    commandInsert.Prepare();
-
-                    var refDate = DateTime.Parse("2016-12-02 10:53:38");
-                    long refDateInt = 13125120818;
-
-                    while (!filesToProces.IsCompleted)
-                    {
-                        TorrentFile torrentFile = null;
-                        try
-                        {
-                            torrentFile = filesToProces.Take();
-                        }
-                        catch (InvalidOperationException) { }
-
-                        if (torrentFile == null) continue;
-
-                        Debug.WriteLine($"Processing:{torrentFile.name}");
-
-                        fileProcessed++;
-                        long n = ((long)(DateTime.Now - refDate).TotalSeconds + refDateInt) * 10000000;
-
-                        commandInsert.Parameters["$path"].Value = torrentFile.path;
-                        commandInsert.Parameters["$name"].Value = torrentFile.name;
-                        commandInsert.Parameters["$ext"].Value = torrentFile.ext;
-                        commandInsert.Parameters["$year"].Value = torrentFile.year;
-                        commandInsert.Parameters["$filesize"].Value = torrentFile.filesize;
-                        commandInsert.Parameters["$n"].Value = n;
-
-                        fileAdded += commandInsert.ExecuteNonQuery();
-                    }
-
-                    filesToProces.Dispose();
-                    filesToProces = null;
-
-                }
-
-            }
+            (fileProcessed, fileAdded) = TorrentFile.InsertToDb(filesToProcess);
 
             stopWatch.Stop();
             Interlocked.Exchange(ref _currentOperation, OperationNone);
@@ -918,8 +606,6 @@ where not exists (select 1 from tb_file where hdd_nid={_hdd_nid} and path=$path 
         //清理无效记录
 
         #region 清理无效记录
-        private int _clearFileCounted;
-        private int _clearFileReaded;
         private async void tsmiClearRecords_Click(object sender, EventArgs e)
         {
             if (Interlocked.CompareExchange(ref _currentOperation, OperationClearFile, OperationNone) != OperationNone)
@@ -939,85 +625,24 @@ where not exists (select 1 from tb_file where hdd_nid={_hdd_nid} and path=$path 
 
             DisplayInfo("清理无效文件中...", false, false);
 
-
-            await Task.Run(() => DoClearFile(_operTokenSource.Token), _operTokenSource.Token)
-                .ContinueWith(task =>
-                {
-                    Interlocked.Exchange(ref _currentOperation, OperationNone);
-
-                    var msg = string.Empty;
-
-                    if (task.IsFaulted)
-                    {
-                        if (task.Exception?.InnerException != null) msg = $"清理无效出错：{task.Exception.InnerException.Message}";
-                    }
-                    else if (task.IsCanceled)
-                        msg = "清理无效文件已取消";
-
-                    DisplayInfo($"{msg}。总共读取{_clearFileReaded}记录，清理了{_clearFileCounted}条无效记录!", task.IsFaulted);
-
-
-                });
-
-
-        }
-
-
-        private async Task DoClearFile(CancellationToken cancelToken)
-        {
-            _clearFileCounted = 0;
-            _clearFileReaded = 0;
-
-            var fileIdToClear = new List<long>();
-
-            using (var connection = new SQLiteConnection(DbConnectionString))
+            
+            await Task.Run(async () =>
             {
-                await connection.OpenAsync(cancelToken);
-                using (var command = new SQLiteCommand("select file_nid,h.area || f.path || f.name || f.ext as fullname from tb_file as f INNER join tb_hdd as h on h.hdd_nid=f.hdd_nid", connection))
-                {
-                    using (var reader = await command.ExecuteReaderAsync(cancelToken))
-                    {
-                        while (await reader.ReadAsync(cancelToken))
-                        {
-                            //if (cancelToken.IsCancellationRequested) break;
+                int clearFileCounted;
+                int clearFileRead;
+                string msg;
+                bool error;
+                (clearFileRead, clearFileCounted,msg,error) = await TorrentFile.DoClearFile(_operTokenSource.Token);
+                DisplayInfo($"{msg}。总共读取{clearFileRead}记录，清理了{clearFileCounted}条无效记录!", error);
 
-                            var nid = (long)reader["file_nid"];
-                            var fullname = (string)reader["fullname"];
-                            Debug.WriteLine(fullname);
+            });
 
-                            _clearFileReaded++;
-
-                            if (!File.Exists(fullname)) fileIdToClear.Add(nid);
-                            else if (new FileInfo(fullname).Length == 0)
-                            {
-                                File.Delete(fullname);
-                                fileIdToClear.Add(nid);
-                            }
-                        }
-                        reader.Close();
-                    }
-                }
-
-
-                using (var command = new SQLiteCommand("delete from tb_file where file_nid=$nid", connection))
-                {
-                    command.Parameters.Add("$nid", DbType.Int32);
-                    command.Prepare();
-
-                    foreach (var nid in fileIdToClear)
-                    {
-                        command.Parameters["$nid"].Value = nid;
-                        await command.ExecuteNonQueryAsync(cancelToken);
-                        if (cancelToken.IsCancellationRequested) break;
-
-                        _clearFileCounted++;
-                    }
-                }
-
-            }
-
+            Interlocked.Exchange(ref _currentOperation, OperationNone);
 
         }
+
+
+
         #endregion
 
 
@@ -1091,6 +716,7 @@ where not exists (select 1 from tb_file where hdd_nid={_hdd_nid} and path=$path 
         private void tsmiFilterRecent_Click(object sender, EventArgs e)
         {
             tsmiFilterRecent.Checked = !tsmiFilterRecent.Checked;
+            TorrentFile.Filter.Recent = tsmiFilterRecent.Checked;
             if (tsmiFilterRecent.Checked) tbSearchText.Text = "";
             DoSearch();
         }
@@ -1099,6 +725,8 @@ where not exists (select 1 from tb_file where hdd_nid={_hdd_nid} and path=$path 
         {
             tsmiFilterSeelater.Checked = !tsmiFilterSeelater.Checked;
             if (tsmiFilterSeelater.Checked) tbSearchText.Text = string.Empty;
+            TorrentFile.Filter.SeeLater = tsmiFilterSeelater.Checked;
+
             DoSearch();
         }
 
@@ -1106,83 +734,96 @@ where not exists (select 1 from tb_file where hdd_nid={_hdd_nid} and path=$path 
         {
             tsmiFilterWatched.Checked = !tsmiFilterWatched.Checked;
             tsmiHideSameSubject.Enabled = (tsmiFilterNotWatched.Checked || !tsmiFilterSeeNoWant.Checked) && !tsmiFilterWatched.Checked;
+            TorrentFile.Filter.Watched = tsmiFilterWatched.Checked;
+
             DoSearch();
         }
         private void tsmiFilterNotWatched_Click(object sender, EventArgs e)
         {
             tsmiFilterNotWatched.Checked = !tsmiFilterNotWatched.Checked;
             tsmiHideSameSubject.Enabled = (tsmiFilterNotWatched.Checked || !tsmiFilterSeeNoWant.Checked) && !tsmiFilterWatched.Checked;
+            TorrentFile.Filter.NotWatched = tsmiFilterNotWatched.Checked;
+
             DoSearch();
         }
         private void tsmiHideSameSubject_Click(object sender, EventArgs e)
         {
             tsmiHideSameSubject.Checked = !tsmiHideSameSubject.Checked;
-            DoSearch();
-        }
-        private void tsmiLimit100_Click(object sender, EventArgs e)
-        {
-            tsmiLimit100.Checked = true;
-            tsmiLimit200.Checked = tsmiLimit500.Checked = tsmiLimit1000.Checked = tsmiLimit2000.Checked = false;
+            TorrentFile.Filter.HideSameSubject = tsmiHideSameSubject.Checked;
             DoSearch();
         }
 
-        private void tsmiLimit200_Click(object sender, EventArgs e)
+        private void tsmiLimit_Click(object sender, EventArgs e)
         {
-            tsmiLimit200.Checked = true;
-            tsmiLimit100.Checked = tsmiLimit500.Checked = tsmiLimit1000.Checked = tsmiLimit2000.Checked = false;
+            ((ToolStripMenuItem) sender).Checked = true;
+            foreach (var menuItem in _limitMenuItems)
+            {
+                if (menuItem != sender) menuItem.Checked = false;
+            }
+            TorrentFile.Filter.RecordsLimit =Convert.ToInt32(((ToolStripMenuItem)sender).Tag);
             DoSearch();
         }
 
-        private void tsmiLimit300_Click(object sender, EventArgs e)
-        {
-            tsmiLimit500.Checked = true;
-            tsmiLimit100.Checked = tsmiLimit200.Checked = tsmiLimit1000.Checked = tsmiLimit2000.Checked = false;
-            DoSearch();
-        }
 
-        private void tsmiLimit1000_Click(object sender, EventArgs e)
+        private void tsmiFilterSeeNoWant_Click(object sender, EventArgs e)
         {
-            tsmiLimit1000.Checked = true;
-            tsmiLimit100.Checked = tsmiLimit200.Checked = tsmiLimit500.Checked = tsmiLimit2000.Checked = false;
-            DoSearch();
-        }
-
-        private void tsmiLimit2000_Click(object sender, EventArgs e)
-        {
-            tsmiLimit2000.Checked = true;
-            tsmiLimit100.Checked = tsmiLimit200.Checked = tsmiLimit500.Checked = tsmiLimit1000.Checked = false;
+            tsmiFilterSeeNoWant.Checked = !tsmiFilterSeeNoWant.Checked;
+            tsmiHideSameSubject.Enabled = (tsmiFilterNotWatched.Checked || !tsmiFilterSeeNoWant.Checked) && !tsmiFilterWatched.Checked;
+            TorrentFile.Filter.NotWant = tsmiFilterSeeNoWant.Checked;
             DoSearch();
         }
         #endregion
         //排序菜单
         #region 排序菜单
-        private void tsmiRatingDesc_Click(object sender, EventArgs e)
+        private void tsmiRatingDescAsc_Click(object sender, EventArgs e)
         {
-            tsmiRatingDesc.Checked = !tsmiRatingDesc.Checked;
-            if (tsmiRatingDesc.Checked) tsmiRatingAsc.Checked = false;
+            if (sender == tsmiRatingDesc)
+            {
+                tsmiRatingDesc.Checked = !tsmiRatingDesc.Checked;
+                if (tsmiRatingDesc.Checked) { tsmiRatingAsc.Checked = false; }
+            }
+            else if (sender == tsmiRatingAsc)
+            {
+                tsmiRatingAsc.Checked = !tsmiRatingAsc.Checked;
+                if (tsmiRatingAsc.Checked) tsmiRatingDesc.Checked = false;
+            }
+
+            if (tsmiRatingDesc.Checked)
+                TorrentFile.Filter.OrderRatingDesc = true;
+            else if (tsmiRatingAsc.Checked)
+                TorrentFile.Filter.OrderRatingDesc = false;
+            else
+                TorrentFile.Filter.OrderRatingDesc = null;
+
             DoSearch();
         }
 
-        private void tsmiRatingAsc_Click(object sender, EventArgs e)
+
+        private void tsmiYearDescAsc_Click(object sender, EventArgs e)
         {
-            tsmiRatingAsc.Checked = !tsmiRatingAsc.Checked;
-            if (tsmiRatingAsc.Checked) tsmiRatingDesc.Checked = false;
+            if (sender == tsmiYearDesc)
+            {
+                tsmiYearDesc.Checked = !tsmiYearDesc.Checked;
+                if (tsmiYearDesc.Checked) tsmiYearAsc.Checked = false;
+            }
+            else if (sender == tsmiYearDesc)
+            {
+                tsmiYearAsc.Checked = !tsmiYearAsc.Checked;
+                if (tsmiYearAsc.Checked) tsmiYearDesc.Checked = false;
+            }
+            
+
+            if (tsmiYearDesc.Checked)
+                TorrentFile.Filter.OrderRatingDesc = true;
+            else if (tsmiRatingAsc.Checked)
+                TorrentFile.Filter.OrderRatingDesc = false;
+            else
+                TorrentFile.Filter.OrderRatingDesc = null;
+
             DoSearch();
         }
 
-        private void tsmiYearDesc_Click(object sender, EventArgs e)
-        {
-            tsmiYearDesc.Checked = !tsmiYearDesc.Checked;
-            if (tsmiYearDesc.Checked) tsmiYearAsc.Checked = false;
-            DoSearch();
-        }
 
-        private void tsmiYearAsc_Click(object sender, EventArgs e)
-        {
-            tsmiYearAsc.Checked = !tsmiYearAsc.Checked;
-            if (tsmiYearAsc.Checked) tsmiYearDesc.Checked = false;
-            DoSearch();
-        }
         #endregion
 
         //右键菜单
@@ -1238,7 +879,7 @@ where not exists (select 1 from tb_file where hdd_nid={_hdd_nid} and path=$path 
             foreach (ListViewItem lvItem in lvResults.CheckedItems)
             {
                 var torrentFile = (TorrentFile)lvItem.Tag;
-                if (!torrentFile.DeleteFromDb(DbConnectionString, deleteFile, out var msg))
+                if (!torrentFile.DeleteFromDb(deleteFile, out var msg))
                 {
                     msgs += $"{msg}\r\n";
                     continue;
@@ -1248,24 +889,24 @@ where not exists (select 1 from tb_file where hdd_nid={_hdd_nid} and path=$path 
             if (!string.IsNullOrEmpty(msgs))
                 MessageBox.Show(msgs, Properties.Resources.TextError, MessageBoxButtons.YesNo, MessageBoxIcon.Error);
 
-
+            
         }
 
         private void tsmiMove_Click(object sender, EventArgs e)
         {
-            if (string.IsNullOrEmpty(TorrentFilePath))
+            if (string.IsNullOrEmpty(TorrentFile.TorrentFilePath))
             {
                 MessageBox.Show("种子文件根目录没有配置", Properties.Resources.TextError, MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
             if (lvResults.SelectedItems.Count == 0) return;
-            if (_folderBrowserDialog1 == null) _folderBrowserDialog1 = new FolderBrowserDialog();
-            _folderBrowserDialog1.SelectedPath = TorrentFilePath;
-            if (_folderBrowserDialog1.ShowDialog(this) == DialogResult.Cancel) return;
-            var selectedPath = _folderBrowserDialog1.SelectedPath;
-            if (!selectedPath.StartsWith(TorrentFilePath, StringComparison.InvariantCultureIgnoreCase))
+
+            var formBrowseTorrentFolder = new FormBrowseTorrentFolder();
+            if (formBrowseTorrentFolder.ShowDialog(this) == DialogResult.Cancel) return;
+            var selectedPath = formBrowseTorrentFolder.SelectedPath;
+            if (!selectedPath.StartsWith(TorrentFile.TorrentFilePath, StringComparison.InvariantCultureIgnoreCase))
             {
-                MessageBox.Show($"选择的目录必须是种子文件目录\"{TorrentFilePath}\"的子目录！", Properties.Resources.TextHint,
+                MessageBox.Show($"选择的目录必须是种子文件目录\"{TorrentFile.TorrentFilePath}\"的子目录！", Properties.Resources.TextHint,
                     MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
@@ -1275,7 +916,7 @@ where not exists (select 1 from tb_file where hdd_nid={_hdd_nid} and path=$path 
             foreach (ListViewItem selectedItem in lvResults.SelectedItems)
             {
                 var torrentFile = (TorrentFile)selectedItem.Tag;
-                if (!torrentFile.MoveTo(DbConnectionString, _folderBrowserDialog1.SelectedPath, out var msg))
+                if (!torrentFile.MoveTo(formBrowseTorrentFolder.SelectedPath, out var msg))
                     errorMsg += msg;
                 else moved++;
             }
@@ -1314,7 +955,7 @@ where not exists (select 1 from tb_file where hdd_nid={_hdd_nid} and path=$path 
             var lvItem = lvResults.SelectedItems[0];
             var torrentFile = (TorrentFile)lvItem.Tag;
 
-            if (!torrentFile.ToggleSeeLater(DbConnectionString, out var msg))
+            if (!torrentFile.ToggleSeeLater(out var msg))
             {
                 MessageBox.Show(msg, Properties.Resources.TextError, MessageBoxButtons.YesNo, MessageBoxIcon.Error);
                 return;
@@ -1325,7 +966,21 @@ where not exists (select 1 from tb_file where hdd_nid={_hdd_nid} and path=$path 
 
         }
 
+        //切换不想看
+        private void tsmiToggleSeeNoWant_Click(object sender, EventArgs e)
+        {
+            if (lvResults.SelectedItems.Count == 0) return;
+            var lvItem = lvResults.SelectedItems[0];
+            var torrentFile = (TorrentFile)lvItem.Tag;
 
+            if (!torrentFile.ToggleSeeNoWant(out var msg))
+            {
+                MessageBox.Show(msg, Properties.Resources.TextError, MessageBoxButtons.YesNo, MessageBoxIcon.Error);
+                return;
+            }
+
+            lvItem.SubItems[4].Text = torrentFile.seenowant.ToString();
+        }
 
         private void tsmiCopyName_Click(object sender, EventArgs e)
         {
@@ -1363,8 +1018,8 @@ where not exists (select 1 from tb_file where hdd_nid={_hdd_nid} and path=$path 
             }
 
             var checkedId = ((TorrentFile)lvResults.CheckedItems[0].Tag).fid;
-            var selectdIds = lvResults.SelectedItems.Cast<ListViewItem>().Select(x => ((TorrentFile)x.Tag).fid).ToList();
-            if (selectdIds.Count - (selectdIds.Contains(checkedId) ? 1 : 0) <= 0)
+            var selectedIds = lvResults.SelectedItems.Cast<ListViewItem>().Select(x => ((TorrentFile)x.Tag).fid).ToList();
+            if (selectedIds.Count - (selectedIds.Contains(checkedId) ? 1 : 0) <= 0)
             {
                 MessageBox.Show("请选择除源项以外的更多项操作！", Properties.Resources.TextHint, MessageBoxButtons.OK,
                     MessageBoxIcon.Asterisk);
@@ -1373,7 +1028,7 @@ where not exists (select 1 from tb_file where hdd_nid={_hdd_nid} and path=$path 
 
             if (MessageBox.Show("确认拷贝豆瓣信息到所选记录？", Properties.Resources.TextHint, MessageBoxButtons.OKCancel, MessageBoxIcon.Question) == DialogResult.Cancel) return;
 
-            if (!TorrentFile.CopyDoubanInfo(DbConnectionString, checkedId, selectdIds, out var msg))
+            if (!TorrentFile.CopyDoubanInfo(checkedId, selectedIds, out var msg))
             {
                 MessageBox.Show(msg, Properties.Resources.TextError, MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
@@ -1383,16 +1038,13 @@ where not exists (select 1 from tb_file where hdd_nid={_hdd_nid} and path=$path 
         }
 
 
-
-
-
-
+        
 
         #endregion
 
         private void tsmiShowStatistics_Click(object sender, EventArgs e)
         {
-            var result = TorrentFile.CountStatistics(DbConnectionString, out var msg);
+            var result = TorrentFile.CountStatistics(out var msg);
             if (!string.IsNullOrEmpty(msg))
             {
                 MessageBox.Show(msg, Properties.Resources.TextError, MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -1413,27 +1065,6 @@ where not exists (select 1 from tb_file where hdd_nid={_hdd_nid} and path=$path 
 
         }
 
-        private void tsmiToggleSeeNoWant_Click(object sender, EventArgs e)
-        {
-            if (lvResults.SelectedItems.Count == 0) return;
-            var lvItem = lvResults.SelectedItems[0];
-            var torrentFile = (TorrentFile)lvItem.Tag;
-
-            if (!torrentFile.ToggleSeeNoWant(DbConnectionString, out var msg))
-            {
-                MessageBox.Show(msg, Properties.Resources.TextError, MessageBoxButtons.YesNo, MessageBoxIcon.Error);
-                return;
-            }
-
-            lvItem.SubItems[4].Text = torrentFile.seenowant.ToString();
-        }
-
-        private void tsmiFilterSeeNoWant_Click(object sender, EventArgs e)
-        {
-            tsmiFilterSeeNoWant.Checked = !tsmiFilterSeeNoWant.Checked;
-            tsmiHideSameSubject.Enabled = (tsmiFilterNotWatched.Checked || !tsmiFilterSeeNoWant.Checked) && !tsmiFilterWatched.Checked;
-            DoSearch();
-        }
 
         private void tsbSearchDouban_Click(object sender, EventArgs e)
         {

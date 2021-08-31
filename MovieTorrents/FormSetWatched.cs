@@ -20,7 +20,7 @@ namespace MovieTorrents
 
         private void button1_Click(object sender, EventArgs e)
         {
-            if (!_torrentFile.SetWatched(FormMain.DbConnectionString, dtPicker.Value, tbComment.Text,out var msg))
+            if (!_torrentFile.SetWatched(dtPicker.Value, tbComment.Text,out var msg))
             {
                 MessageBox.Show(msg, Properties.Resources.TextError, MessageBoxButtons.YesNo, MessageBoxIcon.Error);
                 return;

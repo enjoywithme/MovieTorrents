@@ -187,7 +187,7 @@ namespace MovieTorrents
             var text = tbTitle.Text.Trim();
             if (string.IsNullOrEmpty(text) || text.Length < 2) return;
 
-            var torrents = TorrentFile.Search(FormMain.DbConnectionString, tbTitle.Text, out var msg);
+            var torrents = TorrentFile.Search( tbTitle.Text, out var msg);
             if (torrents == null)
             {
                 MessageBox.Show(msg, "提示", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);

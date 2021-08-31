@@ -84,7 +84,7 @@ namespace MovieTorrents
 
             //判断是否勾选此项
             Checked = (Rating >= 7.0M || Tag.Contains("情色")) && 
-                      (!checkInDb || !TorrentFile.ExistInDb(FormMain.DbConnectionString, Keyword, Year));
+                      (!checkInDb || !TorrentFile.ExistInDb(Keyword, Year));
 
         }
 
@@ -462,7 +462,7 @@ namespace MovieTorrents
                         continue;
                     }
 
-                    var destPath = Path.Combine(FormMain.DefaultInstance.TorrentFilePath,
+                    var destPath = Path.Combine(TorrentFile.TorrentFilePath,
                         TorrentFile.ArchiveYearSubPath(year));
                     destFileName = Path.Combine(destPath, destFileName);
                     Debug.WriteLine(destFileName);

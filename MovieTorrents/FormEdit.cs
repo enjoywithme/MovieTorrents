@@ -1,12 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace MovieTorrents
@@ -44,7 +37,7 @@ namespace MovieTorrents
                 return;
             }
 
-            if (!_torrentFile.EditRecord(FormMain.DbConnectionString, newName,tbYear.Text,tbZone.Text,
+            if (!_torrentFile.EditRecord(newName,tbYear.Text,tbZone.Text,
                 tbKeyName.Text,tbOtherName.Text,tbGenres.Text,
                 cbWatched.Checked,dtPicker.Value,tbComment.Text,
                 out var msg))

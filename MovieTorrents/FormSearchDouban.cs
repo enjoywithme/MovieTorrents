@@ -109,7 +109,7 @@ namespace MovieTorrents
                 return;
             }
 
-            if (!_torrentFile.UpdateDoubanInfo(FormMain.DbConnectionString, subject,out msg))
+            if (!_torrentFile.UpdateDoubanInfo(subject,out msg))
             {
                 MessageBox.Show(msg, Properties.Resources.TextError, MessageBoxButtons.YesNo, MessageBoxIcon.Error);
                 return;

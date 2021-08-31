@@ -57,7 +57,7 @@ namespace MovieTorrents
         {
             var filename = Path.GetFileName(img_url);
             if (string.IsNullOrEmpty(filename)) return;
-            var filefullname = FormMain.CurrentPath + "\\temp\\" + filename;
+            var filefullname = TorrentFile.CurrentPath + "\\temp\\" + filename;
 
             using (WebClient client = new WebClient())
             {
@@ -262,7 +262,7 @@ namespace MovieTorrents
                     html = sr.ReadToEnd();
                     //Debug.WriteLine(html);
 #if DEBUG
-                    File.WriteAllText(FormMain.CurrentPath + "\\temp\\sample_subject.txt", html);
+                    File.WriteAllText(TorrentFile.CurrentPath + "\\temp\\sample_subject.txt", html);
 #endif
                 }
             }
