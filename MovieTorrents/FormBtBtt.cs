@@ -231,12 +231,9 @@ namespace MovieTorrents
         private void BtArchiveTorrent_Click(object sender, EventArgs e)
         {
             var sb=new StringBuilder();
-            BtBtItem.ExtractZipFiles(out var msg);
-            sb.AppendLine(msg);
-            BtBtItem.RenameBBQDDQFiles(out msg);
-            sb.AppendLine(msg);
-            BtBtItem.ArchiveTorrentFiles(out msg);
-            sb.AppendLine(msg);
+            sb.AppendLine(BtBtItem.ExtractZipFiles());
+            sb.Append(BtBtItem.RenameBBQDDQFiles());
+            sb.Append(BtBtItem.ArchiveTorrentFiles());
             MessageBox.Show(sb.ToString(), Properties.Resources.TextHint, MessageBoxButtons.OK, MessageBoxIcon.Information);
 
 
