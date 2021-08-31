@@ -426,7 +426,7 @@ namespace MovieTorrents
         {
             var ret = TorrentFile.BackupDbFile(out var msg);
             
-            MessageBox.Show(msg, ret?"提示":"错误", MessageBoxButtons.OK, ret?MessageBoxIcon.Information:MessageBoxIcon.Error);
+            MessageBox.Show(msg, ret?Properties.Resources.TextHint:"错误", MessageBoxButtons.OK, ret?MessageBoxIcon.Information:MessageBoxIcon.Error);
 
 
         }
@@ -610,7 +610,7 @@ namespace MovieTorrents
         {
             if (Interlocked.CompareExchange(ref _currentOperation, OperationClearFile, OperationNone) != OperationNone)
             {
-                MessageBox.Show("正在执行其他操作，等待完成后操作", "提示", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("正在执行其他操作，等待完成后操作", Properties.Resources.TextHint, MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 

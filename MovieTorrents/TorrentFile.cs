@@ -20,13 +20,13 @@ namespace MovieTorrents
     {
         public int RecordsLimit { get; set; } = 100;
         public bool Recent { get; set; }
-        public bool HideSameSubject { get; set; }
+        public bool HideSameSubject { get; set; } = true;
         public bool NotWatched { get; set; }
         public bool Watched { get; set; }
         public bool NotWant { get; set; }
         public bool SeeLater { get; set; }
 
-        public bool? OrderRatingDesc { get; set; }
+        public bool? OrderRatingDesc { get; set; } = true;
         public bool? OrderYearDesc { get; set; }
 
         private readonly List<string> _filterFields = new List<string> { "rating", "year" };

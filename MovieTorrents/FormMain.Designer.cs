@@ -523,7 +523,7 @@
             // 
             this.notifyIcon1.BalloonTipIcon = System.Windows.Forms.ToolTipIcon.Info;
             this.notifyIcon1.BalloonTipText = "双击恢复窗口";
-            this.notifyIcon1.BalloonTipTitle = "提示";
+            this.notifyIcon1.BalloonTipTitle = Properties.Resources.TextHint;
             this.notifyIcon1.Text = "Movie torrents";
             this.notifyIcon1.Visible = true;
             this.notifyIcon1.BalloonTipClicked += new System.EventHandler(this.notifyIcon1_BalloonTipClicked);

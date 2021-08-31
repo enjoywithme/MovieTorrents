@@ -34,7 +34,9 @@ namespace MovieTorrents
                 tbSelectedPath.Focus();
                 return;
             }
-            
+
+            SelectedPath = SelectedPath.TrimEnd('\\');
+
             DialogResult = DialogResult.OK;
         }
 

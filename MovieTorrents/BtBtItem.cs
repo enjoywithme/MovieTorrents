@@ -10,6 +10,8 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using AngleSharp.Dom;
 using AngleSharp.Html.Parser;
+using BencodeNET.Parsing;
+using BencodeNET.Torrents;
 using mySharedLib;
 using Timer = System.Threading.Timer;
 
@@ -390,7 +392,7 @@ namespace MovieTorrents
         }
 
         //解压zip文件
-        public static int ExtractZipFiles(out string msg)
+        public static void ExtractZipFiles(out string msg)
         {
             var i = 0;
             msg = "";
@@ -440,11 +442,54 @@ namespace MovieTorrents
                 msg += e.Message;
             }
 
-            return i;
+            msg += $"成功解压 {i} 个文件。";
         }
+        //尝试重命名BBQDDQ的文件
+        public static void RenameBBQDDQFiles(out string msg)
+        {
+#if DEBUG
+            DownLoadRootPath = "x:\\temp\\";
+#endif
+            var files = Directory.GetFiles(DownLoadRootPath)
+                .Where(s => Path.GetExtension(s).ToLowerInvariant() == ".torrent");
+            var sb = new StringBuilder();
+            try
+            {
+                var parser = new BencodeParser(); // Default encoding is Encoding.UTF8, but you can specify another if you need to
 
+                foreach (var file in files)
+                {
+                    try
+                    {
+                        var torrent = parser.Parse<Torrent>(file);
+                        if (!torrent.DisplayName.Contains("BBQDDQ")) continue;
+
+                        var name = torrent.DisplayName.Replace("【更多高清电影访问 www.BBQDDQ.com】", "");
+                        name = name.Replace("[中文字幕]", "");
+                        var destFile = file.Replace(Path.GetFileNameWithoutExtension(file), name);
+                        if (File.Exists(destFile))
+                        {
+                            File.Delete(file);
+                            continue;
+                        }
+                        File.Move(file, destFile);
+                    }
+                    catch (Exception e)
+                    {
+                        sb.AppendLine(e.Message);
+                    }
+                    
+                }
+            }
+            catch (Exception e)
+            {
+                sb.AppendLine(e.Message);
+            }
+
+            msg = sb.ToString();
+        }
         //将目录下的种子文件转移到收藏目录
-        public static int ArchiveTorrentFiles(out string msg)
+        public static void ArchiveTorrentFiles(out string msg)
         {
             msg = "";
             var i = 0;
@@ -491,7 +536,7 @@ namespace MovieTorrents
                 msg += $"\r\n{exception.Message}";
             }
 
-            return i;
+            msg+=$"成功转移{i}个文件。";
         }
 
         //自动下载

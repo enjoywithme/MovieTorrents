@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Globalization;
 using System.IO;
+using System.Text;
 using System.Threading;
 using System.Windows.Forms;
 using mySharedLib;
@@ -166,7 +168,7 @@ namespace MovieTorrents
             Cursor = c;
 
             message = $"下载了{i}个文件。{message}";
-            MessageBox.Show(message, "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            MessageBox.Show(message, Properties.Resources.TextHint, MessageBoxButtons.OK, MessageBoxIcon.Information);
             Interlocked.Exchange(ref BtBtItem.AutoDownloadRunning, 0);
 
         }
@@ -190,13 +192,13 @@ namespace MovieTorrents
             var torrents = TorrentFile.Search( tbTitle.Text, out var msg);
             if (torrents == null)
             {
-                MessageBox.Show(msg, "提示", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                MessageBox.Show(msg, Properties.Resources.TextHint, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                 return;
             }
             foreach (var torrentFile in torrents)
             {
                 string[] row = { torrentFile.name,
-                    torrentFile.rating.ToString(),
+                    torrentFile.rating.ToString(CultureInfo.InvariantCulture),
                     torrentFile.year,
                     torrentFile.seelater.ToString(),
                     torrentFile.seenowant.ToString(),
@@ -220,7 +222,7 @@ namespace MovieTorrents
         private bool CheckAutoDownloading()
         {
             if (0 == Interlocked.Exchange(ref BtBtItem.AutoDownloadRunning, 1)) return true;
-            MessageBox.Show("自动下载正在运行，稍后重试。","提示",MessageBoxButtons.OK,MessageBoxIcon.Asterisk);
+            MessageBox.Show("自动下载正在运行，稍后重试。",Properties.Resources.TextHint,MessageBoxButtons.OK,MessageBoxIcon.Asterisk);
             return false;
 
         }
@@ -228,9 +230,14 @@ namespace MovieTorrents
         //将目录下的种子文件转移到收藏目录
         private void BtArchiveTorrent_Click(object sender, EventArgs e)
         {
-            var i1 = BtBtItem.ExtractZipFiles(out var msg1);
-            var i2 = BtBtItem.ArchiveTorrentFiles(out var msg2);
-            MessageBox.Show($"成功解压 {i1} 个文件。{msg1}\r\n成功转移 {i2} 个文件。{msg2}", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            var sb=new StringBuilder();
+            BtBtItem.ExtractZipFiles(out var msg);
+            sb.AppendLine(msg);
+            BtBtItem.RenameBBQDDQFiles(out msg);
+            sb.AppendLine(msg);
+            BtBtItem.ArchiveTorrentFiles(out msg);
+            sb.AppendLine(msg);
+            MessageBox.Show(sb.ToString(), Properties.Resources.TextHint, MessageBoxButtons.OK, MessageBoxIcon.Information);
 
 
         }
