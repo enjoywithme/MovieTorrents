@@ -758,8 +758,7 @@ where not exists (select 1 from tb_file where hdd_nid={_hdd_nid} and path=$path 
             msg = string.Empty;
             var mDbConnection = new SQLiteConnection(DbConnectionString);
 
-            var sql = $"update tb_file set path=$path where file_nid=$fid";
-            bool ok;
+            var ok=true;
             var newPath = destFolder.Substring(Path.GetPathRoot(destFolder).Length) + "\\";
 
             try
@@ -768,13 +767,26 @@ where not exists (select 1 from tb_file where hdd_nid={_hdd_nid} and path=$path 
                 try
                 {
 
-                    var destFullName = destFolder + "\\" + name + ext;
-                    File.Move(FullName, destFullName);
-
-                    var command = new SQLiteCommand(sql, mDbConnection);
-                    command.Parameters.AddWithValue("$path", newPath);
+                    var command = new SQLiteCommand("select path from tb_file where file_nid=$fid",mDbConnection);
                     command.Parameters.AddWithValue("$fid", fid);
-                    ok = command.ExecuteNonQuery() > 0;
+
+                    var reader = command.ExecuteReader();
+                    if (reader.Read())
+                    {
+                        var currentPath = reader.GetString(0);
+                        if (!currentPath.Equals(newPath, StringComparison.InvariantCultureIgnoreCase))
+                        {
+                            var destFullName = destFolder + "\\" + name + ext;
+                            File.Move(FullName, destFullName);
+
+                            command = new SQLiteCommand("update tb_file set path=$path where file_nid=$fid", mDbConnection);
+                            command.Parameters.AddWithValue("$path", newPath);
+                            command.Parameters.AddWithValue("$fid", fid);
+                            ok = command.ExecuteNonQuery() > 0;
+                        }
+                    }
+
+                    
                 }
                 catch (Exception e)
                 {

@@ -94,6 +94,7 @@ namespace MovieTorrents
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "FormBrowseTorrentFolder";
+            this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "选择目录";
             this.Load += new System.EventHandler(this.FormBrowseTorrentFolder_Load);
