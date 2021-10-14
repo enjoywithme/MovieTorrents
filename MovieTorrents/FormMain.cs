@@ -8,6 +8,7 @@ using System.Drawing;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -22,8 +23,7 @@ namespace MovieTorrents
         public static FormMain DefaultInstance { get; set; }
         private FormBtBtt _formBtBtt;
 
-
-
+        
         private CancellationTokenSource _queryTokenSource;
         private CancellationTokenSource _operTokenSource;
 
@@ -60,6 +60,8 @@ namespace MovieTorrents
             //_tt = new System.Timers.Timer(5000);
             //_tt.Elapsed += (o, j) => DisplayInfo("test");
             //_tt.Enabled = true;
+
+            DefaultInstance = this;
 
             if (!TorrentFile.CheckTorrentPath(out var msg))
             {
@@ -125,7 +127,14 @@ namespace MovieTorrents
         #region 目录监视
 
         private bool _isWatching;
+        private bool _ignoreFileWatch;
+
         private BlockingCollection<TorrentFile> _monitoredFilesToProcess = new BlockingCollection<TorrentFile>();
+
+        public void IgnoreFileWatch(bool ignore = true)
+        {
+            _ignoreFileWatch = ignore;
+        }
 
         private bool IsWatching
         {
@@ -252,6 +261,8 @@ namespace MovieTorrents
         }
         private void Watcher_File_Created(object sender, FileSystemEventArgs e)
         {
+            if(_ignoreFileWatch) return;
+
             //添加一个文件会发现生成2个事件，https://blogs.msdn.microsoft.com/ahamza/2006/02/04/filesystemwatcher-generates-duplicate-events-how-to-workaround/ 
             Debug.WriteLine($"File monitored added:{e.FullPath}");
 
@@ -911,16 +922,17 @@ namespace MovieTorrents
                 return;
             }
 
-            var errorMsg = "";
+            var errorMsg = new StringBuilder();
             var moved = 0;
+            IgnoreFileWatch();
             foreach (ListViewItem selectedItem in lvResults.SelectedItems)
             {
                 var torrentFile = (TorrentFile)selectedItem.Tag;
                 if (!torrentFile.MoveTo(formBrowseTorrentFolder.SelectedPath, out var msg))
-                    errorMsg += msg;
+                    errorMsg.AppendLine(msg);
                 else moved++;
             }
-
+            IgnoreFileWatch(false);
             MessageBox.Show($"成功移动{moved}条记录。\r\n{errorMsg}", Properties.Resources.TextHint, MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 

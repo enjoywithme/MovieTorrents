@@ -756,6 +756,13 @@ where not exists (select 1 from tb_file where hdd_nid={_hdd_nid} and path=$path 
         public bool MoveTo(string destFolder, out string msg)
         {
             msg = string.Empty;
+
+            if (!File.Exists(FullName))
+            {
+                msg = $"文件{FullName} 不存在。";
+                return false;
+            }
+
             var mDbConnection = new SQLiteConnection(DbConnectionString);
 
             var ok=true;
@@ -771,22 +778,26 @@ where not exists (select 1 from tb_file where hdd_nid={_hdd_nid} and path=$path 
                     command.Parameters.AddWithValue("$fid", fid);
 
                     var reader = command.ExecuteReader();
-                    if (reader.Read())
+                    var ret = reader.Read();
+                    var currentPath = "";
+                    if (ret)
                     {
-                        var currentPath = reader.GetString(0);
-                        if (!currentPath.Equals(newPath, StringComparison.InvariantCultureIgnoreCase))
-                        {
-                            var destFullName = destFolder + "\\" + name + ext;
-                            File.Move(FullName, destFullName);
+                        currentPath = reader.GetString(0);
+                    }
+                    reader.Close();
 
-                            command = new SQLiteCommand("update tb_file set path=$path where file_nid=$fid", mDbConnection);
-                            command.Parameters.AddWithValue("$path", newPath);
-                            command.Parameters.AddWithValue("$fid", fid);
-                            ok = command.ExecuteNonQuery() > 0;
-                        }
+                    if (ret && !currentPath.Equals(newPath, StringComparison.InvariantCultureIgnoreCase))
+                    {
+                        var destFullName = destFolder + "\\" + name + ext;
+                        File.Move(FullName, destFullName);
+
+                        command = new SQLiteCommand("update tb_file set path=$path where file_nid=$fid", mDbConnection);
+                        command.Parameters.AddWithValue("$path", newPath);
+                        command.Parameters.AddWithValue("$fid", fid);
+                        ok = command.ExecuteNonQuery() > 0;
                     }
 
-                    
+
                 }
                 catch (Exception e)
                 {
