@@ -2,6 +2,7 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.Common;
 using System.Data.SQLite;
 using System.Diagnostics;
 using System.Drawing;
@@ -10,6 +11,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using AngleSharp.Browser;
 using MovieTorrents.Common;
 using mySharedLib;
 
@@ -171,7 +173,8 @@ namespace MovieTorrents
         public string area { get; set; }
         public string path { get; set; }
         public string keyname { get; set; }
-
+        public string casts { get; set; }
+        public string directors { get; set; }
         private string _name;
         public string name
         {
@@ -198,7 +201,6 @@ namespace MovieTorrents
         public string zone { get; set; }
         public string posterpath { get; set; }
         public string doubanid { get; set; }
-
         public string FullName => area + path + name + ext;
 
         public string PurifiedName { get; set; }
@@ -310,6 +312,41 @@ namespace MovieTorrents
 
         }
 
+        public TorrentFile()
+        {
+
+        }
+
+        public TorrentFile(DbDataReader reader)
+        {
+            ReadFromDbReader(reader);
+        }
+
+        private void ReadFromDbReader(DbDataReader reader)
+        {
+            fid = (long)reader["file_nid"];
+            area = Area;
+            path = (string)reader["path"];
+            name = (string)reader["name"];
+            keyname = reader.GetReaderFieldString("keyname");
+            otherName = reader.GetReaderFieldString("othername");
+            ext = (string)reader["ext"];
+            rating = (double)reader["rating"];
+            year = reader.GetReaderFieldString("year");
+            zone = reader.GetReaderFieldString("zone");
+            seelater = (long)reader["seelater"];
+            seenowant = (long)reader["seenowant"];
+            seeflag = (long)reader["seeflag"];
+            posterpath = reader.GetReaderFieldString("posterpath");
+            genres = reader.GetReaderFieldString("genres");
+            doubanid = reader.GetReaderFieldString("doubanid");
+            seedate = reader.GetReaderFieldString("seedate");
+            seecomment = reader.GetReaderFieldString("seecomment");
+            casts = reader.GetReaderFieldString("casts");
+            directors = reader.GetReaderFieldString("directors");
+
+        }
+
         //执行异步搜索
         public static async Task<(IEnumerable<TorrentFile>,string msg)> ExecuteSearch(string searchText, CancellationToken cancelToken, bool withFilter=true)
         {
@@ -327,27 +364,7 @@ namespace MovieTorrents
                 using var reader = await command.ExecuteReaderAsync(cancelToken);
                 while (await reader.ReadAsync(cancelToken))
                 {
-                    result.Add(new TorrentFile
-                    {
-                        fid = (long)reader["file_nid"],
-                        area = Area,
-                        path = (string)reader["path"],
-                        name = (string)reader["name"],
-                        keyname = reader.GetReaderFieldString("keyname"),
-                        otherName = reader.GetReaderFieldString("othername"),
-                        ext = (string)reader["ext"],
-                        rating = (double)reader["rating"],
-                        year = reader.GetReaderFieldString("year"),
-                        zone = reader.GetReaderFieldString("zone"),
-                        seelater = (long)reader["seelater"],
-                        seenowant = (long)reader["seenowant"],
-                        seeflag = (long)reader["seeflag"],
-                        posterpath = reader.GetReaderFieldString("posterpath"),
-                        genres = reader.GetReaderFieldString("genres"),
-                        doubanid = reader.GetReaderFieldString("doubanid"),
-                        seedate = reader.GetReaderFieldString("seedate"),
-                        seecomment = reader.GetReaderFieldString("seecomment")
-                    });
+                    result.Add(new TorrentFile(reader));
 
                 }
             }
@@ -384,33 +401,11 @@ namespace MovieTorrents
                     var command = Filter.BuildSearchCommand(text,false);
                     command.Connection = connection;
 
-                    using (var reader = command.ExecuteReader())
+                    using var reader = command.ExecuteReader();
+                    while (reader.Read())
                     {
-                        while (reader.Read())
-                        {
-                            result.Add(new TorrentFile
-                            {
-                                fid = (long)reader["file_nid"],
-                                area = Area,
-                                path = (string)reader["path"],
-                                name = (string)reader["name"],
-                                keyname = reader.GetReaderFieldString("keyname"),
-                                otherName = reader.GetReaderFieldString("othername"),
-                                ext = (string)reader["ext"],
-                                rating = (double)reader["rating"],
-                                year = reader.GetReaderFieldString("year"),
-                                zone = reader.GetReaderFieldString("zone"),
-                                seelater = (long)reader["seelater"],
-                                seenowant = (long)reader["seenowant"],
-                                seeflag = (long)reader["seeflag"],
-                                posterpath = reader.GetReaderFieldString("posterpath"),
-                                genres = reader.GetReaderFieldString("genres"),
-                                doubanid = reader.GetReaderFieldString("doubanid"),
-                                seedate = reader.GetReaderFieldString("seedate"),
-                                seecomment = reader.GetReaderFieldString("seecomment")
-                            });
+                        result.Add(new TorrentFile(reader));
 
-                        }
                     }
                 }
                 catch (Exception e)
@@ -859,6 +854,7 @@ where not exists (select 1 from tb_file where hdd_nid={_hdd_nid} and path=$path 
         public bool EditRecord(string newName, string newYear, string newZone,
             string newKeyName, string newOtherName, string newGenres,
             bool newWatched, DateTime newWatchDate, string newSeeComment,
+            double newRating,string newposterpath,string newcasts,string newdirectors,
             out string msg)
         {
             msg = string.Empty;
@@ -882,7 +878,8 @@ where not exists (select 1 from tb_file where hdd_nid={_hdd_nid} and path=$path 
             var mDbConnection = new SQLiteConnection(DbConnectionString);
             var sql = @"update tb_file set name=$name,year=$year,zone=$zone,
 keyname=$keyname,othername=$othername,genres=$genres,
-seelater=$seelater,seeflag=$seeflag,seedate=$seedate,seecomment=$comment 
+seelater=$seelater,seeflag=$seeflag,seedate=$seedate,seecomment=$comment,
+rating=$rating,posterpath=$posterpath,casts=$casts,directors=$directors
 where file_nid=$fid";
             var ok = true;
             try
@@ -906,6 +903,12 @@ where file_nid=$fid";
                     command.Parameters.AddWithValue("$seeflag", newWatched ? 1 : 0);
                     command.Parameters.AddWithValue("$seedate", watchDate);
                     command.Parameters.AddWithValue("$comment", newSeeComment);
+
+                    command.Parameters.AddWithValue("$rating", newRating);
+                    command.Parameters.AddWithValue("$posterpath", newposterpath);
+                    command.Parameters.AddWithValue("$casts", newcasts);
+                    command.Parameters.AddWithValue("$directors", newdirectors);
+
                     command.Parameters.AddWithValue("$fid", fid);
                     command.ExecuteNonQuery();
                 }
@@ -938,6 +941,10 @@ where file_nid=$fid";
             seeflag = newWatched ? 1 : 0;
             seedate = watchDate;
             seecomment = newSeeComment;
+            rating = newRating;
+            posterpath = newposterpath;
+            casts = newcasts;
+            directors = newdirectors;
 
             return true;
         }

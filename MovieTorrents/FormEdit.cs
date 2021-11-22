@@ -18,6 +18,11 @@ namespace MovieTorrents
             tbOldName.Text = tbNewName.Text = _torrentFile.name;
             tbYear.Text = _torrentFile.year;
             tbZone.Text = _torrentFile.zone;
+            tbDoubanId.Text = _torrentFile.doubanid;
+            tbCasts.Text = _torrentFile.casts;
+            tbDirectors.Text = _torrentFile.directors;
+            tbRating.Text = _torrentFile.rating.ToString("F");
+            tbposterpath.Text = _torrentFile.posterpath;
             tbKeyName.Text = _torrentFile.keyname;
             tbOtherName.Text = _torrentFile.otherName;
             tbGenres.Text = _torrentFile.genres;
@@ -37,9 +42,16 @@ namespace MovieTorrents
                 return;
             }
 
+            if (!double.TryParse(tbRating.Text, out var newRating))
+            {
+                MessageBox.Show("无效的评分", "错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
             if (!_torrentFile.EditRecord(newName,tbYear.Text,tbZone.Text,
                 tbKeyName.Text,tbOtherName.Text,tbGenres.Text,
                 cbWatched.Checked,dtPicker.Value,tbComment.Text,
+                newRating,tbposterpath.Text,tbCasts.Text,tbDirectors.Text,
                 out var msg))
             {
                 MessageBox.Show(msg, "错误", MessageBoxButtons.OK, MessageBoxIcon.Warning);

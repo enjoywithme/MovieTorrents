@@ -492,9 +492,14 @@ namespace MovieTorrents
             lbRating.Text = Math.Abs(torrentFile.rating) < 0.0001 ? null : torrentFile.rating.ToString(CultureInfo.InvariantCulture);
 
             if (string.IsNullOrEmpty(torrentFile.RealPosterPath) || !File.Exists(torrentFile.RealPosterPath)) return;
-            using (var stream = new FileStream(torrentFile.RealPosterPath, FileMode.Open, FileAccess.Read))
+            try
             {
+                using var stream = new FileStream(torrentFile.RealPosterPath, FileMode.Open, FileAccess.Read);
                 pictureBox1.Image = Image.FromStream(stream);
+            }
+            catch (Exception)
+            {
+                // ignored
             }
         }
 
