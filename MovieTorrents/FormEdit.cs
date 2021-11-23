@@ -51,7 +51,7 @@ namespace MovieTorrents
             if (!_torrentFile.EditRecord(newName,tbYear.Text,tbZone.Text,
                 tbKeyName.Text,tbOtherName.Text,tbGenres.Text,
                 cbWatched.Checked,dtPicker.Value,tbComment.Text,
-                newRating,tbposterpath.Text,tbCasts.Text,tbDirectors.Text,
+                tbDoubanId.Text,newRating,tbposterpath.Text,tbCasts.Text,tbDirectors.Text,
                 out var msg))
             {
                 MessageBox.Show(msg, "错误", MessageBoxButtons.OK, MessageBoxIcon.Warning);

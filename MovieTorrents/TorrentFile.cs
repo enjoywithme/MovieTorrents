@@ -854,7 +854,7 @@ where not exists (select 1 from tb_file where hdd_nid={_hdd_nid} and path=$path 
         public bool EditRecord(string newName, string newYear, string newZone,
             string newKeyName, string newOtherName, string newGenres,
             bool newWatched, DateTime newWatchDate, string newSeeComment,
-            double newRating,string newposterpath,string newcasts,string newdirectors,
+            string newdoubandid,double newRating,string newposterpath,string newcasts,string newdirectors,
             out string msg)
         {
             msg = string.Empty;
@@ -879,7 +879,7 @@ where not exists (select 1 from tb_file where hdd_nid={_hdd_nid} and path=$path 
             var sql = @"update tb_file set name=$name,year=$year,zone=$zone,
 keyname=$keyname,othername=$othername,genres=$genres,
 seelater=$seelater,seeflag=$seeflag,seedate=$seedate,seecomment=$comment,
-rating=$rating,posterpath=$posterpath,casts=$casts,directors=$directors
+doubanid=$doubanid,rating=$rating,posterpath=$posterpath,casts=$casts,directors=$directors
 where file_nid=$fid";
             var ok = true;
             try
@@ -904,6 +904,7 @@ where file_nid=$fid";
                     command.Parameters.AddWithValue("$seedate", watchDate);
                     command.Parameters.AddWithValue("$comment", newSeeComment);
 
+                    command.Parameters.AddWithValue("$doubanid", newdoubandid);
                     command.Parameters.AddWithValue("$rating", newRating);
                     command.Parameters.AddWithValue("$posterpath", newposterpath);
                     command.Parameters.AddWithValue("$casts", newcasts);
@@ -941,6 +942,7 @@ where file_nid=$fid";
             seeflag = newWatched ? 1 : 0;
             seedate = watchDate;
             seecomment = newSeeComment;
+            doubanid = newdoubandid;
             rating = newRating;
             posterpath = newposterpath;
             casts = newcasts;

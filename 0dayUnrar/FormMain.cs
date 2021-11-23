@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using _0dayUnrar.Properties;
+using Exception = System.Exception;
 
 namespace _0dayUnrar
 {
@@ -138,9 +139,10 @@ namespace _0dayUnrar
             _destPath = tbDestFolder.Text;
             if (!Directory.Exists(tbDestFolder.Text))
             {
-                MessageBox.Show($"Destination folder '{tbDestFolder.Text}' does not exists!",
-                    Resources.Warning, MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
+                Directory.CreateDirectory(tbDestFolder.Text);
+                //MessageBox.Show($"Destination folder '{tbDestFolder.Text}' does not exists!",
+                //    Resources.Warning, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                //return;
             }
 
             if (IsSubfolder(_baseSourcePath,_destPath))
@@ -215,24 +217,27 @@ namespace _0dayUnrar
             var zipFiles = Directory.GetFiles(curPath,"*.zip");
             foreach (var zipFile in zipFiles)
             {
-                var cmd = $"x -IBCK -o+ \"{zipFile} \"  \"{curDest} \"";
+                var cmd = $"x -IBCK -o+ -y \"{zipFile} \"  \"{curDest} \"";
                 RunWinRarCmd(cmd);
             }
 
 
             //解压rar
             var rarFiles = Directory.GetFiles(curDest,"*.rar");
+            if (rarFiles.Length == 0)
+                throw new Exception("没有找到.rar文件。");
+
             foreach (var rarFile in rarFiles)
             {
-                var cmd = $"x -IBCK -o+  \"{rarFile} \"  \"{curDest} \"";//背景解压，覆盖文件不确认
+                var cmd = $"x -IBCK -o+ -y  \"{rarFile} \"  \"{curDest} \"";//背景解压，覆盖文件不确认
                 RunWinRarCmd(cmd);
             }
 
-            if(!_deleteFileAfterExtracting) return;
-            foreach (var zipFile in zipFiles)
-            {
-                File.Delete(zipFile);
-            }
+            //if(!_deleteFileAfterExtracting) return;
+            //foreach (var zipFile in zipFiles)
+            //{
+            //    File.Delete(zipFile);
+            //}
 
             rarFiles = Directory.GetFiles(curDest, "*.r??");
             foreach (var rarFile in rarFiles)
@@ -241,6 +246,22 @@ namespace _0dayUnrar
             }
 
         }
+
+        private readonly Dictionary<int, string> _winRarError = new Dictionary<int, string>()
+        {
+            { 1, " 警告。发生非致命错误" },
+            { 2, " 发生致命错误。" },
+            { 3, "无效校验和。数据损坏。 " },
+            { 4, " 尝试修改一个 锁定的压缩文件。 " },
+            { 5, " 写错误。 " },
+            { 6, "文件打开错误。 " },
+            { 7, "错误命令行选项。 " },
+            { 8, "内存不足。 " },
+            { 9, "文件创建错误。 " },
+            { 10, " 没有找到与指定的掩码和选项匹配的文件。 " },
+            { 11, " 密码错误。 " },
+            { 255, " 用户中断。 " }
+        };
 
         private void RunWinRarCmd(string command)
         {
@@ -255,10 +276,12 @@ namespace _0dayUnrar
             var proc = new Process { StartInfo = procStartInfo };
             proc.Start();
             proc.WaitForExit();
-            var result = proc.StandardError.ReadToEnd();
+            //var result = proc.StandardError.ReadToEnd();
+            var errCode = _winRarError.ContainsKey(proc.ExitCode) ? _winRarError[proc.ExitCode] : "未知错误";
             if (proc.ExitCode != 0)
             {
-                backgroundWorker.ReportProgress(0, result);
+
+                throw new Exception($"{errCode}");
 
             }
         }
@@ -272,7 +295,7 @@ namespace _0dayUnrar
                     tbLog.AppendText((string)e.UserState + "\r\n");
                     break;
                 case -1:
-                    tbLog.AppendText($"Error:{(string)e.UserState}\r\n");
+                    tbLog.AppendText($"错误:{(string)e.UserState}\r\n");
                     break;
                 default:
                     progressBar1.Value = e.ProgressPercentage;
