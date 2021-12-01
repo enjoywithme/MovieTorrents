@@ -439,7 +439,7 @@ namespace MovieTorrents
             return msg;
         }
         //尝试重命名BBQDDQ的文件
-        public static string RenameBBQDDQFiles()
+        public static string RenameSpecialFiles()
         {
 #if DEBUG
             DownLoadRootPath = "x:\\temp\\";
@@ -456,9 +456,11 @@ namespace MovieTorrents
                     try
                     {
                         var torrent = parser.Parse<Torrent>(file);
-                        if (!torrent.DisplayName.Contains("BBQDDQ")) continue;
 
-                        var name = torrent.DisplayName.Replace("【更多高清电影访问 www.BBQDDQ.com】", "");
+                        var match = Regex.Match(torrent.DisplayName, "【更多高清电影访问.*】");
+                        if(!match.Success) continue;
+                        
+                        var name = torrent.DisplayName.Replace(match.Groups[0].Value, "");
                         name = name.Replace("[中文字幕]", "");
                         var destFile = file.Replace(Path.GetFileNameWithoutExtension(file), name);
                         if (File.Exists(destFile))
@@ -472,7 +474,7 @@ namespace MovieTorrents
                     {
                         sb.AppendLine(e.Message);
                     }
-                    
+
                 }
             }
             catch (Exception e)

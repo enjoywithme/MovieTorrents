@@ -232,7 +232,7 @@ namespace MovieTorrents
         {
             var sb=new StringBuilder();
             sb.AppendLine(BtBtItem.ExtractZipFiles());
-            sb.Append(BtBtItem.RenameBBQDDQFiles());
+            sb.Append(BtBtItem.RenameSpecialFiles());
             sb.Append(BtBtItem.ArchiveTorrentFiles());
             MessageBox.Show(sb.ToString(), Properties.Resources.TextHint, MessageBoxButtons.OK, MessageBoxIcon.Information);
 
