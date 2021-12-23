@@ -13,6 +13,13 @@ namespace mySharedLib
 {
     public static class Utility
     {
+        private static string[] _badWords;
+
+        static Utility()
+        {
+            var badWordsFilePath = Path.Combine(ExecutingAssemblyPath(), "BAD_WORDS.txt");
+            _badWords = File.Exists(badWordsFilePath) ? File.ReadAllLines(badWordsFilePath) : null;
+        }
 
         //标准化文件名
         public static string MakeValidFileName(this string name)
@@ -77,11 +84,9 @@ namespace mySharedLib
         //清洗字符串
         public static string Purify(this string text,string replace=" ")
         {
-            var badWordsFilePath = Path.Combine(ExecutingAssemblyPath(), "BAD_WORDS.txt");
-            if (File.Exists(badWordsFilePath))
+            if(_badWords==null || _badWords.Length==0) return text;
             {
-                var badWords = File.ReadAllLines(badWordsFilePath);
-                foreach (var badWord in badWords)
+                foreach (var badWord in _badWords)
                 {
                     if (string.IsNullOrEmpty(badWord.Trim())) continue;
 

@@ -31,7 +31,7 @@ namespace MovieTorrents
         public static int AutoDownloadLastTid;
         public static DateTime AutoDownloadLastPostDateTime;
         private static Timer _autoDownloadTimer;
-
+        
         //成员
         private string _title;
 
@@ -59,6 +59,8 @@ namespace MovieTorrents
         public decimal Rating { get; private set; }
 
 
+        private static string[] _btItemPrefix;
+
         static BtBtItem()
         {
             BtBtHomeUrl = Utility.GetSetting(nameof(BtBtHomeUrl), "https://www.btbtt.me/");
@@ -74,6 +76,13 @@ namespace MovieTorrents
 #if DEBUG
             DownLoadRootPath = "x:\\temp";
 #endif
+
+            _btItemPrefix = null;
+            var btPrefixFile = Path.Combine(Utility.ExecutingAssemblyPath(), "BtItemPrefix.txt");
+            if (File.Exists(btPrefixFile))
+            {
+                _btItemPrefix = File.ReadAllLines(btPrefixFile);
+            }
 
         }
 
@@ -457,10 +466,7 @@ namespace MovieTorrents
                     {
                         var torrent = parser.Parse<Torrent>(file);
 
-                        var match = Regex.Match(torrent.DisplayName, "【更多高清电影访问.*】");
-                        if(!match.Success) continue;
-                        
-                        var name = torrent.DisplayName.Replace(match.Groups[0].Value, "");
+                        var name = StripBtPrefix(torrent.DisplayName);
                         name = name.Replace("[中文字幕]", "");
                         var destFile = file.Replace(Path.GetFileNameWithoutExtension(file), name);
                         if (File.Exists(destFile))
@@ -484,6 +490,24 @@ namespace MovieTorrents
 
             return sb.ToString();
         }
+
+        public static string StripBtPrefix(string name)
+        {
+            if (_btItemPrefix == null || _btItemPrefix.Length == 0) return name;
+
+            foreach (var s in _btItemPrefix)
+            {
+                if(string.IsNullOrWhiteSpace(s)) continue;
+                name = Regex.Replace(name, s, "", RegexOptions.IgnoreCase);
+                //var match = Regex.Match(name, s, RegexOptions.IgnoreCase);
+                //if (match.Success) 
+                //    name = name.Replace(match.Groups[0].Value, "");
+
+            }
+
+            return name;
+        }
+
         //将目录下的种子文件转移到收藏目录
         public static string ArchiveTorrentFiles()
         {

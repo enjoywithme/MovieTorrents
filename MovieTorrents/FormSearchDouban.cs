@@ -1,19 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.Web;
-using System.Net;
 using System.IO;
 using System.Diagnostics;
-using System.Runtime.InteropServices;
-using Newtonsoft.Json.Linq;
-using Newtonsoft.Json;
 
 namespace MovieTorrents
 {
@@ -32,7 +21,7 @@ namespace MovieTorrents
         {
             tbOrigTitle.Text = "原标题：" +  _torrentFile.PurifiedName;
             tbSearchText.Text = _torrentFile.FirstName;
-            if(!string.IsNullOrWhiteSpace(tbSearchText.Text))
+            if (!string.IsNullOrWhiteSpace(tbSearchText.Text))
                 DoSearcch();
 
 #if DEBUG

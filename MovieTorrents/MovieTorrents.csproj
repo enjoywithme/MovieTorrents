@@ -169,7 +169,6 @@
     <EmbeddedResource Include="FormSetWatched.resx">
       <DependentUpon>FormSetWatched.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Properties\licenses.licx" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
@@ -205,6 +204,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="BAD_WORDS.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="BtItemPrefix.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Movie.ico" />
