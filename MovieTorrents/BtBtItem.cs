@@ -466,7 +466,7 @@ namespace MovieTorrents
                     {
                         var torrent = parser.Parse<Torrent>(file);
 
-                        var name = StripBtPrefix(torrent.DisplayName);
+                        var name = StripBtPrefix(torrent.DisplayName,file);
                         name = name.Replace("[中文字幕]", "");
                         var destFile = file.Replace(Path.GetFileNameWithoutExtension(file), name);
                         if (File.Exists(destFile))
@@ -491,21 +491,21 @@ namespace MovieTorrents
             return sb.ToString();
         }
 
-        public static string StripBtPrefix(string name)
+        public static string StripBtPrefix(string name,string fileName)
         {
-            if (_btItemPrefix == null || _btItemPrefix.Length == 0) return name;
+            if (_btItemPrefix == null || _btItemPrefix.Length == 0) return fileName;
 
             foreach (var s in _btItemPrefix)
             {
                 if(string.IsNullOrWhiteSpace(s)) continue;
-                name = Regex.Replace(name, s, "", RegexOptions.IgnoreCase);
-                //var match = Regex.Match(name, s, RegexOptions.IgnoreCase);
-                //if (match.Success) 
-                //    name = name.Replace(match.Groups[0].Value, "");
+                var match = Regex.Match(name, s, RegexOptions.IgnoreCase);
+                if (match.Success) 
+                    fileName = name.Replace(match.Groups[0].Value, "");
+                //name = Regex.Replace(name, s, "", RegexOptions.IgnoreCase);
 
             }
 
-            return name;
+            return fileName;
         }
 
         //将目录下的种子文件转移到收藏目录
