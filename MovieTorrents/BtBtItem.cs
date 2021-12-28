@@ -466,8 +466,11 @@ namespace MovieTorrents
                     {
                         var torrent = parser.Parse<Torrent>(file);
 
-                        var name = StripBtPrefix(torrent.DisplayName,file);
+                        var name = StripBtPrefix(torrent.DisplayName,Path.GetFileNameWithoutExtension(file));
                         name = name.Replace("[中文字幕]", "");
+                        if(name==Path.GetFileNameWithoutExtension(file)) 
+                            continue;
+
                         var destFile = file.Replace(Path.GetFileNameWithoutExtension(file), name);
                         if (File.Exists(destFile))
                         {

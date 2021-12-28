@@ -34,6 +34,8 @@ namespace MovieTorrents
         private const int OperationProcessingAddedFile = 2;
         private const int OperationClearFile = 3;
 
+        private string _searchText;
+
         private enum OperationType
         {
             None,
@@ -323,24 +325,19 @@ namespace MovieTorrents
         #region 搜索记录
         private void tbSearchText_TextChanged(object sender, EventArgs e)
         {
+            _searchText = tbSearchText.Text;
             DoSearch(true);
-        }
-
-        private void tbSearchText_KeyDown(object sender, KeyEventArgs e)
-        {
-            if (e.KeyCode == Keys.Return) DoSearch();
         }
 
 
         private void DoSearch(bool checkLastSearch = false)
         {
-            var text = tbSearchText.Text.Trim();
-            if (checkLastSearch && string.Compare(text, _lastSearchText, StringComparison.InvariantCultureIgnoreCase) == 0) return;
-            _lastSearchText = text;
+            if (checkLastSearch && string.Compare(_searchText, _lastSearchText, StringComparison.InvariantCultureIgnoreCase) == 0) return;
+            _lastSearchText = _searchText;
 
             if (!tsmiFilterRecent.Checked && !tsmiFilterSeelater.Checked)
             {
-                if (string.IsNullOrEmpty(text) || (text.Length <= 2 && text.All(x => (int)x <= 127)))
+                if (string.IsNullOrEmpty(_searchText) || (_searchText.Length <= 2 && _searchText.All(x => (int)x <= 127)))
                 {
                     DisplayInfo("输入的搜素文字过少", false, false);
                     return;
@@ -371,7 +368,7 @@ namespace MovieTorrents
 
             Task.Run( async () =>
             {
-                var (torrents,msg) = await TorrentFile.ExecuteSearch(text, _queryTokenSource.Token);
+                var (torrents,msg) = await TorrentFile.ExecuteSearch(_searchText, _queryTokenSource.Token);
                 Interlocked.Exchange(ref _currentOperation, OperationNone);
 
                 if (!string.IsNullOrEmpty(msg))
