@@ -14,11 +14,22 @@ namespace mySharedLib
     public static class Utility
     {
         private static string[] _badWords;
+        private static string[] _badNames;
+
 
         static Utility()
         {
+            ReadBadWords();
+        }
+
+        //读取bad_words
+        public static void ReadBadWords()
+        {
             var badWordsFilePath = Path.Combine(ExecutingAssemblyPath(), "BAD_WORDS.txt");
             _badWords = File.Exists(badWordsFilePath) ? File.ReadAllLines(badWordsFilePath) : null;
+
+            var badNamesFilePath = Path.Combine(ExecutingAssemblyPath(), "BAD_NAMES.txt");
+            _badNames = File.Exists(badWordsFilePath) ? File.ReadAllLines(badNamesFilePath) : null;
         }
 
         //标准化文件名
@@ -94,13 +105,21 @@ namespace mySharedLib
                     switch (splits.Length)
                     {
                         case 0:
-                            continue;
+                           continue;//只能是1或者2
                         case 2:
                             replace = splits[1];
                             break;
                     }
 
-                    text =  Regex.Replace(text, badWord.Trim(), replace, RegexOptions.IgnoreCase);
+                    if (splits[0].StartsWith("regx:"))
+                    {
+                        splits[0] = splits[0].Replace("regx:", "");
+                        text =  Regex.Replace(text, splits[0], replace, RegexOptions.IgnoreCase);
+                    }
+                    else
+                    {
+                        text = text.Replace(splits[0], replace);
+                    }
                 }
             }
             //var cleaned = Regex.Replace(text, "\\b" + String.Join("\\b|\\b", PRE_CLEARS) + "\\b", "", RegexOptions.IgnoreCase);
@@ -109,6 +128,39 @@ namespace mySharedLib
             //cleaned = Regex.Replace(cleaned, "\\b" + String.Join("\\b|\\b", RELEASE_GROUPS) + "\\b", "", RegexOptions.IgnoreCase);
             //替换多个空格为一个空格 https://stackoverflow.com/questions/1615559/convert-a-unicode-string-to-an-escaped-ascii-string
             text = Regex.Replace(text, "[ ]{2,}"," ");
+            return text.Trim();
+        }
+
+        //清洗文件名
+        public static string PurifyName(this string text, string replace = "")
+        {
+            if (_badNames == null || _badNames.Length == 0) return text;
+            {
+                foreach (var badName in _badNames)
+                {
+                    if (string.IsNullOrEmpty(badName.Trim())) continue;
+
+                    var splits = badName.Split();
+                    switch (splits.Length)
+                    {
+                        case 0:
+                            continue;//只能是1或者2
+                        case 2:
+                            replace = splits[1];
+                            break;
+                    }
+
+                    if (splits[0].StartsWith("regx:"))
+                    {
+                        splits[0] = splits[0].Replace("regx:", "");
+                        text = Regex.Replace(text, splits[0], replace, RegexOptions.IgnoreCase);
+                    }
+                    else
+                    {
+                        text = text.Replace(splits[0], replace);
+                    }
+                }
+            }
             return text.Trim();
         }
 

@@ -102,6 +102,7 @@
             this.tsbDelete = new System.Windows.Forms.ToolStripButton();
             this.tsbSearchDouban = new System.Windows.Forms.ToolStripButton();
             this.tsbCopyDouban = new System.Windows.Forms.ToolStripButton();
+            this.tsbNormalize = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.tsbFindSimilar = new System.Windows.Forms.ToolStripButton();
             this.tsbRating0 = new System.Windows.Forms.ToolStripButton();
@@ -523,7 +524,7 @@
             // 
             this.notifyIcon1.BalloonTipIcon = System.Windows.Forms.ToolTipIcon.Info;
             this.notifyIcon1.BalloonTipText = "双击恢复窗口";
-            this.notifyIcon1.BalloonTipTitle = Properties.Resources.TextHint;
+            this.notifyIcon1.BalloonTipTitle = global::MovieTorrents.Properties.Resources.TextHint;
             this.notifyIcon1.Text = "Movie torrents";
             this.notifyIcon1.Visible = true;
             this.notifyIcon1.BalloonTipClicked += new System.EventHandler(this.notifyIcon1_BalloonTipClicked);
@@ -655,6 +656,7 @@
             this.toolStripButton1,
             this.toolStripSeparator1,
             this.tsbMove,
+            this.tsbNormalize,
             this.tsbDelete,
             this.tsbSearchDouban,
             this.tsbCopyDouban,
@@ -723,6 +725,15 @@
             this.tsbCopyDouban.Size = new System.Drawing.Size(23, 22);
             this.tsbCopyDouban.Text = "拷贝信息";
             this.tsbCopyDouban.ToolTipText = "设置豆瓣信息为勾选项";
+            // 
+            // tsbNormalize
+            // 
+            this.tsbNormalize.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.tsbNormalize.Image = global::MovieTorrents.Properties.Resources.Pencil_and_Ruler;
+            this.tsbNormalize.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tsbNormalize.Name = "tsbNormalize";
+            this.tsbNormalize.Size = new System.Drawing.Size(23, 22);
+            this.tsbNormalize.Text = "规范名称";
             // 
             // toolStripSeparator2
             // 
@@ -921,6 +932,7 @@
         private System.Windows.Forms.ToolStripButton tsbRating8;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator4;
         private System.Windows.Forms.ToolStripButton tsbRating9;
+        private System.Windows.Forms.ToolStripButton tsbNormalize;
     }
 }
 

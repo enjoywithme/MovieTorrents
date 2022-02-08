@@ -175,17 +175,7 @@ namespace MovieTorrents
         public string keyname { get; set; }
         public string casts { get; set; }
         public string directors { get; set; }
-        private string _name;
-        public string name
-        {
-            get => _name;
-            set
-            {
-                _name = value;
-                PurifiedName = _name.Purify();
-                FirstName = PurifiedName.ExtractFirstToken();
-            }
-        }
+        public string name { get; set; }
 
         public string otherName { get; set; }
         public string ext { get; set; }
@@ -203,9 +193,10 @@ namespace MovieTorrents
         public string doubanid { get; set; }
         public string FullName => area + path + name + ext;
 
-        public string PurifiedName { get; set; }
+        public string PurifiedName => name.Purify();
 
-        public string FirstName { get; set; }
+
+        public string FirstName => PurifiedName.ExtractFirstToken();
 
         public DateTime SeeDate
         {
@@ -748,20 +739,23 @@ where not exists (select 1 from tb_file where hdd_nid={_hdd_nid} and path=$path 
             return ok;
         }
 
-        public bool MoveTo(string destFolder, out string msg)
+        //移动重命名文件
+        public (bool,string) MoveTo(string destFolder,string destName=null)
         {
-            msg = string.Empty;
 
             if (!File.Exists(FullName))
             {
-                msg = $"文件{FullName} 不存在。";
-                return false;
+                return (false, $"文件{FullName} 不存在。");
             }
 
             var mDbConnection = new SQLiteConnection(DbConnectionString);
 
             var ok=true;
-            var newPath = destFolder.Substring(Path.GetPathRoot(destFolder).Length) + "\\";
+            var newPath = string.IsNullOrEmpty(destFolder)?path:destFolder.Substring(Path.GetPathRoot(destFolder).Length) + "\\";//取根目录下的相对位置
+            var newName = string.IsNullOrEmpty(destName) ? name : destName;
+            var newFullName = area + newPath  + newName + ext;
+
+            var msg = "";
 
             try
             {
@@ -769,25 +763,25 @@ where not exists (select 1 from tb_file where hdd_nid={_hdd_nid} and path=$path 
                 try
                 {
 
-                    var command = new SQLiteCommand("select path from tb_file where file_nid=$fid",mDbConnection);
-                    command.Parameters.AddWithValue("$fid", fid);
+                    //var command = new SQLiteCommand("select path from tb_file where file_nid=$fid",mDbConnection);
+                    //command.Parameters.AddWithValue("$fid", fid);
 
-                    var reader = command.ExecuteReader();
-                    var ret = reader.Read();
-                    var currentPath = "";
-                    if (ret)
+                    //var reader = command.ExecuteReader();
+                    //var ret = reader.Read();
+                    //var currentPath = "";
+                    //if (ret)
+                    //{
+                    //    currentPath = reader.GetString(0);
+                    //}
+                    //reader.Close();
+
+                    if (!newFullName.Equals(FullName, StringComparison.InvariantCultureIgnoreCase))
                     {
-                        currentPath = reader.GetString(0);
-                    }
-                    reader.Close();
+                        File.Move(FullName, newFullName);
 
-                    if (ret && !currentPath.Equals(newPath, StringComparison.InvariantCultureIgnoreCase))
-                    {
-                        var destFullName = destFolder + "\\" + name + ext;
-                        File.Move(FullName, destFullName);
-
-                        command = new SQLiteCommand("update tb_file set path=$path where file_nid=$fid", mDbConnection);
+                        var command = new SQLiteCommand("update tb_file set path=$path,name=$name where file_nid=$fid", mDbConnection);
                         command.Parameters.AddWithValue("$path", newPath);
+                        command.Parameters.AddWithValue("$name", newName);
                         command.Parameters.AddWithValue("$fid", fid);
                         ok = command.ExecuteNonQuery() > 0;
                     }
@@ -811,7 +805,7 @@ where not exists (select 1 from tb_file where hdd_nid={_hdd_nid} and path=$path 
 
             if (ok) path = newPath;
 
-            return ok;
+            return (ok,msg);
         }
 
         public bool DeleteFromDb(bool deleteFile, out string msg)

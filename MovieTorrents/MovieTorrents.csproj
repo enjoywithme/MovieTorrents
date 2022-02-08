@@ -206,9 +206,10 @@
     <Content Include="BAD_WORDS.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="BtItemPrefix.txt">
+    <Content Include="BAD_NAMES.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="BtItemPrefix.txt" />
     <Content Include="Movie.ico" />
     <None Include="README.md" />
     <None Include="Resources\dou.png" />
@@ -225,6 +226,7 @@
     <None Include="Resources\Page-Copy.ico" />
     <None Include="Resources\Blogs.ico" />
     <None Include="Resources\Move-To-Folder.ico" />
+    <None Include="Resources\Pencil-and-Ruler.ico" />
     <Content Include="temp\sample_subject_standard.html">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

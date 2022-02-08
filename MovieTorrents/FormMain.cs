@@ -99,6 +99,7 @@ namespace MovieTorrents
             tsbDelete.Click += tsmiDelete_Click;//删除
             tsbCopyDouban.Click += tsmiCopyDouban_Click;//拷贝豆瓣信息
             tsbMove.Click += tsmiMove_Click;//移动到文件夹
+            tsbNormalize.Click += TsbNormalizeName;//规范文件名称
 
             tsbRating0.Click += (o, a) => { tbSearchText.Text = "Rating:0";};
             tsbRating8.Click += (o, a) => { tbSearchText.Text = "Rating:>8"; };
@@ -875,6 +876,7 @@ namespace MovieTorrents
             RefreshSelected(torrentFile);
         }
 
+        //删除按钮
         private void tsmiDelete_Click(object sender, EventArgs e)
         {
             if (lvResults.SelectedItems.Count == 0)
@@ -905,6 +907,7 @@ namespace MovieTorrents
             
         }
 
+        //移动文件按钮
         private void tsmiMove_Click(object sender, EventArgs e)
         {
             if (string.IsNullOrEmpty(TorrentFile.TorrentFilePath))
@@ -930,12 +933,45 @@ namespace MovieTorrents
             foreach (ListViewItem selectedItem in lvResults.SelectedItems)
             {
                 var torrentFile = (TorrentFile)selectedItem.Tag;
-                if (!torrentFile.MoveTo(formBrowseTorrentFolder.SelectedPath, out var msg))
+                var (ret, msg) = torrentFile.MoveTo(formBrowseTorrentFolder.SelectedPath);
+                if(!ret)
                     errorMsg.AppendLine(msg);
                 else moved++;
             }
             IgnoreFileWatch(false);
             MessageBox.Show($"成功移动{moved}条记录。\r\n{errorMsg}", Properties.Resources.TextHint, MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
+
+        //规范文件名称
+        private void TsbNormalizeName(object sender, EventArgs e)
+        {
+
+            if (lvResults.SelectedItems.Count == 0)
+            {
+                MessageBox.Show("没有选择任何记录！", Properties.Resources.TextHint, MessageBoxButtons.OK,
+                    MessageBoxIcon.Exclamation);
+                return;
+            }
+
+            IgnoreFileWatch();
+            var errorMsg = new StringBuilder();
+            var renamed = 0;
+            foreach (ListViewItem selectedItem in lvResults.SelectedItems)
+            {
+                var torrentFile = (TorrentFile)selectedItem.Tag;
+                Utility.ReadBadWords();
+                var newName = torrentFile.name.PurifyName().NormalizeTorrentFileName();
+                var (ret, msg) = torrentFile.MoveTo(null, newName);
+                if (!ret)
+                    errorMsg.AppendLine(msg);
+                else renamed++;
+            }
+
+
+            IgnoreFileWatch(false);
+            MessageBox.Show($"成功重命名{renamed}条记录。\r\n{errorMsg}", Properties.Resources.TextHint, MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+            DoSearch();
         }
 
         private void tsmiCopyPath_Click(object sender, EventArgs e)
