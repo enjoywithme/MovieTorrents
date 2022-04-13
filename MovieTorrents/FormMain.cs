@@ -100,6 +100,7 @@ namespace MovieTorrents
             tsbCopyDouban.Click += tsmiCopyDouban_Click;//拷贝豆瓣信息
             tsbMove.Click += tsmiMove_Click;//移动到文件夹
             tsbNormalize.Click += TsbNormalizeName;//规范文件名称
+            tsmiClearDuplicates.Click += tsmiClearDuplicates_Click;//清理重复文件
 
             tsbRating0.Click += (o, a) => { tbSearchText.Text = "Rating:0";};
             tsbRating8.Click += (o, a) => { tbSearchText.Text = "Rating:>8"; };
@@ -647,7 +648,7 @@ namespace MovieTorrents
                 string msg;
                 bool error;
                 (clearFileRead, clearFileCounted,msg,error) = await TorrentFile.DoClearFile(_operTokenSource.Token);
-                DisplayInfo($"{msg}。总共读取{clearFileRead}记录，清理了{clearFileCounted}条无效记录!", error);
+                DisplayInfo($"{msg}总共读取{clearFileRead}记录，清理了{clearFileCounted}条无效记录!", error);
 
             });
 
@@ -655,7 +656,40 @@ namespace MovieTorrents
 
         }
 
+        //清理重复选项
+        private async void tsmiClearDuplicates_Click(object sender, EventArgs e)
+        {
+            if (Interlocked.CompareExchange(ref _currentOperation, OperationClearFile, OperationNone) != OperationNone)
+            {
+                MessageBox.Show("正在执行其他操作，等待完成后操作", Properties.Resources.TextHint, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
 
+
+            if (_operTokenSource != null)
+            {
+                _operTokenSource.Dispose();
+                _operTokenSource = null;
+            }
+
+            _operTokenSource = new CancellationTokenSource();
+
+            DisplayInfo("清理重复文件中...", false, false);
+
+
+            await Task.Run(async () =>
+            {
+                int clearFileCounted;
+                string msg;
+                bool error;
+                (clearFileCounted, msg, error) = await TorrentFile.DoClearDuplicate(_operTokenSource.Token);
+                DisplayInfo($"{msg}清理了{clearFileCounted}条重复记录!", error);
+
+            });
+
+            Interlocked.Exchange(ref _currentOperation, OperationNone);
+
+        }
 
         #endregion
 

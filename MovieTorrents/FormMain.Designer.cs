@@ -36,6 +36,7 @@
             this.toolStripMenuItem7 = new System.Windows.Forms.ToolStripSeparator();
             this.tsmiScanFile = new System.Windows.Forms.ToolStripMenuItem();
             this.tsmiClearRecords = new System.Windows.Forms.ToolStripMenuItem();
+            this.tsmiClearDuplicates = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripSeparator();
             this.tsmiExit = new System.Windows.Forms.ToolStripMenuItem();
             this.过滤TToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -99,10 +100,10 @@
             this.toolStripButton1 = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.tsbMove = new System.Windows.Forms.ToolStripButton();
+            this.tsbNormalize = new System.Windows.Forms.ToolStripButton();
             this.tsbDelete = new System.Windows.Forms.ToolStripButton();
             this.tsbSearchDouban = new System.Windows.Forms.ToolStripButton();
             this.tsbCopyDouban = new System.Windows.Forms.ToolStripButton();
-            this.tsbNormalize = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.tsbFindSimilar = new System.Windows.Forms.ToolStripButton();
             this.tsbRating0 = new System.Windows.Forms.ToolStripButton();
@@ -138,6 +139,7 @@
             this.toolStripMenuItem7,
             this.tsmiScanFile,
             this.tsmiClearRecords,
+            this.tsmiClearDuplicates,
             this.toolStripMenuItem2,
             this.tsmiExit});
             this.文件FToolStripMenuItem.Name = "文件FToolStripMenuItem";
@@ -147,38 +149,44 @@
             // tsmiShowStatistics
             // 
             this.tsmiShowStatistics.Name = "tsmiShowStatistics";
-            this.tsmiShowStatistics.Size = new System.Drawing.Size(164, 22);
+            this.tsmiShowStatistics.Size = new System.Drawing.Size(180, 22);
             this.tsmiShowStatistics.Text = "统计(&T)";
             this.tsmiShowStatistics.Click += new System.EventHandler(this.tsmiShowStatistics_Click);
             // 
             // toolStripMenuItem7
             // 
             this.toolStripMenuItem7.Name = "toolStripMenuItem7";
-            this.toolStripMenuItem7.Size = new System.Drawing.Size(161, 6);
+            this.toolStripMenuItem7.Size = new System.Drawing.Size(177, 6);
             // 
             // tsmiScanFile
             // 
             this.tsmiScanFile.Name = "tsmiScanFile";
-            this.tsmiScanFile.Size = new System.Drawing.Size(164, 22);
+            this.tsmiScanFile.Size = new System.Drawing.Size(180, 22);
             this.tsmiScanFile.Text = "扫描种子文件(&S)";
             this.tsmiScanFile.Click += new System.EventHandler(this.tsmiScanFile_Click);
             // 
             // tsmiClearRecords
             // 
             this.tsmiClearRecords.Name = "tsmiClearRecords";
-            this.tsmiClearRecords.Size = new System.Drawing.Size(164, 22);
-            this.tsmiClearRecords.Text = "清除无效记录(&C)";
+            this.tsmiClearRecords.Size = new System.Drawing.Size(180, 22);
+            this.tsmiClearRecords.Text = "清理无效记录(&C)";
             this.tsmiClearRecords.Click += new System.EventHandler(this.tsmiClearRecords_Click);
+            // 
+            // tsmiClearDuplicates
+            // 
+            this.tsmiClearDuplicates.Name = "tsmiClearDuplicates";
+            this.tsmiClearDuplicates.Size = new System.Drawing.Size(180, 22);
+            this.tsmiClearDuplicates.Text = "清理重复记录(&D)";
             // 
             // toolStripMenuItem2
             // 
             this.toolStripMenuItem2.Name = "toolStripMenuItem2";
-            this.toolStripMenuItem2.Size = new System.Drawing.Size(161, 6);
+            this.toolStripMenuItem2.Size = new System.Drawing.Size(177, 6);
             // 
             // tsmiExit
             // 
             this.tsmiExit.Name = "tsmiExit";
-            this.tsmiExit.Size = new System.Drawing.Size(164, 22);
+            this.tsmiExit.Size = new System.Drawing.Size(180, 22);
             this.tsmiExit.Text = "退出(X)";
             this.tsmiExit.Click += new System.EventHandler(this.tsmiExit_Click);
             // 
@@ -697,6 +705,15 @@
             this.tsbMove.Size = new System.Drawing.Size(23, 22);
             this.tsbMove.Text = "移动";
             // 
+            // tsbNormalize
+            // 
+            this.tsbNormalize.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.tsbNormalize.Image = global::MovieTorrents.Properties.Resources.Pencil_and_Ruler;
+            this.tsbNormalize.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tsbNormalize.Name = "tsbNormalize";
+            this.tsbNormalize.Size = new System.Drawing.Size(23, 22);
+            this.tsbNormalize.Text = "规范名称";
+            // 
             // tsbDelete
             // 
             this.tsbDelete.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
@@ -725,15 +742,6 @@
             this.tsbCopyDouban.Size = new System.Drawing.Size(23, 22);
             this.tsbCopyDouban.Text = "拷贝信息";
             this.tsbCopyDouban.ToolTipText = "设置豆瓣信息为勾选项";
-            // 
-            // tsbNormalize
-            // 
-            this.tsbNormalize.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.tsbNormalize.Image = global::MovieTorrents.Properties.Resources.Pencil_and_Ruler;
-            this.tsbNormalize.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.tsbNormalize.Name = "tsbNormalize";
-            this.tsbNormalize.Size = new System.Drawing.Size(23, 22);
-            this.tsbNormalize.Text = "规范名称";
             // 
             // toolStripSeparator2
             // 
@@ -933,6 +941,7 @@
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator4;
         private System.Windows.Forms.ToolStripButton tsbRating9;
         private System.Windows.Forms.ToolStripButton tsbNormalize;
+        private System.Windows.Forms.ToolStripMenuItem tsmiClearDuplicates;
     }
 }
 

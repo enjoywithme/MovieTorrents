@@ -11,7 +11,6 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using AngleSharp.Browser;
 using MovieTorrents.Common;
 using mySharedLib;
 
@@ -585,8 +584,8 @@ where not exists (select 1 from tb_file where hdd_nid={_hdd_nid} and path=$path 
 
                 reader.Close();
 
-
-                using var command = new SQLiteCommand("delete from tb_file where file_nid=$nid", connection);
+                //update the file not exists field
+                using var command = new SQLiteCommand("update tb_file set filenotexists=1 where file_nid=$nid ", connection);
                 command.Parameters.Add("$nid", DbType.Int32);
                 command.Prepare();
 
@@ -596,21 +595,227 @@ where not exists (select 1 from tb_file where hdd_nid={_hdd_nid} and path=$path 
                     await command.ExecuteNonQueryAsync(cancelToken);
                     if (cancelToken.IsCancellationRequested) break;
 
-                    counterCleared++;
                 }
+
+                //delete the record
+                using var deleteCommand =
+                    new SQLiteCommand(
+                        "delete from tb_file where filenotexists=1 and doubanid<>0 and seeflag=0 and seecomment='' and seelater=0",
+                        connection);
+                counterCleared = await deleteCommand.ExecuteNonQueryAsync(cancelToken);
 
 
             }
             catch
                 (Exception e)
             {
-                msg = e.Message;
+                msg = $"{e.Message}。";
                 error = true;
             }
 
             return (counterRead, counterCleared, msg, error);
 
         }
+
+        //清理重复项
+        public static async Task<(int counterCleared, string msg, bool error)> DoClearDuplicate(CancellationToken cancelToken)
+        {
+
+            var counterCleared = 0;
+            var msg = string.Empty;
+            var error = false;
+            
+            try
+            {
+                using var connection = new SQLiteConnection(DbConnectionString);
+
+                //Find the duplicated names
+                await connection.OpenAsync(cancelToken);
+     
+
+                //merge the information
+                var torrentUpdates = new List<TorrentFile>();
+                var torrentDeletes = new List<TorrentFile>();
+
+                //foreach (var name in duplicateNames)
+                {
+                    TorrentFile firstTorrent = null;
+                    var lastName = "";
+                    using var commandMerge =
+                        new SQLiteCommand(
+                            "select * from filelist_view where name in (select name from tb_file group by name having count(name)>1) order by name,filenotexists,file_nid",
+                            connection);
+                    using var readerMerge = await commandMerge.ExecuteReaderAsync(cancelToken);
+                    while (await readerMerge.ReadAsync(cancelToken))
+                    {
+                        var torrentFile = new TorrentFile(readerMerge);
+
+                        if (lastName != (string)readerMerge["name"])
+                        {
+                            firstTorrent = null;
+                            lastName= (string)readerMerge["name"];
+                            Debug.WriteLine(lastName);
+                        }
+
+                        if (firstTorrent == null)
+                        {
+                            firstTorrent = torrentFile;
+                            torrentUpdates.Add(firstTorrent);
+
+                            continue;
+                        }
+
+                        #region Merge fileds
+
+
+                        if (string.IsNullOrEmpty(firstTorrent.doubanid) && !string.IsNullOrEmpty(torrentFile.doubanid))
+                            firstTorrent.doubanid = torrentFile.doubanid;
+
+                        if (string.IsNullOrEmpty(firstTorrent.keyname) && !string.IsNullOrEmpty(torrentFile.keyname))
+                            firstTorrent.keyname = torrentFile.keyname;
+
+                        if (string.IsNullOrEmpty(firstTorrent.casts) && !string.IsNullOrEmpty(torrentFile.casts))
+                            firstTorrent.casts = torrentFile.casts;
+
+                        if (string.IsNullOrEmpty(firstTorrent.directors) && !string.IsNullOrEmpty(torrentFile.directors))
+                            firstTorrent.directors = torrentFile.directors;
+
+                        if (string.IsNullOrEmpty(firstTorrent.otherName) && !string.IsNullOrEmpty(torrentFile.otherName))
+                            firstTorrent.otherName = torrentFile.otherName; 
+                        
+                        if (firstTorrent.rating==0 && torrentFile.rating!=0)
+                            firstTorrent.rating = torrentFile.rating; 
+                        
+                        if (string.IsNullOrEmpty(firstTorrent.year) && !string.IsNullOrEmpty(torrentFile.year))
+                            firstTorrent.year = torrentFile.year;
+
+                        if (firstTorrent.seelater == 0 && torrentFile.seelater != 0)
+                            firstTorrent.seelater = torrentFile.seelater;
+
+                        if (firstTorrent.seeflag == 0 && torrentFile.seeflag != 0)
+                            firstTorrent.seeflag = torrentFile.seeflag;
+
+                        if (firstTorrent.seenowant == 0 && torrentFile.seenowant != 0)
+                            firstTorrent.seenowant = torrentFile.seenowant;
+
+                        if (string.IsNullOrEmpty(firstTorrent.seedate) && !string.IsNullOrEmpty(torrentFile.seedate))
+                            firstTorrent.seedate = torrentFile.seedate; 
+                        
+                        if (string.IsNullOrEmpty(firstTorrent.seecomment) && !string.IsNullOrEmpty(torrentFile.seecomment))
+                            firstTorrent.seecomment = torrentFile.seecomment;
+
+                        if (string.IsNullOrEmpty(firstTorrent.genres) && !string.IsNullOrEmpty(torrentFile.genres))
+                            firstTorrent.genres = torrentFile.genres; 
+                        
+                        if (string.IsNullOrEmpty(firstTorrent.zone) && !string.IsNullOrEmpty(torrentFile.zone))
+                            firstTorrent.zone = torrentFile.zone; 
+                        
+                        if (string.IsNullOrEmpty(firstTorrent.posterpath) && !string.IsNullOrEmpty(torrentFile.posterpath))
+                            firstTorrent.posterpath = torrentFile.posterpath;
+                        #endregion
+
+                        torrentDeletes.Add(torrentFile);
+
+                    }
+
+                    readerMerge.Close();
+                }
+
+                
+
+                //update 
+                using var commandUpdate = new SQLiteCommand(@"update tb_file set 
+year =$year, 
+zone =$zone,
+keyname =$keyname, 
+othername =$othername, 
+genres =$genres,
+seelater =$seelater, 
+seeflag =$seeflag, 
+seedate =$seedate,
+seenowant=$seenowant, 
+seecomment =$seecomment,
+doubanid =$doubanid, 
+rating =$rating, 
+posterpath =$posterpath, 
+casts =$casts, 
+directors =$directors 
+where file_nid =$fid", connection);
+                commandUpdate.Parameters.Add("$fid", DbType.Int32);
+                commandUpdate.Parameters.Add("$year", DbType.String);
+                commandUpdate.Parameters.Add("$zone", DbType.String);
+                commandUpdate.Parameters.Add("$keyname", DbType.String);
+                commandUpdate.Parameters.Add("$othername", DbType.String);
+                commandUpdate.Parameters.Add("$genres", DbType.String);
+                commandUpdate.Parameters.Add("$seelater", DbType.Int32);
+                commandUpdate.Parameters.Add("$seeflag", DbType.Int32);
+                commandUpdate.Parameters.Add("$seenowant", DbType.Int32);
+                commandUpdate.Parameters.Add("$seedate", DbType.String);
+                commandUpdate.Parameters.Add("$seecomment", DbType.String);
+                commandUpdate.Parameters.Add("$doubanid", DbType.String);
+                commandUpdate.Parameters.Add("$rating", DbType.Double);
+                commandUpdate.Parameters.Add("$posterpath", DbType.String);
+                commandUpdate.Parameters.Add("$casts", DbType.String);
+                commandUpdate.Parameters.Add("$directors", DbType.String);
+
+
+                commandUpdate.Prepare();
+
+                foreach (var torrent in torrentUpdates)
+                {
+                    commandUpdate.Parameters["$fid"].Value = torrent.fid;
+                    commandUpdate.Parameters["$year"].Value = torrent.year;
+                    commandUpdate.Parameters["$zone"].Value = torrent.zone;
+                    commandUpdate.Parameters["$keyname"].Value = torrent.keyname;
+                    commandUpdate.Parameters["$othername"].Value = torrent.otherName;
+                    commandUpdate.Parameters["$genres"].Value = torrent.genres;
+                    commandUpdate.Parameters["$seelater"].Value = torrent.seelater;
+                    commandUpdate.Parameters["$seeflag"].Value = torrent.seeflag;
+                    commandUpdate.Parameters["$seenowant"].Value = torrent.seenowant;
+                    commandUpdate.Parameters["$seedate"].Value = torrent.seedate;
+                    commandUpdate.Parameters["$seecomment"].Value = torrent.seecomment;
+                    commandUpdate.Parameters["$doubanid"].Value = torrent.doubanid;
+                    commandUpdate.Parameters["$rating"].Value = torrent.rating;
+                    commandUpdate.Parameters["$posterpath"].Value = torrent.posterpath;
+                    commandUpdate.Parameters["$casts"].Value = torrent.casts;
+                    commandUpdate.Parameters["$directors"].Value = torrent.directors;
+                    
+                    Debug.WriteLine($"Update:{torrent.FullName}");
+
+                    await commandUpdate.ExecuteNonQueryAsync(cancelToken);
+                    if (cancelToken.IsCancellationRequested) break;
+
+                }
+
+                //delete
+                using var deleteCommand = new SQLiteCommand("delete from tb_file where file_nid =$fid", connection);
+                deleteCommand.Parameters.Add("$fid", DbType.Int32);
+                deleteCommand.Prepare();
+                foreach (var torrentFile in torrentDeletes)
+                {
+                    if (File.Exists(torrentFile.FullName))
+                        File.Delete(torrentFile.FullName);
+                    Debug.WriteLine($"Delete:{torrentFile.FullName}");
+
+                    deleteCommand.Parameters["$fid"].Value = torrentFile.fid;
+                    counterCleared += await deleteCommand.ExecuteNonQueryAsync(cancelToken);
+
+                }
+
+            }
+            catch
+                (Exception e)
+            {
+                msg = $"{e.Message}。";
+
+                error = true;
+            }
+
+            return (counterCleared, msg, error);
+
+        }
+        //
+
         #endregion
 
 
