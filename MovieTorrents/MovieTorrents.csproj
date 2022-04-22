@@ -227,6 +227,8 @@
     <None Include="Resources\Blogs.ico" />
     <None Include="Resources\Move-To-Folder.ico" />
     <None Include="Resources\Pencil-and-Ruler.ico" />
+    <None Include="Resources\Folderupload16.png" />
+    <None Include="Resources\Folderupload32.png" />
     <Content Include="temp\sample_subject_standard.html">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

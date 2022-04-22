@@ -123,6 +123,26 @@ namespace MovieTorrents.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap Folderupload16 {
+            get {
+                object obj = ResourceManager.GetObject("Folderupload16", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Folderupload32 {
+            get {
+                object obj = ResourceManager.GetObject("Folderupload32", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap InfoBlue32 {
             get {
                 object obj = ResourceManager.GetObject("InfoBlue32", resourceCulture);
@@ -225,6 +245,15 @@ namespace MovieTorrents.Properties {
         internal static string TextHint {
             get {
                 return ResourceManager.GetString("TextHint", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 请选择一个正确的目录.
+        /// </summary>
+        internal static string TextSelectCorrectFolder {
+            get {
+                return ResourceManager.GetString("TextSelectCorrectFolder", resourceCulture);
             }
         }
     }

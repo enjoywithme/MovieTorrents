@@ -530,7 +530,7 @@ namespace MovieTorrents
                         continue;
                     }
 
-                    var destPath = Path.Combine(TorrentFile.TorrentFilePath,
+                    var destPath = Path.Combine(TorrentFile.TorrentRootPath,
                         TorrentFile.ArchiveYearSubPath(year));
                     destFileName = Path.Combine(destPath, destFileName);
                     Debug.WriteLine(destFileName);

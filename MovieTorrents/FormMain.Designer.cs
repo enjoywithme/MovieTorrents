@@ -79,12 +79,14 @@
             this.tsmiCopyFile = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem4 = new System.Windows.Forms.ToolStripSeparator();
             this.tsmiMove = new System.Windows.Forms.ToolStripMenuItem();
+            this.tsmiMovePath = new System.Windows.Forms.ToolStripMenuItem();
             this.tsmiDelete = new System.Windows.Forms.ToolStripMenuItem();
             this.notifyIcon1 = new System.Windows.Forms.NotifyIcon(this.components);
             this.lvResults = new System.Windows.Forms.ListView();
             this.columnHeaderName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeaderRating = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeaderYear = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeaderPath = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeaderSeelater = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeaderSeenowant = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeaderSeen = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -100,9 +102,11 @@
             this.toolStripButton1 = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.tsbMove = new System.Windows.Forms.ToolStripButton();
+            this.tsbMovePath = new System.Windows.Forms.ToolStripButton();
             this.tsbNormalize = new System.Windows.Forms.ToolStripButton();
-            this.tsbDelete = new System.Windows.Forms.ToolStripButton();
+            this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
             this.tsbSearchDouban = new System.Windows.Forms.ToolStripButton();
+            this.tsbDelete = new System.Windows.Forms.ToolStripButton();
             this.tsbCopyDouban = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.tsbFindSimilar = new System.Windows.Forms.ToolStripButton();
@@ -149,44 +153,44 @@
             // tsmiShowStatistics
             // 
             this.tsmiShowStatistics.Name = "tsmiShowStatistics";
-            this.tsmiShowStatistics.Size = new System.Drawing.Size(180, 22);
+            this.tsmiShowStatistics.Size = new System.Drawing.Size(165, 22);
             this.tsmiShowStatistics.Text = "统计(&T)";
             this.tsmiShowStatistics.Click += new System.EventHandler(this.tsmiShowStatistics_Click);
             // 
             // toolStripMenuItem7
             // 
             this.toolStripMenuItem7.Name = "toolStripMenuItem7";
-            this.toolStripMenuItem7.Size = new System.Drawing.Size(177, 6);
+            this.toolStripMenuItem7.Size = new System.Drawing.Size(162, 6);
             // 
             // tsmiScanFile
             // 
             this.tsmiScanFile.Name = "tsmiScanFile";
-            this.tsmiScanFile.Size = new System.Drawing.Size(180, 22);
+            this.tsmiScanFile.Size = new System.Drawing.Size(165, 22);
             this.tsmiScanFile.Text = "扫描种子文件(&S)";
             this.tsmiScanFile.Click += new System.EventHandler(this.tsmiScanFile_Click);
             // 
             // tsmiClearRecords
             // 
             this.tsmiClearRecords.Name = "tsmiClearRecords";
-            this.tsmiClearRecords.Size = new System.Drawing.Size(180, 22);
+            this.tsmiClearRecords.Size = new System.Drawing.Size(165, 22);
             this.tsmiClearRecords.Text = "清理无效记录(&C)";
             this.tsmiClearRecords.Click += new System.EventHandler(this.tsmiClearRecords_Click);
             // 
             // tsmiClearDuplicates
             // 
             this.tsmiClearDuplicates.Name = "tsmiClearDuplicates";
-            this.tsmiClearDuplicates.Size = new System.Drawing.Size(180, 22);
+            this.tsmiClearDuplicates.Size = new System.Drawing.Size(165, 22);
             this.tsmiClearDuplicates.Text = "清理重复记录(&D)";
             // 
             // toolStripMenuItem2
             // 
             this.toolStripMenuItem2.Name = "toolStripMenuItem2";
-            this.toolStripMenuItem2.Size = new System.Drawing.Size(177, 6);
+            this.toolStripMenuItem2.Size = new System.Drawing.Size(162, 6);
             // 
             // tsmiExit
             // 
             this.tsmiExit.Name = "tsmiExit";
-            this.tsmiExit.Size = new System.Drawing.Size(180, 22);
+            this.tsmiExit.Size = new System.Drawing.Size(165, 22);
             this.tsmiExit.Text = "退出(X)";
             this.tsmiExit.Click += new System.EventHandler(this.tsmiExit_Click);
             // 
@@ -432,9 +436,10 @@
             this.tsmiCopyFile,
             this.toolStripMenuItem4,
             this.tsmiMove,
+            this.tsmiMovePath,
             this.tsmiDelete});
             this.lvContextMenu.Name = "lvContextMenu";
-            this.lvContextMenu.Size = new System.Drawing.Size(213, 258);
+            this.lvContextMenu.Size = new System.Drawing.Size(213, 280);
             this.lvContextMenu.Text = "设置已看";
             this.lvContextMenu.Opening += new System.ComponentModel.CancelEventHandler(this.lvContextMenu_Opening);
             // 
@@ -521,6 +526,14 @@
             this.tsmiMove.Text = "移动...(&M)";
             this.tsmiMove.Click += new System.EventHandler(this.tsmiMove_Click);
             // 
+            // tsmiMovePath
+            // 
+            this.tsmiMovePath.Image = global::MovieTorrents.Properties.Resources.Folderupload16;
+            this.tsmiMovePath.Name = "tsmiMovePath";
+            this.tsmiMovePath.Size = new System.Drawing.Size(212, 22);
+            this.tsmiMovePath.Text = "移动路径(&P)";
+            this.tsmiMovePath.Click += new System.EventHandler(this.tsmiMovePath_Click);
+            // 
             // tsmiDelete
             // 
             this.tsmiDelete.Name = "tsmiDelete";
@@ -549,6 +562,7 @@
             this.columnHeaderName,
             this.columnHeaderRating,
             this.columnHeaderYear,
+            this.columnHeaderPath,
             this.columnHeaderSeelater,
             this.columnHeaderSeenowant,
             this.columnHeaderSeen,
@@ -580,6 +594,11 @@
             // 
             this.columnHeaderYear.Text = "年代";
             this.columnHeaderYear.Width = 100;
+            // 
+            // columnHeaderPath
+            // 
+            this.columnHeaderPath.Text = "路径";
+            this.columnHeaderPath.Width = 160;
             // 
             // columnHeaderSeelater
             // 
@@ -664,9 +683,11 @@
             this.toolStripButton1,
             this.toolStripSeparator1,
             this.tsbMove,
+            this.tsbMovePath,
             this.tsbNormalize,
-            this.tsbDelete,
+            this.toolStripSeparator5,
             this.tsbSearchDouban,
+            this.tsbDelete,
             this.tsbCopyDouban,
             this.toolStripSeparator2,
             this.tsbFindSimilar,
@@ -705,6 +726,15 @@
             this.tsbMove.Size = new System.Drawing.Size(23, 22);
             this.tsbMove.Text = "移动";
             // 
+            // tsbMovePath
+            // 
+            this.tsbMovePath.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.tsbMovePath.Image = global::MovieTorrents.Properties.Resources.Folderupload16;
+            this.tsbMovePath.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tsbMovePath.Name = "tsbMovePath";
+            this.tsbMovePath.Size = new System.Drawing.Size(23, 22);
+            this.tsbMovePath.Text = "移动路径";
+            // 
             // tsbNormalize
             // 
             this.tsbNormalize.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
@@ -714,14 +744,10 @@
             this.tsbNormalize.Size = new System.Drawing.Size(23, 22);
             this.tsbNormalize.Text = "规范名称";
             // 
-            // tsbDelete
+            // toolStripSeparator5
             // 
-            this.tsbDelete.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.tsbDelete.Image = global::MovieTorrents.Properties.Resources.Delete;
-            this.tsbDelete.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.tsbDelete.Name = "tsbDelete";
-            this.tsbDelete.Size = new System.Drawing.Size(23, 22);
-            this.tsbDelete.Text = "删除";
+            this.toolStripSeparator5.Name = "toolStripSeparator5";
+            this.toolStripSeparator5.Size = new System.Drawing.Size(6, 25);
             // 
             // tsbSearchDouban
             // 
@@ -732,6 +758,15 @@
             this.tsbSearchDouban.Size = new System.Drawing.Size(23, 22);
             this.tsbSearchDouban.Text = "搜索豆瓣";
             this.tsbSearchDouban.Click += new System.EventHandler(this.tsbSearchDouban_Click);
+            // 
+            // tsbDelete
+            // 
+            this.tsbDelete.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.tsbDelete.Image = global::MovieTorrents.Properties.Resources.Delete;
+            this.tsbDelete.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tsbDelete.Name = "tsbDelete";
+            this.tsbDelete.Size = new System.Drawing.Size(23, 22);
+            this.tsbDelete.Text = "删除";
             // 
             // tsbCopyDouban
             // 
@@ -841,6 +876,7 @@
             this.Name = "FormMain";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Movie torrents";
+            this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FormMain_FormClosing);
             this.Load += new System.EventHandler(this.FormMain_Load);
             this.Resize += new System.EventHandler(this.FormMain_Resize);
@@ -942,6 +978,10 @@
         private System.Windows.Forms.ToolStripButton tsbRating9;
         private System.Windows.Forms.ToolStripButton tsbNormalize;
         private System.Windows.Forms.ToolStripMenuItem tsmiClearDuplicates;
+        private System.Windows.Forms.ColumnHeader columnHeaderPath;
+        private System.Windows.Forms.ToolStripButton tsbMovePath;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator5;
+        private System.Windows.Forms.ToolStripMenuItem tsmiMovePath;
     }
 }
 

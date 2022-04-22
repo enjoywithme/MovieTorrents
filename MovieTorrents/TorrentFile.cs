@@ -95,7 +95,7 @@ namespace MovieTorrents
 
                     var pName = $"@p{command.Parameters.Count}";
                     command.Parameters.AddWithValue(pName, $"%{splits[i]}%");
-                    sb.Append($" and (name like {pName} or keyname like{pName} or othername like {pName} or genres like {pName} or seecomment like {pName})");
+                    sb.Append($" and (name like {pName} or keyname like{pName} or othername like {pName} or genres like {pName} or seecomment like {pName} or path like{pName})");
 
                 }
             }
@@ -248,7 +248,7 @@ namespace MovieTorrents
         public static string Area;
         private static string _shortRootPath;
         public static string CurrentPath;
-        public static string TorrentFilePath { get; set; }
+        public static string TorrentRootPath { get; set; }
         public static string DbConnectionString;
         public static bool CheckTorrentPath(out string msg)
         {
@@ -280,7 +280,7 @@ namespace MovieTorrents
                         _hdd_nid = (byte)reader.GetByte(0);// ["hdd_nid"];
                         Area = (string)reader["area"];
                         _shortRootPath = (string)reader["path"];
-                        TorrentFile.TorrentFilePath = Area + _shortRootPath;
+                        TorrentFile.TorrentRootPath = Area + _shortRootPath;
                     }
                 }
                 catch (Exception e)
@@ -1011,6 +1011,69 @@ where file_nid =$fid", connection);
             if (ok) path = newPath;
 
             return (ok,msg);
+        }
+
+        //移动路径
+        public static (bool, string) MovePath(string destFolder, string sourcePath,bool rename=false)
+        {
+            if (string.IsNullOrEmpty(sourcePath))
+                return (false, "源路径空");
+
+            var ret = true;
+            var msg = "";
+
+            var mDbConnection = new SQLiteConnection(DbConnectionString);
+            try
+            {
+                mDbConnection.Open();
+                var tran = mDbConnection.BeginTransaction();
+
+                try
+                {
+                    var sourceFullPath = Path.Combine(Area, sourcePath);
+                    var destFullPath = rename?destFolder: Path.Combine(destFolder, new DirectoryInfo(sourceFullPath).Name);
+
+                    var newPath = destFullPath.Substring(Path.GetPathRoot(destFullPath).Length) + "\\";//取根目录下的相对位置
+                    var command = new SQLiteCommand("update tb_file set path=$newPath where path=$path", mDbConnection);
+                    command.Parameters.AddWithValue("$path", sourcePath);
+                    command.Parameters.AddWithValue("$newPath", newPath);
+                    command.ExecuteNonQuery();
+
+                    if (Directory.Exists(destFullPath))
+                    {
+                        
+
+                        var files = Directory.GetFiles(sourceFullPath);
+                        foreach (var file in files)
+                        {
+                            var destFile = Path.Combine(destFullPath, Path.GetFileName(file));
+                            if (File.Exists(destFile)) continue;
+                            File.Move(file,destFile);
+                        }
+
+                        Directory.Delete(sourceFullPath,true);
+                    }
+                    else
+                        Directory.Move(sourceFullPath,destFullPath);
+
+                    tran.Commit();
+                }
+                catch (Exception e)
+                {
+                    tran.Rollback();
+                    ret=false;
+                    msg = e.Message;
+                }
+
+                mDbConnection.Close();
+            }
+            catch (Exception e)
+            {
+                ret = false;
+                msg = e.Message;
+            }
+
+            return (ret,msg);
         }
 
         public bool DeleteFromDb(bool deleteFile, out string msg)
