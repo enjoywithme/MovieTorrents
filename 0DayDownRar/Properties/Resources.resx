@@ -143,6 +143,9 @@ Please wait the process finish.</value>
     <value>Warning</value>
   </data>
   <data name="TxtWinRarNotFound" xml:space="preserve">
-	  <value>WinRar 路径不存在。</value>
+    <value>WinRar 路径不存在。</value>
+  </data>
+  <data name="TextIlegalPath" xml:space="preserve">
+    <value>路径非法。</value>
   </data>
 </root>

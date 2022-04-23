@@ -79,6 +79,15 @@ namespace _0DayDownRar.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to 路径非法。.
+        /// </summary>
+        internal static string TextIlegalPath {
+            get {
+                return ResourceManager.GetString("TextIlegalPath", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to 请选择要解压的目的文件路径.
         /// </summary>
         internal static string TextSelectDestFolder {

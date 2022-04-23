@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using Exception = System.Exception;
@@ -16,7 +17,8 @@ namespace _0DayDownRar
         //private long _singleFileLimit;
         readonly FolderBrowserDialog _folderBrowser = new FolderBrowserDialog();
         readonly OpenFileDialog _openFileDialog = new OpenFileDialog();
-       
+        private WinRar _winRar;
+
         private bool _isRunning;
         private string _baseSourcePath;
         private string _rarFilePath;
@@ -115,6 +117,7 @@ namespace _0DayDownRar
             for (var i = 0; i < listView1.Items.Count; i++)
             {
                 var item = listView1.Items[i];
+                item.SubItems[1].Text = "-";
                 item.SubItems[2].Text = "";
             }
         }
@@ -170,17 +173,17 @@ namespace _0DayDownRar
         private void BackgroundWorkerDoWork(object sender, DoWorkEventArgs e)
         {
             var i = 0;
-            var winRar = new WinRar(_rarFilePath, _baseSourcePath);
+             _winRar = new WinRar(_rarFilePath, _baseSourcePath);
 
             foreach (var path in _files)
             {
                 if(backgroundWorker.CancellationPending) break;
 
                 var ok = true;
-                var msg = "";
+                var msg = "成功完成。";
                 try
                 {
-                    ProcessFile(winRar,path);
+                    ProcessFile(path);
                 }
                 catch (Exception exception)
                 {
@@ -195,24 +198,28 @@ namespace _0DayDownRar
         }
 
         //解压主函数
-        private void ProcessFile(WinRar winRar,string fileName)
+        private void ProcessFile(string fileName)
         {
             backgroundWorker.ReportProgress(0, new PathItem { Path = fileName, Result = "*", Message = "测试文件..." });
 
-            var (exitCode, message) = winRar.TestFile(fileName);
-            if (exitCode==0) return;
+            var (exitCode, message) = _winRar.TestFile(fileName);
+            if (exitCode == 0)
+            {
+                CheckCreateSfv(fileName);
+                return;
+            }
 
             if (exitCode != 11)//密码错误
                 throw new Exception(message);
 
-            var outputs = winRar.ListContent(fileName);
+            var outputs = _winRar.ListContent(fileName);
             //查找最短行作为顶级路径
             var n = outputs.Min(x => x.Length);
             var topFolder = outputs.First(x => x.Length == n);
 
             var currentDir = Path.GetDirectoryName(fileName);
             if (string.IsNullOrEmpty(currentDir))
-                throw new Exception("当前目录空！");
+                throw new Exception(Resources.TextIlegalPath);
 
             var extractDir = currentDir;
             if (!outputs.All(x => x.StartsWith(topFolder)))
@@ -223,11 +230,11 @@ namespace _0DayDownRar
 
             //解压文件
             backgroundWorker.ReportProgress(0, new PathItem { Path = fileName, Result = "*", Message = "解压文件..." });
-            (exitCode, message) = winRar.ExtractFile(fileName, extractDir);
+            (exitCode, message) = _winRar.ExtractFile(fileName, extractDir);
             if (exitCode != 0) throw new Exception(message);
 
             //删除源文件
-            winRar.DeleteRarFiles(fileName);
+            _winRar.DeleteRarFiles(fileName);
 
             //替换文件夹中的空格为下划线
             var topFolderNew = topFolder.Replace(" ", "_");
@@ -238,13 +245,67 @@ namespace _0DayDownRar
 
             //压缩文件夹
             backgroundWorker.ReportProgress(0, new PathItem { Path = fileName, Result = "*", Message = "压缩文件..." });
-            (exitCode, message) = winRar.CompressFolder(Path.Combine(currentDir,$"{topFolderNew}.rar"),
+            (exitCode, message) = _winRar.CompressFolder(Path.Combine(currentDir,$"{topFolderNew}.rar"),
                 Path.Combine(currentDir, topFolderNew));
             if (exitCode != 0) throw new Exception(message);
 
+            //检查创建sfv
+            CheckCreateSfv(fileName,topFolderNew);
         }
 
+        private void CheckCreateSfv(string fileName,string rarBaseName=null)
+        {
+            if (string.IsNullOrEmpty(rarBaseName))
+                rarBaseName = WinRar.RarBaseName(fileName);
+            
+            var dir = Path.GetDirectoryName(fileName);
+            if (string.IsNullOrEmpty(dir))
+                throw new Exception(Resources.TextIlegalPath);
+            var sfvFile = Path.Combine(dir, $"{rarBaseName}.sfv");
 
+            var volumeFiles = WinRar.ListRarVolumeFiles(dir, rarBaseName);
+
+            if (File.Exists(sfvFile))
+            {
+                var lines = File.ReadAllLines(sfvFile);
+                var checkedFiles = 0;
+                foreach (var line in lines)
+                {
+                    if(string.IsNullOrEmpty(line)||line.StartsWith(";")) continue;
+                    var splits = line.Split((char[])null, StringSplitOptions.RemoveEmptyEntries);
+                    if(splits.Length<2) continue;
+
+                    var volumeFile = volumeFiles.FirstOrDefault(x => Path.GetFileName(x).Equals(splits[0],StringComparison.InvariantCultureIgnoreCase));
+                    if(string.IsNullOrEmpty(volumeFile)) continue;
+
+                    var crc = WinRar.FileCrc32(volumeFile);
+                    if (!crc.Equals(splits[1], StringComparison.InvariantCultureIgnoreCase))
+                    {
+                        throw new Exception($"{splits[0]} CRC 错误");
+                    }
+                    checkedFiles++;
+                }
+
+                if(checkedFiles!=volumeFiles.Count)
+                    throw new Exception($"SFV中文件缺失");
+
+            }
+            else
+            {
+                backgroundWorker.ReportProgress(0, new PathItem { Path = fileName, Result = "*", Message = "创建CRC..." });
+
+                var sb = new StringBuilder();
+                sb.AppendLine("; Generated by my 0DayDownRar");
+                foreach (var volumeFile in volumeFiles)
+                {
+                    sb.AppendLine($"{Path.GetFileName(volumeFile)}\t{WinRar.FileCrc32(volumeFile)}");
+                }
+
+                File.WriteAllText(sfvFile,sb.ToString());
+            }
+
+
+        }
 
 
 
