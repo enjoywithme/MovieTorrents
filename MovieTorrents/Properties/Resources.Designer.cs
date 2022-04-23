@@ -240,6 +240,15 @@ namespace MovieTorrents.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to 文件夹不存在:\r\n{0}.
+        /// </summary>
+        internal static string TextFolderNotExists {
+            get {
+                return ResourceManager.GetString("TextFolderNotExists", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to 提示.
         /// </summary>
         internal static string TextHint {

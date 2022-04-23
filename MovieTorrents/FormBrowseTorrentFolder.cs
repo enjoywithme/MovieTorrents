@@ -9,12 +9,16 @@ namespace MovieTorrents
     {
         private FolderBrowserDialog _folderBrowserDialog1;
         public bool FolderRename { get; private set; }
+        public bool CreateFolder { get; private set; }
         public string SelectedPath { get; private set; }
+        private readonly bool _forFolderMove;
 
-        public FormBrowseTorrentFolder(bool showFolderRename=false)
+        public FormBrowseTorrentFolder(bool forFolderMove=false)
         {
             InitializeComponent();
-            checkBox1.Visible = showFolderRename;
+            _forFolderMove= forFolderMove;
+            cbRenameMoveFolder.Visible = forFolderMove;
+            cbCreateFolder.Visible = !forFolderMove;
         }
 
         
@@ -34,36 +38,64 @@ namespace MovieTorrents
 
             tbSelectedPath.Text = Path.Combine(TorrentFile.TorrentRootPath, "[剧集]\\[美剧]\\");
 
-            _folderBrowserDialog1=new FolderBrowserDialog(){ShowNewFolderButton = true};
+            _folderBrowserDialog1=new FolderBrowserDialog {ShowNewFolderButton = true};
             btSelectPath.Click += BtSelectPath_Click;
             btOk.Click += BtOk_Click;
 
-            checkBox1.CheckedChanged+=(_, _) => FolderRename=checkBox1.Checked;
+            cbRenameMoveFolder.CheckedChanged+=(_, _) => FolderRename=cbRenameMoveFolder.Checked;
+            cbCreateFolder.CheckedChanged += (_, _) => CreateFolder = cbCreateFolder.Checked;
+
         }
 
         private void BtOk_Click(object sender, EventArgs e)
         {
             SelectedPath = tbSelectedPath.Text.Trim();
-            if (!CheckFolder(SelectedPath))
+            try
             {
-                MessageBox.Show(Resources.TextSelectCorrectFolder, Resources.TextError, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                CheckFolder(SelectedPath);
+            }
+            catch (Exception exception)
+            {
+                MessageBox.Show(exception.Message, Resources.TextError, MessageBoxButtons.OK, MessageBoxIcon.Error);
                 tbSelectedPath.SelectAll();
                 tbSelectedPath.Focus();
                 return;
             }
+     
 
             //SelectedPath = SelectedPath.TrimEnd('\\');
 
             DialogResult = DialogResult.OK;
         }
 
-        private bool CheckFolder(string path)
+        private void CheckFolder(string path)
         {
-            if (string.IsNullOrEmpty(path)) return false;
-            if (!FolderRename) return Directory.Exists(path);
+            if (string.IsNullOrEmpty(path)) throw new Exception(Resources.TextSelectCorrectFolder);
 
-            var d = Directory.GetParent(path);
-            return d is { Exists: true };
+            if (_forFolderMove)
+            {
+                if (!FolderRename)
+                {
+                    if (!Directory.Exists(path))
+                        throw new Exception(string.Format(Resources.TextFolderNotExists, path));
+
+                }
+                else
+                {
+                    var d = Directory.GetParent(path);
+                    if (!Directory.Exists(path))
+                        throw new Exception(string.Format(Resources.TextFolderNotExists, d));
+                }
+            }
+            else
+            {
+                if(!CreateFolder && !Directory.Exists(path))
+                    throw new Exception(string.Format(Resources.TextFolderNotExists, path));
+
+                if (!Directory.Exists(path))
+                    Directory.CreateDirectory(path);
+            }
+
 
         }
 

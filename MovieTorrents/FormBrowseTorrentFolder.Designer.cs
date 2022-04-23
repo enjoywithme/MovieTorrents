@@ -34,7 +34,8 @@ namespace MovieTorrents
             this.btOk = new System.Windows.Forms.Button();
             this.btCancel = new System.Windows.Forms.Button();
             this.tbSelectedPath = new System.Windows.Forms.ComboBox();
-            this.checkBox1 = new System.Windows.Forms.CheckBox();
+            this.cbRenameMoveFolder = new System.Windows.Forms.CheckBox();
+            this.cbCreateFolder = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
             // label1
@@ -82,22 +83,33 @@ namespace MovieTorrents
             this.tbSelectedPath.Size = new System.Drawing.Size(364, 20);
             this.tbSelectedPath.TabIndex = 3;
             // 
-            // checkBox1
+            // cbRenameMoveFolder
             // 
-            this.checkBox1.AutoSize = true;
-            this.checkBox1.Location = new System.Drawing.Point(47, 73);
-            this.checkBox1.Name = "checkBox1";
-            this.checkBox1.Size = new System.Drawing.Size(96, 16);
-            this.checkBox1.TabIndex = 4;
-            this.checkBox1.Text = "重命名文件夹";
-            this.checkBox1.UseVisualStyleBackColor = true;
+            this.cbRenameMoveFolder.AutoSize = true;
+            this.cbRenameMoveFolder.Location = new System.Drawing.Point(47, 73);
+            this.cbRenameMoveFolder.Name = "cbRenameMoveFolder";
+            this.cbRenameMoveFolder.Size = new System.Drawing.Size(132, 16);
+            this.cbRenameMoveFolder.TabIndex = 4;
+            this.cbRenameMoveFolder.Text = "重命名移动的文件夹";
+            this.cbRenameMoveFolder.UseVisualStyleBackColor = true;
+            // 
+            // cbCreateFolder
+            // 
+            this.cbCreateFolder.AutoSize = true;
+            this.cbCreateFolder.Location = new System.Drawing.Point(47, 95);
+            this.cbCreateFolder.Name = "cbCreateFolder";
+            this.cbCreateFolder.Size = new System.Drawing.Size(84, 16);
+            this.cbCreateFolder.TabIndex = 4;
+            this.cbCreateFolder.Text = "创建文件夹";
+            this.cbCreateFolder.UseVisualStyleBackColor = true;
             // 
             // FormBrowseTorrentFolder
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(541, 173);
-            this.Controls.Add(this.checkBox1);
+            this.Controls.Add(this.cbCreateFolder);
+            this.Controls.Add(this.cbRenameMoveFolder);
             this.Controls.Add(this.tbSelectedPath);
             this.Controls.Add(this.btCancel);
             this.Controls.Add(this.btOk);
@@ -123,6 +135,7 @@ namespace MovieTorrents
         private System.Windows.Forms.Button btOk;
         private System.Windows.Forms.Button btCancel;
         private System.Windows.Forms.ComboBox tbSelectedPath;
-        private System.Windows.Forms.CheckBox checkBox1;
+        private System.Windows.Forms.CheckBox cbRenameMoveFolder;
+        private System.Windows.Forms.CheckBox cbCreateFolder;
     }
 }

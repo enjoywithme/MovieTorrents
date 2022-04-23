@@ -176,6 +176,9 @@
     <value>..\Resources\Folderupload32.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="TextSelectCorrectFolder" xml:space="preserve">
-	  <value>请选择一个正确的目录</value>
+    <value>请选择一个正确的目录</value>
+  </data>
+  <data name="TextFolderNotExists" xml:space="preserve">
+    <value>文件夹不存在:\r\n{0}</value>
   </data>
 </root>
