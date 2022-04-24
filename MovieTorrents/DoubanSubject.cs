@@ -5,10 +5,8 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
-using System.Runtime.InteropServices;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
+using MovieTorrents.Common;
 
 namespace MovieTorrents
 {
@@ -43,7 +41,6 @@ namespace MovieTorrents
             } }
 
 
-        private static CookieContainer _cookieContainer;
         private bool _triedDetail=false;
 
         public DoubanSubject()
@@ -59,73 +56,20 @@ namespace MovieTorrents
             if (string.IsNullOrEmpty(filename)) return;
             var filefullname = TorrentFile.CurrentPath + "\\temp\\" + filename;
 
-            using (WebClient client = new WebClient())
+            using var client = new WebClient();
+            var uri = new Uri(img_url);
+
+            try
             {
-                var uri = new Uri(img_url);
-
-                try
-                {
-                    client.DownloadFile(uri, filefullname);
-                    _img_local = filefullname;
-                }
-                catch(Exception ex)
-                {
-
-                }
+                client.DownloadFile(uri, filefullname);
+                _img_local = filefullname;
+            }
+            catch (Exception ex)
+            {
+                // ignored
             }
         }
 
-        [DllImport("wininet.dll", CharSet = CharSet.Auto, SetLastError = true)]
-        static extern bool InternetGetCookieEx(string lpszUrl, string lpszCookieName, StringBuilder lpszCookieData, ref int lpdwSize, int dwFlags, IntPtr lpReserved);
-
-        const int ERROR_INSUFFICIENT_BUFFER = 122;
-
-        const int INTERNET_COOKIE_HTTPONLY = 0x00002000;
-
-        public static string GetCookies(string uri)
-        {
-            StringBuilder buffer;
-            string result;
-            int bufferLength;
-            int flags;
-
-            bufferLength = 1024;
-            buffer = new StringBuilder(bufferLength);
-
-            flags = INTERNET_COOKIE_HTTPONLY;
-
-            if (InternetGetCookieEx(uri, null, buffer, ref bufferLength, flags, IntPtr.Zero))
-            {
-                result = buffer.ToString();
-            }
-            else
-            {
-                result = null;
-
-                var r = Marshal.GetLastWin32Error();
-                if (r == ERROR_INSUFFICIENT_BUFFER)
-                {
-                    buffer.Length = bufferLength;
-
-                    if (InternetGetCookieEx(uri, null, buffer, ref bufferLength, flags, IntPtr.Zero))
-                    {
-                        result = buffer.ToString();
-                    }
-                }
-            }
-
-            return result;
-        }
-
-        private static void BuildCookies()
-        {
-            if(_cookieContainer==null)
-                _cookieContainer = new CookieContainer();
-            var url = "https://movie.douban.com";
-            var cookieData = GetCookies(url);
-            if (cookieData != null)
-                _cookieContainer.SetCookies(new Uri(url), cookieData.Replace("; ", ","));
-        }
 
         public static List<DoubanSubject> SearchSuggest(string text,out string msg)
         {
@@ -138,22 +82,18 @@ namespace MovieTorrents
             var uri = new Uri(sUrl);
 
 
-            BuildCookies();
             
             var jsonText = string.Empty;
 #if !LOCALTEST
             try
             {
                 var request = (HttpWebRequest)WebRequest.Create(uri);
-                request.CookieContainer = _cookieContainer;
                 request.Method = "GET";
                 request.Accept = "application/json; charset=utf-8";
                 var response = (HttpWebResponse)request.GetResponse();
-                using (var sr = new StreamReader(response.GetResponseStream()))
-                {
-                    jsonText = sr.ReadToEnd();
-                    Debug.WriteLine(jsonText);
-                }
+                using var sr = new StreamReader(response.GetResponseStream());
+                jsonText = sr.ReadToEnd();
+                Debug.WriteLine(jsonText);
             }
             catch (Exception e)
             {
@@ -198,14 +138,6 @@ namespace MovieTorrents
             return list;
         }
 
-        public static List<DoubanSubject> SearchSubject(string text)
-        {
-            var list = new List<DoubanSubject>();
-
-            //TODO:使用内嵌浏览器访问页面抓取
-
-            return list;
-        }
 
         public static List<DoubanSubject> SearchById(string text,out string msg)
         {
@@ -245,26 +177,21 @@ namespace MovieTorrents
             var uri = new Uri(sUrl);
 
 
-            BuildCookies();
-
             var html = string.Empty;
 
 #if !LOCALTEST
             try
             {
                 var request = (HttpWebRequest)WebRequest.Create(uri);
-                request.CookieContainer = _cookieContainer;
                 request.Method = "GET";
                 var response = (HttpWebResponse)request.GetResponse();
 
-                using (var sr = new StreamReader(response.GetResponseStream()))
-                {
-                    html = sr.ReadToEnd();
-                    //Debug.WriteLine(html);
+                using var sr = new StreamReader(response.GetResponseStream());
+                html = sr.ReadToEnd();
+                //Debug.WriteLine(html);
 #if DEBUG
-                    File.WriteAllText(TorrentFile.CurrentPath + "\\temp\\sample_subject.txt", html);
+                File.WriteAllText(TorrentFile.CurrentPath + "\\temp\\sample_subject.txt", html);
 #endif
-                }
             }
             catch (Exception e)
             {
@@ -325,5 +252,57 @@ namespace MovieTorrents
 
             return true;
         }
+
+        public static DoubanSubject InitFromPageHtml(string sourceUrl, string html)
+        {
+            var subject = new DoubanSubject();
+            var match = Regex.Match(sourceUrl, @"movie.douban.com/subject/(\d+)");
+            if (match.Success)
+                subject.id = match.Groups[1].Value;
+            else return null;
+
+            //名称 <span property="v:itemreviewed">雷神 Thor</span>
+            match = Regex.Match(html, @"""v:itemreviewed"">(.*?)</span>", RegexOptions.IgnoreCase);
+            if (match.Success) subject.name = match.Groups[1].Value;
+
+            //year <span class="year">(2011)</span>
+            match = Regex.Match(html, @"class=""year"">\((.*?)\)</span>", RegexOptions.IgnoreCase);
+            if (match.Success) subject.year = match.Groups[1].Value;
+
+            //导演 <span class="pl">导演</span>: <span class="attrs"><a href="/celebrity/1036342/" rel="v:directedBy">肯尼思·布拉纳</a></span>
+            match = Regex.Match(html,@"rel=""v:directedBy"">(.*?)</a>",  RegexOptions.IgnoreCase);
+            subject.directors= match.GetAllText();
+
+            //主演</span>: <span class="attrs"><span><a href="/celebrity/1021959/" rel="v:starring">克里斯·海姆斯沃斯</a> / </span><span><a href="/celebrity/1054454/" rel="v:starring">娜塔莉·波特曼</a> / </span><span><a href="/celebrity/1004596/" rel="v:starring">汤姆·希德勒斯顿</a> / </span><span><a href="/celebrity/1054434/" rel="v:starring">安东尼·霍普金斯</a> / </span><span><a href="/celebrity/1017918/" rel="v:starring">斯特兰·斯卡斯加德</a> / </span><span style="display: none;"><a href="/celebrity/1018976/" rel="v:starring">凯特·戴琳斯</a> / </span><span style="display: none;"><a href="/celebrity/1000083/" rel="v:starring">克拉克·格雷格</a> / </span><span style="display: none;"><a href="/celebrity/1022706/" rel="v:starring">科鲁姆·费奥瑞</a>
+            match = Regex.Match(html, @"rel=""v:starring"">(.*?)</a>", RegexOptions.IgnoreCase);
+            subject.directors = match.GetAllText();
+
+            match = Regex.Match(html, @"v:genre"">(.*?)</span>", RegexOptions.IgnoreCase);
+            subject.genres = match.GetAllText();
+
+            match = Regex.Match(html, @"class=""pl"">制片国家/地区:</span>(.*?)<br>", RegexOptions.IgnoreCase);
+            subject.zone = match.GetAllText();
+
+            match = Regex.Match(html, @"class=""pl"">又名:</span>(.*?)<br>", RegexOptions.IgnoreCase);
+            subject.othername = match.GetAllText();
+
+            match = Regex.Match(html, @"rating_num"" property=""v:average"">(.*?)</strong>", RegexOptions.IgnoreCase);
+            subject.rating = match.GetAllText();
+
+            match = Regex.Match(html, @"class=""pl"">集数:</span>(.*?)<br>", RegexOptions.IgnoreCase);
+            subject.type = match.Success ? "电视剧" : "电影";
+
+            match = Regex.Match(html, @"<div id=""mainpic"" class="""">[\s\S]*?src=""(.*?)""[\s\S]*?</div>", RegexOptions.IgnoreCase);
+            if(match.Success) subject.img_url = match.Groups[1].Value;
+
+            subject.TryToDownloadSubjectImg();
+
+            subject.title = subject.name;
+            subject.sub_title = subject.othername;
+
+            return subject;
+        }
+
+
     }
 }

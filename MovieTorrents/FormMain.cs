@@ -13,6 +13,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using mySharedLib;
+using WebPWrapper;
 using Exception = System.Exception;
 using Timer = System.Threading.Timer;
 
@@ -455,7 +456,7 @@ namespace MovieTorrents
             var formRenameTorrent = new FormEdit(torrentFile);
             if (formRenameTorrent.ShowDialog(this) == DialogResult.Cancel) return;
 
-            RefreshSelected(torrentFile);
+            RefreshSelected();
 
         }
         //ctrl+a 选择所有条目
@@ -476,7 +477,7 @@ namespace MovieTorrents
         {
             RefreshSelected();
         }
-        private void RefreshSelected(TorrentFile torrentFile = null)
+        private void RefreshSelected()
         {
             lbGenres.Text = lbRating.Text = lbOtherName.Text = lbKeyName.Text = lbZone.Text = null;
             if (pictureBox1.Image != null)
@@ -491,7 +492,7 @@ namespace MovieTorrents
             {
                 var lvItem = lvResults.SelectedItems[i];
 
-                torrentFile ??= (TorrentFile)lvItem.Tag;
+                var torrentFile = (TorrentFile)lvItem.Tag;
 
                 lvItem.Text = torrentFile.name;
                 lvItem.ForeColor = torrentFile.ForeColor;
@@ -510,11 +511,21 @@ namespace MovieTorrents
                 lbZone.Text = torrentFile.zone;
                 lbRating.Text = Math.Abs(torrentFile.rating) < 0.0001 ? null : torrentFile.rating.ToString(CultureInfo.InvariantCulture);
 
-                if (string.IsNullOrEmpty(torrentFile.RealPosterPath) || !File.Exists(torrentFile.RealPosterPath)) return;
+                if (string.IsNullOrEmpty(torrentFile.RealPosterPath) || !File.Exists(torrentFile.RealPosterPath)) continue;
                 try
                 {
-                    using var stream = new FileStream(torrentFile.RealPosterPath, FileMode.Open, FileAccess.Read);
-                    pictureBox1.Image = Image.FromStream(stream);
+                    var ext = Path.GetExtension(torrentFile.RealPosterPath);
+                    if (ext.Equals(".webp", StringComparison.InvariantCultureIgnoreCase))
+                    {
+                        using var webp = new WebP();
+                        pictureBox1.Image = webp.Load(torrentFile.RealPosterPath);
+                    }
+                    else
+                    {
+                        using var stream = new FileStream(torrentFile.RealPosterPath, FileMode.Open, FileAccess.Read);
+                        pictureBox1.Image = Image.FromStream(stream);
+                    }
+                    
                 }
                 catch (Exception)
                 {
@@ -929,8 +940,8 @@ namespace MovieTorrents
             var torrentFile = (TorrentFile)lvItem.Tag;
             var formSearchDouban = new FormSearchDouban(torrentFile);
             if (formSearchDouban.ShowDialog(this) == DialogResult.Cancel) return;
-
-            RefreshSelected(torrentFile);
+   
+            RefreshSelected();
         }
 
         //删除按钮
@@ -1104,7 +1115,7 @@ namespace MovieTorrents
 
             var formSetWatched = new FormSetWatched(torrentFile);
             if (formSetWatched.ShowDialog(this) == DialogResult.Cancel) return;
-            RefreshSelected(torrentFile);
+            RefreshSelected();
 
             //自动备份
             BackupDbFile();
