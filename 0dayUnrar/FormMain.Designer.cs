@@ -37,7 +37,6 @@
             this.tbWinrarPath = new System.Windows.Forms.TextBox();
             this.btSelectWinrarPath = new System.Windows.Forms.Button();
             this.btStart = new System.Windows.Forms.Button();
-            this.tbLog = new System.Windows.Forms.TextBox();
             this.label6 = new System.Windows.Forms.Label();
             this.backgroundWorker = new System.ComponentModel.BackgroundWorker();
             this.listView1 = new System.Windows.Forms.ListView();
@@ -46,6 +45,7 @@
             this.btClear = new System.Windows.Forms.Button();
             this.progressBar1 = new System.Windows.Forms.ProgressBar();
             this.cbDeleteFileAfterExtracting = new System.Windows.Forms.CheckBox();
+            this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.SuspendLayout();
             // 
             // label1
@@ -60,7 +60,7 @@
             // btSelectSourceFolder
             // 
             this.btSelectSourceFolder.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btSelectSourceFolder.Location = new System.Drawing.Point(671, 22);
+            this.btSelectSourceFolder.Location = new System.Drawing.Point(913, 22);
             this.btSelectSourceFolder.Name = "btSelectSourceFolder";
             this.btSelectSourceFolder.Size = new System.Drawing.Size(34, 23);
             this.btSelectSourceFolder.TabIndex = 0;
@@ -72,7 +72,7 @@
             // 
             this.label2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(12, 367);
+            this.label2.Location = new System.Drawing.Point(12, 417);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(77, 12);
             this.label2.TabIndex = 0;
@@ -82,16 +82,16 @@
             // 
             this.tbDestFolder.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.tbDestFolder.Location = new System.Drawing.Point(12, 382);
+            this.tbDestFolder.Location = new System.Drawing.Point(12, 432);
             this.tbDestFolder.Name = "tbDestFolder";
-            this.tbDestFolder.Size = new System.Drawing.Size(623, 21);
+            this.tbDestFolder.Size = new System.Drawing.Size(865, 21);
             this.tbDestFolder.TabIndex = 3;
             this.tbDestFolder.Text = "F:\\temp\\x\\";
             // 
             // btSelectDestFolder
             // 
             this.btSelectDestFolder.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btSelectDestFolder.Location = new System.Drawing.Point(671, 376);
+            this.btSelectDestFolder.Location = new System.Drawing.Point(913, 426);
             this.btSelectDestFolder.Name = "btSelectDestFolder";
             this.btSelectDestFolder.Size = new System.Drawing.Size(34, 23);
             this.btSelectDestFolder.TabIndex = 5;
@@ -103,7 +103,7 @@
             // 
             this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(12, 409);
+            this.label3.Location = new System.Drawing.Point(12, 459);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(65, 12);
             this.label3.TabIndex = 0;
@@ -113,9 +113,9 @@
             // 
             this.tbWinrarPath.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.tbWinrarPath.Location = new System.Drawing.Point(12, 426);
+            this.tbWinrarPath.Location = new System.Drawing.Point(12, 476);
             this.tbWinrarPath.Name = "tbWinrarPath";
-            this.tbWinrarPath.Size = new System.Drawing.Size(623, 21);
+            this.tbWinrarPath.Size = new System.Drawing.Size(865, 21);
             this.tbWinrarPath.TabIndex = 4;
             this.tbWinrarPath.Tag = "";
             this.tbWinrarPath.Text = "C:\\Program Files\\WinRAR\\WinRAR.exe";
@@ -123,7 +123,7 @@
             // btSelectWinrarPath
             // 
             this.btSelectWinrarPath.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btSelectWinrarPath.Location = new System.Drawing.Point(671, 420);
+            this.btSelectWinrarPath.Location = new System.Drawing.Point(913, 470);
             this.btSelectWinrarPath.Name = "btSelectWinrarPath";
             this.btSelectWinrarPath.Size = new System.Drawing.Size(34, 23);
             this.btSelectWinrarPath.TabIndex = 6;
@@ -135,7 +135,7 @@
             // 
             this.btStart.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.btStart.Location = new System.Drawing.Point(654, 164);
+            this.btStart.Location = new System.Drawing.Point(896, 164);
             this.btStart.Name = "btStart";
             this.btStart.Size = new System.Drawing.Size(69, 140);
             this.btStart.TabIndex = 2;
@@ -143,22 +143,11 @@
             this.btStart.UseVisualStyleBackColor = true;
             this.btStart.Click += new System.EventHandler(this.TbnStartClick);
             // 
-            // tbLog
-            // 
-            this.tbLog.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.tbLog.Location = new System.Drawing.Point(12, 500);
-            this.tbLog.Multiline = true;
-            this.tbLog.Name = "tbLog";
-            this.tbLog.ReadOnly = true;
-            this.tbLog.Size = new System.Drawing.Size(623, 47);
-            this.tbLog.TabIndex = 5;
-            // 
             // label6
             // 
             this.label6.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(12, 450);
+            this.label6.Location = new System.Drawing.Point(12, 500);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(53, 12);
             this.label6.TabIndex = 0;
@@ -179,12 +168,14 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.listView1.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnHeader1,
-            this.columnHeader2});
+            this.columnHeader2,
+            this.columnHeader3});
             this.listView1.FullRowSelect = true;
             this.listView1.HideSelection = false;
             this.listView1.Location = new System.Drawing.Point(12, 22);
             this.listView1.Name = "listView1";
-            this.listView1.Size = new System.Drawing.Size(623, 339);
+            this.listView1.ShowItemToolTips = true;
+            this.listView1.Size = new System.Drawing.Size(865, 388);
             this.listView1.TabIndex = 8;
             this.listView1.UseCompatibleStateImageBehavior = false;
             this.listView1.View = System.Windows.Forms.View.Details;
@@ -201,7 +192,7 @@
             // btClear
             // 
             this.btClear.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btClear.Location = new System.Drawing.Point(671, 51);
+            this.btClear.Location = new System.Drawing.Point(913, 51);
             this.btClear.Name = "btClear";
             this.btClear.Size = new System.Drawing.Size(34, 26);
             this.btClear.TabIndex = 1;
@@ -212,30 +203,34 @@
             // 
             this.progressBar1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.progressBar1.Location = new System.Drawing.Point(12, 471);
+            this.progressBar1.Location = new System.Drawing.Point(12, 521);
             this.progressBar1.Name = "progressBar1";
-            this.progressBar1.Size = new System.Drawing.Size(623, 23);
+            this.progressBar1.Size = new System.Drawing.Size(865, 23);
             this.progressBar1.TabIndex = 9;
             // 
             // cbDeleteFileAfterExtracting
             // 
             this.cbDeleteFileAfterExtracting.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.cbDeleteFileAfterExtracting.AutoSize = true;
-            this.cbDeleteFileAfterExtracting.Location = new System.Drawing.Point(503, 366);
+            this.cbDeleteFileAfterExtracting.Location = new System.Drawing.Point(745, 416);
             this.cbDeleteFileAfterExtracting.Name = "cbDeleteFileAfterExtracting";
             this.cbDeleteFileAfterExtracting.Size = new System.Drawing.Size(132, 16);
             this.cbDeleteFileAfterExtracting.TabIndex = 10;
             this.cbDeleteFileAfterExtracting.Text = "解压缩后删除原文件";
             this.cbDeleteFileAfterExtracting.UseVisualStyleBackColor = true;
             // 
+            // columnHeader3
+            // 
+            this.columnHeader3.Text = "处理信息";
+            this.columnHeader3.Width = 260;
+            // 
             // FormMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(736, 559);
+            this.ClientSize = new System.Drawing.Size(978, 559);
             this.Controls.Add(this.cbDeleteFileAfterExtracting);
             this.Controls.Add(this.progressBar1);
-            this.Controls.Add(this.tbLog);
             this.Controls.Add(this.label6);
             this.Controls.Add(this.listView1);
             this.Controls.Add(this.btClear);
@@ -268,7 +263,6 @@
         private System.Windows.Forms.TextBox tbWinrarPath;
         private System.Windows.Forms.Button btSelectWinrarPath;
         private System.Windows.Forms.Button btStart;
-        private System.Windows.Forms.TextBox tbLog;
         private System.Windows.Forms.Label label6;
         private System.ComponentModel.BackgroundWorker backgroundWorker;
         private System.Windows.Forms.ListView listView1;
@@ -277,6 +271,7 @@
         private System.Windows.Forms.ColumnHeader columnHeader2;
         private System.Windows.Forms.ProgressBar progressBar1;
         private System.Windows.Forms.CheckBox cbDeleteFileAfterExtracting;
+        private System.Windows.Forms.ColumnHeader columnHeader3;
     }
 }
 

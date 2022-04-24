@@ -83,7 +83,7 @@ namespace MovieTorrents
                 else
                 {
                     var d = Directory.GetParent(path);
-                    if (!Directory.Exists(path))
+                    if (d is not { Exists: true })
                         throw new Exception(string.Format(Resources.TextFolderNotExists, d));
                 }
             }

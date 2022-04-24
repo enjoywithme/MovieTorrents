@@ -62,8 +62,10 @@ namespace _0dayUnrar
                 
                 var item = listView1.Items.Add(subDir.Name,subDir.Name,0);
                 item.SubItems.Add("-");
+                item.SubItems.Add("");
+
             }
-            
+
         }
 
         private bool DirHasZipRarFile(DirectoryInfo directoryInfo)
@@ -168,16 +170,28 @@ namespace _0dayUnrar
             btStart.Text = Resources.TextStop;
             progressBar1.Maximum = _paths.Count;
             progressBar1.Value = 0;
+
+            ResetItemStatus();
             _isRunning = true;
-            tbLog.Text = "";
+
             backgroundWorker.RunWorkerAsync();
         }
 
+        private void ResetItemStatus()
+        {
+            for (var i = 0; i < listView1.Items.Count; i++)
+            {
+                var item = listView1.Items[i];
+                item.SubItems[1].Text = "-";
+                item.SubItems[2].Text = "";
+            }
+        }
 
         struct PathItem
         {
             public string Path;
             public string Result;
+            public string Message;
         }
 
         private void BackgroundWorkerDoWork(object sender, DoWorkEventArgs e)
@@ -188,19 +202,20 @@ namespace _0dayUnrar
                 if(backgroundWorker.CancellationPending) break;
 
                 var ok = true;
-                backgroundWorker.ReportProgress(0,path);
+                var message = "成功完成。";
+                backgroundWorker.ReportProgress(0,new PathItem { Path = path, Result = "*" ,Message = "解压..."});
                 try
                 {
                     ExtractFolder(path);
                 }
                 catch (Exception exception)
                 {
-                    backgroundWorker.ReportProgress(-1,exception.Message);
                     ok = false;
+                    message = exception.Message;
                 }
 
                 i++;
-                backgroundWorker.ReportProgress(i, new PathItem(){Path = path,Result = ok?"o":"x"});
+                backgroundWorker.ReportProgress(i, new PathItem(){Path = path,Result = ok?"o":"x",Message =message});
             }
 
         }
@@ -289,20 +304,12 @@ namespace _0dayUnrar
 
         private void BackgroundWorkerProgressChanged(object sender, ProgressChangedEventArgs e)
         {
-            switch (e.ProgressPercentage)
-            {
-                case 0:
-                    tbLog.AppendText((string)e.UserState + "\r\n");
-                    break;
-                case -1:
-                    tbLog.AppendText($"错误:{(string)e.UserState}\r\n");
-                    break;
-                default:
-                    progressBar1.Value = e.ProgressPercentage;
-                    var state = (PathItem)e.UserState;
-                    listView1.Items[state.Path].SubItems[1].Text = state.Result;
-                    break;
-            }
+            var state = (PathItem)e.UserState;
+            listView1.Items[state.Path].SubItems[1].Text = state.Result;
+            listView1.Items[state.Path].SubItems[2].Text = state.Message;
+            if(e.ProgressPercentage>0)
+                progressBar1.Value = e.ProgressPercentage;
+
         }
 
         private void BackgroundWorkerRunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
