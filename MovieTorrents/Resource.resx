@@ -157,4 +157,28 @@
   <data name="TxtStopDirMonitor" xml:space="preserve">
 	  <value>停止监视</value>
   </data>
+  <data name="TxtWaitForOtherOperation" xml:space="preserve">
+	  <value>正在执行其他操作，等待完成后操作</value>
+  </data>
+  <data name="TextDirMonitorStopped" xml:space="preserve">
+	  <value>目录监视停止</value>
+  </data>
+  <data name="TxtStartDirMonitor" xml:space="preserve">
+	  <value>启动监视</value>
+  </data>
+  <data name="TxtLoadZeroFiles" xml:space="preserve">
+	  <value>加载了0 个文件，0 已知项目。</value>
+  </data>
+  <data name="TxtSeedRottDir" xml:space="preserve">
+	  <value>种子目录[{0}]</value>
+  </data>
+  <data name="TxtSeedDirNotExists" xml:space="preserve">
+	  <value>种子目录“{0}”不存在!</value>
+  </data>
+  <data name="TxtConfirmCancelCurrentOperation" xml:space="preserve">
+	  <value>确定取消当前操作?</value>
+  </data>
+  <data name="TextLoadNFiles" xml:space="preserve">
+	  <value>加载了{0} 个文件，{1} 已知项目。</value>
+  </data>
 </root>

@@ -130,6 +130,15 @@ namespace MovieTorrents {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to 目录监视停止.
+        /// </summary>
+        internal static string TextDirMonitorStopped {
+            get {
+                return ResourceManager.GetString("TextDirMonitorStopped", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to 错误.
         /// </summary>
         internal static string TextError {
@@ -157,11 +166,29 @@ namespace MovieTorrents {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to 加载了{0} 个文件，{1} 已知项目。.
+        /// </summary>
+        internal static string TextLoadNFiles {
+            get {
+                return ResourceManager.GetString("TextLoadNFiles", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to 请选择一个正确的目录.
         /// </summary>
         internal static string TextSelectCorrectFolder {
             get {
                 return ResourceManager.GetString("TextSelectCorrectFolder", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 确定取消当前操作?.
+        /// </summary>
+        internal static string TxtConfirmCancelCurrentOperation {
+            get {
+                return ResourceManager.GetString("TxtConfirmCancelCurrentOperation", resourceCulture);
             }
         }
         
@@ -175,11 +202,56 @@ namespace MovieTorrents {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to 加载了0 个文件，0 已知项目。.
+        /// </summary>
+        internal static string TxtLoadZeroFiles {
+            get {
+                return ResourceManager.GetString("TxtLoadZeroFiles", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 种子目录“{0}”不存在!.
+        /// </summary>
+        internal static string TxtSeedDirNotExists {
+            get {
+                return ResourceManager.GetString("TxtSeedDirNotExists", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 种子目录[{0}].
+        /// </summary>
+        internal static string TxtSeedRottDir {
+            get {
+                return ResourceManager.GetString("TxtSeedRottDir", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 启动监视.
+        /// </summary>
+        internal static string TxtStartDirMonitor {
+            get {
+                return ResourceManager.GetString("TxtStartDirMonitor", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to 停止监视.
         /// </summary>
         internal static string TxtStopDirMonitor {
             get {
                 return ResourceManager.GetString("TxtStopDirMonitor", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 正在执行其他操作，等待完成后操作.
+        /// </summary>
+        internal static string TxtWaitForOtherOperation {
+            get {
+                return ResourceManager.GetString("TxtWaitForOtherOperation", resourceCulture);
             }
         }
     }

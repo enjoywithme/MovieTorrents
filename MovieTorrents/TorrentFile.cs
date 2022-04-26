@@ -30,7 +30,7 @@ namespace MovieTorrents
         public bool? OrderRatingDesc { get; set; } = true;
         public bool? OrderYearDesc { get; set; }
 
-        private readonly List<string> _filterFields = new List<string> { "rating", "year" };
+        private readonly List<string> _filterFields = new() { "rating", "year" };
 
         //构造搜索SQL
         private bool ProcessFilterFields(SQLiteCommand command, StringBuilder sb, string text)
@@ -167,42 +167,42 @@ namespace MovieTorrents
 
     public class TorrentFile
     {
-        public long fid { get; set; }
-        public byte hdd_nid { get; set; }
-        public string area { get; set; }
-        public string path { get; set; }
-        public string keyname { get; set; }
-        public string casts { get; set; }
-        public string directors { get; set; }
-        public string name { get; set; }
+        public long Fid { get; set; }
+        //public byte hdd_nid { get; set; }
+        public string Area { get; set; }
+        public string Path { get; set; }
+        public string KeyName { get; set; }
+        public string Casts { get; set; }
+        public string Directors { get; set; }
+        public string Name { get; set; }
 
-        public string otherName { get; set; }
-        public string ext { get; set; }
-        public long filesize { get; set; }
-        public double rating { get; set; }
-        public string year { get; set; }
-        public long seelater { get; set; }
-        public long seeflag { get; set; }
-        public long seenowant { get; set; }
-        public string seedate { get; set; }
-        public string seecomment { get; set; }
-        public string genres { get; set; }
-        public string zone { get; set; }
-        public string posterpath { get; set; }
-        public string doubanid { get; set; }
-        public string FullName => area + path + name + ext;
+        public string OtherName { get; set; }
+        public string Ext { get; set; }
+        public long FileSize { get; set; }
+        public double Rating { get; set; }
+        public string Year { get; set; }
+        public long SeeLater { get; set; }
+        public long SeeFlag { get; set; }
+        public long SeeNoWant { get; set; }
+        public string SeeDate { get; set; }
+        public string SeeComment { get; set; }
+        public string Genres { get; set; }
+        public string Zone { get; set; }
+        public string PosterPath { get; set; }
+        public string DoubanId { get; set; }
+        public string FullName => Area + Path + Name + Ext;
 
-        public string PurifiedName => name.Purify();
+        public string PurifiedName => Name.Purify();
 
 
         public string FirstName => PurifiedName.ExtractFirstToken();
 
-        public DateTime SeeDate
+        public DateTime SeeDateDate
         {
             get
             {
                 var seeDate = DateTime.Today;
-                if (!string.IsNullOrEmpty(seedate) && DateTime.TryParse(seedate, out var d))
+                if (!string.IsNullOrEmpty(SeeDate) && DateTime.TryParse(SeeDate, out var d))
                     seeDate = d;
                 return seeDate;
             }
@@ -212,24 +212,24 @@ namespace MovieTorrents
         {
             get
             {
-                if (string.IsNullOrEmpty(posterpath)) return null;
-                return CurrentPath + "\\poster\\douban\\" + Path.GetFileName(posterpath);
+                if (string.IsNullOrEmpty(PosterPath)) return null;
+                return CurrentPath + "\\poster\\douban\\" + System.IO.Path.GetFileName(PosterPath);
             }
         }
 
-        public Color ForeColor => string.IsNullOrWhiteSpace(doubanid) ? Color.Firebrick : Color.Black;
+        public Color ForeColor => string.IsNullOrWhiteSpace(DoubanId) ? Color.Firebrick : Color.Black;
 
 
         public static TorrentFile FromFullPath(string fullName)
         {
-            var torrentFile = new TorrentFile { name = Path.GetFileNameWithoutExtension(fullName) };
-            var dir = Path.GetDirectoryName(fullName);
-            torrentFile.path = dir.Substring(Path.GetPathRoot(dir).Length) + "\\";
-            torrentFile.ext = Path.GetExtension(fullName);
-            torrentFile.filesize = new FileInfo(fullName).Length;
+            var torrentFile = new TorrentFile { Name = System.IO.Path.GetFileNameWithoutExtension(fullName) };
+            var dir = System.IO.Path.GetDirectoryName(fullName);
+            torrentFile.Path = dir?.Substring(System.IO.Path.GetPathRoot(dir).Length) + "\\";
+            torrentFile.Ext = System.IO.Path.GetExtension(fullName);
+            torrentFile.FileSize = new FileInfo(fullName).Length;
 
-            var yr = torrentFile.name.ExtractYear();
-            torrentFile.year = yr == 0 ? "" : yr.ToString();
+            var yr = torrentFile.Name.ExtractYear();
+            torrentFile.Year = yr == 0 ? "" : yr.ToString();
             return torrentFile;
         }
 
@@ -243,9 +243,9 @@ namespace MovieTorrents
         }
 
         #region 静态变量/函数
-        public static TorrentFilter Filter { get; } = new TorrentFilter();
-        private static byte _hdd_nid;
-        public static string Area;
+        public static TorrentFilter Filter { get; } = new();
+        private static byte HddNid { get; set; }
+        public static string DefaultArea { get; set; }
         private static string _shortRootPath;
         public static string CurrentPath;
         public static string TorrentRootPath { get; set; }
@@ -267,7 +267,7 @@ namespace MovieTorrents
             DbConnectionString = $"Data Source ={CurrentPath}//zogvm.db; Version = 3; ";
 
             using var connection = new SQLiteConnection(DbConnectionString);
-            var sql = $"select d.hdd_nid,area,path from tb_dir as d inner join tb_hdd as h on h.hdd_nid=d.hdd_nid  limit 1";
+            const string sql = "select d.hdd_nid,area,path from tb_dir as d inner join tb_hdd as h on h.hdd_nid=d.hdd_nid  limit 1";
             try
             {
                 connection.Open();
@@ -277,10 +277,10 @@ namespace MovieTorrents
                     using var reader = command.ExecuteReader();
                     if (reader.Read())
                     {
-                        _hdd_nid = (byte)reader.GetByte(0);// ["hdd_nid"];
-                        Area = (string)reader["area"];
+                        HddNid = reader.GetByte(0);// ["hdd_nid"];
+                        DefaultArea = (string)reader["area"];
                         _shortRootPath = (string)reader["path"];
-                        TorrentFile.TorrentRootPath = Area + _shortRootPath;
+                        TorrentFile.TorrentRootPath = DefaultArea + _shortRootPath;
                     }
                 }
                 catch (Exception e)
@@ -314,26 +314,26 @@ namespace MovieTorrents
 
         private void ReadFromDbReader(DbDataReader reader)
         {
-            fid = (long)reader["file_nid"];
-            area = Area;
-            path = (string)reader["path"];
-            name = (string)reader["name"];
-            keyname = reader.GetReaderFieldString("keyname");
-            otherName = reader.GetReaderFieldString("othername");
-            ext = (string)reader["ext"];
-            rating = (double)reader["rating"];
-            year = reader.GetReaderFieldString("year");
-            zone = reader.GetReaderFieldString("zone");
-            seelater = (long)reader["seelater"];
-            seenowant = (long)reader["seenowant"];
-            seeflag = (long)reader["seeflag"];
-            posterpath = reader.GetReaderFieldString("posterpath");
-            genres = reader.GetReaderFieldString("genres");
-            doubanid = reader.GetReaderFieldString("doubanid");
-            seedate = reader.GetReaderFieldString("seedate");
-            seecomment = reader.GetReaderFieldString("seecomment");
-            casts = reader.GetReaderFieldString("casts");
-            directors = reader.GetReaderFieldString("directors");
+            Fid = (long)reader["file_nid"];
+            Area = DefaultArea;
+            Path = (string)reader["path"];
+            Name = (string)reader["name"];
+            KeyName = reader.GetReaderFieldString("keyname");
+            OtherName = reader.GetReaderFieldString("othername");
+            Ext = (string)reader["ext"];
+            Rating = (double)reader["rating"];
+            Year = reader.GetReaderFieldString("year");
+            Zone = reader.GetReaderFieldString("zone");
+            SeeLater = (long)reader["seelater"];
+            SeeNoWant = (long)reader["seenowant"];
+            SeeFlag = (long)reader["seeflag"];
+            PosterPath = reader.GetReaderFieldString("posterpath");
+            Genres = reader.GetReaderFieldString("genres");
+            DoubanId = reader.GetReaderFieldString("doubanid");
+            SeeDate = reader.GetReaderFieldString("seedate");
+            SeeComment = reader.GetReaderFieldString("seecomment");
+            Casts = reader.GetReaderFieldString("casts");
+            Directors = reader.GetReaderFieldString("directors");
 
         }
 
@@ -495,8 +495,8 @@ namespace MovieTorrents
 
                 using (var commandInsert = new SQLiteCommand($@"insert into tb_file
 (hdd_nid,path,name,ext,year,filesize,CreationTime,LastWriteTime,LastOpenTime,maintype,resolutionW,resolutionH,filetime,bitrateKbps,zidian_sound,zidian_sub)
-select {_hdd_nid},$path,$name,$ext,$year,$filesize,$n,$n,$n,0,0,0,0,0,'',''
-where not exists (select 1 from tb_file where hdd_nid={_hdd_nid} and path=$path and name=$name and ext=$ext)", connection))
+select {HddNid},$path,$name,$ext,$year,$filesize,$n,$n,$n,0,0,0,0,0,'',''
+where not exists (select 1 from tb_file where hdd_nid={HddNid} and path=$path and name=$name and ext=$ext)", connection))
                 {
                     commandInsert.Parameters.Add("$path", DbType.String, 520);
                     commandInsert.Parameters.Add("$name", DbType.String, 520);
@@ -521,16 +521,16 @@ where not exists (select 1 from tb_file where hdd_nid={_hdd_nid} and path=$path 
 
                         if (torrentFile == null) continue;
 
-                        Debug.WriteLine($"Processing:{torrentFile.name}");
+                        Debug.WriteLine($"Processing:{torrentFile.Name}");
 
                         fileProcessed++;
                         long n = ((long)(DateTime.Now - refDate).TotalSeconds + refDateInt) * 10000000;
 
-                        commandInsert.Parameters["$path"].Value = torrentFile.path;
-                        commandInsert.Parameters["$name"].Value = torrentFile.name;
-                        commandInsert.Parameters["$ext"].Value = torrentFile.ext;
-                        commandInsert.Parameters["$year"].Value = torrentFile.year;
-                        commandInsert.Parameters["$filesize"].Value = torrentFile.filesize;
+                        commandInsert.Parameters["$path"].Value = torrentFile.Path;
+                        commandInsert.Parameters["$name"].Value = torrentFile.Name;
+                        commandInsert.Parameters["$ext"].Value = torrentFile.Ext;
+                        commandInsert.Parameters["$year"].Value = torrentFile.Year;
+                        commandInsert.Parameters["$filesize"].Value = torrentFile.FileSize;
                         commandInsert.Parameters["$n"].Value = n;
 
                         fileAdded += commandInsert.ExecuteNonQuery();
@@ -668,50 +668,50 @@ where not exists (select 1 from tb_file where hdd_nid={_hdd_nid} and path=$path 
                         #region Merge fileds
 
 
-                        if (string.IsNullOrEmpty(firstTorrent.doubanid) && !string.IsNullOrEmpty(torrentFile.doubanid))
-                            firstTorrent.doubanid = torrentFile.doubanid;
+                        if (string.IsNullOrEmpty(firstTorrent.DoubanId) && !string.IsNullOrEmpty(torrentFile.DoubanId))
+                            firstTorrent.DoubanId = torrentFile.DoubanId;
 
-                        if (string.IsNullOrEmpty(firstTorrent.keyname) && !string.IsNullOrEmpty(torrentFile.keyname))
-                            firstTorrent.keyname = torrentFile.keyname;
+                        if (string.IsNullOrEmpty(firstTorrent.KeyName) && !string.IsNullOrEmpty(torrentFile.KeyName))
+                            firstTorrent.KeyName = torrentFile.KeyName;
 
-                        if (string.IsNullOrEmpty(firstTorrent.casts) && !string.IsNullOrEmpty(torrentFile.casts))
-                            firstTorrent.casts = torrentFile.casts;
+                        if (string.IsNullOrEmpty(firstTorrent.Casts) && !string.IsNullOrEmpty(torrentFile.Casts))
+                            firstTorrent.Casts = torrentFile.Casts;
 
-                        if (string.IsNullOrEmpty(firstTorrent.directors) && !string.IsNullOrEmpty(torrentFile.directors))
-                            firstTorrent.directors = torrentFile.directors;
+                        if (string.IsNullOrEmpty(firstTorrent.Directors) && !string.IsNullOrEmpty(torrentFile.Directors))
+                            firstTorrent.Directors = torrentFile.Directors;
 
-                        if (string.IsNullOrEmpty(firstTorrent.otherName) && !string.IsNullOrEmpty(torrentFile.otherName))
-                            firstTorrent.otherName = torrentFile.otherName; 
+                        if (string.IsNullOrEmpty(firstTorrent.OtherName) && !string.IsNullOrEmpty(torrentFile.OtherName))
+                            firstTorrent.OtherName = torrentFile.OtherName; 
                         
-                        if (firstTorrent.rating==0 && torrentFile.rating!=0)
-                            firstTorrent.rating = torrentFile.rating; 
+                        if (firstTorrent.Rating==0 && torrentFile.Rating!=0)
+                            firstTorrent.Rating = torrentFile.Rating; 
                         
-                        if (string.IsNullOrEmpty(firstTorrent.year) && !string.IsNullOrEmpty(torrentFile.year))
-                            firstTorrent.year = torrentFile.year;
+                        if (string.IsNullOrEmpty(firstTorrent.Year) && !string.IsNullOrEmpty(torrentFile.Year))
+                            firstTorrent.Year = torrentFile.Year;
 
-                        if (firstTorrent.seelater == 0 && torrentFile.seelater != 0)
-                            firstTorrent.seelater = torrentFile.seelater;
+                        if (firstTorrent.SeeLater == 0 && torrentFile.SeeLater != 0)
+                            firstTorrent.SeeLater = torrentFile.SeeLater;
 
-                        if (firstTorrent.seeflag == 0 && torrentFile.seeflag != 0)
-                            firstTorrent.seeflag = torrentFile.seeflag;
+                        if (firstTorrent.SeeFlag == 0 && torrentFile.SeeFlag != 0)
+                            firstTorrent.SeeFlag = torrentFile.SeeFlag;
 
-                        if (firstTorrent.seenowant == 0 && torrentFile.seenowant != 0)
-                            firstTorrent.seenowant = torrentFile.seenowant;
+                        if (firstTorrent.SeeNoWant == 0 && torrentFile.SeeNoWant != 0)
+                            firstTorrent.SeeNoWant = torrentFile.SeeNoWant;
 
-                        if (string.IsNullOrEmpty(firstTorrent.seedate) && !string.IsNullOrEmpty(torrentFile.seedate))
-                            firstTorrent.seedate = torrentFile.seedate; 
+                        if (string.IsNullOrEmpty(firstTorrent.SeeDate) && !string.IsNullOrEmpty(torrentFile.SeeDate))
+                            firstTorrent.SeeDate = torrentFile.SeeDate; 
                         
-                        if (string.IsNullOrEmpty(firstTorrent.seecomment) && !string.IsNullOrEmpty(torrentFile.seecomment))
-                            firstTorrent.seecomment = torrentFile.seecomment;
+                        if (string.IsNullOrEmpty(firstTorrent.SeeComment) && !string.IsNullOrEmpty(torrentFile.SeeComment))
+                            firstTorrent.SeeComment = torrentFile.SeeComment;
 
-                        if (string.IsNullOrEmpty(firstTorrent.genres) && !string.IsNullOrEmpty(torrentFile.genres))
-                            firstTorrent.genres = torrentFile.genres; 
+                        if (string.IsNullOrEmpty(firstTorrent.Genres) && !string.IsNullOrEmpty(torrentFile.Genres))
+                            firstTorrent.Genres = torrentFile.Genres; 
                         
-                        if (string.IsNullOrEmpty(firstTorrent.zone) && !string.IsNullOrEmpty(torrentFile.zone))
-                            firstTorrent.zone = torrentFile.zone; 
+                        if (string.IsNullOrEmpty(firstTorrent.Zone) && !string.IsNullOrEmpty(torrentFile.Zone))
+                            firstTorrent.Zone = torrentFile.Zone; 
                         
-                        if (string.IsNullOrEmpty(firstTorrent.posterpath) && !string.IsNullOrEmpty(torrentFile.posterpath))
-                            firstTorrent.posterpath = torrentFile.posterpath;
+                        if (string.IsNullOrEmpty(firstTorrent.PosterPath) && !string.IsNullOrEmpty(torrentFile.PosterPath))
+                            firstTorrent.PosterPath = torrentFile.PosterPath;
                         #endregion
 
                         torrentDeletes.Add(torrentFile);
@@ -763,22 +763,22 @@ where file_nid =$fid", connection);
 
                 foreach (var torrent in torrentUpdates)
                 {
-                    commandUpdate.Parameters["$fid"].Value = torrent.fid;
-                    commandUpdate.Parameters["$year"].Value = torrent.year;
-                    commandUpdate.Parameters["$zone"].Value = torrent.zone;
-                    commandUpdate.Parameters["$keyname"].Value = torrent.keyname;
-                    commandUpdate.Parameters["$othername"].Value = torrent.otherName;
-                    commandUpdate.Parameters["$genres"].Value = torrent.genres;
-                    commandUpdate.Parameters["$seelater"].Value = torrent.seelater;
-                    commandUpdate.Parameters["$seeflag"].Value = torrent.seeflag;
-                    commandUpdate.Parameters["$seenowant"].Value = torrent.seenowant;
-                    commandUpdate.Parameters["$seedate"].Value = torrent.seedate;
-                    commandUpdate.Parameters["$seecomment"].Value = torrent.seecomment;
-                    commandUpdate.Parameters["$doubanid"].Value = torrent.doubanid;
-                    commandUpdate.Parameters["$rating"].Value = torrent.rating;
-                    commandUpdate.Parameters["$posterpath"].Value = torrent.posterpath;
-                    commandUpdate.Parameters["$casts"].Value = torrent.casts;
-                    commandUpdate.Parameters["$directors"].Value = torrent.directors;
+                    commandUpdate.Parameters["$fid"].Value = torrent.Fid;
+                    commandUpdate.Parameters["$year"].Value = torrent.Year;
+                    commandUpdate.Parameters["$zone"].Value = torrent.Zone;
+                    commandUpdate.Parameters["$keyname"].Value = torrent.KeyName;
+                    commandUpdate.Parameters["$othername"].Value = torrent.OtherName;
+                    commandUpdate.Parameters["$genres"].Value = torrent.Genres;
+                    commandUpdate.Parameters["$seelater"].Value = torrent.SeeLater;
+                    commandUpdate.Parameters["$seeflag"].Value = torrent.SeeFlag;
+                    commandUpdate.Parameters["$seenowant"].Value = torrent.SeeNoWant;
+                    commandUpdate.Parameters["$seedate"].Value = torrent.SeeDate;
+                    commandUpdate.Parameters["$seecomment"].Value = torrent.SeeComment;
+                    commandUpdate.Parameters["$doubanid"].Value = torrent.DoubanId;
+                    commandUpdate.Parameters["$rating"].Value = torrent.Rating;
+                    commandUpdate.Parameters["$posterpath"].Value = torrent.PosterPath;
+                    commandUpdate.Parameters["$casts"].Value = torrent.Casts;
+                    commandUpdate.Parameters["$directors"].Value = torrent.Directors;
                     
                     Debug.WriteLine($"Update:{torrent.FullName}");
 
@@ -797,7 +797,7 @@ where file_nid =$fid", connection);
                         File.Delete(torrentFile.FullName);
                     Debug.WriteLine($"Delete:{torrentFile.FullName}");
 
-                    deleteCommand.Parameters["$fid"].Value = torrentFile.fid;
+                    deleteCommand.Parameters["$fid"].Value = torrentFile.Fid;
                     counterCleared += await deleteCommand.ExecuteNonQueryAsync(cancelToken);
 
                 }
@@ -840,7 +840,7 @@ where file_nid =$fid", connection);
             msg = string.Empty;
             var mDbConnection = new SQLiteConnection(DbConnectionString);
 
-            var sql = $"update tb_file set seelater = case seelater when 1 then 0 else 1 end where file_nid=$fid";
+            const string sql = $"update tb_file set seelater = case seelater when 1 then 0 else 1 end where file_nid=$fid";
             var ok = true;
             try
             {
@@ -848,7 +848,7 @@ where file_nid =$fid", connection);
                 try
                 {
                     var command = new SQLiteCommand(sql, mDbConnection);
-                    command.Parameters.AddWithValue("$fid", fid);
+                    command.Parameters.AddWithValue("$fid", Fid);
                     command.ExecuteNonQuery();
                 }
                 catch (Exception e)
@@ -882,10 +882,10 @@ where file_nid =$fid", connection);
                 try
                 {
                     var command = new SQLiteCommand(sql, mDbConnection);
-                    command.Parameters.AddWithValue("$fid", fid);
+                    command.Parameters.AddWithValue("$fid", Fid);
                     command.ExecuteNonQuery();
 
-                    seenowant = seenowant == 1 ? 0 : 1;
+                    SeeNoWant = SeeNoWant == 1 ? 0 : 1;
                 }
                 catch (Exception e)
                 {
@@ -909,8 +909,8 @@ where file_nid =$fid", connection);
         public bool SetWatched(DateTime watchDate, string comment, out string msg)
         {
             msg = string.Empty;
-            seedate = watchDate.ToString("yyyy-MM-dd");
-            seecomment = comment;
+            SeeDate = watchDate.ToString("yyyy-MM-dd");
+            SeeComment = comment;
             var mDbConnection = new SQLiteConnection(DbConnectionString);
 
             var sql = $"update tb_file set seelater=0,seeflag=1,seedate=$seedate,seecomment=$comment where file_nid=$fid";
@@ -921,9 +921,9 @@ where file_nid =$fid", connection);
                 try
                 {
                     var command = new SQLiteCommand(sql, mDbConnection);
-                    command.Parameters.AddWithValue("$seedate", seedate);
+                    command.Parameters.AddWithValue("$seedate", SeeDate);
                     command.Parameters.AddWithValue("$comment", comment);
-                    command.Parameters.AddWithValue("$fid", fid);
+                    command.Parameters.AddWithValue("$fid", Fid);
                     command.ExecuteNonQuery();
                 }
                 catch (Exception e)
@@ -956,9 +956,9 @@ where file_nid =$fid", connection);
             var mDbConnection = new SQLiteConnection(DbConnectionString);
 
             var ok=true;
-            var newPath = string.IsNullOrEmpty(destFolder)?path:destFolder.Substring(Path.GetPathRoot(destFolder).Length) + "\\";//取根目录下的相对位置
-            var newName = string.IsNullOrEmpty(destName) ? name : destName;
-            var newFullName = area + newPath  + newName + ext;
+            var newPath = string.IsNullOrEmpty(destFolder)?Path:destFolder.Substring(System.IO.Path.GetPathRoot(destFolder).Length) + "\\";//取根目录下的相对位置
+            var newName = string.IsNullOrEmpty(destName) ? Name : destName;
+            var newFullName = Area + newPath  + newName + Ext;
 
             var msg = "";
 
@@ -987,7 +987,7 @@ where file_nid =$fid", connection);
                         var command = new SQLiteCommand("update tb_file set path=$path,name=$name where file_nid=$fid", mDbConnection);
                         command.Parameters.AddWithValue("$path", newPath);
                         command.Parameters.AddWithValue("$name", newName);
-                        command.Parameters.AddWithValue("$fid", fid);
+                        command.Parameters.AddWithValue("$fid", Fid);
                         ok = command.ExecuteNonQuery() > 0;
                     }
 
@@ -1008,7 +1008,7 @@ where file_nid =$fid", connection);
                 ok = false;
             }
 
-            if (ok) path = newPath;
+            if (ok) Path = newPath;
 
             return (ok,msg);
         }
@@ -1030,10 +1030,10 @@ where file_nid =$fid", connection);
 
                 try
                 {
-                    var sourceFullPath = Path.Combine(Area, sourcePath);
-                    var destFullPath = rename?destFolder: Path.Combine(destFolder, new DirectoryInfo(sourceFullPath).Name);
+                    var sourceFullPath = System.IO.Path.Combine(DefaultArea, sourcePath);
+                    var destFullPath = rename?destFolder: System.IO.Path.Combine(destFolder, new DirectoryInfo(sourceFullPath).Name);
 
-                    var newPath = destFullPath.Substring(Path.GetPathRoot(destFullPath).Length) + "\\";//取根目录下的相对位置
+                    var newPath = destFullPath.Substring(System.IO.Path.GetPathRoot(destFullPath).Length) + "\\";//取根目录下的相对位置
                     var command = new SQLiteCommand("update tb_file set path=$newPath where path=$path", mDbConnection);
                     command.Parameters.AddWithValue("$path", sourcePath);
                     command.Parameters.AddWithValue("$newPath", newPath);
@@ -1046,7 +1046,7 @@ where file_nid =$fid", connection);
                         var files = Directory.GetFiles(sourceFullPath);
                         foreach (var file in files)
                         {
-                            var destFile = Path.Combine(destFullPath, Path.GetFileName(file));
+                            var destFile = System.IO.Path.Combine(destFullPath, System.IO.Path.GetFileName(file));
                             if (File.Exists(destFile)) continue;
                             File.Move(file,destFile);
                         }
@@ -1081,8 +1081,8 @@ where file_nid =$fid", connection);
             msg = string.Empty;
             var mDbConnection = new SQLiteConnection(DbConnectionString);
 
-            var sql = $"delete from tb_file where file_nid=$fid";
-            var ok = true;
+            const string sql = $"delete from tb_file where file_nid=$fid";
+            bool ok;
             try
             {
                 mDbConnection.Open();
@@ -1092,7 +1092,7 @@ where file_nid =$fid", connection);
                         File.Delete(FullName);
 
                     var command = new SQLiteCommand(sql, mDbConnection);
-                    command.Parameters.AddWithValue("$fid", fid);
+                    command.Parameters.AddWithValue("$fid", Fid);
                     ok = command.ExecuteNonQuery() > 0;
                 }
                 catch (Exception e)
@@ -1122,9 +1122,9 @@ where file_nid =$fid", connection);
             msg = string.Empty;
             var reNameFile = false;
             newName = newName.Trim();
-            var newFullName = area + path + newName + ext;
+            var newFullName = Area + Path + newName + Ext;
 
-            if (string.Compare(name, newName, StringComparison.InvariantCultureIgnoreCase) != 0)
+            if (string.Compare(Name, newName, StringComparison.InvariantCultureIgnoreCase) != 0)
             {
                 reNameFile = true;
                 if (File.Exists(newFullName))
@@ -1135,7 +1135,7 @@ where file_nid =$fid", connection);
             }
 
             var watchDate = newWatched ? newWatchDate.ToString("yyyy-MM-dd") : "";
-            var newSeelater = newWatched ? 0 : seelater;
+            var newSeelater = newWatched ? 0 : SeeLater;
 
             var mDbConnection = new SQLiteConnection(DbConnectionString);
             var sql = @"update tb_file set name=$name,year=$year,zone=$zone,
@@ -1172,7 +1172,7 @@ where file_nid=$fid";
                     command.Parameters.AddWithValue("$casts", newcasts);
                     command.Parameters.AddWithValue("$directors", newdirectors);
 
-                    command.Parameters.AddWithValue("$fid", fid);
+                    command.Parameters.AddWithValue("$fid", Fid);
                     command.ExecuteNonQuery();
                 }
                 catch (Exception e)
@@ -1194,21 +1194,21 @@ where file_nid=$fid";
 
             if (!ok) return false;
 
-            name = newName;
-            year = newYear;
-            zone = newZone;
-            keyname = newKeyName;
-            otherName = newOtherName;
-            genres = newGenres;
-            seelater = newSeelater;
-            seeflag = newWatched ? 1 : 0;
-            seedate = watchDate;
-            seecomment = newSeeComment;
-            doubanid = newdoubandid;
-            rating = newRating;
-            posterpath = newposterpath;
-            casts = newcasts;
-            directors = newdirectors;
+            Name = newName;
+            Year = newYear;
+            Zone = newZone;
+            KeyName = newKeyName;
+            OtherName = newOtherName;
+            Genres = newGenres;
+            SeeLater = newSeelater;
+            SeeFlag = newWatched ? 1 : 0;
+            SeeDate = watchDate;
+            SeeComment = newSeeComment;
+            DoubanId = newdoubandid;
+            Rating = newRating;
+            PosterPath = newposterpath;
+            Casts = newcasts;
+            Directors = newdirectors;
 
             return true;
         }
@@ -1217,8 +1217,8 @@ where file_nid=$fid";
         {
             msg = string.Empty;
             var connection = new SQLiteConnection(dbConnString);
-            var sql = $"select count(*) as watched from filelist_view where seeflag=1";
-            long watched = 0;
+            const string sql = $"select count(*) as watched from filelist_view where seeflag=1";
+            long watched;
             try
             {
                 connection.Open();
@@ -1250,7 +1250,7 @@ where file_nid=$fid";
             msg = string.Empty;
             var sb = new StringBuilder();
             var connection = new SQLiteConnection(DbConnectionString);
-            var sql = $"select count(*) as watched from filelist_view where seeflag=1";
+            //var sql = $"select count(*) as watched from filelist_view where seeflag=1";
             try
             {
                 connection.Open();
@@ -1307,7 +1307,7 @@ rating=$rating,genres=$genres,directors=$directors,casts=$casts where file_nid=$
 
                 if (!string.IsNullOrEmpty(subject.img_local))
                 {
-                    posterImageFileName = CurrentPath + "\\poster\\douban\\" + Path.GetFileName(subject.img_local);
+                    posterImageFileName = CurrentPath + "\\poster\\douban\\" + System.IO.Path.GetFileName(subject.img_local);
                     File.Copy(subject.img_local, posterImageFileName, true);
                     posterImageFileName = posterImageFileName.Replace("\\", "/");//zogvm的路径使用正斜杠
                 }
@@ -1316,17 +1316,17 @@ rating=$rating,genres=$genres,directors=$directors,casts=$casts where file_nid=$
                 try
                 {
                     var command = new SQLiteCommand(sql, mDbConnection);
-                    command.Parameters.AddWithValue("$year", string.IsNullOrEmpty(subject.year) ? year : subject.year);
+                    command.Parameters.AddWithValue("$year", string.IsNullOrEmpty(subject.year) ? Year : subject.year);
                     command.Parameters.AddWithValue("$zone", subject.zone);
                     command.Parameters.AddWithValue("$keyname", subject.name);
-                    command.Parameters.AddWithValue("$othername", string.IsNullOrEmpty(subject.othername) ? otherName : subject.othername);
+                    command.Parameters.AddWithValue("$othername", string.IsNullOrEmpty(subject.othername) ? OtherName : subject.othername);
                     command.Parameters.AddWithValue("$doubanid", subject.id);
                     command.Parameters.AddWithValue("$posterpath", posterImageFileName);
                     command.Parameters.AddWithValue("$rating", subject.Rating);
                     command.Parameters.AddWithValue("$genres", subject.genres);
                     command.Parameters.AddWithValue("$directors", subject.directors);
                     command.Parameters.AddWithValue("$casts", subject.casts);
-                    command.Parameters.AddWithValue("$fid", fid);
+                    command.Parameters.AddWithValue("$fid", Fid);
                     command.ExecuteNonQuery();
                 }
                 catch (Exception e)
@@ -1347,14 +1347,14 @@ rating=$rating,genres=$genres,directors=$directors,casts=$casts where file_nid=$
             }
 
             if (!ok) return false;
-            genres = subject.genres;
-            keyname = subject.name;
-            otherName = string.IsNullOrEmpty(subject.othername) ? otherName : subject.othername;
-            year = string.IsNullOrEmpty(subject.year) ? year : subject.year;
-            zone = string.IsNullOrEmpty(subject.zone) ? zone : subject.zone;
-            posterpath = posterImageFileName;
-            doubanid = subject.id;
-            rating = subject.Rating;
+            Genres = subject.genres;
+            KeyName = subject.name;
+            OtherName = string.IsNullOrEmpty(subject.othername) ? OtherName : subject.othername;
+            Year = string.IsNullOrEmpty(subject.year) ? Year : subject.year;
+            Zone = string.IsNullOrEmpty(subject.zone) ? Zone : subject.zone;
+            PosterPath = posterImageFileName;
+            DoubanId = subject.id;
+            Rating = subject.Rating;
 
 
             return true;
@@ -1381,7 +1381,7 @@ directors=(select directors from tb_file where file_nid=$fid),
 genres=(select genres from tb_file where file_nid=$fid),
 zone=(select zone from tb_file where file_nid=$fid)
 where file_nid in ({sFids})";
-            var ok = true;
+            bool ok;
             try
             {
 
@@ -1414,8 +1414,8 @@ where file_nid in ({sFids})";
 
         public void OpenDoubanLink()
         {
-            if (string.IsNullOrEmpty(doubanid)) return;
-            Process.Start($"https://movie.douban.com/subject/{doubanid}/");
+            if (string.IsNullOrEmpty(DoubanId)) return;
+            Process.Start($"https://movie.douban.com/subject/{DoubanId}/");
         }
     }
 }

@@ -197,14 +197,14 @@ namespace MovieTorrents
             }
             foreach (var torrentFile in torrents)
             {
-                string[] row = { torrentFile.name,
-                    torrentFile.rating.ToString(CultureInfo.InvariantCulture),
-                    torrentFile.year,
-                    torrentFile.seelater.ToString(),
-                    torrentFile.seenowant.ToString(),
-                    torrentFile.seeflag.ToString(),
-                    torrentFile.seedate,
-                    torrentFile.seecomment
+                string[] row = { torrentFile.Name,
+                    torrentFile.Rating.ToString(CultureInfo.InvariantCulture),
+                    torrentFile.Year,
+                    torrentFile.SeeLater.ToString(),
+                    torrentFile.SeeNoWant.ToString(),
+                    torrentFile.SeeFlag.ToString(),
+                    torrentFile.SeeDate,
+                    torrentFile.SeeComment
                 };
                 lvTorrents.Items.Add(new ListViewItem(row));
             }

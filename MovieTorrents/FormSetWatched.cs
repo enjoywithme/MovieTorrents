@@ -14,8 +14,8 @@ namespace MovieTorrents
 
         private void FormSetWatched_Load(object sender, EventArgs e)
         {
-            dtPicker.Value = _torrentFile.SeeDate;
-            tbComment.Text = _torrentFile.seecomment;
+            dtPicker.Value = _torrentFile.SeeDateDate;
+            tbComment.Text = _torrentFile.SeeComment;
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -26,8 +26,8 @@ namespace MovieTorrents
                 return;
             }
 
-            _torrentFile.seelater = 0;
-            _torrentFile.seeflag = 1;
+            _torrentFile.SeeLater = 0;
+            _torrentFile.SeeFlag = 1;
 
             DialogResult = DialogResult.OK;
         }

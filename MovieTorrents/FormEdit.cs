@@ -15,20 +15,20 @@ namespace MovieTorrents
 
         private void FormRenameTorrent_Load(object sender, EventArgs e)
         {
-            tbOldName.Text = tbNewName.Text = _torrentFile.name;
-            tbYear.Text = _torrentFile.year;
-            tbZone.Text = _torrentFile.zone;
-            tbDoubanId.Text = _torrentFile.doubanid;
-            tbCasts.Text = _torrentFile.casts;
-            tbDirectors.Text = _torrentFile.directors;
-            tbRating.Text = _torrentFile.rating.ToString("F");
-            tbposterpath.Text = _torrentFile.posterpath;
-            tbKeyName.Text = _torrentFile.keyname;
-            tbOtherName.Text = _torrentFile.otherName;
-            tbGenres.Text = _torrentFile.genres;
-            cbWatched.Checked = _torrentFile.seeflag == 1;
-            dtPicker.Value = _torrentFile.SeeDate;
-            tbComment.Text = _torrentFile.seecomment;
+            tbOldName.Text = tbNewName.Text = _torrentFile.Name;
+            tbYear.Text = _torrentFile.Year;
+            tbZone.Text = _torrentFile.Zone;
+            tbDoubanId.Text = _torrentFile.DoubanId;
+            tbCasts.Text = _torrentFile.Casts;
+            tbDirectors.Text = _torrentFile.Directors;
+            tbRating.Text = _torrentFile.Rating.ToString("F");
+            tbposterpath.Text = _torrentFile.PosterPath;
+            tbKeyName.Text = _torrentFile.KeyName;
+            tbOtherName.Text = _torrentFile.OtherName;
+            tbGenres.Text = _torrentFile.Genres;
+            cbWatched.Checked = _torrentFile.SeeFlag == 1;
+            dtPicker.Value = _torrentFile.SeeDateDate;
+            tbComment.Text = _torrentFile.SeeComment;
 
         }
 
