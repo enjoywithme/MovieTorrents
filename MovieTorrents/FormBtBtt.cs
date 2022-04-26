@@ -168,7 +168,7 @@ namespace MovieTorrents
             Cursor = c;
 
             message = $"下载了{i}个文件。{message}";
-            MessageBox.Show(message, Properties.Resources.TextHint, MessageBoxButtons.OK, MessageBoxIcon.Information);
+            MessageBox.Show(message, Resource.TextHint, MessageBoxButtons.OK, MessageBoxIcon.Information);
             Interlocked.Exchange(ref BtBtItem.AutoDownloadRunning, 0);
 
         }
@@ -192,7 +192,7 @@ namespace MovieTorrents
             var torrents = TorrentFile.Search( tbTitle.Text, out var msg);
             if (torrents == null)
             {
-                MessageBox.Show(msg, Properties.Resources.TextHint, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                MessageBox.Show(msg, Resource.TextHint, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                 return;
             }
             foreach (var torrentFile in torrents)
@@ -222,7 +222,7 @@ namespace MovieTorrents
         private bool CheckAutoDownloading()
         {
             if (0 == Interlocked.Exchange(ref BtBtItem.AutoDownloadRunning, 1)) return true;
-            MessageBox.Show("自动下载正在运行，稍后重试。",Properties.Resources.TextHint,MessageBoxButtons.OK,MessageBoxIcon.Asterisk);
+            MessageBox.Show("自动下载正在运行，稍后重试。", Resource.TextHint,MessageBoxButtons.OK,MessageBoxIcon.Asterisk);
             return false;
 
         }
@@ -234,7 +234,7 @@ namespace MovieTorrents
             sb.AppendLine(BtBtItem.ExtractZipFiles());
             sb.Append(BtBtItem.RenameSpecialFiles());
             sb.Append(BtBtItem.ArchiveTorrentFiles());
-            MessageBox.Show(sb.ToString(), Properties.Resources.TextHint, MessageBoxButtons.OK, MessageBoxIcon.Information);
+            MessageBox.Show(sb.ToString(), Resource.TextHint, MessageBoxButtons.OK, MessageBoxIcon.Information);
 
 
         }

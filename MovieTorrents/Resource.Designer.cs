@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace MovieTorrents.Properties {
+namespace MovieTorrents {
     using System;
     
     
@@ -22,14 +22,14 @@ namespace MovieTorrents.Properties {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    internal class Resources {
+    internal class Resource {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
         private static global::System.Globalization.CultureInfo resourceCulture;
         
         [global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        internal Resources() {
+        internal Resource() {
         }
         
         /// <summary>
@@ -39,7 +39,7 @@ namespace MovieTorrents.Properties {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("MovieTorrents.Properties.Resources", typeof(Resources).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("MovieTorrents.Resource", typeof(Resource).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -63,9 +63,9 @@ namespace MovieTorrents.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap Blogs {
+        internal static System.Drawing.Bitmap Eye32 {
             get {
-                object obj = ResourceManager.GetObject("Blogs", resourceCulture);
+                object obj = ResourceManager.GetObject("Eye32", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -73,9 +73,9 @@ namespace MovieTorrents.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap BTBT {
+        internal static System.Drawing.Bitmap EyeStop32 {
             get {
-                object obj = ResourceManager.GetObject("BTBT", resourceCulture);
+                object obj = ResourceManager.GetObject("EyeStop32", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -83,9 +83,9 @@ namespace MovieTorrents.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap Delete {
+        internal static System.Drawing.Bitmap InfoBlue32 {
             get {
-                object obj = ResourceManager.GetObject("Delete", resourceCulture);
+                object obj = ResourceManager.GetObject("InfoBlue32", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -93,9 +93,9 @@ namespace MovieTorrents.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap dou {
+        internal static System.Drawing.Bitmap InfoGree32 {
             get {
-                object obj = ResourceManager.GetObject("dou", resourceCulture);
+                object obj = ResourceManager.GetObject("InfoGree32", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -103,9 +103,9 @@ namespace MovieTorrents.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap Folderupload16 {
+        internal static System.Drawing.Bitmap InfoRed32 {
             get {
-                object obj = ResourceManager.GetObject("Folderupload16", resourceCulture);
+                object obj = ResourceManager.GetObject("InfoRed32", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -113,60 +113,73 @@ namespace MovieTorrents.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap Folderupload32 {
+        internal static System.Drawing.Bitmap InfoYellow32 {
             get {
-                object obj = ResourceManager.GetObject("Folderupload32", resourceCulture);
+                object obj = ResourceManager.GetObject("InfoYellow32", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        ///   Looks up a localized string similar to 目录监视中.
         /// </summary>
-        internal static System.Drawing.Bitmap Move_To_Folder {
+        internal static string TextDirInMonitor {
             get {
-                object obj = ResourceManager.GetObject("Move-To-Folder", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
+                return ResourceManager.GetString("TextDirInMonitor", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        ///   Looks up a localized string similar to 错误.
         /// </summary>
-        internal static System.Drawing.Bitmap Page_Copy {
+        internal static string TextError {
             get {
-                object obj = ResourceManager.GetObject("Page-Copy", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
+                return ResourceManager.GetString("TextError", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        ///   Looks up a localized string similar to 文件夹不存在:\r\n{0}.
         /// </summary>
-        internal static System.Drawing.Bitmap Pencil_and_Ruler {
+        internal static string TextFolderNotExists {
             get {
-                object obj = ResourceManager.GetObject("Pencil-and-Ruler", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
+                return ResourceManager.GetString("TextFolderNotExists", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        ///   Looks up a localized string similar to 提示.
         /// </summary>
-        internal static System.Drawing.Bitmap search16 {
+        internal static string TextHint {
             get {
-                object obj = ResourceManager.GetObject("search16", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
+                return ResourceManager.GetString("TextHint", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        ///   Looks up a localized string similar to 请选择一个正确的目录.
         /// </summary>
-        internal static System.Drawing.Bitmap search32 {
+        internal static string TextSelectCorrectFolder {
             get {
-                object obj = ResourceManager.GetObject("search32", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
+                return ResourceManager.GetString("TextSelectCorrectFolder", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 文件 {0} 不存在!.
+        /// </summary>
+        internal static string TxtFileNotExists {
+            get {
+                return ResourceManager.GetString("TxtFileNotExists", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 停止监视.
+        /// </summary>
+        internal static string TxtStopDirMonitor {
+            get {
+                return ResourceManager.GetString("TxtStopDirMonitor", resourceCulture);
             }
         }
     }

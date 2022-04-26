@@ -1,7 +1,6 @@
 ﻿using System;
 using System.IO;
 using System.Windows.Forms;
-using MovieTorrents.Properties;
 
 namespace MovieTorrents
 {
@@ -56,7 +55,7 @@ namespace MovieTorrents
             }
             catch (Exception exception)
             {
-                MessageBox.Show(exception.Message, Resources.TextError, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(exception.Message, Resource.TextError, MessageBoxButtons.OK, MessageBoxIcon.Error);
                 tbSelectedPath.SelectAll();
                 tbSelectedPath.Focus();
                 return;
@@ -70,27 +69,27 @@ namespace MovieTorrents
 
         private void CheckFolder(string path)
         {
-            if (string.IsNullOrEmpty(path)) throw new Exception(Resources.TextSelectCorrectFolder);
+            if (string.IsNullOrEmpty(path)) throw new Exception(Resource.TextSelectCorrectFolder);
 
             if (_forFolderMove)
             {
                 if (!FolderRename)
                 {
                     if (!Directory.Exists(path))
-                        throw new Exception(string.Format(Resources.TextFolderNotExists, path));
+                        throw new Exception(string.Format(Resource.TextFolderNotExists, path));
 
                 }
                 else
                 {
                     var d = Directory.GetParent(path);
                     if (d is not { Exists: true })
-                        throw new Exception(string.Format(Resources.TextFolderNotExists, d));
+                        throw new Exception(string.Format(Resource.TextFolderNotExists, d));
                 }
             }
             else
             {
                 if(!CreateFolder && !Directory.Exists(path))
-                    throw new Exception(string.Format(Resources.TextFolderNotExists, path));
+                    throw new Exception(string.Format(Resource.TextFolderNotExists, path));
 
                 if (!Directory.Exists(path))
                     Directory.CreateDirectory(path);
@@ -105,6 +104,7 @@ namespace MovieTorrents
                 _folderBrowserDialog1.SelectedPath = TorrentFile.TorrentRootPath;
             if (_folderBrowserDialog1.ShowDialog(this) == DialogResult.Cancel) return;
             tbSelectedPath.Text = _folderBrowserDialog1.SelectedPath;
+            if (!tbSelectedPath.Text.EndsWith("\\")) tbSelectedPath.Text += "\\";
         }
     }
 }

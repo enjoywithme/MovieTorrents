@@ -123,13 +123,13 @@ namespace MovieTorrents
             var subject = (DoubanSubject)listView1.SelectedItems[0].Tag;
             if (!subject.TryQueryDetail(out var msg))
             {
-                MessageBox.Show($"查找豆瓣详细信息失败：{msg}", Properties.Resources.TextError, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show($"查找豆瓣详细信息失败：{msg}", Resource.TextError, MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
             if (!_torrentFile.UpdateDoubanInfo(subject, out msg))
             {
-                MessageBox.Show(msg, Properties.Resources.TextError, MessageBoxButtons.YesNo, MessageBoxIcon.Error);
+                MessageBox.Show(msg, Resource.TextError, MessageBoxButtons.YesNo, MessageBoxIcon.Error);
                 return;
             }
             DoubanSubject = subject;
@@ -151,7 +151,7 @@ namespace MovieTorrents
 
             if (!_torrentFile.UpdateDoubanInfo(formWebBrowser.DoubanSubject, out var msg))
             {
-                MessageBox.Show(msg, Properties.Resources.TextError, MessageBoxButtons.YesNo, MessageBoxIcon.Error);
+                MessageBox.Show(msg, Resource.TextError, MessageBoxButtons.YesNo, MessageBoxIcon.Error);
                 return;
             }
             DoubanSubject = formWebBrowser.DoubanSubject;

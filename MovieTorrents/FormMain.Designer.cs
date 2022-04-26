@@ -73,6 +73,7 @@
             this.tsmiSearchDouban = new System.Windows.Forms.ToolStripMenuItem();
             this.tsmiCopyDouban = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem3 = new System.Windows.Forms.ToolStripSeparator();
+            this.tsmiOpenFile = new System.Windows.Forms.ToolStripMenuItem();
             this.tsmiShowFileLocation = new System.Windows.Forms.ToolStripMenuItem();
             this.tsmiCopyName = new System.Windows.Forms.ToolStripMenuItem();
             this.tsmiCopyPath = new System.Windows.Forms.ToolStripMenuItem();
@@ -371,7 +372,7 @@
             // 
             this.tssState.AutoSize = false;
             this.tssState.BackColor = System.Drawing.SystemColors.Control;
-            this.tssState.Image = global::MovieTorrents.Properties.Resources.InfoGree32;
+            this.tssState.Image = global::MovieTorrents.Resource.InfoGree32;
             this.tssState.Name = "tssState";
             this.tssState.Size = new System.Drawing.Size(17, 21);
             this.tssState.Click += new System.EventHandler(this.tssState_Click);
@@ -430,6 +431,7 @@
             this.tsmiSearchDouban,
             this.tsmiCopyDouban,
             this.toolStripMenuItem3,
+            this.tsmiOpenFile,
             this.tsmiShowFileLocation,
             this.tsmiCopyName,
             this.tsmiCopyPath,
@@ -439,7 +441,7 @@
             this.tsmiMovePath,
             this.tsmiDelete});
             this.lvContextMenu.Name = "lvContextMenu";
-            this.lvContextMenu.Size = new System.Drawing.Size(213, 280);
+            this.lvContextMenu.Size = new System.Drawing.Size(213, 324);
             this.lvContextMenu.Text = "设置已看";
             this.lvContextMenu.Opening += new System.ComponentModel.CancelEventHandler(this.lvContextMenu_Opening);
             // 
@@ -484,6 +486,13 @@
             // 
             this.toolStripMenuItem3.Name = "toolStripMenuItem3";
             this.toolStripMenuItem3.Size = new System.Drawing.Size(209, 6);
+            // 
+            // tsmiOpenFile
+            // 
+            this.tsmiOpenFile.Name = "tsmiOpenFile";
+            this.tsmiOpenFile.Size = new System.Drawing.Size(212, 22);
+            this.tsmiOpenFile.Text = "打开文件(&O)";
+            this.tsmiOpenFile.Click += new System.EventHandler(this.tsmiOpenFile_Click);
             // 
             // tsmiShowFileLocation
             // 
@@ -545,7 +554,7 @@
             // 
             this.notifyIcon1.BalloonTipIcon = System.Windows.Forms.ToolTipIcon.Info;
             this.notifyIcon1.BalloonTipText = "双击恢复窗口";
-            this.notifyIcon1.BalloonTipTitle = global::MovieTorrents.Properties.Resources.TextHint;
+            this.notifyIcon1.BalloonTipTitle = global::MovieTorrents.Resource.TextHint;
             this.notifyIcon1.Text = "Movie torrents";
             this.notifyIcon1.Visible = true;
             this.notifyIcon1.BalloonTipClicked += new System.EventHandler(this.notifyIcon1_BalloonTipClicked);
@@ -982,6 +991,7 @@
         private System.Windows.Forms.ToolStripButton tsbMovePath;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator5;
         private System.Windows.Forms.ToolStripMenuItem tsmiMovePath;
+        private System.Windows.Forms.ToolStripMenuItem tsmiOpenFile;
     }
 }
 

@@ -22,7 +22,7 @@ namespace MovieTorrents
         {
             if (!_torrentFile.SetWatched(dtPicker.Value, tbComment.Text,out var msg))
             {
-                MessageBox.Show(msg, Properties.Resources.TextError, MessageBoxButtons.YesNo, MessageBoxIcon.Error);
+                MessageBox.Show(msg, Resource.TextError, MessageBoxButtons.YesNo, MessageBoxIcon.Error);
                 return;
             }
 
