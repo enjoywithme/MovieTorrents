@@ -40,6 +40,7 @@ namespace MovieTorrents
         private int _currentOperation;
         private string _lastSearchText = string.Empty;
 
+        private ListViewColumnSorter _lvwColumnSorter;
 
 
         //private System.Timers.Timer _tt;
@@ -100,14 +101,34 @@ namespace MovieTorrents
             tsbRating8.Click += (_, _) => { tbSearchText.Text = @"Rating:>8"; };
             tsbRating9.Click += (_, _) => { tbSearchText.Text = @"Rating:>9"; };
 
+            _lvwColumnSorter = new ListViewColumnSorter();
+            lvResults.ListViewItemSorter = _lvwColumnSorter;
             lvResults.KeyDown += lvResults_KeyDown;
+            lvResults.ColumnClick += LvResults_ColumnClick;
 
 #if DEBUG
             tbSearchText.Text = @"雷神";
 #endif
         }
 
+        private void LvResults_ColumnClick(object sender, ColumnClickEventArgs e)
+        {
+            // Determine if clicked column is already the column that is being sorted.
+            if (e.Column == _lvwColumnSorter.SortColumn)
+            {
+                // Reverse the current sort direction for this column.
+                _lvwColumnSorter.Order = _lvwColumnSorter.Order == SortOrder.Ascending ? SortOrder.Descending : SortOrder.Ascending;
+            }
+            else
+            {
+                // Set the column number that is to be sorted; default to ascending.
+                _lvwColumnSorter.SortColumn = e.Column;
+                _lvwColumnSorter.Order = SortOrder.Ascending;
+            }
 
+            // Perform the sort with these new sort options.
+            lvResults.Sort();
+        }
 
         private void FormMain_FormClosing(object sender, FormClosingEventArgs e)
         {
@@ -448,13 +469,11 @@ namespace MovieTorrents
         //ctrl+a 选择所有条目
         private void lvResults_KeyDown(object sender, KeyEventArgs e)
         {
-            if (e.KeyCode == Keys.A && e.Control)
+            if (e.KeyCode != Keys.A || !e.Control) return;
+            lvResults.MultiSelect = true;
+            foreach (ListViewItem item in lvResults.Items)
             {
-                lvResults.MultiSelect = true;
-                foreach (ListViewItem item in lvResults.Items)
-                {
-                    item.Selected = true;
-                }
+                item.Selected = true;
             }
         }
 
@@ -859,53 +878,6 @@ namespace MovieTorrents
 
         //排序菜单
         #region 排序菜单
-        private void tsmiRatingDescAsc_Click(object sender, EventArgs e)
-        {
-            if (sender == tsmiRatingDesc)
-            {
-                tsmiRatingDesc.Checked = !tsmiRatingDesc.Checked;
-                if (tsmiRatingDesc.Checked) { tsmiRatingAsc.Checked = false; }
-            }
-            else if (sender == tsmiRatingAsc)
-            {
-                tsmiRatingAsc.Checked = !tsmiRatingAsc.Checked;
-                if (tsmiRatingAsc.Checked) tsmiRatingDesc.Checked = false;
-            }
-
-            if (tsmiRatingDesc.Checked)
-                TorrentFile.Filter.OrderRatingDesc = true;
-            else if (tsmiRatingAsc.Checked)
-                TorrentFile.Filter.OrderRatingDesc = false;
-            else
-                TorrentFile.Filter.OrderRatingDesc = null;
-
-            DoSearch();
-        }
-
-
-        private void tsmiYearDescAsc_Click(object sender, EventArgs e)
-        {
-            if (sender == tsmiYearDesc)
-            {
-                tsmiYearDesc.Checked = !tsmiYearDesc.Checked;
-                if (tsmiYearDesc.Checked) tsmiYearAsc.Checked = false;
-            }
-            else if (sender == tsmiYearDesc)
-            {
-                tsmiYearAsc.Checked = !tsmiYearAsc.Checked;
-                if (tsmiYearAsc.Checked) tsmiYearDesc.Checked = false;
-            }
-
-
-            if (tsmiYearDesc.Checked)
-                TorrentFile.Filter.OrderRatingDesc = true;
-            else if (tsmiRatingAsc.Checked)
-                TorrentFile.Filter.OrderRatingDesc = false;
-            else
-                TorrentFile.Filter.OrderRatingDesc = null;
-
-            DoSearch();
-        }
 
 
         #endregion

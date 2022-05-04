@@ -162,6 +162,7 @@
     <Compile Include="FormSetWatched.Designer.cs">
       <DependentUpon>FormSetWatched.cs</DependentUpon>
     </Compile>
+    <Compile Include="ListViewColumnSorter.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Resource.Designer.cs">
@@ -171,6 +172,7 @@
     </Compile>
     <Compile Include="TextBoxWithPasteEvent.cs" />
     <Compile Include="TorrentFile.cs" />
+    <Compile Include="TorrentFilter.cs" />
     <Compile Include="WebPWrapper.cs" />
     <EmbeddedResource Include="FormWebBrowser.resx">
       <DependentUpon>FormWebBrowser.cs</DependentUpon>

@@ -53,12 +53,6 @@
             this.tsmiLimit500 = new System.Windows.Forms.ToolStripMenuItem();
             this.tsmiLimit1000 = new System.Windows.Forms.ToolStripMenuItem();
             this.tsmiLimit2000 = new System.Windows.Forms.ToolStripMenuItem();
-            this.排序OToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.tsmiRatingDesc = new System.Windows.Forms.ToolStripMenuItem();
-            this.tsmiRatingAsc = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripMenuItem5 = new System.Windows.Forms.ToolStripSeparator();
-            this.tsmiYearDesc = new System.Windows.Forms.ToolStripMenuItem();
-            this.tsmiYearAsc = new System.Windows.Forms.ToolStripMenuItem();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.tssState = new System.Windows.Forms.ToolStripStatusLabel();
             this.tssInfo = new System.Windows.Forms.ToolStripStatusLabel();
@@ -129,8 +123,7 @@
             // 
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.文件FToolStripMenuItem,
-            this.过滤TToolStripMenuItem,
-            this.排序OToolStripMenuItem});
+            this.过滤TToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Size = new System.Drawing.Size(1273, 25);
@@ -154,44 +147,44 @@
             // tsmiShowStatistics
             // 
             this.tsmiShowStatistics.Name = "tsmiShowStatistics";
-            this.tsmiShowStatistics.Size = new System.Drawing.Size(165, 22);
+            this.tsmiShowStatistics.Size = new System.Drawing.Size(180, 22);
             this.tsmiShowStatistics.Text = "统计(&T)";
             this.tsmiShowStatistics.Click += new System.EventHandler(this.tsmiShowStatistics_Click);
             // 
             // toolStripMenuItem7
             // 
             this.toolStripMenuItem7.Name = "toolStripMenuItem7";
-            this.toolStripMenuItem7.Size = new System.Drawing.Size(162, 6);
+            this.toolStripMenuItem7.Size = new System.Drawing.Size(177, 6);
             // 
             // tsmiScanFile
             // 
             this.tsmiScanFile.Name = "tsmiScanFile";
-            this.tsmiScanFile.Size = new System.Drawing.Size(165, 22);
+            this.tsmiScanFile.Size = new System.Drawing.Size(180, 22);
             this.tsmiScanFile.Text = "扫描种子文件(&S)";
             this.tsmiScanFile.Click += new System.EventHandler(this.tsmiScanFile_Click);
             // 
             // tsmiClearRecords
             // 
             this.tsmiClearRecords.Name = "tsmiClearRecords";
-            this.tsmiClearRecords.Size = new System.Drawing.Size(165, 22);
+            this.tsmiClearRecords.Size = new System.Drawing.Size(180, 22);
             this.tsmiClearRecords.Text = "清理无效记录(&C)";
             this.tsmiClearRecords.Click += new System.EventHandler(this.tsmiClearRecords_Click);
             // 
             // tsmiClearDuplicates
             // 
             this.tsmiClearDuplicates.Name = "tsmiClearDuplicates";
-            this.tsmiClearDuplicates.Size = new System.Drawing.Size(165, 22);
+            this.tsmiClearDuplicates.Size = new System.Drawing.Size(180, 22);
             this.tsmiClearDuplicates.Text = "清理重复记录(&D)";
             // 
             // toolStripMenuItem2
             // 
             this.toolStripMenuItem2.Name = "toolStripMenuItem2";
-            this.toolStripMenuItem2.Size = new System.Drawing.Size(162, 6);
+            this.toolStripMenuItem2.Size = new System.Drawing.Size(177, 6);
             // 
             // tsmiExit
             // 
             this.tsmiExit.Name = "tsmiExit";
-            this.tsmiExit.Size = new System.Drawing.Size(165, 22);
+            this.tsmiExit.Size = new System.Drawing.Size(180, 22);
             this.tsmiExit.Text = "退出(X)";
             this.tsmiExit.Click += new System.EventHandler(this.tsmiExit_Click);
             // 
@@ -307,53 +300,6 @@
             this.tsmiLimit2000.Tag = "2000";
             this.tsmiLimit2000.Text = "限制2000条";
             // 
-            // 排序OToolStripMenuItem
-            // 
-            this.排序OToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.tsmiRatingDesc,
-            this.tsmiRatingAsc,
-            this.toolStripMenuItem5,
-            this.tsmiYearDesc,
-            this.tsmiYearAsc});
-            this.排序OToolStripMenuItem.Name = "排序OToolStripMenuItem";
-            this.排序OToolStripMenuItem.Size = new System.Drawing.Size(62, 21);
-            this.排序OToolStripMenuItem.Text = "排序(&O)";
-            // 
-            // tsmiRatingDesc
-            // 
-            this.tsmiRatingDesc.Checked = true;
-            this.tsmiRatingDesc.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.tsmiRatingDesc.Name = "tsmiRatingDesc";
-            this.tsmiRatingDesc.Size = new System.Drawing.Size(113, 22);
-            this.tsmiRatingDesc.Text = "评分 -";
-            this.tsmiRatingDesc.Click += new System.EventHandler(this.tsmiRatingDescAsc_Click);
-            // 
-            // tsmiRatingAsc
-            // 
-            this.tsmiRatingAsc.Name = "tsmiRatingAsc";
-            this.tsmiRatingAsc.Size = new System.Drawing.Size(113, 22);
-            this.tsmiRatingAsc.Text = "评分 +";
-            this.tsmiRatingAsc.Click += new System.EventHandler(this.tsmiRatingDescAsc_Click);
-            // 
-            // toolStripMenuItem5
-            // 
-            this.toolStripMenuItem5.Name = "toolStripMenuItem5";
-            this.toolStripMenuItem5.Size = new System.Drawing.Size(110, 6);
-            // 
-            // tsmiYearDesc
-            // 
-            this.tsmiYearDesc.Name = "tsmiYearDesc";
-            this.tsmiYearDesc.Size = new System.Drawing.Size(113, 22);
-            this.tsmiYearDesc.Text = "年代 -";
-            this.tsmiYearDesc.Click += new System.EventHandler(this.tsmiYearDescAsc_Click);
-            // 
-            // tsmiYearAsc
-            // 
-            this.tsmiYearAsc.Name = "tsmiYearAsc";
-            this.tsmiYearAsc.Size = new System.Drawing.Size(113, 22);
-            this.tsmiYearAsc.Text = "年代 +";
-            this.tsmiYearAsc.Click += new System.EventHandler(this.tsmiYearDescAsc_Click);
-            // 
             // statusStrip1
             // 
             this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -441,7 +387,7 @@
             this.tsmiMovePath,
             this.tsmiDelete});
             this.lvContextMenu.Name = "lvContextMenu";
-            this.lvContextMenu.Size = new System.Drawing.Size(213, 324);
+            this.lvContextMenu.Size = new System.Drawing.Size(213, 302);
             this.lvContextMenu.Text = "设置已看";
             this.lvContextMenu.Opening += new System.ComponentModel.CancelEventHandler(this.lvContextMenu_Opening);
             // 
@@ -943,12 +889,6 @@
         private System.Windows.Forms.ToolStripMenuItem tsmiFilterSeelater;
         private System.Windows.Forms.Label lbKeyName;
         private System.Windows.Forms.Label lbOtherName;
-        private System.Windows.Forms.ToolStripMenuItem 排序OToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem tsmiRatingDesc;
-        private System.Windows.Forms.ToolStripMenuItem tsmiRatingAsc;
-        private System.Windows.Forms.ToolStripSeparator toolStripMenuItem5;
-        private System.Windows.Forms.ToolStripMenuItem tsmiYearDesc;
-        private System.Windows.Forms.ToolStripMenuItem tsmiYearAsc;
         private System.Windows.Forms.ToolStripSeparator toolStripMenuItem6;
         private System.Windows.Forms.ToolStripMenuItem tsmiLimit100;
         private System.Windows.Forms.ToolStripMenuItem tsmiLimit200;
