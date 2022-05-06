@@ -147,7 +147,11 @@ namespace MovieTorrents
             var searchText = Uri.EscapeUriString(tbSearchText.Text.Trim());
             var url = $"https://movie.douban.com/subject_search?search_text={searchText}";
             var formWebBrowser = new FormWebBrowser(url);
-            if(formWebBrowser.ShowDialog()!=DialogResult.OK || formWebBrowser.DoubanSubject==null) return;
+            if (formWebBrowser.ShowDialog() != DialogResult.OK || formWebBrowser.DoubanSubject == null)
+            {
+                Close();
+                return;
+            }
 
             if (!_torrentFile.UpdateDoubanInfo(formWebBrowser.DoubanSubject, out var msg))
             {

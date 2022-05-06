@@ -112,6 +112,11 @@
             this.tsbRating9 = new System.Windows.Forms.ToolStripButton();
             this.tbSearchText = new System.Windows.Forms.ComboBox();
             this.btClearSearch = new System.Windows.Forms.Button();
+            this.columnHeaderCreationTime = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.tsmiNoDoubanId = new System.Windows.Forms.ToolStripMenuItem();
+            this.tsmiHaveDoubanId = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator6 = new System.Windows.Forms.ToolStripSeparator();
+            this.lbYear = new System.Windows.Forms.Label();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.lvContextMenu.SuspendLayout();
@@ -147,44 +152,44 @@
             // tsmiShowStatistics
             // 
             this.tsmiShowStatistics.Name = "tsmiShowStatistics";
-            this.tsmiShowStatistics.Size = new System.Drawing.Size(180, 22);
+            this.tsmiShowStatistics.Size = new System.Drawing.Size(165, 22);
             this.tsmiShowStatistics.Text = "统计(&T)";
             this.tsmiShowStatistics.Click += new System.EventHandler(this.tsmiShowStatistics_Click);
             // 
             // toolStripMenuItem7
             // 
             this.toolStripMenuItem7.Name = "toolStripMenuItem7";
-            this.toolStripMenuItem7.Size = new System.Drawing.Size(177, 6);
+            this.toolStripMenuItem7.Size = new System.Drawing.Size(162, 6);
             // 
             // tsmiScanFile
             // 
             this.tsmiScanFile.Name = "tsmiScanFile";
-            this.tsmiScanFile.Size = new System.Drawing.Size(180, 22);
+            this.tsmiScanFile.Size = new System.Drawing.Size(165, 22);
             this.tsmiScanFile.Text = "扫描种子文件(&S)";
             this.tsmiScanFile.Click += new System.EventHandler(this.tsmiScanFile_Click);
             // 
             // tsmiClearRecords
             // 
             this.tsmiClearRecords.Name = "tsmiClearRecords";
-            this.tsmiClearRecords.Size = new System.Drawing.Size(180, 22);
+            this.tsmiClearRecords.Size = new System.Drawing.Size(165, 22);
             this.tsmiClearRecords.Text = "清理无效记录(&C)";
             this.tsmiClearRecords.Click += new System.EventHandler(this.tsmiClearRecords_Click);
             // 
             // tsmiClearDuplicates
             // 
             this.tsmiClearDuplicates.Name = "tsmiClearDuplicates";
-            this.tsmiClearDuplicates.Size = new System.Drawing.Size(180, 22);
+            this.tsmiClearDuplicates.Size = new System.Drawing.Size(165, 22);
             this.tsmiClearDuplicates.Text = "清理重复记录(&D)";
             // 
             // toolStripMenuItem2
             // 
             this.toolStripMenuItem2.Name = "toolStripMenuItem2";
-            this.toolStripMenuItem2.Size = new System.Drawing.Size(177, 6);
+            this.toolStripMenuItem2.Size = new System.Drawing.Size(162, 6);
             // 
             // tsmiExit
             // 
             this.tsmiExit.Name = "tsmiExit";
-            this.tsmiExit.Size = new System.Drawing.Size(180, 22);
+            this.tsmiExit.Size = new System.Drawing.Size(165, 22);
             this.tsmiExit.Text = "退出(X)";
             this.tsmiExit.Click += new System.EventHandler(this.tsmiExit_Click);
             // 
@@ -193,6 +198,9 @@
             this.过滤TToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.tsmiFilterRecent,
             this.tsmiFilterSeelater,
+            this.toolStripSeparator6,
+            this.tsmiHaveDoubanId,
+            this.tsmiNoDoubanId,
             this.toolStripMenuItem1,
             this.tsmiFilterWatched,
             this.tsmiFilterNotWatched,
@@ -522,7 +530,8 @@
             this.columnHeaderSeenowant,
             this.columnHeaderSeen,
             this.columnHeaderSeeDate,
-            this.columnHeaderSeeComment});
+            this.columnHeaderSeeComment,
+            this.columnHeaderCreationTime});
             this.lvResults.FullRowSelect = true;
             this.lvResults.HideSelection = false;
             this.lvResults.Location = new System.Drawing.Point(132, 76);
@@ -579,7 +588,7 @@
             // 
             // lbGenres
             // 
-            this.lbGenres.Location = new System.Drawing.Point(14, 445);
+            this.lbGenres.Location = new System.Drawing.Point(14, 469);
             this.lbGenres.Name = "lbGenres";
             this.lbGenres.Size = new System.Drawing.Size(98, 44);
             this.lbGenres.TabIndex = 1;
@@ -597,16 +606,16 @@
             // 
             // lbKeyName
             // 
-            this.lbKeyName.Location = new System.Drawing.Point(14, 281);
+            this.lbKeyName.Location = new System.Drawing.Point(14, 314);
             this.lbKeyName.Name = "lbKeyName";
-            this.lbKeyName.Size = new System.Drawing.Size(98, 62);
+            this.lbKeyName.Size = new System.Drawing.Size(98, 53);
             this.lbKeyName.TabIndex = 1;
             this.lbKeyName.Text = "keyName";
             this.lbKeyName.TextAlign = System.Drawing.ContentAlignment.TopCenter;
             // 
             // lbOtherName
             // 
-            this.lbOtherName.Location = new System.Drawing.Point(14, 365);
+            this.lbOtherName.Location = new System.Drawing.Point(14, 389);
             this.lbOtherName.Name = "lbOtherName";
             this.lbOtherName.Size = new System.Drawing.Size(98, 58);
             this.lbOtherName.TabIndex = 1;
@@ -625,9 +634,9 @@
             // 
             // lbZone
             // 
-            this.lbZone.Location = new System.Drawing.Point(12, 513);
+            this.lbZone.Location = new System.Drawing.Point(12, 526);
             this.lbZone.Name = "lbZone";
-            this.lbZone.Size = new System.Drawing.Size(98, 44);
+            this.lbZone.Size = new System.Drawing.Size(98, 31);
             this.lbZone.TabIndex = 1;
             this.lbZone.Text = "zone";
             this.lbZone.TextAlign = System.Drawing.ContentAlignment.TopCenter;
@@ -810,6 +819,39 @@
             this.btClearSearch.UseVisualStyleBackColor = true;
             this.btClearSearch.Click += new System.EventHandler(this.btClearSearch_Click);
             // 
+            // columnHeaderCreationTime
+            // 
+            this.columnHeaderCreationTime.Text = "添加时间";
+            this.columnHeaderCreationTime.Width = 100;
+            // 
+            // tsmiNoDoubanId
+            // 
+            this.tsmiNoDoubanId.Name = "tsmiNoDoubanId";
+            this.tsmiNoDoubanId.Size = new System.Drawing.Size(187, 22);
+            this.tsmiNoDoubanId.Text = "没有豆瓣ID";
+            this.tsmiNoDoubanId.Click += new System.EventHandler(this.tsmiNoDoubanId_Click);
+            // 
+            // tsmiHaveDoubanId
+            // 
+            this.tsmiHaveDoubanId.Name = "tsmiHaveDoubanId";
+            this.tsmiHaveDoubanId.Size = new System.Drawing.Size(187, 22);
+            this.tsmiHaveDoubanId.Text = "有豆瓣ID";
+            this.tsmiHaveDoubanId.Click += new System.EventHandler(this.tsmiHaveDoubanId_Click);
+            // 
+            // toolStripSeparator6
+            // 
+            this.toolStripSeparator6.Name = "toolStripSeparator6";
+            this.toolStripSeparator6.Size = new System.Drawing.Size(184, 6);
+            // 
+            // lbYear
+            // 
+            this.lbYear.Location = new System.Drawing.Point(12, 278);
+            this.lbYear.Name = "lbYear";
+            this.lbYear.Size = new System.Drawing.Size(100, 23);
+            this.lbYear.TabIndex = 6;
+            this.lbYear.Text = "Year";
+            this.lbYear.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
             // FormMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -818,6 +860,7 @@
             this.Controls.Add(this.btClearSearch);
             this.Controls.Add(this.tbSearchText);
             this.Controls.Add(this.toolStrip1);
+            this.Controls.Add(this.lbYear);
             this.Controls.Add(this.lbRating);
             this.Controls.Add(this.lbOtherName);
             this.Controls.Add(this.lbKeyName);
@@ -932,6 +975,11 @@
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator5;
         private System.Windows.Forms.ToolStripMenuItem tsmiMovePath;
         private System.Windows.Forms.ToolStripMenuItem tsmiOpenFile;
+        private System.Windows.Forms.ColumnHeader columnHeaderCreationTime;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator6;
+        private System.Windows.Forms.ToolStripMenuItem tsmiHaveDoubanId;
+        private System.Windows.Forms.ToolStripMenuItem tsmiNoDoubanId;
+        private System.Windows.Forms.Label lbYear;
     }
 }
 

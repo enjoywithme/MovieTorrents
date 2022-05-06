@@ -42,7 +42,8 @@ namespace MovieTorrents
         public string PosterPath { get; set; }
         public string DoubanId { get; set; }
         public string FullName => Area + Path + Name + Ext;
-
+        private long? _creationTime;
+        public string CreationTime => _creationTime.SqlLiteToDateTime();
         public string PurifiedName => Name.Purify();
 
 
@@ -68,7 +69,7 @@ namespace MovieTorrents
             }
         }
 
-        public Color ForeColor => string.IsNullOrWhiteSpace(DoubanId) ? Color.Firebrick : Color.Black;
+        public Color ForeColor => string.IsNullOrWhiteSpace(DoubanId) || DoubanId=="0"? Color.Firebrick : Color.Black;
 
 
         public static TorrentFile FromFullPath(string fullName)
@@ -185,7 +186,7 @@ namespace MovieTorrents
             SeeComment = reader.GetReaderFieldString("seecomment");
             Casts = reader.GetReaderFieldString("casts");
             Directors = reader.GetReaderFieldString("directors");
-
+            _creationTime = Convert.IsDBNull(reader["CreationTime"])?null: reader.GetInt64(reader.GetOrdinal("CreationTime"));//int8 表示字节，实际上存的是 int64 https://stackoverflow.com/questions/681653/can-you-get-the-column-names-from-a-sqldatareader
         }
 
         //执行异步搜索
@@ -358,9 +359,6 @@ where not exists (select 1 from tb_file where hdd_nid={HddNid} and path=$path an
 
                     commandInsert.Prepare();
 
-                    var refDate = DateTime.Parse("2016-12-02 10:53:38");
-                    long refDateInt = 13125120818;
-
                     while (!filesToProcess.IsCompleted)
                     {
                         TorrentFile torrentFile = null;
@@ -375,7 +373,7 @@ where not exists (select 1 from tb_file where hdd_nid={HddNid} and path=$path an
                         Debug.WriteLine($"Processing:{torrentFile.Name}");
 
                         fileProcessed++;
-                        long n = ((long)(DateTime.Now - refDate).TotalSeconds + refDateInt) * 10000000;
+                        var n = DateTime.Now.ToSqlLiteInt64();
 
                         commandInsert.Parameters["$path"].Value = torrentFile.Path;
                         commandInsert.Parameters["$name"].Value = torrentFile.Name;

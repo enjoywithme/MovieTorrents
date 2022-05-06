@@ -15,10 +15,11 @@ public class TorrentFilter
     public bool Watched { get; set; }
     public bool NotWant { get; set; }
     public bool SeeLater { get; set; }
+    public bool HasDoubanId { get; set; }
+    public bool NoDoubanId { get; set; }
 
     public bool? OrderRatingDesc { get; set; } = true;
     public bool? OrderYearDesc { get; set; }
-
     private readonly List<string> _filterFields = new() { "rating", "year" };
 
     //构造搜索SQL
@@ -110,6 +111,17 @@ public class TorrentFilter
             sb.Append(" and seenowant=0");
             if (HideSameSubject)
                 sb.Append(" and  doubanid not in(select DISTINCT doubanid from tb_file where seenowant=1 and doubanid<>'')");
+        }
+
+        if (HasDoubanId && !NoDoubanId)
+        {
+            sb.Append(" and doubanid<>0");
+        }
+
+        if (!HasDoubanId && NoDoubanId)
+        {
+            sb.Append(" and (doubanid=0 or doubanid is null)");
+
         }
 
         //限制条数

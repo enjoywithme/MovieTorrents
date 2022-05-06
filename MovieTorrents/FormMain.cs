@@ -76,7 +76,7 @@ namespace MovieTorrents
             notifyIcon1.Icon = Icon;
 
 
-            lbGenres.Text = lbKeyName.Text = lbOtherName.Text = lbZone.Text = lbRating.Text = string.Empty;
+            lbYear.Text = lbGenres.Text = lbKeyName.Text = lbOtherName.Text = lbZone.Text = lbRating.Text = string.Empty;
             tsSummary.Text = Resource.TxtLoadZeroFiles;
 
             StartFileWatch();
@@ -424,7 +424,8 @@ namespace MovieTorrents
                                 torrentFile.SeeNoWant.ToString(),
                                 torrentFile.SeeFlag.ToString(),
                                 torrentFile.SeeDate,
-                                torrentFile.SeeComment
+                                torrentFile.SeeComment,
+                                torrentFile.CreationTime
                             };
                 lvResults.Items.Add(new ListViewItem(row)
                 {
@@ -484,7 +485,7 @@ namespace MovieTorrents
         }
         private void RefreshSelected()
         {
-            lbGenres.Text = lbRating.Text = lbOtherName.Text = lbKeyName.Text = lbZone.Text = null;
+            lbYear.Text = lbGenres.Text = lbRating.Text = lbOtherName.Text = lbKeyName.Text = lbZone.Text = null;
             if (pictureBox1.Image != null)
             {
                 pictureBox1.Image.Dispose();
@@ -509,8 +510,10 @@ namespace MovieTorrents
                 lvItem.SubItems[6].Text = torrentFile.SeeFlag.ToString();
                 lvItem.SubItems[7].Text = torrentFile.SeeDate;
                 lvItem.SubItems[8].Text = torrentFile.SeeComment;
+                lvItem.SubItems[9].Text = torrentFile.CreationTime;
 
                 lbGenres.Text = torrentFile.Genres;
+                lbYear.Text = torrentFile.Year;
                 lbKeyName.Text = torrentFile.KeyName;
                 lbOtherName.Text = torrentFile.OtherName;
                 lbZone.Text = torrentFile.Zone;
@@ -873,6 +876,22 @@ namespace MovieTorrents
             tsmiHideSameSubject.Enabled = (tsmiFilterNotWatched.Checked || !tsmiFilterSeeNoWant.Checked) && !tsmiFilterWatched.Checked;
             TorrentFile.Filter.NotWant = tsmiFilterSeeNoWant.Checked;
             DoSearch();
+        }
+
+        private void tsmiHaveDoubanId_Click(object sender, EventArgs e)
+        {
+            tsmiHaveDoubanId.Checked = !tsmiHaveDoubanId.Checked;
+            TorrentFile.Filter.HasDoubanId=tsmiHaveDoubanId.Checked;
+            DoSearch();
+
+        }
+
+        private void tsmiNoDoubanId_Click(object sender, EventArgs e)
+        {
+            tsmiNoDoubanId.Checked = !tsmiNoDoubanId.Checked;
+            TorrentFile.Filter.NoDoubanId=tsmiNoDoubanId.Checked;
+            DoSearch();
+
         }
         #endregion
 
@@ -1254,9 +1273,6 @@ namespace MovieTorrents
             lvResults.DoDragDrop(data, DragDropEffects.Copy);
 
         }
-
-
-
 
 
     }
