@@ -12,6 +12,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using BrightIdeasSoftware;
 using MovieTorrents.Common;
 using mySharedLib;
 using Nito.AsyncEx.Synchronous;
@@ -112,11 +113,9 @@ namespace MovieTorrents
 
             _lvwColumnSorter = new ListViewColumnSorter();
 
-            lvResults.RetrieveVirtualItem += LvResults_RetrieveVirtualItem;
-            lvResults.CacheVirtualItems += LvResults_CacheVirtualItems;
             lvResults.KeyDown += lvResults_KeyDown;
             lvResults.ColumnClick += LvResults_ColumnClick;
-            lvResults.VirtualMode = true;
+            lvResults.CheckBoxes = true;
 #if DEBUG
             tbSearchText.Text = @"雷神";
 #endif
@@ -222,13 +221,12 @@ namespace MovieTorrents
             {
                 _listTorrentFiles = torrentFiles;
             }
-            _myCache = null;
 
             var totalFiles = torrentFiles.Count();
             var totalItems = torrentFiles.Where(x => !string.IsNullOrEmpty(x.DoubanId)).GroupBy(x => x.DoubanId).Count();
             lvResults.BeginUpdate();
-            lvResults.Items.Clear();
-            lvResults.VirtualListSize = torrentFiles.Count;
+            lvResults.SetObjects(torrentFiles);
+
             lvResults.EndUpdate();
 
             tsSummary.Text = string.Format(Resource.TextLoadNFiles, totalFiles, totalItems);

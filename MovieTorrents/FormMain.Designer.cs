@@ -42,6 +42,9 @@
             this.过滤TToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tsmiFilterRecent = new System.Windows.Forms.ToolStripMenuItem();
             this.tsmiFilterSeelater = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator6 = new System.Windows.Forms.ToolStripSeparator();
+            this.tsmiHaveDoubanId = new System.Windows.Forms.ToolStripMenuItem();
+            this.tsmiNoDoubanId = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
             this.tsmiFilterWatched = new System.Windows.Forms.ToolStripMenuItem();
             this.tsmiFilterNotWatched = new System.Windows.Forms.ToolStripMenuItem();
@@ -77,16 +80,6 @@
             this.tsmiMovePath = new System.Windows.Forms.ToolStripMenuItem();
             this.tsmiDelete = new System.Windows.Forms.ToolStripMenuItem();
             this.notifyIcon1 = new System.Windows.Forms.NotifyIcon(this.components);
-            this.lvResults = new System.Windows.Forms.ListView();
-            this.columnHeaderName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.columnHeaderRating = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.columnHeaderYear = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.columnHeaderPath = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.columnHeaderSeelater = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.columnHeaderSeenowant = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.columnHeaderSeen = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.columnHeaderSeeDate = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.columnHeaderSeeComment = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.lbGenres = new System.Windows.Forms.Label();
             this.lbRating = new System.Windows.Forms.Label();
             this.lbKeyName = new System.Windows.Forms.Label();
@@ -112,16 +105,23 @@
             this.tsbRating9 = new System.Windows.Forms.ToolStripButton();
             this.tbSearchText = new System.Windows.Forms.ComboBox();
             this.btClearSearch = new System.Windows.Forms.Button();
-            this.columnHeaderCreationTime = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.tsmiNoDoubanId = new System.Windows.Forms.ToolStripMenuItem();
-            this.tsmiHaveDoubanId = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripSeparator6 = new System.Windows.Forms.ToolStripSeparator();
             this.lbYear = new System.Windows.Forms.Label();
+            this.lvResults = new BrightIdeasSoftware.FastObjectListView();
+            this.olvColName = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
+            this.olvColRating = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
+            this.olvColYear = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
+            this.olvColPath = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
+            this.olvColSeelater = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
+            this.olvColNoWant = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
+            this.olvColSeen = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
+            this.olvColSeeDate = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
+            this.olvColAddDate = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.lvContextMenu.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.toolStrip1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.lvResults)).BeginInit();
             this.SuspendLayout();
             // 
             // menuStrip1
@@ -131,7 +131,7 @@
             this.过滤TToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(1273, 25);
+            this.menuStrip1.Size = new System.Drawing.Size(1129, 25);
             this.menuStrip1.TabIndex = 0;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -230,6 +230,25 @@
             this.tsmiFilterSeelater.Text = "稍后看(&L)";
             this.tsmiFilterSeelater.Click += new System.EventHandler(this.tsmiFilterSeelater_Click);
             // 
+            // toolStripSeparator6
+            // 
+            this.toolStripSeparator6.Name = "toolStripSeparator6";
+            this.toolStripSeparator6.Size = new System.Drawing.Size(184, 6);
+            // 
+            // tsmiHaveDoubanId
+            // 
+            this.tsmiHaveDoubanId.Name = "tsmiHaveDoubanId";
+            this.tsmiHaveDoubanId.Size = new System.Drawing.Size(187, 22);
+            this.tsmiHaveDoubanId.Text = "有豆瓣ID";
+            this.tsmiHaveDoubanId.Click += new System.EventHandler(this.tsmiHaveDoubanId_Click);
+            // 
+            // tsmiNoDoubanId
+            // 
+            this.tsmiNoDoubanId.Name = "tsmiNoDoubanId";
+            this.tsmiNoDoubanId.Size = new System.Drawing.Size(187, 22);
+            this.tsmiNoDoubanId.Text = "没有豆瓣ID";
+            this.tsmiNoDoubanId.Click += new System.EventHandler(this.tsmiNoDoubanId_Click);
+            // 
             // toolStripMenuItem1
             // 
             this.toolStripMenuItem1.Name = "toolStripMenuItem1";
@@ -316,9 +335,9 @@
             this.tsSummary,
             this.tsCurrentDir,
             this.tsButtonWatch});
-            this.statusStrip1.Location = new System.Drawing.Point(0, 557);
+            this.statusStrip1.Location = new System.Drawing.Point(0, 547);
             this.statusStrip1.Name = "statusStrip1";
-            this.statusStrip1.Size = new System.Drawing.Size(1273, 26);
+            this.statusStrip1.Size = new System.Drawing.Size(1129, 26);
             this.statusStrip1.TabIndex = 2;
             this.statusStrip1.Text = "statusStrip1";
             // 
@@ -335,7 +354,7 @@
             // 
             this.tssInfo.AutoSize = false;
             this.tssInfo.Name = "tssInfo";
-            this.tssInfo.Size = new System.Drawing.Size(1145, 21);
+            this.tssInfo.Size = new System.Drawing.Size(1001, 21);
             this.tssInfo.Spring = true;
             this.tssInfo.Text = "空闲";
             this.tssInfo.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -515,77 +534,6 @@
             this.notifyIcon1.MouseClick += new System.Windows.Forms.MouseEventHandler(this.notifyIcon1_MouseClick);
             this.notifyIcon1.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.notifyIcon1_MouseDoubleClick);
             // 
-            // lvResults
-            // 
-            this.lvResults.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.lvResults.CheckBoxes = true;
-            this.lvResults.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.columnHeaderName,
-            this.columnHeaderRating,
-            this.columnHeaderYear,
-            this.columnHeaderPath,
-            this.columnHeaderSeelater,
-            this.columnHeaderSeenowant,
-            this.columnHeaderSeen,
-            this.columnHeaderSeeDate,
-            this.columnHeaderSeeComment,
-            this.columnHeaderCreationTime});
-            this.lvResults.FullRowSelect = true;
-            this.lvResults.HideSelection = false;
-            this.lvResults.Location = new System.Drawing.Point(132, 76);
-            this.lvResults.Name = "lvResults";
-            this.lvResults.Size = new System.Drawing.Size(1141, 482);
-            this.lvResults.TabIndex = 5;
-            this.lvResults.UseCompatibleStateImageBehavior = false;
-            this.lvResults.View = System.Windows.Forms.View.Details;
-            this.lvResults.ItemDrag += new System.Windows.Forms.ItemDragEventHandler(this.lvResults_ItemDrag);
-            this.lvResults.SelectedIndexChanged += new System.EventHandler(this.lvResults_SelectedIndexChanged);
-            this.lvResults.MouseClick += new System.Windows.Forms.MouseEventHandler(this.lvResults_MouseClick);
-            this.lvResults.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.lvResults_MouseDoubleClick);
-            // 
-            // columnHeaderName
-            // 
-            this.columnHeaderName.Text = "名称";
-            this.columnHeaderName.Width = 500;
-            // 
-            // columnHeaderRating
-            // 
-            this.columnHeaderRating.Text = "评分";
-            // 
-            // columnHeaderYear
-            // 
-            this.columnHeaderYear.Text = "年代";
-            this.columnHeaderYear.Width = 100;
-            // 
-            // columnHeaderPath
-            // 
-            this.columnHeaderPath.Text = "路径";
-            this.columnHeaderPath.Width = 160;
-            // 
-            // columnHeaderSeelater
-            // 
-            this.columnHeaderSeelater.Text = "稍后看";
-            // 
-            // columnHeaderSeenowant
-            // 
-            this.columnHeaderSeenowant.Text = "不想看";
-            // 
-            // columnHeaderSeen
-            // 
-            this.columnHeaderSeen.Text = "看过";
-            // 
-            // columnHeaderSeeDate
-            // 
-            this.columnHeaderSeeDate.Text = "观看日期";
-            this.columnHeaderSeeDate.Width = 120;
-            // 
-            // columnHeaderSeeComment
-            // 
-            this.columnHeaderSeeComment.Text = "观看评论";
-            this.columnHeaderSeeComment.Width = 190;
-            // 
             // lbGenres
             // 
             this.lbGenres.Location = new System.Drawing.Point(14, 469);
@@ -662,7 +610,7 @@
             this.tsbRating9});
             this.toolStrip1.Location = new System.Drawing.Point(0, 25);
             this.toolStrip1.Name = "toolStrip1";
-            this.toolStrip1.Size = new System.Drawing.Size(1273, 25);
+            this.toolStrip1.Size = new System.Drawing.Size(1129, 25);
             this.toolStrip1.TabIndex = 8;
             this.toolStrip1.Text = "toolStrip1";
             // 
@@ -805,7 +753,7 @@
             "rating:0"});
             this.tbSearchText.Location = new System.Drawing.Point(30, 48);
             this.tbSearchText.Name = "tbSearchText";
-            this.tbSearchText.Size = new System.Drawing.Size(1231, 20);
+            this.tbSearchText.Size = new System.Drawing.Size(1087, 20);
             this.tbSearchText.TabIndex = 9;
             this.tbSearchText.TextChanged += new System.EventHandler(this.tbSearchText_TextChanged);
             // 
@@ -819,30 +767,6 @@
             this.btClearSearch.UseVisualStyleBackColor = true;
             this.btClearSearch.Click += new System.EventHandler(this.btClearSearch_Click);
             // 
-            // columnHeaderCreationTime
-            // 
-            this.columnHeaderCreationTime.Text = "添加时间";
-            this.columnHeaderCreationTime.Width = 100;
-            // 
-            // tsmiNoDoubanId
-            // 
-            this.tsmiNoDoubanId.Name = "tsmiNoDoubanId";
-            this.tsmiNoDoubanId.Size = new System.Drawing.Size(187, 22);
-            this.tsmiNoDoubanId.Text = "没有豆瓣ID";
-            this.tsmiNoDoubanId.Click += new System.EventHandler(this.tsmiNoDoubanId_Click);
-            // 
-            // tsmiHaveDoubanId
-            // 
-            this.tsmiHaveDoubanId.Name = "tsmiHaveDoubanId";
-            this.tsmiHaveDoubanId.Size = new System.Drawing.Size(187, 22);
-            this.tsmiHaveDoubanId.Text = "有豆瓣ID";
-            this.tsmiHaveDoubanId.Click += new System.EventHandler(this.tsmiHaveDoubanId_Click);
-            // 
-            // toolStripSeparator6
-            // 
-            this.toolStripSeparator6.Name = "toolStripSeparator6";
-            this.toolStripSeparator6.Size = new System.Drawing.Size(184, 6);
-            // 
             // lbYear
             // 
             this.lbYear.Location = new System.Drawing.Point(12, 278);
@@ -852,11 +776,88 @@
             this.lbYear.Text = "Year";
             this.lbYear.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
+            // lvResults
+            // 
+            this.lvResults.AllColumns.Add(this.olvColName);
+            this.lvResults.AllColumns.Add(this.olvColRating);
+            this.lvResults.AllColumns.Add(this.olvColYear);
+            this.lvResults.AllColumns.Add(this.olvColPath);
+            this.lvResults.AllColumns.Add(this.olvColSeelater);
+            this.lvResults.AllColumns.Add(this.olvColNoWant);
+            this.lvResults.AllColumns.Add(this.olvColSeen);
+            this.lvResults.AllColumns.Add(this.olvColSeeDate);
+            this.lvResults.AllColumns.Add(this.olvColAddDate);
+            this.lvResults.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.lvResults.CellEditUseWholeCell = false;
+            this.lvResults.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.olvColName,
+            this.olvColRating,
+            this.olvColYear,
+            this.olvColPath,
+            this.olvColSeelater,
+            this.olvColNoWant,
+            this.olvColSeen,
+            this.olvColSeeDate,
+            this.olvColAddDate});
+            this.lvResults.Cursor = System.Windows.Forms.Cursors.Default;
+            this.lvResults.HideSelection = false;
+            this.lvResults.Location = new System.Drawing.Point(132, 74);
+            this.lvResults.Name = "lvResults";
+            this.lvResults.ShowGroups = false;
+            this.lvResults.Size = new System.Drawing.Size(985, 473);
+            this.lvResults.TabIndex = 11;
+            this.lvResults.UseCompatibleStateImageBehavior = false;
+            this.lvResults.View = System.Windows.Forms.View.Details;
+            this.lvResults.VirtualMode = true;
+            // 
+            // olvColName
+            // 
+            this.olvColName.AspectName = "Name";
+            this.olvColName.Text = "名称";
+            this.olvColName.Width = 400;
+            // 
+            // olvColRating
+            // 
+            this.olvColRating.AspectName = "Rating";
+            this.olvColRating.Text = "评分";
+            // 
+            // olvColYear
+            // 
+            this.olvColYear.AspectName = "Year";
+            this.olvColYear.Text = "年代";
+            // 
+            // olvColPath
+            // 
+            this.olvColPath.Text = "路径";
+            // 
+            // olvColSeelater
+            // 
+            this.olvColSeelater.Text = "稍后看";
+            // 
+            // olvColNoWant
+            // 
+            this.olvColNoWant.Text = "不想看";
+            // 
+            // olvColSeen
+            // 
+            this.olvColSeen.Text = "看过";
+            // 
+            // olvColSeeDate
+            // 
+            this.olvColSeeDate.Text = "观看日期";
+            // 
+            // olvColAddDate
+            // 
+            this.olvColAddDate.Text = "添加日期";
+            // 
             // FormMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1273, 583);
+            this.ClientSize = new System.Drawing.Size(1129, 573);
+            this.Controls.Add(this.lvResults);
             this.Controls.Add(this.btClearSearch);
             this.Controls.Add(this.tbSearchText);
             this.Controls.Add(this.toolStrip1);
@@ -866,7 +867,6 @@
             this.Controls.Add(this.lbKeyName);
             this.Controls.Add(this.lbZone);
             this.Controls.Add(this.lbGenres);
-            this.Controls.Add(this.lvResults);
             this.Controls.Add(this.pictureBox1);
             this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.menuStrip1);
@@ -886,6 +886,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.toolStrip1.ResumeLayout(false);
             this.toolStrip1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.lvResults)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -907,13 +908,6 @@
         private System.Windows.Forms.NotifyIcon notifyIcon1;
         private System.Windows.Forms.ToolStripMenuItem tsmiShowFileLocation;
         private System.Windows.Forms.ToolStripMenuItem tsmiSearchDouban;
-        private System.Windows.Forms.ListView lvResults;
-        private System.Windows.Forms.ColumnHeader columnHeaderName;
-        private System.Windows.Forms.ColumnHeader columnHeaderRating;
-        private System.Windows.Forms.ColumnHeader columnHeaderYear;
-        private System.Windows.Forms.ColumnHeader columnHeaderSeen;
-        private System.Windows.Forms.ColumnHeader columnHeaderSeeDate;
-        private System.Windows.Forms.ColumnHeader columnHeaderSeeComment;
         private System.Windows.Forms.Label lbGenres;
         private System.Windows.Forms.PictureBox pictureBox1;
         private System.Windows.Forms.Label lbRating;
@@ -927,7 +921,6 @@
         private System.Windows.Forms.ToolStripMenuItem tsmiDelete;
         private System.Windows.Forms.ToolStripMenuItem tsmiCopyFile;
         private System.Windows.Forms.ToolStripSeparator toolStripMenuItem4;
-        private System.Windows.Forms.ColumnHeader columnHeaderSeelater;
         private System.Windows.Forms.ToolStripMenuItem tsmiSetSeelater;
         private System.Windows.Forms.ToolStripMenuItem tsmiFilterSeelater;
         private System.Windows.Forms.Label lbKeyName;
@@ -947,7 +940,6 @@
         private System.Windows.Forms.ToolStripMenuItem tsmiCopyPath;
         private System.Windows.Forms.Label lbZone;
         private System.Windows.Forms.ToolStripSeparator toolStripMenuItem7;
-        private System.Windows.Forms.ColumnHeader columnHeaderSeenowant;
         private System.Windows.Forms.ToolStripMenuItem tsmiToggleSeeNoWant;
         private System.Windows.Forms.ToolStripMenuItem tsmiFilterSeeNoWant;
         private System.Windows.Forms.ToolStrip toolStrip1;
@@ -970,16 +962,24 @@
         private System.Windows.Forms.ToolStripButton tsbRating9;
         private System.Windows.Forms.ToolStripButton tsbNormalize;
         private System.Windows.Forms.ToolStripMenuItem tsmiClearDuplicates;
-        private System.Windows.Forms.ColumnHeader columnHeaderPath;
         private System.Windows.Forms.ToolStripButton tsbMovePath;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator5;
         private System.Windows.Forms.ToolStripMenuItem tsmiMovePath;
         private System.Windows.Forms.ToolStripMenuItem tsmiOpenFile;
-        private System.Windows.Forms.ColumnHeader columnHeaderCreationTime;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator6;
         private System.Windows.Forms.ToolStripMenuItem tsmiHaveDoubanId;
         private System.Windows.Forms.ToolStripMenuItem tsmiNoDoubanId;
         private System.Windows.Forms.Label lbYear;
+        private BrightIdeasSoftware.FastObjectListView lvResults;
+        private BrightIdeasSoftware.OLVColumn olvColName;
+        private BrightIdeasSoftware.OLVColumn olvColRating;
+        private BrightIdeasSoftware.OLVColumn olvColYear;
+        private BrightIdeasSoftware.OLVColumn olvColPath;
+        private BrightIdeasSoftware.OLVColumn olvColSeelater;
+        private BrightIdeasSoftware.OLVColumn olvColNoWant;
+        private BrightIdeasSoftware.OLVColumn olvColSeen;
+        private BrightIdeasSoftware.OLVColumn olvColSeeDate;
+        private BrightIdeasSoftware.OLVColumn olvColAddDate;
     }
 }
 
