@@ -13,6 +13,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using mySharedLib;
+using Nito.AsyncEx.Synchronous;
 using WebPWrapper;
 using Exception = System.Exception;
 using Timer = System.Threading.Timer;
@@ -346,7 +347,7 @@ namespace MovieTorrents
         }
 
         //搜索的主函数
-        private async void DoSearch(bool checkLastSearch = false)
+        private void DoSearch(bool checkLastSearch = false)
         {
             if (checkLastSearch && string.Compare(_searchText, _lastSearchText, StringComparison.InvariantCultureIgnoreCase) == 0) return;
             _lastSearchText = _searchText;
@@ -382,22 +383,29 @@ namespace MovieTorrents
 
             DisplayInfo("正在查询文件", false, false);
 
+            Task.Run(() =>
+            {
+                var task = TorrentFile.ExecuteSearch(_searchText, _queryTokenSource.Token);
+                Interlocked.Exchange(ref _currentOperation, OperationNone);
+                //https://stackoverflow.com/questions/9343594/how-to-call-asynchronous-method-from-synchronous-method-in-c
+                var result = task.WaitAndUnwrapException();
 
-           var (torrents, msg) = await TorrentFile.ExecuteSearch(_searchText, _queryTokenSource.Token);
-           Interlocked.Exchange(ref _currentOperation, OperationNone);
+                if (result.Cancelled) return;
 
-           if (!string.IsNullOrEmpty(msg))
-           {
-               DisplayInfo(msg, true);
-               return;
-           }
+                BeginInvoke(new Action(() =>
+                {
+                    if (!string.IsNullOrEmpty(result.Message))
+                    {
+                        DisplayInfo(result.Message, true);
+                        return;
+                    }
 
-           BeginInvoke(new Action(() =>
-           {
-               UpdateListView(torrents);
-               DisplayInfo();
-           }));
+                    UpdateListView(result.TorrentFiles);
+                    DisplayInfo();
+                }));
 
+            });
+            
 
         }
 
@@ -881,7 +889,7 @@ namespace MovieTorrents
         private void tsmiHaveDoubanId_Click(object sender, EventArgs e)
         {
             tsmiHaveDoubanId.Checked = !tsmiHaveDoubanId.Checked;
-            TorrentFile.Filter.HasDoubanId=tsmiHaveDoubanId.Checked;
+            TorrentFile.Filter.HasDoubanId = tsmiHaveDoubanId.Checked;
             DoSearch();
 
         }
@@ -889,7 +897,7 @@ namespace MovieTorrents
         private void tsmiNoDoubanId_Click(object sender, EventArgs e)
         {
             tsmiNoDoubanId.Checked = !tsmiNoDoubanId.Checked;
-            TorrentFile.Filter.NoDoubanId=tsmiNoDoubanId.Checked;
+            TorrentFile.Filter.NoDoubanId = tsmiNoDoubanId.Checked;
             DoSearch();
 
         }

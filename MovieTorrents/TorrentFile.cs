@@ -189,11 +189,17 @@ namespace MovieTorrents
             _creationTime = Convert.IsDBNull(reader["CreationTime"])?null: reader.GetInt64(reader.GetOrdinal("CreationTime"));//int8 表示字节，实际上存的是 int64 https://stackoverflow.com/questions/681653/can-you-get-the-column-names-from-a-sqldatareader
         }
 
-        //执行异步搜索
-        public static async Task<(IEnumerable<TorrentFile>,string msg)> ExecuteSearch(string searchText, CancellationToken cancelToken, bool withFilter=true)
+
+        public struct SearchResult
         {
-            var result = new List<TorrentFile>();
-            var msg = string.Empty;
+            public IList<TorrentFile> TorrentFiles=new List<TorrentFile>();
+            public string Message=string.Empty;
+            public bool Cancelled=false;
+        }
+        //执行异步搜索
+        public static async Task<SearchResult> ExecuteSearch(string searchText, CancellationToken cancelToken, bool withFilter=true)
+        {
+            var result = new SearchResult();
 
             try
             {
@@ -202,22 +208,24 @@ namespace MovieTorrents
                 command.Connection = connection;
 
                 await connection.OpenAsync(cancelToken);
-
                 using var reader = await command.ExecuteReaderAsync(cancelToken);
                 while (await reader.ReadAsync(cancelToken))
                 {
-                    result.Add(new TorrentFile(reader));
-
+                    result.TorrentFiles.Add(new TorrentFile(reader));
                 }
+            }
+            catch (OperationCanceledException)
+            {
+                result.Cancelled = true;
             }
             catch (Exception e)
             {
-                msg = e.Message;
+                result.Message = e.Message;
             }
 
             
 
-            return (result,msg);
+            return result;
         }
 
         //在数据库中搜索
