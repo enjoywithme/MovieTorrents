@@ -12,6 +12,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using MovieTorrents.Common;
 using mySharedLib;
 using Nito.AsyncEx.Synchronous;
 using WebPWrapper;
@@ -44,7 +45,7 @@ namespace MovieTorrents
         private ListViewColumnSorter _lvwColumnSorter;
 
 
-        //private System.Timers.Timer _tt;
+        private FolderWatch _folderWatch;
 
 
         public FormMain()
@@ -80,7 +81,11 @@ namespace MovieTorrents
             lbYear.Text = lbGenres.Text = lbKeyName.Text = lbOtherName.Text = lbZone.Text = lbRating.Text = string.Empty;
             tsSummary.Text = Resource.TxtLoadZeroFiles;
 
-            StartFileWatch();
+            //Folder watch
+            _folderWatch = new FolderWatch(TorrentFile.TorrentRootPath);
+            _folderWatch.FolderWatchEvent += _folderWatch_FolderWatchEvent;
+            _folderWatch.Start();
+
 
             //查询limit菜单项
             _limitMenuItems = new[] { tsmiLimit100, tsmiLimit200, tsmiLimit500, tsmiLimit1000, tsmiLimit2000 };
@@ -112,6 +117,95 @@ namespace MovieTorrents
 #endif
         }
 
+
+
+
+
+        private void FormMain_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (_currentOperation == OperationNone || 0 != Interlocked.Exchange(ref BtBtItem.AutoDownloadRunning, 1))
+            {
+                _formBtBtt?.Close();
+                return;
+            }
+            MessageBox.Show(Resource.TxtWaitForOtherOperation, Resource.TextHint, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            e.Cancel = true;
+        }
+
+        //目录监视
+        #region 目录监视
+
+        private void _folderWatch_FolderWatchEvent(object sender, FolderWatchEventArgs e)
+        {
+            if (e == null) return;
+
+
+            if (!string.IsNullOrEmpty(e.Message))
+            {
+                DisplayInfo(e.Message);
+            }
+
+            //Status
+            if (e.StatusChanged)
+            {
+                tsButtonWatch.Image = _folderWatch.IsWatching?Resource.Eye32: Resource.EyeStop32; 
+                tsButtonWatch.ToolTipText = _folderWatch.IsWatching ? Resource.TextDirInMonitor : Resource.TextDirMonitorStopped;
+                tsmiToggleWatch.Text =  _folderWatch.IsWatching ? Resource.TxtStopDirMonitor: Resource.TxtStartDirMonitor;
+
+                if(_folderWatch.IsWatching)
+                    DisplayInfo("目录监视已启动", false, false);
+                else DisplayInfo("目录监视已停止", true);
+
+            }
+
+
+            if (e.NewFilesToBeProcess)
+            {
+                var filesToProcess = new BlockingCollection<TorrentFile>();
+
+                while (_folderWatch.FilesAdded.TryDequeue(out var file))
+                {
+                    filesToProcess.Add(TorrentFile.FromFullPath(file));
+                }
+                filesToProcess.CompleteAdding();
+
+                Task.Run(() => ProcessFileToBeAdded(new CancellationTokenSource().Token, filesToProcess)).ContinueWith(task =>
+                {
+                    if (!task.IsFaulted)
+                    {
+                        DoSearch();
+                        return;
+                    }
+                    var ex = task.Exception?.InnerException;
+                    if (ex != null)
+                        DisplayInfo(ex.Message, true);
+                });
+            }
+
+        }
+
+        private void tsmiToggleWatch_Click(object sender, EventArgs e)
+        {
+            if (_folderWatch.IsWatching)
+                _folderWatch.Stop();
+            else
+                _folderWatch.Start();
+
+        }
+
+        #endregion
+
+
+        //List view
+        #region 列表
+
+        private void lvResults_ItemDrag(object sender, ItemDragEventArgs e)
+        {
+            var data = new DataObject(DataFormats.FileDrop, (from ListViewItem item in lvResults.SelectedItems select ((TorrentFile)item.Tag).FullName).ToArray());
+            lvResults.DoDragDrop(data, DragDropEffects.Copy);
+
+        }
+
         private void LvResults_ColumnClick(object sender, ColumnClickEventArgs e)
         {
             // Determine if clicked column is already the column that is being sorted.
@@ -129,164 +223,6 @@ namespace MovieTorrents
 
             // Perform the sort with these new sort options.
             lvResults.Sort();
-        }
-
-        private void FormMain_FormClosing(object sender, FormClosingEventArgs e)
-        {
-            if (_currentOperation == OperationNone || 0 != Interlocked.Exchange(ref BtBtItem.AutoDownloadRunning, 1))
-            {
-                _formBtBtt?.Close();
-                return;
-            }
-            MessageBox.Show(Resource.TxtWaitForOtherOperation, Resource.TextHint, MessageBoxButtons.OK, MessageBoxIcon.Warning);
-            e.Cancel = true;
-        }
-
-        //目录监视
-        #region 目录监视
-
-        private bool _isWatching;
-        private bool _ignoreFileWatch;
-
-        private readonly BlockingCollection<TorrentFile> _monitoredFilesToProcess = new();
-
-        public void IgnoreFileWatch(bool ignore = true)
-        {
-            _ignoreFileWatch = ignore;
-        }
-
-        private bool IsWatching
-        {
-            set
-            {
-                _isWatching = value;
-                if (_isWatching)
-                {
-                    tsButtonWatch.Image = Resource.Eye32;
-                    tsButtonWatch.ToolTipText = Resource.TextDirInMonitor;
-                    tsmiToggleWatch.Text = Resource.TxtStopDirMonitor;
-                    DisplayInfo("目录监视已启动", false, false);
-                    return;
-                }
-
-                tsButtonWatch.Image = Resource.EyeStop32;
-                tsButtonWatch.ToolTipText = Resource.TextDirMonitorStopped;
-                tsmiToggleWatch.Text = Resource.TxtStartDirMonitor;
-                DisplayInfo("目录监视已停止", true);
-            }
-        }
-        private FileSystemWatcher _watcher;
-        private Timer _watchTimer;
-
-        private void StartFileWatch()
-        {
-            if (string.IsNullOrEmpty(TorrentFile.TorrentRootPath)) return;
-
-            try
-            {
-                _watcher = new FileSystemWatcher(TorrentFile.TorrentRootPath)
-                {
-                    IncludeSubdirectories = true,
-                    NotifyFilter = NotifyFilters.FileName,
-                    Filter = "*.torrent"
-                };
-                _watcher.Created += Watcher_File_Created;
-                _watcher.Error += Watcher_File__Error;
-                _watcher.EnableRaisingEvents = true;
-                IsWatching = true;
-            }
-            catch (Exception e)
-            {
-                IsWatching = false;
-                DisplayInfo($"启动目录监视失败\r\n{e.Message}!", true);
-            }
-
-            if (_watchTimer == null)
-            {
-                _watchTimer = new Timer(CheckWatchStatus, null, 2000, 10000);
-            }
-            else
-                _watchTimer.Change(2000, 10000);
-
-        }
-        private void StopFileWatch()
-        {
-            if (_watchTimer != null && !_watchTimer.Change(Timeout.Infinite, Timeout.Infinite))
-            {
-                _watchTimer.Dispose();
-                _watchTimer = null;
-            }
-
-            if (_watcher != null)
-            {
-                _watcher.EnableRaisingEvents = false;
-                _watcher.Dispose();
-                _watcher = null;
-            }
-
-
-            IsWatching = false;
-        }
-
-        private void Watcher_File__Error(object sender, ErrorEventArgs e)
-        {
-            IsWatching = false;
-            DisplayInfo($"目录监视失败:{e.GetException().Message}", true);
-        }
-
-        public void CheckWatchStatus(object state)
-        {
-            if (string.IsNullOrEmpty(TorrentFile.TorrentRootPath)) return;
-
-            if (_monitoredFilesToProcess.Count > 0)
-            {
-                var filesToProcess = new BlockingCollection<TorrentFile>();
-
-                while (_monitoredFilesToProcess.TryTake(out var torrentFile))
-                {
-                    filesToProcess.Add(torrentFile);
-                }
-                filesToProcess.CompleteAdding();
-
-                Task.Run(() => ProcessFileToBeAdded(new CancellationTokenSource().Token, filesToProcess)).ContinueWith(task =>
-                {
-                    if (!task.IsFaulted)
-                    {
-                        DoSearch();
-                        return;
-                    }
-                    var ex = task.Exception?.InnerException;
-                    if (ex != null)
-                        DisplayInfo(ex.Message, true);
-                });
-            }
-
-
-            if (_isWatching) return;
-
-            if (!Directory.Exists(TorrentFile.TorrentRootPath)) return;
-
-            StartFileWatch();
-        }
-
-
-        private void tsmiToggleWatch_Click(object sender, EventArgs e)
-        {
-            if (_isWatching)
-                StopFileWatch();
-            else
-                StartFileWatch();
-
-        }
-        private void Watcher_File_Created(object sender, FileSystemEventArgs e)
-        {
-            if (_ignoreFileWatch) return;
-
-            //添加一个文件会发现生成2个事件，https://blogs.msdn.microsoft.com/ahamza/2006/02/04/filesystemwatcher-generates-duplicate-events-how-to-workaround/ 
-            Debug.WriteLine($"File monitored added:{e.FullPath}");
-
-            _monitoredFilesToProcess.Add(TorrentFile.FromFullPath(e.FullPath));
-
         }
         #endregion
 
@@ -903,11 +839,7 @@ namespace MovieTorrents
         }
         #endregion
 
-        //排序菜单
-        #region 排序菜单
 
-
-        #endregion
 
         //右键菜单
         #region 
@@ -998,7 +930,7 @@ namespace MovieTorrents
 
             var errorMsg = new StringBuilder();
             var moved = 0;
-            IgnoreFileWatch();
+            _folderWatch.IgnoreFileWatch();
             foreach (ListViewItem selectedItem in lvResults.SelectedItems)
             {
                 var torrentFile = (TorrentFile)selectedItem.Tag;
@@ -1007,7 +939,7 @@ namespace MovieTorrents
                     errorMsg.AppendLine(msg);
                 else moved++;
             }
-            IgnoreFileWatch(false);
+            _folderWatch.IgnoreFileWatch(false);
             MessageBox.Show($"成功移动{moved}条记录。\r\n{errorMsg}", Resource.TextHint, MessageBoxButtons.OK, MessageBoxIcon.Information);
 
             RefreshSelected();
@@ -1056,10 +988,10 @@ namespace MovieTorrents
                 return;
             }
 
-            IgnoreFileWatch();
+            _folderWatch.IgnoreFileWatch();
             var (ret, msg) = TorrentFile.MovePath(formBrowseTorrentFolder.SelectedPath, torrentFile.Path, formBrowseTorrentFolder.FolderRename);
 
-            IgnoreFileWatch(false);
+            _folderWatch.IgnoreFileWatch(false);
             MessageBox.Show(ret ? $"成功移动目录 {torrentFile.Path}。" : $"移动目录 {torrentFile.Path} 失败。\r\n{msg}",
                 Resource.TextHint, MessageBoxButtons.OK,
                 ret ? MessageBoxIcon.Information : MessageBoxIcon.Error);
@@ -1078,7 +1010,7 @@ namespace MovieTorrents
                 return;
             }
 
-            IgnoreFileWatch();
+            _folderWatch.IgnoreFileWatch();
             var errorMsg = new StringBuilder();
             var renamed = 0;
             foreach (ListViewItem selectedItem in lvResults.SelectedItems)
@@ -1093,7 +1025,7 @@ namespace MovieTorrents
             }
 
 
-            IgnoreFileWatch(false);
+            _folderWatch.IgnoreFileWatch(false);
             MessageBox.Show($"成功重命名{renamed}条记录。\r\n{errorMsg}", Resource.TextHint, MessageBoxButtons.OK, MessageBoxIcon.Information);
 
             DoSearch();
@@ -1275,12 +1207,7 @@ namespace MovieTorrents
         #endregion
 
 
-        private void lvResults_ItemDrag(object sender, ItemDragEventArgs e)
-        {
-            var data = new DataObject(DataFormats.FileDrop, (from ListViewItem item in lvResults.SelectedItems select ((TorrentFile)item.Tag).FullName).ToArray());
-            lvResults.DoDragDrop(data, DragDropEffects.Copy);
 
-        }
 
 
     }
