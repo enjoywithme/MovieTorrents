@@ -133,13 +133,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Common\BtBtItem.cs" />
-    <Compile Include="Common\DoubanSubject.cs" />
+    <Compile Include="Common\DouBanSubject.cs" />
     <Compile Include="Common\FolderWatch.cs" />
     <Compile Include="Common\ListViewColumnSorter.cs" />
     <Compile Include="Common\TextBoxWithPasteEvent.cs" />
     <Compile Include="Common\TorrentFile.cs" />
     <Compile Include="Common\TorrentFilter.cs" />
-    <Compile Include="Common\WebPWrapper.cs" />
+    <Compile Include="WebPWrapper\WebPWrapper.cs" />
     <Compile Include="FormWebBrowser.cs">
       <SubType>Form</SubType>
     </Compile>

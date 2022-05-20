@@ -9,6 +9,7 @@ using System.IO;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using Microsoft.Web.WebView2.Core;
+using MovieTorrents.Common;
 using static System.String;
 
 namespace MovieTorrents
@@ -16,7 +17,7 @@ namespace MovieTorrents
     public partial class FormWebBrowser : Form
     {
         private string _startUrl;
-        public DoubanSubject DoubanSubject { get; private set; }
+        public DouBanSubject DouBanSubject { get; private set; }
         public FormWebBrowser(string startUrl)
         {
             _startUrl = startUrl;
@@ -27,7 +28,7 @@ namespace MovieTorrents
 
         private void FormWebBrowser_Load(object sender, EventArgs e)
         {
-            DoubanSubject = null;
+            DouBanSubject = null;
             txtUrl.Text= _startUrl;
             GoUrl(_startUrl);
         }
@@ -165,7 +166,7 @@ namespace MovieTorrents
 
 #endif
 
-            DoubanSubject = DoubanSubject.InitFromPageHtml(webView2Control.Source.AbsoluteUri, html);
+            DouBanSubject = DouBanSubject.InitFromPageHtml(webView2Control.Source.AbsoluteUri, html);
 
             DialogResult = DialogResult.OK;
         }

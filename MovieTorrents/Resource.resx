@@ -215,16 +215,19 @@
     <value>没有选择任何记录！</value>
   </data>
   <data name="TextFilesRenamed" xml:space="preserve">
-	  <value>成功重命名{0}条记录。
+    <value>成功重命名{0}条记录。
 {1}</value>
   </data>
   <data name="TextCheckOnlyOneItem" xml:space="preserve">
-	  <value>请只勾选一项作为要拷贝豆瓣信息的原始项！</value>
+    <value>请只勾选一项作为要拷贝豆瓣信息的原始项！</value>
   </data>
   <data name="TextSelectItemsExcludeSource" xml:space="preserve">
-	  <value>请选择除源项以外的更多项操作！</value>
+    <value>请选择除源项以外的更多项操作！</value>
   </data>
   <data name="TextConfirmCopDoubanInfo" xml:space="preserve">
-	  <value>确认拷贝豆瓣信息到所选记录？</value>
+    <value>确认拷贝豆瓣信息到所选记录？</value>
+  </data>
+  <data name="TextNoResultsFound" xml:space="preserve">
+    <value>没有搜索到任何结果</value>
   </data>
 </root>

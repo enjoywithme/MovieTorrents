@@ -15,7 +15,7 @@ using BencodeNET.Torrents;
 using mySharedLib;
 using Timer = System.Threading.Timer;
 
-namespace MovieTorrents
+namespace MovieTorrents.Common
 {
     public class BtBtItem
     {

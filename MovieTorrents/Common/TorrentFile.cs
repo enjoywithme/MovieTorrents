@@ -11,10 +11,9 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using MovieTorrents.Common;
 using mySharedLib;
 
-namespace MovieTorrents
+namespace MovieTorrents.Common
 {
     public class TorrentFile
     {
@@ -1150,7 +1149,7 @@ where file_nid=$fid";
             return sb.ToString();
         }
 
-        public bool UpdateDoubanInfo(DoubanSubject subject, out string msg)
+        public bool UpdateDoubanInfo(DouBanSubject subject, out string msg)
         {
             msg = string.Empty;
             var posterImageFileName = string.Empty;

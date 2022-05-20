@@ -1,16 +1,15 @@
-﻿using Newtonsoft.Json.Linq;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text.RegularExpressions;
-using MovieTorrents.Common;
+using Newtonsoft.Json.Linq;
 
-namespace MovieTorrents
+namespace MovieTorrents.Common
 {
-    public class DoubanSubject
+    public class DouBanSubject
     {
 
 
@@ -43,7 +42,7 @@ namespace MovieTorrents
 
         private bool _triedDetail=false;
 
-        public DoubanSubject()
+        public DouBanSubject()
         {
             casts=string.Empty;
             directors = string.Empty;
@@ -71,11 +70,11 @@ namespace MovieTorrents
         }
 
 
-        public static List<DoubanSubject> SearchSuggest(string text,out string msg)
+        public static List<DouBanSubject> SearchSuggest(string text,out string msg)
         {
             msg = string.Empty;
 
-            var list = new List<DoubanSubject>();
+            var list = new List<DouBanSubject>();
 
             var q = Uri.EscapeDataString(text);
             var sUrl = $"https://movie.douban.com/j/subject_suggest?q={q}";
@@ -114,7 +113,7 @@ namespace MovieTorrents
                 var subjects = JArray.Parse(jsonText).ToList();
                 foreach (var jobject in subjects)
                 {
-                    var subject = new DoubanSubject
+                    var subject = new DouBanSubject
                     {
                         id = (string)jobject["id"],
                         title = (string)jobject["title"],
@@ -139,10 +138,10 @@ namespace MovieTorrents
         }
 
 
-        public static List<DoubanSubject> SearchById(string text,out string msg)
+        public static List<DouBanSubject> SearchById(string text,out string msg)
         {
             var subjectId = string.Empty;
-            var list = new List<DoubanSubject>();
+            var list = new List<DouBanSubject>();
 
             var match = Regex.Match(text, "https:\\/\\/movie.douban.com\\/subject\\/(\\d+)",
                 RegexOptions.IgnoreCase);
@@ -158,7 +157,7 @@ namespace MovieTorrents
                 msg = "不正确的豆瓣ID";
             else
             {
-                var subject = new DoubanSubject() { id = subjectId };
+                var subject = new DouBanSubject() { id = subjectId };
                 subject.TryQueryDetail(out msg);
                 subject.title = subject.name;
                 subject.sub_title = subject.othername;
@@ -253,9 +252,9 @@ namespace MovieTorrents
             return true;
         }
 
-        public static DoubanSubject InitFromPageHtml(string sourceUrl, string html)
+        public static DouBanSubject InitFromPageHtml(string sourceUrl, string html)
         {
-            var subject = new DoubanSubject();
+            var subject = new DouBanSubject();
             var match = Regex.Match(sourceUrl, @"movie.douban.com/subject/(\d+)");
             if (match.Success)
                 subject.id = match.Groups[1].Value;

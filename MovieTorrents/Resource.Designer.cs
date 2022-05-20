@@ -233,6 +233,15 @@ namespace MovieTorrents {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to 没有搜索到任何结果.
+        /// </summary>
+        internal static string TextNoResultsFound {
+            get {
+                return ResourceManager.GetString("TextNoResultsFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to 种子文件根目录没有配置.
         /// </summary>
         internal static string TextNoRootFolder {

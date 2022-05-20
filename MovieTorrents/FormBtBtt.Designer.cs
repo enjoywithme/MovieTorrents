@@ -1,4 +1,6 @@
-﻿namespace MovieTorrents
+﻿using MovieTorrents.Common;
+
+namespace MovieTorrents
 {
     partial class FormBtBtt
     {
@@ -56,7 +58,7 @@
             this.btLog = new System.Windows.Forms.Button();
             this.btClearLog = new System.Windows.Forms.Button();
             this.btHomePage = new System.Windows.Forms.Button();
-            this.tbSearch = new MovieTorrents.TextBoxWithPasteEvent();
+            this.tbSearch = new TextBoxWithPasteEvent();
             this.SuspendLayout();
             // 
             // tbUrl
@@ -343,7 +345,7 @@
         private System.Windows.Forms.ColumnHeader columnHeaderSeeDate;
         private System.Windows.Forms.ColumnHeader columnHeaderSeeComment;
         private System.Windows.Forms.TextBox tbTitle;
-        private MovieTorrents.TextBoxWithPasteEvent tbSearch;
+        private TextBoxWithPasteEvent tbSearch;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Button btArchiveTorrent;
         private System.Windows.Forms.CheckBox cbAutoDownload;

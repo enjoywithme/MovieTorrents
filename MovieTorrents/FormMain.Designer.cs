@@ -110,8 +110,8 @@
             this.olvColName = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.olvColRating = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.olvColYear = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
-            this.olvColPath = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.olvColAddDate = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
+            this.olvColPath = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.olvColSeelater = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.olvColNoWant = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.olvColSeen = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
@@ -747,6 +747,7 @@
             // 
             this.tbSearchText.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.tbSearchText.Font = new System.Drawing.Font("Microsoft YaHei", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.tbSearchText.FormattingEnabled = true;
             this.tbSearchText.Items.AddRange(new object[] {
             "rating:>9",
@@ -754,7 +755,7 @@
             "rating:0"});
             this.tbSearchText.Location = new System.Drawing.Point(30, 48);
             this.tbSearchText.Name = "tbSearchText";
-            this.tbSearchText.Size = new System.Drawing.Size(1099, 20);
+            this.tbSearchText.Size = new System.Drawing.Size(1099, 25);
             this.tbSearchText.TabIndex = 9;
             this.tbSearchText.TextChanged += new System.EventHandler(this.tbSearchText_TextChanged);
             // 
@@ -831,17 +832,17 @@
             this.olvColYear.AspectName = "Year";
             this.olvColYear.Text = "年代";
             // 
-            // olvColPath
-            // 
-            this.olvColPath.AspectName = "Path";
-            this.olvColPath.Text = "路径";
-            this.olvColPath.Width = 100;
-            // 
             // olvColAddDate
             // 
             this.olvColAddDate.AspectName = "CreationTime";
             this.olvColAddDate.Text = "添加日期";
             this.olvColAddDate.Width = 110;
+            // 
+            // olvColPath
+            // 
+            this.olvColPath.AspectName = "Path";
+            this.olvColPath.Text = "路径";
+            this.olvColPath.Width = 100;
             // 
             // olvColSeelater
             // 

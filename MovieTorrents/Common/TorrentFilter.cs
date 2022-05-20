@@ -4,7 +4,7 @@ using System.Data.SQLite;
 using System.Diagnostics;
 using System.Text;
 
-namespace MovieTorrents;
+namespace MovieTorrents.Common;
 
 public class TorrentFilter
 {

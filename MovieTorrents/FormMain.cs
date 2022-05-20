@@ -12,10 +12,11 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using BrightIdeasSoftware;
 using MovieTorrents.Common;
+using MovieTorrents.WebPWrapper;
 using mySharedLib;
 using Nito.AsyncEx.Synchronous;
-using WebPWrapper;
 using Exception = System.Exception;
 
 namespace MovieTorrents
@@ -29,7 +30,6 @@ namespace MovieTorrents
         private CancellationTokenSource _queryTokenSource;
         private CancellationTokenSource _operationTokenSource;
 
-        private IList<TorrentFile> _listTorrentFiles;//保存的当前列表
 
         private ToolStripMenuItem[] _limitMenuItems;
 
@@ -109,13 +109,16 @@ namespace MovieTorrents
             lvResults.ItemDrag += lvResults_ItemDrag;
             lvResults.MouseDoubleClick += lvResults_MouseDoubleClick;
             lvResults.MouseClick += lvResults_MouseClick;
+            lvResults.RowFormatter = RowFormatter;
+            lvResults.CellToolTipGetter = CellToolTipGetter;
             lvResults.CheckBoxes = true;
             lvResults.FullRowSelect = true;
+            lvResults.EmptyListMsg = Resource.TextNoResultsFound;
+            lvResults.EmptyListMsgFont = new Font("Microsoft YaHei", 24);
 #if DEBUG
             tbSearchText.Text = @"雷神";
 #endif
         }
-
 
 
         private void FormMain_FormClosing(object sender, FormClosingEventArgs e)
@@ -197,25 +200,38 @@ namespace MovieTorrents
         #region 列表
 
         //更新列表
-        private void UpdateListView(IList<TorrentFile> torrentFiles = null)
+        private void UpdateListView(IList<TorrentFile> torrentFiles)
         {
-            if (torrentFiles == null)
-                torrentFiles = _listTorrentFiles;
-            else
-            {
-                _listTorrentFiles = torrentFiles;
-            }
-
             var totalFiles = torrentFiles.Count();
             var totalItems = torrentFiles.Where(x => !string.IsNullOrEmpty(x.DoubanId)).GroupBy(x => x.DoubanId).Count();
-            lvResults.BeginUpdate();
             lvResults.SetObjects(torrentFiles);
-
-            lvResults.EndUpdate();
 
             tsSummary.Text = string.Format(Resource.TextLoadNFiles, totalFiles, totalItems);
         }
-
+        //条目tooltip
+        private string CellToolTipGetter(OLVColumn column, object modelObject)
+        {
+            var torrentFile = (TorrentFile)modelObject;
+            var sb = new StringBuilder();
+            sb.AppendLine(torrentFile.Name);
+            sb.AppendLine($"评分：{torrentFile.Rating:0.0}");
+            sb.AppendLine($"年份：{torrentFile.Year}");
+            sb.AppendLine($"类型:{torrentFile.Genres}");
+            sb.AppendLine($"地区:{torrentFile.Zone}");
+            sb.AppendLine($"路径：{torrentFile.Path}");
+            sb.AppendLine($"观看评论：{torrentFile.SeeComment}");
+            return sb.ToString();
+        }
+        //格式化条目
+        private void RowFormatter(OLVListItem olvItem)
+        {
+            var torrentFile = (TorrentFile)olvItem.RowObject;
+            if (!string.IsNullOrEmpty(torrentFile.DoubanId)) return;
+            var i = lvResults.Columns.IndexOf(olvColName);
+            if (i < 0) return;
+            olvItem.UseItemStyleForSubItems = false;
+            olvItem.SubItems[i].BackColor = Color.Yellow;
+        }
 
         //刷新当前选择
         private void lvResults_SelectedIndexChanged(object sender, EventArgs e)

@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Windows.Forms;
 
-namespace MovieTorrents
+namespace MovieTorrents.Common
 {
 
 
