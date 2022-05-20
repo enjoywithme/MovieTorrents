@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Runtime.Remoting.Messaging;
 using System.Windows.Forms;
 using MovieTorrents.Common;
 
@@ -45,6 +46,14 @@ namespace MovieTorrents
             cbRenameMoveFolder.CheckedChanged+=(_, _) => FolderRename=cbRenameMoveFolder.Checked;
             cbCreateFolder.CheckedChanged += (_, _) => CreateFolder = cbCreateFolder.Checked;
 
+        }
+
+        private void btFolder_Click(object sender, EventArgs e)
+        {
+            if(sender is not Button button) return;
+            var path = button.Tag as string;
+            if(string.IsNullOrEmpty(path)) return;
+            tbSelectedPath.Text = Path.Combine(TorrentFile.TorrentRootPath,path);
         }
 
         private void BtOk_Click(object sender, EventArgs e)
@@ -107,5 +116,7 @@ namespace MovieTorrents
             tbSelectedPath.Text = _folderBrowserDialog1.SelectedPath;
             if (!tbSelectedPath.Text.EndsWith("\\")) tbSelectedPath.Text += "\\";
         }
+
+
     }
 }

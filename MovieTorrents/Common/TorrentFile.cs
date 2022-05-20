@@ -1119,19 +1119,24 @@ where file_nid=$fid";
                     sb.AppendLine($"已知电影数 {command.ExecuteScalar()}（有豆瓣编号）");
 
                     command = new SQLiteCommand("select count(*) as watched from filelist_view where seeflag=1", connection);
-                    sb.AppendLine($"已看 {command.ExecuteScalar()}");
-
-                    sb.AppendLine("过去5年观看数：");
+                    sb.AppendLine($"已看 {command.ExecuteScalar()}：");
 
                     var thisYear = DateTime.Now.Year;
-                    command = new SQLiteCommand("select count(*) from filelist_view where strftime('%Y', seedate)=@year ", connection);
-                    command.Parameters.Add("@year", DbType.String, 10);
-                    command.Prepare();
-                    for (var i = 0; i < 5; i++)
+                    command = new SQLiteCommand(@"
+select year_month,count(*) from (
+select strftime('%Y', seedate) year_month
+from filelist_view
+where seedate<>'' and seedate not null)
+group by year_month 
+order by year_month desc
+", connection);
+                    var reader = command.ExecuteReader();
+                    while (reader.Read())
                     {
-                        command.Parameters["@year"].Value = (thisYear - i).ToString();
-                        sb.AppendLine($"{ thisYear - i} / {command.ExecuteScalar()}");
+                        sb.AppendLine($"{reader[0]} | {reader[1]}");
                     }
+                    reader.Close();
+
                 }
                 catch (Exception e)
                 {

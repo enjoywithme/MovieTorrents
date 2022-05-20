@@ -155,7 +155,7 @@
             this.tsmiShowStatistics.Name = "tsmiShowStatistics";
             this.tsmiShowStatistics.Size = new System.Drawing.Size(165, 22);
             this.tsmiShowStatistics.Text = "统计(&T)";
-            this.tsmiShowStatistics.Click += new System.EventHandler(this.tsmiShowStatistics_Click);
+            this.tsmiShowStatistics.Click += new System.EventHandler(this.MenuItemShowStatistics_Click);
             // 
             // toolStripMenuItem7
             // 
@@ -167,7 +167,7 @@
             this.tsmiScanFile.Name = "tsmiScanFile";
             this.tsmiScanFile.Size = new System.Drawing.Size(165, 22);
             this.tsmiScanFile.Text = "扫描种子文件(&S)";
-            this.tsmiScanFile.Click += new System.EventHandler(this.tsmiScanFile_Click);
+            this.tsmiScanFile.Click += new System.EventHandler(this.MenuItemScanFile_Click);
             // 
             // tsmiClearRecords
             // 
@@ -192,7 +192,7 @@
             this.tsmiExit.Name = "tsmiExit";
             this.tsmiExit.Size = new System.Drawing.Size(165, 22);
             this.tsmiExit.Text = "退出(X)";
-            this.tsmiExit.Click += new System.EventHandler(this.tsmiExit_Click);
+            this.tsmiExit.Click += new System.EventHandler(this.MenuitemExit_Click);
             // 
             // 过滤TToolStripMenuItem
             // 

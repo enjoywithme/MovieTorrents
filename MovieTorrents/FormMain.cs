@@ -226,11 +226,10 @@ namespace MovieTorrents
         private void RowFormatter(OLVListItem olvItem)
         {
             var torrentFile = (TorrentFile)olvItem.RowObject;
-            if (!string.IsNullOrEmpty(torrentFile.DoubanId)) return;
             var i = lvResults.Columns.IndexOf(olvColName);
             if (i < 0) return;
             olvItem.UseItemStyleForSubItems = false;
-            olvItem.SubItems[i].ForeColor = Color.Red;
+            olvItem.SubItems[i].ForeColor = torrentFile.ForeColor;
         }
 
         //刷新当前选择
@@ -693,17 +692,17 @@ namespace MovieTorrents
 
         //主菜单
         #region 主菜单
-        private void tsmiExit_Click(object sender, EventArgs e)
+        private void MenuitemExit_Click(object sender, EventArgs e)
         {
             Close();
         }
 
-        private void tsmiScanFile_Click(object sender, EventArgs e)
+        private void MenuItemScanFile_Click(object sender, EventArgs e)
         {
             ScanTorrentFile();
         }
 
-        private void tsmiShowStatistics_Click(object sender, EventArgs e)
+        private void MenuItemShowStatistics_Click(object sender, EventArgs e)
         {
             var result = TorrentFile.CountStatistics(out var msg);
             if (!string.IsNullOrEmpty(msg))
