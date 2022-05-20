@@ -204,8 +204,8 @@ namespace MovieTorrents
         {
             var totalFiles = torrentFiles.Count();
             var totalItems = torrentFiles.Where(x => !string.IsNullOrEmpty(x.DoubanId)).GroupBy(x => x.DoubanId).Count();
-            lvResults.SetObjects(torrentFiles);
-
+            lvResults.SetObjects(torrentFiles,true);
+            lvResults.SelectedIndices.Clear();
             tsSummary.Text = string.Format(Resource.TextLoadNFiles, totalFiles, totalItems);
         }
         //条目tooltip
@@ -230,7 +230,7 @@ namespace MovieTorrents
             var i = lvResults.Columns.IndexOf(olvColName);
             if (i < 0) return;
             olvItem.UseItemStyleForSubItems = false;
-            olvItem.SubItems[i].BackColor = Color.Yellow;
+            olvItem.SubItems[i].ForeColor = Color.Red;
         }
 
         //刷新当前选择
