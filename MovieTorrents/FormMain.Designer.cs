@@ -116,6 +116,7 @@
             this.olvColSeen = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.olvColSeeDate = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.olvColAddDate = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
+            this.olvColSeeComment = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.lvContextMenu.SuspendLayout();
@@ -126,6 +127,8 @@
             // 
             // menuStrip1
             // 
+
+
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.文件FToolStripMenuItem,
             this.过滤TToolStripMenuItem});
@@ -329,6 +332,7 @@
             // 
             // statusStrip1
             // 
+
             this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.tssState,
             this.tssInfo,
@@ -338,6 +342,7 @@
             this.statusStrip1.Location = new System.Drawing.Point(0, 547);
             this.statusStrip1.Name = "statusStrip1";
             this.statusStrip1.Size = new System.Drawing.Size(1129, 26);
+
             this.statusStrip1.TabIndex = 2;
             this.statusStrip1.Text = "statusStrip1";
             // 
@@ -397,6 +402,7 @@
             // 
             // lvContextMenu
             // 
+
             this.lvContextMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.tsmiSetWatched,
             this.tsmiSetSeelater,
@@ -537,6 +543,7 @@
             // lbGenres
             // 
             this.lbGenres.Location = new System.Drawing.Point(14, 469);
+
             this.lbGenres.Name = "lbGenres";
             this.lbGenres.Size = new System.Drawing.Size(98, 44);
             this.lbGenres.TabIndex = 1;
@@ -546,6 +553,7 @@
             // lbRating
             // 
             this.lbRating.Location = new System.Drawing.Point(12, 247);
+
             this.lbRating.Name = "lbRating";
             this.lbRating.Size = new System.Drawing.Size(100, 23);
             this.lbRating.TabIndex = 6;
@@ -555,6 +563,7 @@
             // lbKeyName
             // 
             this.lbKeyName.Location = new System.Drawing.Point(14, 314);
+
             this.lbKeyName.Name = "lbKeyName";
             this.lbKeyName.Size = new System.Drawing.Size(98, 53);
             this.lbKeyName.TabIndex = 1;
@@ -564,6 +573,7 @@
             // lbOtherName
             // 
             this.lbOtherName.Location = new System.Drawing.Point(14, 389);
+
             this.lbOtherName.Name = "lbOtherName";
             this.lbOtherName.Size = new System.Drawing.Size(98, 58);
             this.lbOtherName.TabIndex = 1;
@@ -573,6 +583,7 @@
             // pictureBox1
             // 
             this.pictureBox1.Location = new System.Drawing.Point(0, 74);
+
             this.pictureBox1.Name = "pictureBox1";
             this.pictureBox1.Size = new System.Drawing.Size(126, 164);
             this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
@@ -583,6 +594,7 @@
             // lbZone
             // 
             this.lbZone.Location = new System.Drawing.Point(12, 526);
+
             this.lbZone.Name = "lbZone";
             this.lbZone.Size = new System.Drawing.Size(98, 31);
             this.lbZone.TabIndex = 1;
@@ -591,6 +603,7 @@
             // 
             // toolStrip1
             // 
+
             this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripButton1,
             this.toolStripSeparator1,
@@ -611,6 +624,7 @@
             this.toolStrip1.Location = new System.Drawing.Point(0, 25);
             this.toolStrip1.Name = "toolStrip1";
             this.toolStrip1.Size = new System.Drawing.Size(1129, 25);
+
             this.toolStrip1.TabIndex = 8;
             this.toolStrip1.Text = "toolStrip1";
             // 
@@ -752,6 +766,7 @@
             "rating:>8",
             "rating:0"});
             this.tbSearchText.Location = new System.Drawing.Point(30, 48);
+
             this.tbSearchText.Name = "tbSearchText";
             this.tbSearchText.Size = new System.Drawing.Size(1087, 20);
             this.tbSearchText.TabIndex = 9;
@@ -760,6 +775,7 @@
             // btClearSearch
             // 
             this.btClearSearch.Location = new System.Drawing.Point(4, 47);
+
             this.btClearSearch.Name = "btClearSearch";
             this.btClearSearch.Size = new System.Drawing.Size(22, 22);
             this.btClearSearch.TabIndex = 10;
@@ -770,6 +786,7 @@
             // lbYear
             // 
             this.lbYear.Location = new System.Drawing.Point(12, 278);
+
             this.lbYear.Name = "lbYear";
             this.lbYear.Size = new System.Drawing.Size(100, 23);
             this.lbYear.TabIndex = 6;
@@ -782,11 +799,12 @@
             this.lvResults.AllColumns.Add(this.olvColRating);
             this.lvResults.AllColumns.Add(this.olvColYear);
             this.lvResults.AllColumns.Add(this.olvColPath);
+            this.lvResults.AllColumns.Add(this.olvColAddDate);
             this.lvResults.AllColumns.Add(this.olvColSeelater);
             this.lvResults.AllColumns.Add(this.olvColNoWant);
             this.lvResults.AllColumns.Add(this.olvColSeen);
             this.lvResults.AllColumns.Add(this.olvColSeeDate);
-            this.lvResults.AllColumns.Add(this.olvColAddDate);
+            this.lvResults.AllColumns.Add(this.olvColSeeComment);
             this.lvResults.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
@@ -796,14 +814,16 @@
             this.olvColRating,
             this.olvColYear,
             this.olvColPath,
+            this.olvColAddDate,
             this.olvColSeelater,
             this.olvColNoWant,
             this.olvColSeen,
             this.olvColSeeDate,
-            this.olvColAddDate});
+            this.olvColSeeComment});
             this.lvResults.Cursor = System.Windows.Forms.Cursors.Default;
             this.lvResults.HideSelection = false;
             this.lvResults.Location = new System.Drawing.Point(132, 74);
+
             this.lvResults.Name = "lvResults";
             this.lvResults.ShowGroups = false;
             this.lvResults.Size = new System.Drawing.Size(985, 473);
@@ -830,27 +850,38 @@
             // 
             // olvColPath
             // 
+            this.olvColPath.AspectName = "Path";
             this.olvColPath.Text = "路径";
             // 
             // olvColSeelater
             // 
+            this.olvColSeelater.AspectName = "SeeLater";
             this.olvColSeelater.Text = "稍后看";
             // 
             // olvColNoWant
             // 
+            this.olvColNoWant.AspectName = "SeeNoWant";
             this.olvColNoWant.Text = "不想看";
             // 
             // olvColSeen
             // 
+            this.olvColSeen.AspectName = "SeeFlag";
             this.olvColSeen.Text = "看过";
             // 
             // olvColSeeDate
             // 
+            this.olvColSeeDate.AspectName = "SeeDate";
             this.olvColSeeDate.Text = "观看日期";
             // 
             // olvColAddDate
             // 
             this.olvColAddDate.Text = "添加日期";
+            this.olvColAddDate.Width = 100;
+            // 
+            // olvColSeeComment
+            // 
+            this.olvColSeeComment.AspectName = "SeeComment";
+            this.olvColSeeComment.Text = "观看评论";
             // 
             // FormMain
             // 
@@ -871,6 +902,7 @@
             this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.menuStrip1);
             this.MainMenuStrip = this.menuStrip1;
+
             this.Name = "FormMain";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Movie torrents";
@@ -980,6 +1012,7 @@
         private BrightIdeasSoftware.OLVColumn olvColSeen;
         private BrightIdeasSoftware.OLVColumn olvColSeeDate;
         private BrightIdeasSoftware.OLVColumn olvColAddDate;
+        private BrightIdeasSoftware.OLVColumn olvColSeeComment;
     }
 }
 
