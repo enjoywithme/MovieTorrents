@@ -175,6 +175,24 @@ namespace MovieTorrents {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to 种子文件根目录没有配置.
+        /// </summary>
+        internal static string TextNoRootFolder {
+            get {
+                return ResourceManager.GetString("TextNoRootFolder", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 种子文件根目录&quot;{0}&quot;不存在！.
+        /// </summary>
+        internal static string TextRootFolderNotExists {
+            get {
+                return ResourceManager.GetString("TextRootFolderNotExists", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to 请选择一个正确的目录.
         /// </summary>
         internal static string TextSelectCorrectFolder {

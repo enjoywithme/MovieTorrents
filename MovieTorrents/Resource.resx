@@ -181,4 +181,10 @@
   <data name="TextLoadNFiles" xml:space="preserve">
 	  <value>加载了{0} 个文件，{1} 已知项目。</value>
   </data>
+  <data name="TextNoRootFolder" xml:space="preserve">
+	  <value>种子文件根目录没有配置</value>
+  </data>
+  <data name="TextRootFolderNotExists" xml:space="preserve">
+	  <value>种子文件根目录"{0}"不存在！</value>
+  </data>
 </root>
