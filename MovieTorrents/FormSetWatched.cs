@@ -28,6 +28,7 @@ namespace MovieTorrents
 
             _torrentFile.SeeLater = 0;
             _torrentFile.SeeFlag = 1;
+            _torrentFile.SeeComment = tbComment.Text;
 
             DialogResult = DialogResult.OK;
         }

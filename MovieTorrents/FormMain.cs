@@ -12,13 +12,11 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using BrightIdeasSoftware;
 using MovieTorrents.Common;
 using mySharedLib;
 using Nito.AsyncEx.Synchronous;
 using WebPWrapper;
 using Exception = System.Exception;
-using Timer = System.Threading.Timer;
 
 namespace MovieTorrents
 {
@@ -29,10 +27,9 @@ namespace MovieTorrents
 
 
         private CancellationTokenSource _queryTokenSource;
-        private CancellationTokenSource _operTokenSource;
+        private CancellationTokenSource _operationTokenSource;
 
         private IList<TorrentFile> _listTorrentFiles;//保存的当前列表
-        private ListViewItem[] _myCache;
 
         private ToolStripMenuItem[] _limitMenuItems;
 
@@ -46,8 +43,6 @@ namespace MovieTorrents
         private int _currentOperation;
         private string _lastSearchText = string.Empty;
 
-        private ListViewColumnSorter _lvwColumnSorter;
-
 
         private FolderWatch _folderWatch;
 
@@ -59,9 +54,6 @@ namespace MovieTorrents
 
         private void FormMain_Load(object sender, EventArgs e)
         {
-            //_tt = new System.Timers.Timer(5000);
-            //_tt.Elapsed += (o, j) => DisplayInfo("test");
-            //_tt.Enabled = true;
 
             DefaultInstance = this;
 
@@ -73,7 +65,7 @@ namespace MovieTorrents
 
             if (!string.IsNullOrEmpty(TorrentFile.TorrentRootPath) && !Directory.Exists(TorrentFile.TorrentRootPath))
             {
-                MessageBox.Show(string.Format(Resource.TxtSeedDirNotExists, TorrentFile.TorrentRootPath), Resource.TextError, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(string.Format(Resource.TextRootFolderNotExists, TorrentFile.TorrentRootPath), Resource.TextError, MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
 
             tsCurrentDir.Text = string.Format(Resource.TxtSeedRottDir, TorrentFile.TorrentRootPath);
@@ -100,22 +92,25 @@ namespace MovieTorrents
 
 
 
-            tsbDelete.Click += tsmiDelete_Click;//删除
-            tsbCopyDouban.Click += tsmiCopyDouban_Click;//拷贝豆瓣信息
-            tsbMove.Click += tsmiMove_Click;//移动到文件夹
-            tsbMovePath.Click += tsmiMovePath_Click;//移动整个文件夹
+            tsbDelete.Click += ToolBarDelete_Click;//删除
+            tsbCopyDouban.Click += MenuItemCopyDouBan_Click;//拷贝豆瓣信息
+            tsbMove.Click += ToolBarMove_Click;//移动到文件夹
+            tsbMovePath.Click += ToolbarMovePath_Click;//移动整个文件夹
             tsbNormalize.Click += TsbNormalizeName;//规范文件名称
-            tsmiClearDuplicates.Click += tsmiClearDuplicates_Click;//清理重复文件
+            tsmiClearDuplicates.Click += MenuItemClearDuplicates_Click;//清理重复文件
 
             tsbRating0.Click += (_, _) => { tbSearchText.Text = @"Rating:0"; };
             tsbRating8.Click += (_, _) => { tbSearchText.Text = @"Rating:>8"; };
             tsbRating9.Click += (_, _) => { tbSearchText.Text = @"Rating:>9"; };
 
-            _lvwColumnSorter = new ListViewColumnSorter();
 
-            lvResults.KeyDown += lvResults_KeyDown;
-            lvResults.ColumnClick += LvResults_ColumnClick;
+            //列表 list view
+            lvResults.SelectedIndexChanged += lvResults_SelectedIndexChanged;
+            lvResults.ItemDrag += lvResults_ItemDrag;
+            lvResults.MouseDoubleClick += lvResults_MouseDoubleClick;
+            lvResults.MouseClick += lvResults_MouseClick;
             lvResults.CheckBoxes = true;
+            lvResults.FullRowSelect = true;
 #if DEBUG
             tbSearchText.Text = @"雷神";
 #endif
@@ -150,11 +145,11 @@ namespace MovieTorrents
             //Status
             if (e.StatusChanged)
             {
-                tsButtonWatch.Image = _folderWatch.IsWatching?Resource.Eye32: Resource.EyeStop32; 
+                tsButtonWatch.Image = _folderWatch.IsWatching ? Resource.Eye32 : Resource.EyeStop32;
                 tsButtonWatch.ToolTipText = _folderWatch.IsWatching ? Resource.TextDirInMonitor : Resource.TextDirMonitorStopped;
-                tsmiToggleWatch.Text =  _folderWatch.IsWatching ? Resource.TxtStopDirMonitor: Resource.TxtStartDirMonitor;
+                tsmiToggleWatch.Text = _folderWatch.IsWatching ? Resource.TxtStopDirMonitor : Resource.TxtStartDirMonitor;
 
-                if(_folderWatch.IsWatching)
+                if (_folderWatch.IsWatching)
                     DisplayInfo("目录监视已启动", false, false);
                 else DisplayInfo("目录监视已停止", true);
 
@@ -171,7 +166,7 @@ namespace MovieTorrents
                 }
                 filesToProcess.CompleteAdding();
 
-                Task.Run(() => ProcessFileToBeAdded(new CancellationTokenSource().Token, filesToProcess)).ContinueWith(task =>
+                Task.Run(() => ProcessFileToBeAdded(filesToProcess)).ContinueWith(task =>
                 {
                     if (!task.IsFaulted)
                     {
@@ -186,7 +181,7 @@ namespace MovieTorrents
 
         }
 
-        private void tsmiToggleWatch_Click(object sender, EventArgs e)
+        private void MenuItemToggleWatch_Click(object sender, EventArgs e)
         {
             if (_folderWatch.IsWatching)
                 _folderWatch.Stop();
@@ -200,20 +195,9 @@ namespace MovieTorrents
 
         //List view
         #region 列表
-        //获取列表选择的项
-        private List<ListViewItem> ListSelectedItems()
-        {
-            var list = new List<ListViewItem>();
-            for (var i = 0; i < lvResults.SelectedIndices.Count; i++)
-            {
-                list.Add(lvResults.Items[lvResults.SelectedIndices[i]]);
-            }
-
-            return list;
-        }
 
         //更新列表
-        private void UpdateListView(IList<TorrentFile> torrentFiles=null)
+        private void UpdateListView(IList<TorrentFile> torrentFiles = null)
         {
             if (torrentFiles == null)
                 torrentFiles = _listTorrentFiles;
@@ -231,49 +215,7 @@ namespace MovieTorrents
 
             tsSummary.Text = string.Format(Resource.TextLoadNFiles, totalFiles, totalItems);
         }
-        private void LvResults_CacheVirtualItems(object sender, CacheVirtualItemsEventArgs e)
-        {
-            Debug.WriteLine("cache refresh");
-        }
-        private void LvResults_RetrieveVirtualItem(object sender, RetrieveVirtualItemEventArgs e)
-        {
-            if (_myCache != null && _myCache[e.ItemIndex]!=null)
-            {
-                e.Item = _myCache[e.ItemIndex];
-                return;
-            }
 
-
-            var torrentFile = _listTorrentFiles[e.ItemIndex];
-            string[] row = { torrentFile.Name,
-                torrentFile.Rating.ToString(CultureInfo.InvariantCulture),
-                torrentFile.Year,
-                torrentFile.Path,
-                torrentFile.SeeLater.ToString(),
-                torrentFile.SeeNoWant.ToString(),
-                torrentFile.SeeFlag.ToString(),
-                torrentFile.SeeDate,
-                torrentFile.SeeComment,
-                torrentFile.CreationTime
-            };
-            e.Item = new ListViewItem(row)
-            {
-                Tag = torrentFile,
-                ForeColor = torrentFile.ForeColor
-            };
-            _myCache ??= new ListViewItem[_listTorrentFiles.Count];
-            _myCache[e.ItemIndex] = e.Item;
-        }
-        //ctrl+a 选择所有条目
-        private void lvResults_KeyDown(object sender, KeyEventArgs e)
-        {
-            if (e.KeyCode != Keys.A || !e.Control) return;
-            lvResults.MultiSelect = true;
-            for (var i=0;i<lvResults.Items.Count;i++)
-            {
-                lvResults.Items[i].Selected = true;
-            }
-        }
 
         //刷新当前选择
         private void lvResults_SelectedIndexChanged(object sender, EventArgs e)
@@ -289,71 +231,54 @@ namespace MovieTorrents
                 pictureBox1.Image = null;
             }
 
-            if (lvResults.SelectedIndices.Count == 0) return;
+            if (lvResults.SelectedObjects.Count == 0) return;
+            lvResults.RefreshSelectedObjects();
 
-            for (var i = 0; i < lvResults.SelectedIndices.Count; i++)
+
+            var torrentFile = (TorrentFile)lvResults.SelectedObjects[0];
+
+            lbGenres.Text = torrentFile.Genres;
+            lbYear.Text = torrentFile.Year;
+            lbKeyName.Text = torrentFile.KeyName;
+            lbOtherName.Text = torrentFile.OtherName;
+            lbZone.Text = torrentFile.Zone;
+            lbRating.Text = Math.Abs(torrentFile.Rating) < 0.0001 ? null : torrentFile.Rating.ToString(CultureInfo.InvariantCulture);
+
+            if (string.IsNullOrEmpty(torrentFile.RealPosterPath) || !File.Exists(torrentFile.RealPosterPath)) return;
+            try
             {
-                var lvIndex = lvResults.SelectedIndices[i];
-
-                var lvItem =lvResults.Items[lvIndex];
-
-                var torrentFile = (TorrentFile)lvItem.Tag;
-
-                lvItem.Text = torrentFile.Name;
-                lvItem.ForeColor = torrentFile.ForeColor;
-                lvItem.SubItems[1].Text = torrentFile.Rating.ToString(CultureInfo.InvariantCulture);
-                lvItem.SubItems[2].Text = torrentFile.Year;
-                lvItem.SubItems[3].Text = torrentFile.Path;
-                lvItem.SubItems[4].Text = torrentFile.SeeLater.ToString();
-                lvItem.SubItems[5].Text = torrentFile.SeeNoWant.ToString();
-                lvItem.SubItems[6].Text = torrentFile.SeeFlag.ToString();
-                lvItem.SubItems[7].Text = torrentFile.SeeDate;
-                lvItem.SubItems[8].Text = torrentFile.SeeComment;
-                lvItem.SubItems[9].Text = torrentFile.CreationTime;
-            
-                
-                lbGenres.Text = torrentFile.Genres;
-                lbYear.Text = torrentFile.Year;
-                lbKeyName.Text = torrentFile.KeyName;
-                lbOtherName.Text = torrentFile.OtherName;
-                lbZone.Text = torrentFile.Zone;
-                lbRating.Text = Math.Abs(torrentFile.Rating) < 0.0001 ? null : torrentFile.Rating.ToString(CultureInfo.InvariantCulture);
-
-                if (string.IsNullOrEmpty(torrentFile.RealPosterPath) || !File.Exists(torrentFile.RealPosterPath)) continue;
-                try
+                var ext = Path.GetExtension(torrentFile.RealPosterPath);
+                if (ext.Equals(@".webp", StringComparison.InvariantCultureIgnoreCase))
                 {
-                    var ext = Path.GetExtension(torrentFile.RealPosterPath);
-                    if (ext.Equals(@".webp", StringComparison.InvariantCultureIgnoreCase))
-                    {
-                        using var webp = new WebP();
-                        pictureBox1.Image = webp.Load(torrentFile.RealPosterPath);
-                    }
-                    else
-                    {
-                        using var stream = new FileStream(torrentFile.RealPosterPath, FileMode.Open, FileAccess.Read);
-                        pictureBox1.Image = Image.FromStream(stream);
-                    }
-
+                    using var webp = new WebP();
+                    pictureBox1.Image = webp.Load(torrentFile.RealPosterPath);
                 }
-                catch (Exception)
+                else
                 {
-                    // ignored
+                    using var stream = new FileStream(torrentFile.RealPosterPath, FileMode.Open, FileAccess.Read);
+                    pictureBox1.Image = Image.FromStream(stream);
                 }
-
-               
 
             }
+            catch (Exception)
+            {
+                // ignored
+            }
 
-            lvResults.RedrawItems(lvResults.SelectedIndices[0],
-                lvResults.SelectedIndices[lvResults.SelectedIndices.Count - 1], false);
+
+
+
         }
+
+        //拖动条目
         private void lvResults_ItemDrag(object sender, ItemDragEventArgs e)
         {
-            var selectedItems = ListSelectedItems();
-            var data = new DataObject(DataFormats.FileDrop, (from ListViewItem item in selectedItems select ((TorrentFile)item.Tag).FullName).ToArray());
+            var selectedItems = lvResults.SelectedObjects.Cast<TorrentFile>();
+            var data = new DataObject(DataFormats.FileDrop, (from TorrentFile item in selectedItems select item.FullName).ToArray());
             lvResults.DoDragDrop(data, DragDropEffects.Copy);
 
         }
+        //双击条目
         private void lvResults_MouseDoubleClick(object sender, MouseEventArgs e)
         {
             EditRecord();
@@ -361,10 +286,9 @@ namespace MovieTorrents
         //编辑记录
         private void EditRecord()
         {
-            if (lvResults.SelectedIndices.Count == 0) return;
+            if (lvResults.SelectedObjects.Count == 0) return;
 
-            var lvItem = lvResults.Items[lvResults.SelectedIndices[0]];
-            var torrentFile = (TorrentFile)lvItem.Tag;
+            var torrentFile = (TorrentFile)lvResults.SelectedObjects[0];
             var formRenameTorrent = new FormEdit(torrentFile);
             if (formRenameTorrent.ShowDialog(this) == DialogResult.Cancel) return;
 
@@ -372,44 +296,6 @@ namespace MovieTorrents
 
         }
 
-        private void LvResults_ColumnClick(object sender, ColumnClickEventArgs e)
-        {
-            if (e.Column == _lvwColumnSorter.SortColumn)
-            {
-                _lvwColumnSorter.Order = _lvwColumnSorter.Order == SortOrder.Ascending ? SortOrder.Descending : SortOrder.Ascending;
-            }
-            else
-            {
-                _lvwColumnSorter.SortColumn = e.Column;
-                _lvwColumnSorter.Order = SortOrder.Ascending;
-            }
-
-            if(_listTorrentFiles==null) return;
-
-            var fields = new List<string>()
-                { nameof(TorrentFile.Name), 
-                    nameof(TorrentFile.Rating), 
-                    nameof(TorrentFile.Year),
-                    nameof(TorrentFile.Path),
-                    nameof(TorrentFile.SeeLater),
-                    nameof(TorrentFile.SeeNoWant),
-                    nameof(TorrentFile.SeeFlag),
-                    nameof(TorrentFile.SeeDate),
-                    nameof(TorrentFile.SeeComment),
-                    nameof(TorrentFile.CreationTime)
-                };
-
-            if (_lvwColumnSorter.SortColumn >= fields.Count) return;
-            var propertyInfo = typeof(TorrentFile).GetProperty(fields[_lvwColumnSorter.SortColumn]);
-            if (propertyInfo == null) return;
-            _listTorrentFiles = _lvwColumnSorter.Order == SortOrder.Ascending
-                ? _listTorrentFiles.OrderBy(x => propertyInfo.GetValue(x, null)).ToList()
-                : _listTorrentFiles.OrderByDescending(x => propertyInfo.GetValue(x, null)).ToList();
-
-            UpdateListView();
-
-
-        }
         #endregion
 
         //辅助函数
@@ -449,7 +335,7 @@ namespace MovieTorrents
             if (MessageBox.Show(Resource.TxtConfirmCancelCurrentOperation, Resource.TextHint, MessageBoxButtons.YesNo, MessageBoxIcon.Asterisk) == DialogResult.No)
                 return;
 
-            _operTokenSource?.Cancel();
+            _operationTokenSource?.Cancel();
         }
         private void pictureBox1_DoubleClick(object sender, EventArgs e)
         {
@@ -528,11 +414,11 @@ namespace MovieTorrents
                 }));
 
             });
-            
+
 
         }
 
-        
+
         #endregion
 
         //备份数据库文件
@@ -567,26 +453,26 @@ namespace MovieTorrents
             }
 
 
-            if (_operTokenSource != null)
+            if (_operationTokenSource != null)
             {
-                _operTokenSource.Dispose();
-                _operTokenSource = null;
+                _operationTokenSource.Dispose();
+                _operationTokenSource = null;
             }
 
-            _operTokenSource = new CancellationTokenSource();
+            _operationTokenSource = new CancellationTokenSource();
             var filesToProcess = new BlockingCollection<TorrentFile>();
 
 
 
 
-            Task.Run(() => DoScanFile(TorrentFile.TorrentRootPath, _operTokenSource.Token, filesToProcess)).ContinueWith(task =>
+            Task.Run(() => DoScanFile(TorrentFile.TorrentRootPath, _operationTokenSource.Token, filesToProcess)).ContinueWith(task =>
             {
                 if (!task.IsFaulted) return;
                 if (task.Exception?.InnerException != null) DisplayInfo($"扫描文件出错：{task.Exception.InnerException.Message}", true);
                 //Invoke(new Action(() => MessageBox.Show(task.Exception.InnerException.Message)));
             });
 
-            Task.Run(() => ProcessFileToBeAdded(_operTokenSource.Token, filesToProcess)).ContinueWith(task =>
+            Task.Run(() => ProcessFileToBeAdded(filesToProcess)).ContinueWith(task =>
             {
                 if (!task.IsFaulted) return;
                 if (task.Exception?.InnerException != null) DisplayInfo($"添加文件记录出错：{task.Exception.InnerException.Message}", true);
@@ -615,7 +501,7 @@ namespace MovieTorrents
                 {
                     filesToProcess.TryAdd(TorrentFile.FromFullPath(fi.FullName), 2, token);
                 }
-                catch (OperationCanceledException e)
+                catch (OperationCanceledException)
                 {
                     Debug.WriteLine("扫描文件操作取消");
                     break;
@@ -635,7 +521,7 @@ namespace MovieTorrents
         }
 
         //处理文件队列
-        private void ProcessFileToBeAdded(CancellationToken token, BlockingCollection<TorrentFile> filesToProcess)
+        private void ProcessFileToBeAdded(BlockingCollection<TorrentFile> filesToProcess)
         {
             while (true)
             {
@@ -663,7 +549,7 @@ namespace MovieTorrents
 
         //清理无效记录
         #region 清理无效记录
-        private async void tsmiClearRecords_Click(object sender, EventArgs e)
+        private async void MenuItemClearRecords_Click(object sender, EventArgs e)
         {
             if (Interlocked.CompareExchange(ref _currentOperation, OperationClearFile, OperationNone) != OperationNone)
             {
@@ -672,13 +558,13 @@ namespace MovieTorrents
             }
 
 
-            if (_operTokenSource != null)
+            if (_operationTokenSource != null)
             {
-                _operTokenSource.Dispose();
-                _operTokenSource = null;
+                _operationTokenSource.Dispose();
+                _operationTokenSource = null;
             }
 
-            _operTokenSource = new CancellationTokenSource();
+            _operationTokenSource = new CancellationTokenSource();
 
             DisplayInfo("清理无效文件中...", false, false);
 
@@ -689,7 +575,7 @@ namespace MovieTorrents
                 int clearFileRead;
                 string msg;
                 bool error;
-                (clearFileRead, clearFileCounted, msg, error) = await TorrentFile.DoClearFile(_operTokenSource.Token);
+                (clearFileRead, clearFileCounted, msg, error) = await TorrentFile.DoClearFile(_operationTokenSource.Token);
                 DisplayInfo($"{msg}总共读取{clearFileRead}记录，清理了{clearFileCounted}条无效记录!", error);
 
             });
@@ -699,22 +585,22 @@ namespace MovieTorrents
         }
 
         //清理重复选项
-        private async void tsmiClearDuplicates_Click(object sender, EventArgs e)
+        private async void MenuItemClearDuplicates_Click(object sender, EventArgs e)
         {
             if (Interlocked.CompareExchange(ref _currentOperation, OperationClearFile, OperationNone) != OperationNone)
             {
-                MessageBox.Show("正在执行其他操作，等待完成后操作", Resource.TextHint, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show(Resource.TextWaitOtherOperation, Resource.TextHint, MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
 
-            if (_operTokenSource != null)
+            if (_operationTokenSource != null)
             {
-                _operTokenSource.Dispose();
-                _operTokenSource = null;
+                _operationTokenSource.Dispose();
+                _operationTokenSource = null;
             }
 
-            _operTokenSource = new CancellationTokenSource();
+            _operationTokenSource = new CancellationTokenSource();
 
             DisplayInfo("清理重复文件中...", false, false);
 
@@ -724,7 +610,7 @@ namespace MovieTorrents
                 int clearFileCounted;
                 string msg;
                 bool error;
-                (clearFileCounted, msg, error) = await TorrentFile.DoClearDuplicate(_operTokenSource.Token);
+                (clearFileCounted, msg, error) = await TorrentFile.DoClearDuplicate(_operationTokenSource.Token);
                 DisplayInfo($"{msg}清理了{clearFileCounted}条重复记录!", error);
 
             });
@@ -734,7 +620,7 @@ namespace MovieTorrents
         }
 
         #endregion
-        
+
         //通知栏图标
         #region 通知栏图标 
         protected override void WndProc(ref Message message)
@@ -910,45 +796,42 @@ namespace MovieTorrents
             if (lvResults.SelectedIndices.Count == 0) e.Cancel = true;
         }
         //显示条目文件路径
-        private void tsmiShowFileLocation_Click(object sender, EventArgs e)
+        private void MenuItemShowFileLocation_Click(object sender, EventArgs e)
         {
-            if (lvResults.SelectedIndices.Count == 0) return;
-
-            var torrentFile = (TorrentFile)lvResults.Items[lvResults.SelectedIndices[0]].Tag;
+            if (lvResults.SelectedObjects.Count == 0) return;
+            var torrentFile = (TorrentFile)lvResults.SelectedObjects[0];
             torrentFile.ShowInExplorer();
         }
 
-        private void tsmiSearchDouban_Click(object sender, EventArgs e)
+        //搜索豆瓣信息
+        private void MenuItemSearchDouBan_Click(object sender, EventArgs e)
         {
-            if (lvResults.SelectedIndices.Count == 0) return;
-
-            var lvItem = lvResults.Items[lvResults.SelectedIndices[0]];
-            var torrentFile = (TorrentFile)lvItem.Tag;
-            var formSearchDouban = new FormSearchDouban(torrentFile);
-            if (formSearchDouban.ShowDialog(this) == DialogResult.Cancel) return;
+            if (lvResults.SelectedObjects.Count == 0) return;
+            var torrentFile = (TorrentFile)lvResults.SelectedObjects[0];
+            var formDouBan = new FormSearchDouban(torrentFile);
+            if (formDouBan.ShowDialog(this) == DialogResult.Cancel) return;
 
             RefreshSelected();
         }
 
-
-        private void tsmiCopyPath_Click(object sender, EventArgs e)
+        //拷贝文件路径
+        private void MenuItemCopyPath_Click(object sender, EventArgs e)
         {
-            if (lvResults.SelectedIndices.Count == 0) return;
-            var torrentFile = (TorrentFile)lvResults.Items[lvResults.SelectedIndices[0]].Tag;
+            if (lvResults.SelectedObjects.Count == 0) return;
+            var torrentFile = (TorrentFile)lvResults.SelectedObjects[0];
             Clipboard.SetText(torrentFile.FullName);
         }
 
         //标记为已观看
-        private void tsmiSetWatched_Click(object sender, EventArgs e)
+        private void MenuItemSetWatched_Click(object sender, EventArgs e)
         {
-            if (lvResults.SelectedIndices.Count == 0) return;
-            var lvItem = lvResults.Items[lvResults.SelectedIndices[0]];
-            var torrentFile = (TorrentFile)lvItem.Tag;
+            if (lvResults.SelectedObjects.Count == 0) return;
+            var torrentFile = (TorrentFile)lvResults.SelectedObjects[0];
 
 
             var formSetWatched = new FormSetWatched(torrentFile);
             if (formSetWatched.ShowDialog(this) == DialogResult.Cancel) return;
-            RefreshSelected();
+            lvResults.RefreshObject(torrentFile);
 
             //自动备份
             BackupDbFile();
@@ -956,11 +839,10 @@ namespace MovieTorrents
         }
 
         //切换稍后看
-        private void tsmiSetSeelater_Click(object sender, EventArgs e)
+        private void MenuItemSetSeeLater_Click(object sender, EventArgs e)
         {
-            if (lvResults.SelectedIndices.Count == 0) return;
-            var lvItem = lvResults.Items[lvResults.SelectedIndices[0]];
-            var torrentFile = (TorrentFile)lvItem.Tag;
+            if (lvResults.SelectedObjects.Count == 0) return;
+            var torrentFile = (TorrentFile)lvResults.SelectedObjects[0];
 
             if (!torrentFile.ToggleSeeLater(out var msg))
             {
@@ -968,19 +850,15 @@ namespace MovieTorrents
                 return;
             }
 
-            torrentFile.SeeLater = torrentFile.SeeLater == 1 ? 0 : 1;
-            lvItem.SubItems[4].Text = torrentFile.SeeLater.ToString();
-            
-            lvResults.RedrawItems(lvItem.Index, lvItem.Index, false);
-            
+            lvResults.RefreshObject(torrentFile);
+
         }
 
         //切换不想看
-        private void tsmiToggleSeeNoWant_Click(object sender, EventArgs e)
+        private void MenuItemToggleSeeNoWant_Click(object sender, EventArgs e)
         {
-            if (lvResults.SelectedIndices.Count == 0) return;
-            var lvItem = lvResults.Items[lvResults.SelectedIndices[0]];
-            var torrentFile = (TorrentFile)lvItem.Tag;
+            if (lvResults.SelectedObjects.Count == 0) return;
+            var torrentFile = (TorrentFile)lvResults.SelectedObjects[0];
 
             if (!torrentFile.ToggleSeeNoWant(out var msg))
             {
@@ -988,37 +866,35 @@ namespace MovieTorrents
                 return;
             }
 
-            lvItem.SubItems[5].Text = torrentFile.SeeNoWant.ToString();
-            lvResults.RedrawItems(lvItem.Index,lvItem.Index,false);
+            lvResults.RefreshObject(torrentFile);
         }
 
 
         //拷贝文件名
-        private void tsmiCopyName_Click(object sender, EventArgs e)
+        private void MenuItemCopyName_Click(object sender, EventArgs e)
         {
-            if (lvResults.SelectedIndices.Count == 0) return;
-            var lvItem = lvResults.Items[lvResults.SelectedIndices[0]];
+            if (lvResults.SelectedObjects.Count == 0) return;
 
-            Clipboard.SetText(lvItem.Text);
+            Clipboard.SetText(((TorrentFile)lvResults.SelectedObjects[0]).Name);
         }
 
         //拷贝文件
-        private void tsmiCopyFile_Click(object sender, EventArgs e)
+        private void MenuItemCopyFile_Click(object sender, EventArgs e)
         {
-            if (lvResults.SelectedIndices.Count == 0) return;
-            var lvItem = lvResults.Items[lvResults.SelectedIndices[0]];
+            if (lvResults.SelectedObjects.Count == 0) return;
 
-            var torrentFile = (TorrentFile)lvItem.Tag;
+            var torrentFile = (TorrentFile)lvResults.SelectedObjects[0];
             Clipboard.SetFileDropList(new StringCollection { torrentFile.FullName });
         }
 
 
 
         // 打开文件
-     private void tsmiOpenFile_Click(object sender, EventArgs e)
+        private void MenuItemOpenFile_Click(object sender, EventArgs e)
         {
-            if (lvResults.SelectedItems.Count == 0 || lvResults.SelectedItems[0].Tag == null) return;
-            var torrentFile = (TorrentFile)lvResults.SelectedItems[0].Tag;
+            if (lvResults.SelectedObjects.Count == 0) return;
+
+            var torrentFile = (TorrentFile)lvResults.SelectedObjects[0];
             if (!File.Exists(torrentFile.FullName))
             {
                 MessageBox.Show(string.Format(Resource.TxtFileNotExists, torrentFile.FullName), Resource.TextError, MessageBoxButtons.OK,
@@ -1043,58 +919,59 @@ namespace MovieTorrents
         //工具栏
         #region 工具栏
         //搜索豆瓣条目
-        private void tsbSearchDouban_Click(object sender, EventArgs e)
+        private void tsbSearchDouBan_Click(object sender, EventArgs e)
         {
-            tsmiSearchDouban_Click(sender, e);
+            MenuItemSearchDouBan_Click(sender, e);
         }
         //删除按钮
-        private void tsmiDelete_Click(object sender, EventArgs e)
+        private void ToolBarDelete_Click(object sender, EventArgs e)
         {
-            if (lvResults.SelectedIndices.Count == 0)
+            if (lvResults.CheckedObjects.Count == 0)
             {
-                MessageBox.Show("没有勾选任何记录！", Resource.TextHint, MessageBoxButtons.OK,
+                MessageBox.Show(Resource.TextNoCheckedItems, Resource.TextHint, MessageBoxButtons.OK,
                     MessageBoxIcon.Exclamation);
                 return;
             }
 
-            var ret = MessageBox.Show("确定删除勾选的记录？\r\n选择是同时删除文件\r\n否仅删除记录", Resource.TextHint, MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning);
+            var ret = MessageBox.Show(Resource.TextConfirmDelete, Resource.TextHint, MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning);
             if (ret == DialogResult.Cancel) return;
             var deleteFile = ret == DialogResult.Yes;
 
-            var msgs = "";
-            for (var i = 0; i < lvResults.CheckedIndices.Count; i++)
+            var msgs =new StringBuilder();
+            var checkedObjects = lvResults.CheckedObjects;
+            foreach (var item in checkedObjects)
             {
-                var lvItem = lvResults.Items[lvResults.CheckedIndices[i]];
-                var torrentFile = (TorrentFile)lvItem.Tag;
+                var torrentFile = (TorrentFile)item;
                 if (!torrentFile.DeleteFromDb(deleteFile, out var msg))
                 {
-                    msgs += $"{msg}\r\n";
+                    msgs.AppendLine($"{msg}");
                     continue;
                 }
-                lvResults.Items.Remove(lvItem);
+                lvResults.RemoveObject(torrentFile);
             }
-            if (!string.IsNullOrEmpty(msgs))
-                MessageBox.Show(msgs, Resource.TextError, MessageBoxButtons.YesNo, MessageBoxIcon.Error);
+
+            if (msgs.Length>0)
+                MessageBox.Show(msgs.ToString(), Resource.TextError, MessageBoxButtons.YesNo, MessageBoxIcon.Error);
 
 
         }
 
         //移动文件按钮
-        private void tsmiMove_Click(object sender, EventArgs e)
+        private void ToolBarMove_Click(object sender, EventArgs e)
         {
             if (string.IsNullOrEmpty(TorrentFile.TorrentRootPath))
             {
-                MessageBox.Show("种子文件根目录没有配置", Resource.TextError, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show(Resource.TextNoRootFolder, Resource.TextError, MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
-            if (lvResults.SelectedIndices.Count == 0) return;
+            if (lvResults.SelectedObjects.Count == 0) return;
 
             var formBrowseTorrentFolder = new FormBrowseTorrentFolder();
             if (formBrowseTorrentFolder.ShowDialog(this) == DialogResult.Cancel) return;
             var selectedPath = formBrowseTorrentFolder.SelectedPath;
             if (!selectedPath.StartsWith(TorrentFile.TorrentRootPath, StringComparison.InvariantCultureIgnoreCase))
             {
-                MessageBox.Show($"选择的目录必须是种子文件目录\"{TorrentFile.TorrentRootPath}\"的子目录！", Resource.TextHint,
+                MessageBox.Show(string.Format(Resource.TextPathMustInRoot, TorrentFile.TorrentRootPath), Resource.TextHint,
                     MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
@@ -1102,42 +979,42 @@ namespace MovieTorrents
             var errorMsg = new StringBuilder();
             var moved = 0;
             _folderWatch.IgnoreFileWatch();
-            var selectedItems = ListSelectedItems();
-            foreach (ListViewItem selectedItem in selectedItems)
+            var selectedItems = lvResults.SelectedObjects;
+            foreach (var selectedItem in selectedItems)
             {
-                var torrentFile = (TorrentFile)selectedItem.Tag;
+                var torrentFile = (TorrentFile)selectedItem;
                 var (ret, msg) = torrentFile.MoveTo(formBrowseTorrentFolder.SelectedPath);
                 if (!ret)
                     errorMsg.AppendLine(msg);
                 else moved++;
             }
             _folderWatch.IgnoreFileWatch(false);
-            MessageBox.Show($"成功移动{moved}条记录。\r\n{errorMsg}", Resource.TextHint, MessageBoxButtons.OK, MessageBoxIcon.Information);
+            MessageBox.Show(string.Format(Resource.TextFilesMoved, moved, errorMsg), Resource.TextHint, MessageBoxButtons.OK, MessageBoxIcon.Information);
 
             RefreshSelected();
         }
 
         //移动整个目录
-        private void tsmiMovePath_Click(object sender, EventArgs e)
+        private void ToolbarMovePath_Click(object sender, EventArgs e)
         {
             if (string.IsNullOrEmpty(TorrentFile.TorrentRootPath))
             {
-                MessageBox.Show("种子文件根目录没有配置", Resource.TextError, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show(Resource.TextNoRootFolder, Resource.TextError, MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
-            if (lvResults.SelectedIndices.Count == 0) return;
-            var torrentFile = (TorrentFile)lvResults.Items[lvResults.SelectedIndices[0]].Tag;
+            if (lvResults.SelectedObjects.Count == 0) return;
+            var torrentFile = (TorrentFile)lvResults.SelectedObjects[0];
             var sourcePath = Path.Combine(TorrentFile.DefaultArea, torrentFile.Path);
             if (!Directory.Exists(sourcePath))
             {
-                MessageBox.Show($"目录\"{sourcePath}\"不存在！", Resource.TextError,
+                MessageBox.Show(string.Format(Resource.TextPathNotExists, sourcePath), Resource.TextError,
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
 
             if (Directory.GetDirectories(sourcePath).Length > 0)
             {
-                MessageBox.Show($"{sourcePath}文件夹下有子文件夹！", Resource.TextError,
+                MessageBox.Show(string.Format(Resource.TextPathHasChildDirectory, sourcePath), Resource.TextError,
                                     MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
@@ -1145,7 +1022,7 @@ namespace MovieTorrents
             var dirName = new DirectoryInfo(sourcePath).Name;
             if (int.TryParse(dirName, out var _) || Directory.GetFiles(sourcePath).Length > 10)
             {
-                if (MessageBox.Show($"目录 {sourcePath} 下有大量的文件，确认转移？", Resource.TextHint, MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2) == DialogResult.No)
+                if (MessageBox.Show(string.Format(Resource.TextPathHavePlentyFiles, sourcePath), Resource.TextHint, MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2) == DialogResult.No)
                     return;
             }
 
@@ -1155,7 +1032,7 @@ namespace MovieTorrents
             var selectedPath = formBrowseTorrentFolder.SelectedPath;
             if (!selectedPath.StartsWith(TorrentFile.TorrentRootPath, StringComparison.InvariantCultureIgnoreCase))
             {
-                MessageBox.Show($"选择的目录必须是种子文件目录\"{TorrentFile.TorrentRootPath}\"的子目录！", Resource.TextHint,
+                MessageBox.Show(string.Format(Resource.TextPathMustInRoot, TorrentFile.TorrentRootPath), Resource.TextHint,
                     MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
@@ -1175,9 +1052,9 @@ namespace MovieTorrents
         private void TsbNormalizeName(object sender, EventArgs e)
         {
 
-            if (lvResults.SelectedIndices.Count == 0)
+            if (lvResults.SelectedObjects.Count == 0)
             {
-                MessageBox.Show("没有选择任何记录！", Resource.TextHint, MessageBoxButtons.OK,
+                MessageBox.Show(Resource.TextNoSelectedItems, Resource.TextHint, MessageBoxButtons.OK,
                     MessageBoxIcon.Exclamation);
                 return;
             }
@@ -1185,10 +1062,10 @@ namespace MovieTorrents
             _folderWatch.IgnoreFileWatch();
             var errorMsg = new StringBuilder();
             var renamed = 0;
-            var selectedItems = ListSelectedItems();
-            foreach (ListViewItem selectedItem in selectedItems)
+            var selectedItems = lvResults.SelectedObjects;
+            foreach (var selectedItem in selectedItems)
             {
-                var torrentFile = (TorrentFile)selectedItem.Tag;
+                var torrentFile = (TorrentFile)selectedItem;
                 Utility.ReadBadWords();
                 var newName = torrentFile.Name.PurifyName().NormalizeTorrentFileName();
                 var (ret, msg) = torrentFile.MoveTo(null, newName);
@@ -1199,38 +1076,38 @@ namespace MovieTorrents
 
 
             _folderWatch.IgnoreFileWatch(false);
-            MessageBox.Show($"成功重命名{renamed}条记录。\r\n{errorMsg}", Resource.TextHint, MessageBoxButtons.OK, MessageBoxIcon.Information);
+            MessageBox.Show(string.Format(Resource.TextFilesRenamed, renamed, errorMsg), Resource.TextHint, MessageBoxButtons.OK, MessageBoxIcon.Information);
 
-            DoSearch();
+            RefreshSelected();
         }
 
         //拷贝豆瓣信息
-        private void tsmiCopyDouban_Click(object sender, EventArgs e)
+        private void MenuItemCopyDouBan_Click(object sender, EventArgs e)
         {
-            if (lvResults.CheckedIndices.Count == 0)
+            switch (lvResults.CheckedObjects.Count)
             {
-                MessageBox.Show("请勾选要拷贝豆瓣信息的原始项！", Resource.TextHint, MessageBoxButtons.OK,
-                    MessageBoxIcon.Asterisk);
-                return;
-            }
-            if (lvResults.CheckedIndices.Count > 1)
-            {
-                MessageBox.Show("请只勾选一项作为要拷贝豆瓣信息的原始项！", Resource.TextHint, MessageBoxButtons.OK,
-                    MessageBoxIcon.Asterisk);
-                return;
+                case 0:
+                    MessageBox.Show(Resource.TextNoCheckedItems, Resource.TextHint, MessageBoxButtons.OK,
+                        MessageBoxIcon.Asterisk);
+                    return;
+                case > 1:
+                    MessageBox.Show(Resource.TextCheckOnlyOneItem, Resource.TextHint, MessageBoxButtons.OK,
+                        MessageBoxIcon.Asterisk);
+                    return;
             }
 
-            var checkedId = ((TorrentFile)lvResults.Items[lvResults.CheckedIndices[0]].Tag).Fid;
-            var selectedItems = ListSelectedItems();
-            var selectedIds = selectedItems.Select(x => ((TorrentFile)x.Tag).Fid).ToList();
+            var checkedId = ((TorrentFile)lvResults.CheckedObjects[0]).Fid;
+            var selectedItems = lvResults.SelectedObjects.Cast<TorrentFile>();
+            
+            var selectedIds = selectedItems.Select(x => x.Fid).ToList();
             if (selectedIds.Count - (selectedIds.Contains(checkedId) ? 1 : 0) <= 0)
             {
-                MessageBox.Show("请选择除源项以外的更多项操作！", Resource.TextHint, MessageBoxButtons.OK,
+                MessageBox.Show(Resource.TextSelectItemsExcludeSource, Resource.TextHint, MessageBoxButtons.OK,
                     MessageBoxIcon.Asterisk);
                 return;
             }
 
-            if (MessageBox.Show("确认拷贝豆瓣信息到所选记录？", Resource.TextHint, MessageBoxButtons.OKCancel, MessageBoxIcon.Question) == DialogResult.Cancel) return;
+            if (MessageBox.Show(Resource.TextConfirmCopDoubanInfo, Resource.TextHint, MessageBoxButtons.OKCancel, MessageBoxIcon.Question) == DialogResult.Cancel) return;
 
             if (!TorrentFile.CopyDoubanInfo(checkedId, selectedIds, out var msg))
             {
@@ -1240,19 +1117,18 @@ namespace MovieTorrents
 
             DoSearch();
         }
-        private void tsmiBtbttDownload_Click(object sender, EventArgs e)
+        private void MenuItemBtBtDownload_Click(object sender, EventArgs e)
         {
             _formBtBtt ??= new FormBtBtt();
             _formBtBtt.Show();
             _formBtBtt.WindowState = FormWindowState.Maximized;
             _formBtBtt.BringToFront();
         }
-
+        //查找相似项
         private void tsbFindSimilar_Click(object sender, EventArgs e)
         {
-            if (lvResults.SelectedItems.Count == 0) return;
-            var lvItem = lvResults.SelectedItems[0];
-            var torrentFile = (TorrentFile)lvItem.Tag;
+            if (lvResults.SelectedObjects.Count == 0) return;
+            var torrentFile = (TorrentFile)lvResults.SelectedObjects[0];
 
             tbSearchText.Text = torrentFile.FirstName;
         }
