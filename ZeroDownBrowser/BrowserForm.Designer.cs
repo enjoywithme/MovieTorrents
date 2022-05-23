@@ -33,21 +33,21 @@
             this.statusLabel = new System.Windows.Forms.Label();
             this.outputLabel = new System.Windows.Forms.Label();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
-            this.urlTextBox = new System.Windows.Forms.ToolStripTextBox();
-            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
-            this.menuStrip1 = new System.Windows.Forms.MenuStrip();
-            this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.startAutoSaveToWizNoteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.showLogToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.showDevToolsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
-            this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.backButton = new System.Windows.Forms.ToolStripButton();
             this.forwardButton = new System.Windows.Forms.ToolStripButton();
             this.tsbAutoDownloadNow = new System.Windows.Forms.ToolStripButton();
             this.tsbCapture0DayDown = new System.Windows.Forms.ToolStripButton();
+            this.urlTextBox = new System.Windows.Forms.ToolStripTextBox();
             this.goButton = new System.Windows.Forms.ToolStripButton();
+            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.tsbShowLog = new System.Windows.Forms.ToolStripButton();
+            this.menuStrip1 = new System.Windows.Forms.MenuStrip();
+            this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.startAutoSaveToWizNoteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.clearLogToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.showDevToolsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
+            this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripContainer.ContentPanel.SuspendLayout();
             this.toolStripContainer.TopToolStripPanel.SuspendLayout();
             this.toolStripContainer.SuspendLayout();
@@ -115,74 +115,6 @@
             this.toolStrip1.TabIndex = 0;
             this.toolStrip1.Layout += new System.Windows.Forms.LayoutEventHandler(this.HandleToolStripLayout);
             // 
-            // urlTextBox
-            // 
-            this.urlTextBox.AutoSize = false;
-            this.urlTextBox.Font = new System.Drawing.Font("Microsoft YaHei UI", 9F);
-            this.urlTextBox.Name = "urlTextBox";
-            this.urlTextBox.Size = new System.Drawing.Size(500, 25);
-            this.urlTextBox.KeyUp += new System.Windows.Forms.KeyEventHandler(this.UrlTextBoxKeyUp);
-            // 
-            // toolStripSeparator1
-            // 
-            this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(6, 25);
-            // 
-            // menuStrip1
-            // 
-            this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.fileToolStripMenuItem});
-            this.menuStrip1.Location = new System.Drawing.Point(0, 0);
-            this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(891, 25);
-            this.menuStrip1.TabIndex = 1;
-            this.menuStrip1.Text = "menuStrip1";
-            // 
-            // fileToolStripMenuItem
-            // 
-            this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.startAutoSaveToWizNoteToolStripMenuItem,
-            this.showLogToolStripMenuItem,
-            this.showDevToolsToolStripMenuItem,
-            this.toolStripMenuItem1,
-            this.exitToolStripMenuItem});
-            this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
-            this.fileToolStripMenuItem.Size = new System.Drawing.Size(39, 21);
-            this.fileToolStripMenuItem.Text = "File";
-            // 
-            // startAutoSaveToWizNoteToolStripMenuItem
-            // 
-            this.startAutoSaveToWizNoteToolStripMenuItem.Enabled = false;
-            this.startAutoSaveToWizNoteToolStripMenuItem.Name = "startAutoSaveToWizNoteToolStripMenuItem";
-            this.startAutoSaveToWizNoteToolStripMenuItem.Size = new System.Drawing.Size(245, 22);
-            this.startAutoSaveToWizNoteToolStripMenuItem.Text = "Enable auto save to WizNote";
-            // 
-            // showLogToolStripMenuItem
-            // 
-            this.showLogToolStripMenuItem.Name = "showLogToolStripMenuItem";
-            this.showLogToolStripMenuItem.Size = new System.Drawing.Size(245, 22);
-            this.showLogToolStripMenuItem.Text = "Show Log";
-            this.showLogToolStripMenuItem.Click += new System.EventHandler(this.showLogToolStripMenuItem_Click);
-            // 
-            // showDevToolsToolStripMenuItem
-            // 
-            this.showDevToolsToolStripMenuItem.Name = "showDevToolsToolStripMenuItem";
-            this.showDevToolsToolStripMenuItem.Size = new System.Drawing.Size(245, 22);
-            this.showDevToolsToolStripMenuItem.Text = "Show DevTools";
-            this.showDevToolsToolStripMenuItem.Click += new System.EventHandler(this.ShowDevToolsMenuItemClick);
-            // 
-            // toolStripMenuItem1
-            // 
-            this.toolStripMenuItem1.Name = "toolStripMenuItem1";
-            this.toolStripMenuItem1.Size = new System.Drawing.Size(242, 6);
-            // 
-            // exitToolStripMenuItem
-            // 
-            this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(245, 22);
-            this.exitToolStripMenuItem.Text = "Exit";
-            this.exitToolStripMenuItem.Click += new System.EventHandler(this.ExitMenuItemClick);
-            // 
             // backButton
             // 
             this.backButton.Enabled = false;
@@ -222,6 +154,14 @@
             this.tsbCapture0DayDown.Text = "Save to WizNote";
             this.tsbCapture0DayDown.Click += new System.EventHandler(this.tsbCapture0DayDown_Click);
             // 
+            // urlTextBox
+            // 
+            this.urlTextBox.AutoSize = false;
+            this.urlTextBox.Font = new System.Drawing.Font("Microsoft YaHei UI", 9F);
+            this.urlTextBox.Name = "urlTextBox";
+            this.urlTextBox.Size = new System.Drawing.Size(500, 25);
+            this.urlTextBox.KeyUp += new System.Windows.Forms.KeyEventHandler(this.UrlTextBoxKeyUp);
+            // 
             // goButton
             // 
             this.goButton.Image = global::ZeroDownBrowser.Properties.Resources.nav_plain_green;
@@ -231,6 +171,11 @@
             this.goButton.Text = "Go";
             this.goButton.Click += new System.EventHandler(this.GoButtonClick);
             // 
+            // toolStripSeparator1
+            // 
+            this.toolStripSeparator1.Name = "toolStripSeparator1";
+            this.toolStripSeparator1.Size = new System.Drawing.Size(6, 25);
+            // 
             // tsbShowLog
             // 
             this.tsbShowLog.Image = global::ZeroDownBrowser.Properties.Resources.Column_one_16;
@@ -239,6 +184,61 @@
             this.tsbShowLog.Size = new System.Drawing.Size(50, 21);
             this.tsbShowLog.Text = "Log";
             this.tsbShowLog.Click += new System.EventHandler(this.tsbShowLog_Click);
+            // 
+            // menuStrip1
+            // 
+            this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.fileToolStripMenuItem});
+            this.menuStrip1.Location = new System.Drawing.Point(0, 0);
+            this.menuStrip1.Name = "menuStrip1";
+            this.menuStrip1.Size = new System.Drawing.Size(891, 25);
+            this.menuStrip1.TabIndex = 1;
+            this.menuStrip1.Text = "menuStrip1";
+            // 
+            // fileToolStripMenuItem
+            // 
+            this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.startAutoSaveToWizNoteToolStripMenuItem,
+            this.clearLogToolStripMenuItem,
+            this.showDevToolsToolStripMenuItem,
+            this.toolStripMenuItem1,
+            this.exitToolStripMenuItem});
+            this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
+            this.fileToolStripMenuItem.Size = new System.Drawing.Size(39, 21);
+            this.fileToolStripMenuItem.Text = "File";
+            // 
+            // startAutoSaveToWizNoteToolStripMenuItem
+            // 
+            this.startAutoSaveToWizNoteToolStripMenuItem.Enabled = false;
+            this.startAutoSaveToWizNoteToolStripMenuItem.Name = "startAutoSaveToWizNoteToolStripMenuItem";
+            this.startAutoSaveToWizNoteToolStripMenuItem.Size = new System.Drawing.Size(245, 22);
+            this.startAutoSaveToWizNoteToolStripMenuItem.Text = "Enable auto save to WizNote";
+            // 
+            // clearLogToolStripMenuItem
+            // 
+            this.clearLogToolStripMenuItem.Name = "clearLogToolStripMenuItem";
+            this.clearLogToolStripMenuItem.Size = new System.Drawing.Size(245, 22);
+            this.clearLogToolStripMenuItem.Text = "Clear log";
+            this.clearLogToolStripMenuItem.Click += new System.EventHandler(this.clearLogToolStripMenuItem_Click);
+            // 
+            // showDevToolsToolStripMenuItem
+            // 
+            this.showDevToolsToolStripMenuItem.Name = "showDevToolsToolStripMenuItem";
+            this.showDevToolsToolStripMenuItem.Size = new System.Drawing.Size(245, 22);
+            this.showDevToolsToolStripMenuItem.Text = "Show DevTools";
+            this.showDevToolsToolStripMenuItem.Click += new System.EventHandler(this.ShowDevToolsMenuItemClick);
+            // 
+            // toolStripMenuItem1
+            // 
+            this.toolStripMenuItem1.Name = "toolStripMenuItem1";
+            this.toolStripMenuItem1.Size = new System.Drawing.Size(242, 6);
+            // 
+            // exitToolStripMenuItem
+            // 
+            this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(245, 22);
+            this.exitToolStripMenuItem.Text = "Exit";
+            this.exitToolStripMenuItem.Click += new System.EventHandler(this.ExitMenuItemClick);
             // 
             // BrowserForm
             // 
@@ -284,7 +284,7 @@
         private System.Windows.Forms.ToolStripButton tsbCapture0DayDown;
         private System.Windows.Forms.ToolStripMenuItem startAutoSaveToWizNoteToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripMenuItem1;
-        private System.Windows.Forms.ToolStripMenuItem showLogToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem clearLogToolStripMenuItem;
         private System.Windows.Forms.ToolStripButton tsbShowLog;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
         private System.Windows.Forms.ToolStripButton tsbAutoDownloadNow;

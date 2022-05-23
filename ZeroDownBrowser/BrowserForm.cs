@@ -317,7 +317,7 @@ $(el).css({'background-color':'yellow','color':'red'});});";
 
         private void ShowLog()
         {
-            if (!mySharedLib.MyLog.OpenLog(out var msg))
+            if (!MyLog.OpenLog(out var msg))
                 MessageBox.Show(this, msg, "错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
 
@@ -368,9 +368,9 @@ $(el).css({'background-color':'yellow','color':'red'});});";
             _mainBrowser.ShowDevTools();
         }
 
-        private void showLogToolStripMenuItem_Click(object sender, EventArgs e)
+        private void clearLogToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            ShowLog();
+            MyLog.ClearLog();
         }
 
         //图标区

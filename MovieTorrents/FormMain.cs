@@ -354,9 +354,8 @@ namespace MovieTorrents
         }
         private void pictureBox1_DoubleClick(object sender, EventArgs e)
         {
-            if (lvResults.SelectedIndices.Count == 0) return;
-            var lvItem = lvResults.Items[lvResults.SelectedIndices[0]];
-            var torrentFile = (TorrentFile)lvItem.Tag;
+            if (lvResults.SelectedObjects.Count == 0) return;
+            var torrentFile = (TorrentFile)lvResults.SelectedObjects[0];
             torrentFile.OpenDoubanLink();
         }
         #endregion
