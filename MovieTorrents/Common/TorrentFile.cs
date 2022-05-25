@@ -6,6 +6,7 @@ using System.Data.Common;
 using System.Data.SQLite;
 using System.Diagnostics;
 using System.Drawing;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -45,6 +46,7 @@ namespace MovieTorrents.Common
         public string CreationTime => _creationTime.SqlLiteToDateTime();
         public string PurifiedName => Name.Purify();
 
+        public string RatingString => Math.Abs(Rating) < 0.0001 ? null : Rating.ToString(CultureInfo.InvariantCulture);
 
         public string FirstName => PurifiedName.ExtractFirstToken();
 

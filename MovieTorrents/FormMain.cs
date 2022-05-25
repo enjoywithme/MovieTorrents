@@ -5,7 +5,6 @@ using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
-using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -65,7 +64,8 @@ namespace MovieTorrents
 
             if (!string.IsNullOrEmpty(TorrentFile.TorrentRootPath) && !Directory.Exists(TorrentFile.TorrentRootPath))
             {
-                MessageBox.Show(string.Format(Resource.TextRootFolderNotExists, TorrentFile.TorrentRootPath), Resource.TextError, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                //MessageBox.Show(string.Format(Resource.TextRootFolderNotExists, TorrentFile.TorrentRootPath), Resource.TextError, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                DisplayInfo(string.Format(Resource.TextRootFolderNotExists, TorrentFile.TorrentRootPath),true);
             }
 
             tsCurrentDir.Text = string.Format(Resource.TxtSeedRottDir, TorrentFile.TorrentRootPath);
@@ -105,7 +105,7 @@ namespace MovieTorrents
 
 
             //列表 list view
-            lvResults.SelectedIndexChanged += lvResults_SelectedIndexChanged;
+            lvResults.ItemSelectionChanged += LvResults_ItemSelectionChanged;
             lvResults.ItemDrag += lvResults_ItemDrag;
             lvResults.MouseDoubleClick += lvResults_MouseDoubleClick;
             lvResults.MouseClick += lvResults_MouseClick;
@@ -119,6 +119,7 @@ namespace MovieTorrents
             tbSearchText.Text = @"雷神";
 #endif
         }
+
 
 
         private void FormMain_FormClosing(object sender, FormClosingEventArgs e)
@@ -233,40 +234,42 @@ namespace MovieTorrents
         }
 
         //刷新当前选择
-        private void lvResults_SelectedIndexChanged(object sender, EventArgs e)
+        private void LvResults_ItemSelectionChanged(object sender, ListViewItemSelectionChangedEventArgs e)
         {
+            Debug.WriteLine("item selection changed");
+            //在鼠标点击和 item selection changed 时间之间有明显的延迟
             RefreshSelected();
         }
-        private void RefreshSelected()
+        private void RefreshSelected(OLVListItem listItem=null)
         {
-            lbYear.Text = lbGenres.Text = lbRating.Text = lbOtherName.Text = lbKeyName.Text = lbZone.Text = null;
-            if (pictureBox1.Image != null)
-            {
-                pictureBox1.Image.Dispose();
-                pictureBox1.Image = null;
-            }
+            Debug.WriteLine("RefreshSelected");
 
-            if (lvResults.SelectedObjects.Count == 0) return;
             lvResults.RefreshSelectedObjects();
 
+            listItem ??= lvResults.SelectedItem;
 
-            var torrentFile = (TorrentFile)lvResults.SelectedObjects[0];
+            var torrentFile = (TorrentFile)listItem?.RowObject;
 
-            lbGenres.Text = torrentFile.Genres;
-            lbYear.Text = torrentFile.Year;
-            lbKeyName.Text = torrentFile.KeyName;
-            lbOtherName.Text = torrentFile.OtherName;
-            lbZone.Text = torrentFile.Zone;
-            lbRating.Text = Math.Abs(torrentFile.Rating) < 0.0001 ? null : torrentFile.Rating.ToString(CultureInfo.InvariantCulture);
+            lbGenres.Text = torrentFile?.Genres;
+            lbYear.Text = torrentFile?.Year;
+            lbKeyName.Text = torrentFile?.KeyName;
+            lbOtherName.Text = torrentFile?.OtherName;
+            lbZone.Text = torrentFile?.Zone;
+            lbRating.Text = torrentFile?.RatingString;
 
-            if (string.IsNullOrEmpty(torrentFile.RealPosterPath) || !File.Exists(torrentFile.RealPosterPath)) return;
+            if (torrentFile == null || string.IsNullOrEmpty(torrentFile.RealPosterPath) || !File.Exists(torrentFile.RealPosterPath))
+            {
+                pictureBox1.Image?.Dispose();
+                pictureBox1.Image = null;
+                return;
+            }
             try
             {
                 var ext = Path.GetExtension(torrentFile.RealPosterPath);
                 if (ext.Equals(@".webp", StringComparison.InvariantCultureIgnoreCase))
                 {
-                    using var webp = new WebP();
-                    pictureBox1.Image = webp.Load(torrentFile.RealPosterPath);
+                    using var webP = new WebP();
+                    pictureBox1.Image = webP.Load(torrentFile.RealPosterPath);
                 }
                 else
                 {
