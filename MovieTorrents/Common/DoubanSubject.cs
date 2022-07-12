@@ -63,7 +63,7 @@ namespace MovieTorrents.Common
                 client.DownloadFile(uri, filefullname);
                 _img_local = filefullname;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 // ignored
             }

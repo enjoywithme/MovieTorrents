@@ -98,6 +98,7 @@ namespace MovieTorrents
             tsbMovePath.Click += ToolbarMovePath_Click;//移动整个文件夹
             tsbNormalize.Click += TsbNormalizeName;//规范文件名称
             tsmiClearDuplicates.Click += MenuItemClearDuplicates_Click;//清理重复文件
+            tsmiClearPoster.Click += TsmiClearPoster_Click;//清理海报
 
             tsbRating0.Click += (_, _) => { tbSearchText.Text = @"Rating:0"; };
             tsbRating8.Click += (_, _) => { tbSearchText.Text = @"Rating:>8"; };
@@ -634,6 +635,40 @@ namespace MovieTorrents
 
             Interlocked.Exchange(ref _currentOperation, OperationNone);
 
+        }
+
+        //清理海报
+        private async void TsmiClearPoster_Click(object sender, EventArgs e)
+        {
+            if (Interlocked.CompareExchange(ref _currentOperation, OperationClearFile, OperationNone) != OperationNone)
+            {
+                MessageBox.Show(Resource.TextWaitOtherOperation, Resource.TextHint, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+
+            if (_operationTokenSource != null)
+            {
+                _operationTokenSource.Dispose();
+                _operationTokenSource = null;
+            }
+
+            _operationTokenSource = new CancellationTokenSource();
+
+            DisplayInfo("清理海报中...", false, false);
+
+
+            await Task.Run(async () =>
+            {
+                int clearFileCounted;
+                string msg;
+                bool error;
+                (clearFileCounted, msg, error) = await TorrentFile.DoClearPoster(_operationTokenSource.Token);
+                DisplayInfo($"{msg}清理了{clearFileCounted}条海报!", error);
+
+            });
+
+            Interlocked.Exchange(ref _currentOperation, OperationNone);
         }
 
         #endregion

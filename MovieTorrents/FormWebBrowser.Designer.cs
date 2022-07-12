@@ -307,7 +307,6 @@ namespace MovieTorrents
         private System.Windows.Forms.Button btnStop;
         private System.Windows.Forms.Button btnGo;
         private System.Windows.Forms.TextBox txtUrl;
-        private System.Drawing.Bitmap webViewLogoBitmap;
         private Microsoft.Web.WebView2.WinForms.WebView2 webView2Control;
         private System.Windows.Forms.MenuStrip menuStrip1;
         private System.Windows.Forms.ToolStripMenuItem controlToolStripMenuItem;

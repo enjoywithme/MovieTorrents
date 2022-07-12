@@ -85,7 +85,7 @@ public class TorrentFilter
 
                 var pName = $"@p{command.Parameters.Count}";
                 command.Parameters.AddWithValue(pName, $"%{splits[i]}%");
-                sb.Append($" and (name like {pName} or keyname like{pName} or othername like {pName} or genres like {pName} or seecomment like {pName} or path like{pName})");
+                sb.Append($" and (name like {pName} or keyname like{pName} or othername like {pName} or genres like {pName} or seecomment like {pName} or path like {pName} or doubanid like {pName})");
 
             }
         }

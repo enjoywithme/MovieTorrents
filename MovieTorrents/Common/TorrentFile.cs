@@ -191,11 +191,11 @@ namespace MovieTorrents.Common
         }
 
 
-        public struct SearchResult
+        public class SearchResult
         {
             public IList<TorrentFile> TorrentFiles=new List<TorrentFile>();
             public string Message=string.Empty;
-            public bool Cancelled=false;
+            public bool Cancelled;
         }
         //执行异步搜索
         public static async Task<SearchResult> ExecuteSearch(string searchText, CancellationToken cancelToken, bool withFilter=true)
@@ -672,7 +672,112 @@ where file_nid =$fid", connection);
             return (counterCleared, msg, error);
 
         }
-        //
+
+
+        struct PosterUpdate
+        {
+            public TorrentFile TorrentFile;
+            public string NewPosterFileName;
+        }
+        //清理海报
+        public static async Task<(int counterCleared, string msg, bool error)> DoClearPoster(CancellationToken cancelToken)
+        {
+
+            var counterCleared = 0;
+            var msg = string.Empty;
+            var error = false;
+
+            try
+            {
+                using var connection = new SQLiteConnection(DbConnectionString);
+
+                //Find the duplicated names
+                await connection.OpenAsync(cancelToken);
+
+
+                //merge the information
+                var torrentUpdates = new List<PosterUpdate>();
+
+                //foreach (var name in duplicateNames)
+                {
+                    using var commandMerge =
+                        new SQLiteCommand(
+                            "select * from filelist_view where length(doubanid)<>0 and length(posterpath)<>0",
+                            connection);
+                    using var reader = await commandMerge.ExecuteReaderAsync(cancelToken);
+                    while (await reader.ReadAsync(cancelToken))
+                    {
+                        var torrentFile = new TorrentFile(reader);
+
+                        var posterPath = torrentFile.RealPosterPath;
+
+                        var fileName = System.IO.Path.GetFileNameWithoutExtension(posterPath);
+                        var fileExt = System.IO.Path.GetExtension(posterPath);
+                        var newFileName = $"d{torrentFile.DoubanId}";
+                        if (!string.Equals(fileName, newFileName, StringComparison.CurrentCultureIgnoreCase))
+                        {
+                            torrentUpdates.Add(new PosterUpdate { TorrentFile = torrentFile, NewPosterFileName = newFileName + fileExt });
+                        }
+
+
+                    }
+
+                    reader.Close();
+                }
+
+
+
+                //update 
+                using var commandUpdate = new SQLiteCommand(@"update tb_file set posterpath =$posterpath where file_nid =$fid", connection);
+                commandUpdate.Parameters.Add("$fid", DbType.Int32);
+                commandUpdate.Parameters.Add("$posterpath", DbType.String);
+                commandUpdate.Prepare();
+
+                foreach (var posterUpdate in torrentUpdates)
+                {
+
+                    try
+                    {
+                        if (!string.IsNullOrEmpty(posterUpdate.NewPosterFileName))
+                        {
+                            var newFullName = System.IO.Path.Combine(CurrentPath, "poster\\douban\\" , posterUpdate.NewPosterFileName);
+                            if (!File.Exists(newFullName))
+                            {
+                                if(!File.Exists(posterUpdate.TorrentFile.RealPosterPath)) continue;
+                                File.Move(posterUpdate.TorrentFile.RealPosterPath,newFullName);
+                            }
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        Debug.WriteLine($"Failed to rename file:{e.Message}");
+                        continue;
+                    }
+
+                    commandUpdate.Parameters["$fid"].Value = posterUpdate.TorrentFile.Fid;
+                    commandUpdate.Parameters["$posterpath"].Value = posterUpdate.NewPosterFileName;
+
+                    commandUpdate.ExecuteNonQuery();
+                    counterCleared++;
+                    Debug.WriteLine($"Update:{posterUpdate.NewPosterFileName}");
+
+                    if (cancelToken.IsCancellationRequested) break;
+
+                }
+
+
+            }
+            catch
+                (Exception e)
+            {
+                msg = $"{e.Message}。";
+
+                error = true;
+            }
+
+            return (counterCleared, msg, error);
+
+        }
 
         #endregion
 
@@ -946,7 +1051,7 @@ where file_nid =$fid", connection);
                 mDbConnection.Open();
                 try
                 {
-                    if (deleteFile)
+                    if (deleteFile && File.Exists(FullName))
                         File.Delete(FullName);
 
                     var command = new SQLiteCommand(sql, mDbConnection);
@@ -1123,7 +1228,6 @@ where file_nid=$fid";
                     command = new SQLiteCommand("select count(*) as watched from filelist_view where seeflag=1", connection);
                     sb.AppendLine($"已看 {command.ExecuteScalar()}：");
 
-                    var thisYear = DateTime.Now.Year;
                     command = new SQLiteCommand(@"
 select year_month,count(*) from (
 select strftime('%Y', seedate) year_month

@@ -117,6 +117,7 @@
             this.olvColSeen = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.olvColSeeDate = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.olvColSeeComment = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
+            this.tsmiClearPoster = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.lvContextMenu.SuspendLayout();
@@ -144,6 +145,7 @@
             this.tsmiScanFile,
             this.tsmiClearRecords,
             this.tsmiClearDuplicates,
+            this.tsmiClearPoster,
             this.toolStripMenuItem2,
             this.tsmiExit});
             this.文件FToolStripMenuItem.Name = "文件FToolStripMenuItem";
@@ -153,44 +155,44 @@
             // tsmiShowStatistics
             // 
             this.tsmiShowStatistics.Name = "tsmiShowStatistics";
-            this.tsmiShowStatistics.Size = new System.Drawing.Size(165, 22);
+            this.tsmiShowStatistics.Size = new System.Drawing.Size(180, 22);
             this.tsmiShowStatistics.Text = "统计(&T)";
             this.tsmiShowStatistics.Click += new System.EventHandler(this.MenuItemShowStatistics_Click);
             // 
             // toolStripMenuItem7
             // 
             this.toolStripMenuItem7.Name = "toolStripMenuItem7";
-            this.toolStripMenuItem7.Size = new System.Drawing.Size(162, 6);
+            this.toolStripMenuItem7.Size = new System.Drawing.Size(177, 6);
             // 
             // tsmiScanFile
             // 
             this.tsmiScanFile.Name = "tsmiScanFile";
-            this.tsmiScanFile.Size = new System.Drawing.Size(165, 22);
+            this.tsmiScanFile.Size = new System.Drawing.Size(180, 22);
             this.tsmiScanFile.Text = "扫描种子文件(&S)";
             this.tsmiScanFile.Click += new System.EventHandler(this.MenuItemScanFile_Click);
             // 
             // tsmiClearRecords
             // 
             this.tsmiClearRecords.Name = "tsmiClearRecords";
-            this.tsmiClearRecords.Size = new System.Drawing.Size(165, 22);
+            this.tsmiClearRecords.Size = new System.Drawing.Size(180, 22);
             this.tsmiClearRecords.Text = "清理无效记录(&C)";
             this.tsmiClearRecords.Click += new System.EventHandler(this.MenuItemClearRecords_Click);
             // 
             // tsmiClearDuplicates
             // 
             this.tsmiClearDuplicates.Name = "tsmiClearDuplicates";
-            this.tsmiClearDuplicates.Size = new System.Drawing.Size(165, 22);
+            this.tsmiClearDuplicates.Size = new System.Drawing.Size(180, 22);
             this.tsmiClearDuplicates.Text = "清理重复记录(&D)";
             // 
             // toolStripMenuItem2
             // 
             this.toolStripMenuItem2.Name = "toolStripMenuItem2";
-            this.toolStripMenuItem2.Size = new System.Drawing.Size(162, 6);
+            this.toolStripMenuItem2.Size = new System.Drawing.Size(177, 6);
             // 
             // tsmiExit
             // 
             this.tsmiExit.Name = "tsmiExit";
-            this.tsmiExit.Size = new System.Drawing.Size(165, 22);
+            this.tsmiExit.Size = new System.Drawing.Size(180, 22);
             this.tsmiExit.Text = "退出(X)";
             this.tsmiExit.Click += new System.EventHandler(this.MenuitemExit_Click);
             // 
@@ -871,6 +873,12 @@
             this.olvColSeeComment.Text = "观看评论";
             this.olvColSeeComment.Width = 120;
             // 
+            // tsmiClearPoster
+            // 
+            this.tsmiClearPoster.Name = "tsmiClearPoster";
+            this.tsmiClearPoster.Size = new System.Drawing.Size(180, 22);
+            this.tsmiClearPoster.Text = "清理海报";
+            // 
             // FormMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -1000,6 +1008,7 @@
         private BrightIdeasSoftware.OLVColumn olvColSeeDate;
         private BrightIdeasSoftware.OLVColumn olvColAddDate;
         private BrightIdeasSoftware.OLVColumn olvColSeeComment;
+        private System.Windows.Forms.ToolStripMenuItem tsmiClearPoster;
     }
 }
 
