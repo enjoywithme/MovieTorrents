@@ -1274,9 +1274,11 @@ rating=$rating,genres=$genres,directors=$directors,casts=$casts where file_nid=$
 
                 if (!string.IsNullOrEmpty(subject.img_local))
                 {
-                    posterImageFileName = CurrentPath + "\\poster\\douban\\" + System.IO.Path.GetFileName(subject.img_local);
+                    var fileExt = System.IO.Path.GetExtension(subject.img_local);
+
+                    posterImageFileName = CurrentPath + "\\poster\\douban\\d" + subject.id + fileExt;
                     File.Copy(subject.img_local, posterImageFileName, true);
-                    posterImageFileName = posterImageFileName.Replace("\\", "/");//zogvm的路径使用正斜杠
+                    posterImageFileName = $"d{subject.id}{fileExt}";//使用豆瓣ID命名海报文件
                 }
 
                 mDbConnection.Open();
