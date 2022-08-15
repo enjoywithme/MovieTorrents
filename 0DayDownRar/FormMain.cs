@@ -203,11 +203,11 @@ namespace _0DayDownRar
             backgroundWorker.ReportProgress(0, new PathItem { Path = fileName, Result = "*", Message = "测试文件..." });
 
             var (exitCode, message) = _winRar.TestFile(fileName);
-            if (exitCode == 0)
-            {
-                CheckCreateSfv(fileName);
-                return;
-            }
+            //if (exitCode == 0)
+            //{
+            //    CheckCreateSfv(fileName);
+            //    return;
+            //}
 
             if (exitCode != 11)//密码错误
                 throw new Exception(message);
