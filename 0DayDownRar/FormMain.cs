@@ -202,15 +202,15 @@ namespace _0DayDownRar
         {
             backgroundWorker.ReportProgress(0, new PathItem { Path = fileName, Result = "*", Message = "测试文件..." });
 
-            var (exitCode, message) = _winRar.TestFile(fileName);
+            //var (exitCode, message) = _winRar.TestFile(fileName);
             //if (exitCode == 0)
             //{
             //    CheckCreateSfv(fileName);
             //    return;
             //}
 
-            if (exitCode != 11)//密码错误
-                throw new Exception(message);
+            //if (exitCode!=0 && exitCode != 11)//密码错误
+            //    throw new Exception(message);
 
             var outputs = _winRar.ListContent(fileName);
             //查找最短行作为顶级路径
@@ -230,7 +230,7 @@ namespace _0DayDownRar
 
             //解压文件
             backgroundWorker.ReportProgress(0, new PathItem { Path = fileName, Result = "*", Message = "解压文件..." });
-            (exitCode, message) = _winRar.ExtractFile(fileName, extractDir);
+            var (exitCode, message) = _winRar.ExtractFile(fileName, extractDir);
             if (exitCode != 0) throw new Exception(message);
 
             //删除源文件

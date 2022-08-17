@@ -58,6 +58,8 @@ namespace _0DayDownRar
 
         public (int,string) ExtractFile(string fileName, string extractDir)
         {
+            if(!extractDir.EndsWith("\\"))
+                extractDir+="\\";
             var cmd = $"x -IBCK -o+ -y -inul -p{ZeroDownPwd} \"{fileName}\"  \"{extractDir}\"";//背景解压，覆盖文件不确认,禁止显示错误
             var (exitCode, message, _) = RunCmd(Path.Combine(_winRarPath, "winrar.exe"), cmd);
             return (exitCode, message);
