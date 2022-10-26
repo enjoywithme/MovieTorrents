@@ -8,6 +8,7 @@ using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using Exception = System.Exception;
 using _0DayDownRar.Properties;
+using Microsoft.WindowsAPICodePack.Taskbar;
 
 namespace _0DayDownRar
 {
@@ -157,6 +158,10 @@ namespace _0DayDownRar
             btStart.Text = Resources.TextStop;
             progressBar1.Maximum = _files.Count;
             progressBar1.Value = 0;
+
+            TaskbarManager.Instance.SetProgressState(TaskbarProgressBarState.Normal, Handle);
+            TaskbarManager.Instance.SetProgressValue(0,progressBar1.Maximum,Handle);
+
             _isRunning = true;
             Cursor = Cursors.WaitCursor;
             backgroundWorker.RunWorkerAsync();
@@ -311,7 +316,12 @@ namespace _0DayDownRar
 
         private void BackgroundWorkerProgressChanged(object sender, ProgressChangedEventArgs e)
         {
-            if(e.ProgressPercentage !=0) progressBar1.Value = e.ProgressPercentage;
+            if (e.ProgressPercentage != 0)
+            {
+                progressBar1.Value = e.ProgressPercentage;
+                TaskbarManager.Instance.SetProgressState(TaskbarProgressBarState.Normal, Handle);
+                TaskbarManager.Instance.SetProgressValue(progressBar1.Value, progressBar1.Maximum, Handle);
+            }
             var state = (PathItem)e.UserState;
             listView1.Items[state.Path].SubItems[1].Text = state.Result;
             listView1.Items[state.Path].SubItems[2].Text = state.Message;
@@ -325,6 +335,8 @@ namespace _0DayDownRar
             EnableControles(true);
             btStart.Enabled = true;
             Cursor = Cursors.Default;
+            TaskbarManager.Instance.SetProgressState(TaskbarProgressBarState.Normal, Handle);
+            TaskbarManager.Instance.SetProgressValue(progressBar1.Value, progressBar1.Maximum, Handle);
         }
 
         private void FormMainFormClosing(object sender, FormClosingEventArgs e)
