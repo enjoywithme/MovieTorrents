@@ -29,7 +29,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "0dayUnrar", "0dayUnrar\0day
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "0DayDownRar", "0DayDownRar\0DayDownRar.csproj", "{B3B8B786-6A23-4764-8BED-0A8572330452}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CleanHtmlLazyLoadingImg", "CleanHtmlLazyLoadingImg\CleanHtmlLazyLoadingImg.csproj", "{1B48483A-944A-4964-805E-879BD5DC38D5}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CleanHtml", "CleanHtml\CleanHtml.csproj", "{1B48483A-944A-4964-805E-879BD5DC38D5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
