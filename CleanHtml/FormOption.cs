@@ -19,6 +19,7 @@ namespace CleanHtml
         }
 
         public ActionType Action { get; private set; }
+        public bool ConvertWebp { get; private set; }
 
         public FormOption()
         {
@@ -31,6 +32,8 @@ namespace CleanHtml
                 Action = ActionType.CleanImageLazyLoad;
             else if (radioButton2.Checked)
                 Action = ActionType.ExtractEmbeddedImage;
+
+            ConvertWebp = cbConvertWebp.Checked;
 
             DialogResult = DialogResult.OK;
         }
