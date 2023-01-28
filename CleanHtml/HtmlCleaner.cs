@@ -90,18 +90,21 @@ namespace CleanHtml
 
 
                 using var image = new MagickImage(webPFile);
+
                 if (image.AnimationDelay == 0)
                 {
-                    var defines = new JpegWriteDefines()
-                    {
-                        DctMethod = JpegDctMethod.Slow,
-                        OptimizeCoding = false
-                    };
+                    //image.ColorAlpha(MagickColors.White);
 
-                    var jpegFile = Path.Combine(filePath, $"{fileName}.jpeg");
+                    //var defines = new JpegWriteDefines()
+                    //{
+                    //    DctMethod = JpegDctMethod.Slow,
+                    //    OptimizeCoding = false
+                    //};
 
-                    image.Write(jpegFile, defines);
-                    format = "jpeg";
+                    var pngFile = Path.Combine(filePath, $"{fileName}.png");
+
+                    image.Write(pngFile);
+                    format = "png";
                 }
                 else
                 {

@@ -97,9 +97,9 @@
             this.cbConvertWebp.CheckState = System.Windows.Forms.CheckState.Checked;
             this.cbConvertWebp.Location = new System.Drawing.Point(49, 183);
             this.cbConvertWebp.Name = "cbConvertWebp";
-            this.cbConvertWebp.Size = new System.Drawing.Size(144, 16);
+            this.cbConvertWebp.Size = new System.Drawing.Size(138, 16);
             this.cbConvertWebp.TabIndex = 2;
-            this.cbConvertWebp.Text = "Convert webp to jpeg";
+            this.cbConvertWebp.Text = "Convert webp to png";
             this.cbConvertWebp.UseVisualStyleBackColor = true;
             // 
             // FormOption
