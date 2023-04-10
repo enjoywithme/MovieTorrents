@@ -31,6 +31,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "0DayDownRar", "0DayDownRar\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CleanHtml", "CleanHtml\CleanHtml.csproj", "{1B48483A-944A-4964-805E-879BD5DC38D5}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "MyPages", "MyPages", "{68384984-6AEF-488D-8634-1984C1E2DDF6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyPageViewer", "MyPages\MyPageViewer\MyPageViewer.csproj", "{298D7C74-27B4-44D6-8819-2C75D283F488}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -85,9 +89,16 @@ Global
 		{1B48483A-944A-4964-805E-879BD5DC38D5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1B48483A-944A-4964-805E-879BD5DC38D5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1B48483A-944A-4964-805E-879BD5DC38D5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{298D7C74-27B4-44D6-8819-2C75D283F488}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{298D7C74-27B4-44D6-8819-2C75D283F488}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{298D7C74-27B4-44D6-8819-2C75D283F488}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{298D7C74-27B4-44D6-8819-2C75D283F488}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{298D7C74-27B4-44D6-8819-2C75D283F488} = {68384984-6AEF-488D-8634-1984C1E2DDF6}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {96CC90BD-34AF-4748-9E10-494A76E2DBAC}
