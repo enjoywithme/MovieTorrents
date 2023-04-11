@@ -11,8 +11,6 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using WindowsInput;
-using WindowsInput.Native;
 using AngleSharp.Html.Parser;
 using CefBrowser.Controls;
 using CefSharp;
