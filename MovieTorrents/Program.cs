@@ -12,10 +12,15 @@ namespace MovieTorrents
         [STAThread]
         static void Main()
         {
-
-            if (!SingleInstance.Start())
+            if (SingleInstance.InitInstance(out var message))
             {
-                SingleInstance.ShowFirstInstance();
+                ShowError(message);
+                return;
+            }
+
+            if (!SingleInstance.Instance.Start())
+            {
+                SingleInstance.Instance.ShowFirstInstance();
                 return;
             }
 
@@ -29,12 +34,18 @@ namespace MovieTorrents
             }
             catch (Exception e)
             {
-                MessageBox.Show(e.Message, "错误", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                ShowError(message);
             }
 
 
-            SingleInstance.Stop();
+            SingleInstance.Instance.Stop();
 
         }
+
+        public static void ShowError(string message)
+        {
+            MessageBox.Show(message, Resource.TextError, MessageBoxButtons.OK, MessageBoxIcon.Error);
+        }
+
     }
 }

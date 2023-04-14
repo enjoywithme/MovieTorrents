@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Dynamic;
+using System.IO.MemoryMappedFiles;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Threading;
@@ -6,30 +8,88 @@ using System.Threading;
 namespace mySharedLib
 {
     //The code below is from https://www.codeproject.com/Articles/32908/C-Single-Instance-App-With-the-Ability-To-Restore
-    public static class SingleInstance
+    public class SingleInstance
     {
-        public static readonly int WM_SHOWFIRSTINSTANCE = WinApi.RegisterWindowMessage("WM_SHOWFIRSTINSTANCE|{0}", ProgramInfo.AssemblyGuid);
-        static Mutex _mutex;
-        public static bool Start()
+        public static SingleInstance Instance { get; private set; }
+
+        public static int WM_SHOWFIRSTINSTANCE { get; private set; } 
+        private  Mutex _mutex;
+        private  string _guid;
+        private readonly bool _shareMemory;
+
+        public  string MutexName { get; private set; }
+        public  string MmfName { get; private set; }
+        public const int MmfLength = 1024;
+
+        private SingleInstance(string guid,bool shareMemory)
         {
-            var mutexName = $"Local\\{ProgramInfo.AssemblyGuid}";
+            _guid = guid;
+            _shareMemory = shareMemory;
+        }
+
+        public static bool InitInstance(out string message,string guid = null,bool shareMemory=true)
+        {
+            message = string.Empty;
+
+            var gid = string.IsNullOrEmpty(guid) ? ProgramInfo.AssemblyGuid : guid;
+            if (string.IsNullOrEmpty(gid))
+            {
+                message = "Empty guid is not allowed.";
+                return false;
+            }
+
+            WM_SHOWFIRSTINSTANCE = WinApi.RegisterWindowMessage("WM_SHOWFIRSTINSTANCE|{0}", ProgramInfo.AssemblyGuid);
+
+            Instance = new SingleInstance(guid,shareMemory);
+            return true;
+        }
+
+        public  bool Start()
+        {
+
+            MutexName =  $"Local\\Mutex_{_guid}";
+            MmfName = $"MMF_{_guid}";
 
             // if you want your app to be limited to a single instance
             // across ALL SESSIONS (multiple users & terminal services), then use the following line instead:
             // string mutexName = String.Format("Global\\{0}", ProgramInfo.AssemblyGuid);
 
-            _mutex = new Mutex(true, mutexName, out var onlyInstance);
+            _mutex = new Mutex(true, MutexName, out var onlyInstance);
+
+            if (onlyInstance && _shareMemory)
+            {
+                //Start the memory
+                MemoryMappedFile.CreateOrOpen(MmfName, MmfLength, MemoryMappedFileAccess.ReadWrite);
+            }
+            
             return onlyInstance;
         }
-        public static void ShowFirstInstance()
+        public void ShowFirstInstance(string message=null)
         {
-            WinApi.PostMessage(
-                (IntPtr)WinApi.HWND_BROADCAST,
-                WM_SHOWFIRSTINSTANCE,
-                IntPtr.Zero,
-                IntPtr.Zero);
+            if (string.IsNullOrEmpty(message))
+            {
+                WinApi.PostMessage((IntPtr)WinApi.HWND_BROADCAST, WM_SHOWFIRSTINSTANCE, IntPtr.Zero, IntPtr.Zero);
+                return;
+            }
+
+            var bytes = System.Text.Encoding.Default.GetBytes(message);
+            var n = bytes.Length;
+            try
+            {
+                var mmf = MemoryMappedFile.CreateOrOpen(MmfName, MmfLength, MemoryMappedFileAccess.ReadWrite);
+                var accessor = mmf.CreateViewAccessor(0, MmfLength);
+                accessor.WriteArray(0,bytes,0,n);
+
+                WinApi.PostMessage((IntPtr)WinApi.HWND_BROADCAST, WM_SHOWFIRSTINSTANCE, IntPtr.Zero, (IntPtr)n);
+
+
+            }
+            catch (Exception)
+            {
+                // ignored
+            }
         }
-        public static void Stop()
+        public void Stop()
         {
             _mutex.ReleaseMutex();
         }
@@ -140,28 +200,21 @@ namespace mySharedLib
         {
             get
             {
-                var attributes = Assembly.GetEntryAssembly().GetCustomAttributes(typeof(System.Runtime.InteropServices.GuidAttribute), false);
-                if (attributes.Length == 0)
-                {
-                    return String.Empty;
-                }
-                return ((System.Runtime.InteropServices.GuidAttribute)attributes[0]).Value;
+                var attributes = Assembly.GetEntryAssembly()?.GetCustomAttributes(typeof(GuidAttribute), false);
+                if (attributes == null || attributes.Length == 0) return string.Empty;
+                return ((GuidAttribute)attributes[0]).Value;
             }
         }
         public static string AssemblyTitle
         {
             get
             {
-                var attributes = Assembly.GetEntryAssembly().GetCustomAttributes(typeof(AssemblyTitleAttribute), false);
-                if (attributes.Length > 0)
-                {
-                    AssemblyTitleAttribute titleAttribute = (AssemblyTitleAttribute)attributes[0];
-                    if (titleAttribute.Title != "")
-                    {
-                        return titleAttribute.Title;
-                    }
-                }
-                return System.IO.Path.GetFileNameWithoutExtension(Assembly.GetEntryAssembly().CodeBase);
+                var attributes = Assembly.GetEntryAssembly()?.GetCustomAttributes(typeof(AssemblyTitleAttribute), false);
+                if(attributes ==null || attributes.Length == 0)
+                    return System.IO.Path.GetFileNameWithoutExtension(Assembly.GetEntryAssembly()?.CodeBase);
+
+                return ((AssemblyTitleAttribute)attributes[0]).Title;
+
             }
         }
 

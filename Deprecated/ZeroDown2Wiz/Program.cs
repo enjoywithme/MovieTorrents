@@ -75,8 +75,14 @@ namespace ZeroDown2Wiz
 
             Console.ForegroundColor = ConsoleColor.Green;
 
+            if (!SingleInstance.InitInstance(out var message))
+            {
+                Console.WriteLine(message);
+                return;
+            }
+
             //判断单进程
-            if (!SingleInstance.Start())
+            if (!SingleInstance.Instance.Start())
             {
                 Console.WriteLine("The program is already running....");
                 Console.WriteLine("Press any key to quit.");
@@ -146,7 +152,7 @@ namespace ZeroDown2Wiz
 
             Debug.WriteLine("-----------final exit---------------");
 
-            SingleInstance.Stop();
+            SingleInstance.Instance.Stop();
         }
 
         private static void _notifyIcon_MouseClick(object sender, MouseEventArgs e)

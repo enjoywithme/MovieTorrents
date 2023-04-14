@@ -20,9 +20,14 @@ namespace ZeroDownBrowser
         [STAThread]
         static void Main()
         {
-            if (!SingleInstance.Start())
+            if (!SingleInstance.InitInstance(out var message))
             {
-                SingleInstance.ShowFirstInstance();
+                return;
+            }
+
+            if (!SingleInstance.Instance.Start())
+            {
+                SingleInstance.Instance.ShowFirstInstance();
                 return;
             }
 
@@ -50,7 +55,7 @@ namespace ZeroDownBrowser
             }
             finally
             {
-                SingleInstance.Stop();
+                SingleInstance.Instance.Stop();
             }
         }
 
