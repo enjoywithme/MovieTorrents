@@ -524,15 +524,25 @@ namespace MovieTorrents.Common
                 {
                     var destFileName = Path.GetFileName(file).NormalizeTorrentFileName();
                     var year = destFileName.ExtractYear();
-                    if (year == 0)
+                    if (year != 0)
                     {
-                        msg += $"\r\n文件 {destFileName} 没有年份！";
-                        continue;
+                        var destPath = Path.Combine(TorrentFile.TorrentRootPath, TorrentFile.ArchiveYearSubPath(year));
+                        destFileName = Path.Combine(destPath, destFileName);
+                    }
+                    else
+                    {
+                        var torrentFile = TorrentFile.FindByName(Path.GetFileNameWithoutExtension(file)) ?? TorrentFile.FindByName(Path.GetFileNameWithoutExtension(destFileName));
+                        if (torrentFile == null)
+                        {
+                            msg += $"\r\n文件 {destFileName} 没有年份！";
+                            continue;
+                        }
+                        var destPath = Path.GetDirectoryName(torrentFile.FullName);
+
+                        destFileName = Path.Combine(destPath, destFileName);
+
                     }
 
-                    var destPath = Path.Combine(TorrentFile.TorrentRootPath,
-                        TorrentFile.ArchiveYearSubPath(year));
-                    destFileName = Path.Combine(destPath, destFileName);
                     Debug.WriteLine(destFileName);
 
                     try
@@ -540,11 +550,14 @@ namespace MovieTorrents.Common
                         if (File.Exists(destFileName))
                         {
                             msg += $"\r\n文件 {destFileName} 已经存在！";
+                            File.Copy(file,destFileName,true);
                             File.Delete(file);
-                            continue;
+                        }
+                        else
+                        {
+                            File.Move(file, destFileName);
                         }
 
-                        File.Move(file, destFileName);
                         i++;
                     }
                     catch (Exception exception)

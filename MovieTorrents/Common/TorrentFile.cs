@@ -13,6 +13,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using mySharedLib;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace MovieTorrents.Common
 {
@@ -276,6 +277,52 @@ namespace MovieTorrents.Common
 
             return ok ? result : null;
         }
+
+        /// <summary>
+        /// 根据文件名查找
+        /// </summary>
+        /// <param name="name"></param>
+        /// <returns></returns>
+        public static TorrentFile FindByName(string name)
+        {
+            if (string.IsNullOrEmpty(name)) return null;
+            TorrentFile result = null;
+            var ok = true;
+            try
+            {
+                var connection = new SQLiteConnection(DbConnectionString);
+
+                connection.Open();
+
+                try
+                {
+                    var sql = "select * from filelist_view where name=$pName";
+
+                    var command = new SQLiteCommand(sql, connection);
+                    command.Parameters.AddWithValue("$pName", name);
+
+                    using var reader = command.ExecuteReader();
+                    if (reader.Read())
+                    {
+                        result = new TorrentFile(reader);
+                    }
+                }
+                catch (Exception e)
+                {
+                    Debug.WriteLine(e.Message);
+                    ok = false;
+                }
+                connection.Close();
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine(e.Message);
+                ok = false;
+            }
+
+            return ok ? result : null;
+        }
+
         //检查数据库是否存在
         public static bool ExistInDb(string text, int? year = null)
         {

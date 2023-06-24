@@ -12,7 +12,7 @@ namespace MovieTorrents
         [STAThread]
         static void Main()
         {
-            if (SingleInstance.InitInstance(out var message))
+            if (!SingleInstance.InitInstance(out var message))
             {
                 ShowError(message);
                 return;
