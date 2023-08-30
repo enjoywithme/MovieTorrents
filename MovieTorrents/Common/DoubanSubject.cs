@@ -69,7 +69,6 @@ namespace MovieTorrents.Common
             }
         }
 
-
         public static List<DouBanSubject> SearchSuggest(string text,out string msg)
         {
             msg = string.Empty;
@@ -294,7 +293,7 @@ namespace MovieTorrents.Common
             match = Regex.Match(html, @"<div id=""mainpic"" class="""">[\s\S]*?src=""(.*?)""[\s\S]*?</div>", RegexOptions.IgnoreCase);
             if(match.Success) subject.img_url = match.Groups[1].Value;
 
-            subject.TryToDownloadSubjectImg();
+            //subject.TryToDownloadSubjectImg();
 
             subject.title = subject.name;
             subject.sub_title = subject.othername;

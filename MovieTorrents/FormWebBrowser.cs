@@ -7,6 +7,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using Microsoft.Web.WebView2.Core;
 using MovieTorrents.Common;
@@ -160,16 +161,47 @@ namespace MovieTorrents
             var html = await webView2Control.CoreWebView2.ExecuteScriptAsync("document.body.outerHTML");
             html = Regex.Unescape(html);
             //var htmldecoded = System.Web.Helpers.Json.Decode(html);
-            Debug.Write(html);
 #if DEBUG
-            File.WriteAllText("d:\\temp\\2.txt",html);
+            //File.WriteAllText("d:\\temp\\2.txt",html);
 
 #endif
+            try
+            {
+                DouBanSubject = DouBanSubject.InitFromPageHtml(webView2Control.Source.AbsoluteUri, html);
+                if (!string.IsNullOrEmpty(DouBanSubject?.img_url))
+                {
+                    //webView2Control.CoreWebView2.Navigate(DouBanSubject.img_url);
+                    var filename = Path.GetFileName(DouBanSubject.img_url);
 
-            DouBanSubject = DouBanSubject.InitFromPageHtml(webView2Control.Source.AbsoluteUri, html);
+                    //下载 https://stackoverflow.com/questions/23872902/chrome-download-attribute-not-working-to-replace-the-original-name
+                    //https://stackoverflow.com/questions/3749231/download-file-using-javascript-jquery
 
-            DialogResult = DialogResult.OK;
+                    var scritp = $@"
+const outsideRes = await fetch(""{DouBanSubject.img_url}"");
+//const blob = await outsideRes.blob();
+//const url = window.URL.createObjectURL(blob);
+const link = document.createElement(""a"");
+link.href = ""{DouBanSubject.img_url}"";
+link.download = ""{filename}"";
+link.innerText = ""download xxxxxx"";
+document.body.appendChild(link);
+//link.click();
+";
+                    System.Diagnostics.Debug.WriteLine(scritp);
+                    await webView2Control.CoreWebView2.ExecuteScriptAsync(scritp);
+
+                }
+            }
+            catch (Exception exception)
+            {
+                MessageBox.Show(exception.Message, Resource.TextError, MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            
+
+            //DialogResult = DialogResult.OK;
         }
+
+
 
         private void btnForward_Click(object sender, EventArgs e)
         {
