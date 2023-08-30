@@ -17,7 +17,9 @@ namespace MovieTorrents
 {
     public partial class FormWebBrowser : Form
     {
-        private string _startUrl;
+        private readonly string _startUrl;
+        private bool _downloadingPoster;
+
         public DouBanSubject DouBanSubject { get; private set; }
         public FormWebBrowser(string startUrl)
         {
@@ -46,9 +48,32 @@ namespace MovieTorrents
             UpdateTitleWithEvent("NavigationStarting");
         }
 
-        private void WebView2Control_NavigationCompleted(object sender, CoreWebView2NavigationCompletedEventArgs e)
+        private async void WebView2Control_NavigationCompleted(object sender, CoreWebView2NavigationCompletedEventArgs e)
         {
             UpdateTitleWithEvent("NavigationCompleted");
+
+            if (_downloadingPoster)
+            {
+                _downloadingPoster = false;
+
+                //if (webView2Control.Source.AbsolutePath.EndsWith(".webp"))
+                try
+                {
+                    var filename = Path.GetFileName(DouBanSubject.img_url);
+                    if (IsNullOrEmpty(filename)) return;
+                    var downloadedFilePath = TorrentFile.CurrentPath + "\\temp\\" + Path.GetFileNameWithoutExtension(filename) + ".jpg";
+
+                    var imageData = await GetImageBytesAsync();
+                    File.WriteAllBytes(downloadedFilePath, imageData);
+                    DouBanSubject.img_local = downloadedFilePath;
+                }
+                catch (Exception)
+                {
+                    // ignored
+                }
+
+                DialogResult = DialogResult.OK;
+            }
         }
 
         private void WebView2Control_SourceChanged(object sender, CoreWebView2SourceChangedEventArgs e)
@@ -160,7 +185,6 @@ namespace MovieTorrents
         {
             var html = await webView2Control.CoreWebView2.ExecuteScriptAsync("document.body.outerHTML");
             html = Regex.Unescape(html);
-            //var htmldecoded = System.Web.Helpers.Json.Decode(html);
 #if DEBUG
             //File.WriteAllText("d:\\temp\\2.txt",html);
 
@@ -168,28 +192,13 @@ namespace MovieTorrents
             try
             {
                 DouBanSubject = DouBanSubject.InitFromPageHtml(webView2Control.Source.AbsoluteUri, html);
-                if (!string.IsNullOrEmpty(DouBanSubject?.img_url))
+                if(IsNullOrEmpty(DouBanSubject.img_local) && !IsNullOrEmpty(DouBanSubject?.img_url))
                 {
-                    //webView2Control.CoreWebView2.Navigate(DouBanSubject.img_url);
-                    var filename = Path.GetFileName(DouBanSubject.img_url);
 
-                    //下载 https://stackoverflow.com/questions/23872902/chrome-download-attribute-not-working-to-replace-the-original-name
-                    //https://stackoverflow.com/questions/3749231/download-file-using-javascript-jquery
+                    //从浏览器中下载 https://stackoverflow.com/questions/76647184/how-to-save-image-in-microsoft-webview2-page-to-local-file/77003697#77003697
 
-                    var scritp = $@"
-const outsideRes = await fetch(""{DouBanSubject.img_url}"");
-//const blob = await outsideRes.blob();
-//const url = window.URL.createObjectURL(blob);
-const link = document.createElement(""a"");
-link.href = ""{DouBanSubject.img_url}"";
-link.download = ""{filename}"";
-link.innerText = ""download xxxxxx"";
-document.body.appendChild(link);
-//link.click();
-";
-                    System.Diagnostics.Debug.WriteLine(scritp);
-                    await webView2Control.CoreWebView2.ExecuteScriptAsync(scritp);
-
+                    _downloadingPoster = true;
+                    webView2Control.Source = new Uri(DouBanSubject.img_url);
                 }
             }
             catch (Exception exception)
@@ -201,7 +210,39 @@ document.body.appendChild(link);
             //DialogResult = DialogResult.OK;
         }
 
+        /// <summary>
+        /// Get raw data (bytes) about an image in an "img" html element 
+        /// where id is indicated by "elementId". 
+        /// If "elementId" is null, the first "img" element in the page is used 
+        /// </summary>
+        async Task<byte[]> GetImageBytesAsync(string elementId = null, bool debug = false)
+        {
+            var script = @"
+function getImageAsBase64(imgElementId)
+{
+    " + (debug ? "debugger;" : "") + @"
+    let img = document.getElementById(imgElementId);
+    if (imgElementId == '')
+    {
+        var results = document.evaluate('//img', document, null, XPathResult.ANY_TYPE, null);
+        img = results.iterateNext();
+    }
+    let canvas = document.createElement('canvas');
+    canvas.width = img.naturalWidth;
+    canvas.height = img.naturalHeight;
 
+    let ctx = canvas.getContext('2d');
+    ctx.drawImage(img, 0, 0, img.naturalWidth, img.naturalHeight);
+
+    let base64String = canvas.toDataURL('image/jpeg');  // or 'image/png'
+    return base64String;
+};
+getImageAsBase64('" + elementId + "')";
+            var base64Data = await webView2Control.ExecuteScriptAsync(script);
+            base64Data = base64Data.Split(new[] { "base64," }, StringSplitOptions.RemoveEmptyEntries)[1].TrimEnd('"');
+            var result = Convert.FromBase64String(base64Data);
+            return result;
+        }
 
         private void btnForward_Click(object sender, EventArgs e)
         {

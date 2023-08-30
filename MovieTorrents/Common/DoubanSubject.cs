@@ -33,11 +33,17 @@ namespace MovieTorrents.Common
             } }
         public string img_url { get; set; }
         private string _img_local = string.Empty;
-        public string img_local { get {
+
+        public string img_local
+        {
+            get
+            {
                 if (!string.IsNullOrEmpty(_img_local)) return _img_local;
                 TryToDownloadSubjectImg();
                 return _img_local;
-            } }
+            }
+            set => _img_local = value;
+        }
 
 
         private bool _triedDetail=false;
@@ -51,17 +57,19 @@ namespace MovieTorrents.Common
 
         private void TryToDownloadSubjectImg()
         {
+            if(!string.IsNullOrEmpty(_img_local) && File.Exists(_img_local)) return;
+
             var filename = Path.GetFileName(img_url);
             if (string.IsNullOrEmpty(filename)) return;
-            var filefullname = TorrentFile.CurrentPath + "\\temp\\" + filename;
+            var tempFileName = TorrentFile.CurrentPath + "\\temp\\" + filename;
 
             using var client = new WebClient();
             var uri = new Uri(img_url);
 
             try
             {
-                client.DownloadFile(uri, filefullname);
-                _img_local = filefullname;
+                client.DownloadFile(uri, tempFileName);
+                _img_local = tempFileName;
             }
             catch (Exception)
             {
@@ -293,7 +301,7 @@ namespace MovieTorrents.Common
             match = Regex.Match(html, @"<div id=""mainpic"" class="""">[\s\S]*?src=""(.*?)""[\s\S]*?</div>", RegexOptions.IgnoreCase);
             if(match.Success) subject.img_url = match.Groups[1].Value;
 
-            //subject.TryToDownloadSubjectImg();
+            subject.TryToDownloadSubjectImg();
 
             subject.title = subject.name;
             subject.sub_title = subject.othername;
