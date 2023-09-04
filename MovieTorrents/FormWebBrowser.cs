@@ -200,6 +200,10 @@ namespace MovieTorrents
                     _downloadingPoster = true;
                     webView2Control.Source = new Uri(DouBanSubject.img_url);
                 }
+                else
+                {
+                    DialogResult = DialogResult.OK;
+                }
             }
             catch (Exception exception)
             {
@@ -207,7 +211,6 @@ namespace MovieTorrents
             }
             
 
-            //DialogResult = DialogResult.OK;
         }
 
         /// <summary>
