@@ -40,7 +40,7 @@ namespace mySharedLib
 
             WM_SHOWFIRSTINSTANCE = WinApi.RegisterWindowMessage("WM_SHOWFIRSTINSTANCE|{0}", ProgramInfo.AssemblyGuid);
 
-            Instance = new SingleInstance(guid,shareMemory);
+            Instance = new SingleInstance(gid,shareMemory);
             return true;
         }
 

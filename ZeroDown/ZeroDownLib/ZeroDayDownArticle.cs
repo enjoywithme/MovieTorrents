@@ -8,6 +8,9 @@ using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using mySharedLib;
 using WizKMCoreLib;
+using System.Net;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace ZeroDownLib
 {
@@ -24,7 +27,8 @@ namespace ZeroDownLib
         private static readonly List<string> SimilarSkipWords = new List<string>{"pro","ultimate"};
         public static string WizDbPath;
         public static string WizDefaultFolder;
-
+        public static string MyPageTempPath;
+        public static string SaveFormat;//WIZ保存到为知笔记，PIZ保存为PIZ文件
 
         public string Html { get; set; }
         public string Url { get; set; }
@@ -45,6 +49,10 @@ namespace ZeroDownLib
         public string Name { get; set; }//名称，不含版本号
         public string DocFileName { get; private set; }//Wiz保存文件名
         public string WizFolderLocation { get; private set; }
+
+        private string _pageDocTempPath;
+
+        public string PizFileName { get; private set; }
 
         static ZeroDayDownArticle()
         {
@@ -136,7 +144,7 @@ namespace ZeroDownLib
 
             try
             {
-                SaveToWiz();
+                Save();
                 msg = $"保存成功!";
 
             }
@@ -149,9 +157,17 @@ namespace ZeroDownLib
             return true;
         }
 
+        public void Save()
+        {
+            if(SaveFormat == "PIZ")
+                SaveAsPiz();
+            else
+                SaveAsWiz();
+        }
+
         //保存为为知笔记文档
         //https://www.wiz.cn/zh-cn/m/api-summary.html
-        public void SaveToWiz()
+        public void SaveAsWiz()
         {
             //打开数据库 https://www.wiz.cn/m/api/descriptions/IWizDatabase.html
             //var dbPath = System.Configuration.ConfigurationManager.AppSettings["IndexDbPath"];
@@ -227,6 +243,241 @@ namespace ZeroDownLib
 
             wizDb.Close();
         }
+
+        public void SaveAsPiz()
+        {
+            FindWizLocation();
+            var targetPath = FindWizLocation();
+            if (string.IsNullOrEmpty(targetPath))
+                throw new Exception("找不到文章保存路径");
+
+            if(string.IsNullOrEmpty(MyPageTempPath)||!Directory.Exists(MyPageTempPath))
+                throw new Exception("找不到My pages临时目录");
+
+            var guId = Guid.NewGuid().ToString();
+            _pageDocTempPath = Path.Combine(MyPageTempPath, guId);
+            if (Directory.Exists(_pageDocTempPath))
+                Directory.Delete(_pageDocTempPath, true);
+            Directory.CreateDirectory(_pageDocTempPath);
+
+
+            //下载图片
+            var doc = ProcessDocument();
+            var indexHtmlFile = Path.Combine(_pageDocTempPath, "index.html");
+            doc.Save(indexHtmlFile);
+
+
+            //创建manifest
+            var fileName = Path.Combine(_pageDocTempPath, "manifest.json");
+            var jo = File.Exists(fileName) ? JObject.Parse(File.ReadAllText(fileName)) : new JObject();
+
+            jo["title"] = _title;
+            jo["originalUrl"] = Url;
+            jo["archiveTime"] = DateTime.UtcNow.ToString("s") + "Z";
+            jo["rate"] = 0;
+
+            File.WriteAllText(fileName, JsonConvert.SerializeObject(jo, JsonSerializerSettings), Encoding.UTF8);
+
+            //zip打包
+            var tempZip = Path.Combine(MyPageTempPath, $"{guId}.zip");
+            if (File.Exists(tempZip))
+                File.Delete(tempZip);
+            System.IO.Compression.ZipFile.CreateFromDirectory(_pageDocTempPath, tempZip);
+
+            //移动到目标路径
+            PizFileName = $"{Title} - 0DayDown - {DateTime.Now:yyyy_MM_dd_HH_mm_ss}.piz".MakeValidFileName();
+            PizFileName = Path.Combine(targetPath, PizFileName);
+            File.Move(tempZip, PizFileName);
+
+
+            //删除临时目录
+            Directory.Delete(_pageDocTempPath,true);
+
+        }
+
+        private static readonly JsonSerializerSettings JsonSerializerSettings
+            = new()
+            {
+                NullValueHandling = NullValueHandling.Ignore,
+                Formatting = Formatting.Indented
+            };
+
+
+        private HtmlAgilityPack.HtmlDocument ProcessDocument()
+        {
+            var doc = new HtmlAgilityPack.HtmlDocument();
+            doc.LoadHtml(Content);
+
+            //处理图片
+            var imageNodes = doc.DocumentNode.SelectNodes("//img")?.ToList();
+            foreach (var imageNode in imageNodes)
+            {
+                var imgsrc = imageNode.Attributes["src"].Value;
+                System.Diagnostics.Debug.WriteLine(imgsrc);
+                if (Utility.IsValidateImageUrl(imgsrc))
+                {
+                    if (!DownloadImage(imgsrc, out var imgPath, out var message))
+                        throw new Exception(message);
+
+                    imageNode.Attributes["src"].Value = imgPath;
+                    continue;
+
+                    
+
+                }
+
+                imgsrc = imageNode.Attributes["data-src"].Value;
+                if (Utility.IsValidateImageUrl(imgsrc))
+                {
+                    if (!DownloadImage(imgsrc, out var imgPath, out var message))
+                        throw new Exception(message);
+
+                    imageNode.Attributes["src"].Value = imgPath;
+                    imageNode.Attributes.Remove("data-src");
+                }
+
+                
+
+            }
+
+            //删除 <span>?<span>
+            var nodes = doc.DocumentNode.SelectNodes("//span")?.Where(t => t.InnerLength <=2)
+                .ToList();
+            if (nodes != null)
+            {
+
+                foreach (var node in nodes)
+                {
+                    node.Remove();
+                }
+            }
+
+
+            //删除 <p>?</p>
+            nodes = doc.DocumentNode.SelectNodes("//p")?.Where(t => t.InnerLength <= 2)
+                .ToList();
+            if (nodes != null)
+            {
+
+                foreach (var node in nodes)
+                {
+                    node.Remove();
+                }
+            }
+
+            return doc;
+        }
+
+
+        private bool DownloadImage(string url,out string imgPath,out string message)
+        {
+            imgPath = null;
+            message = null;
+            try
+            {
+                var uri = new Uri(url);
+                var fileName = Path.GetFileName(uri.LocalPath);
+                if (string.IsNullOrEmpty(fileName))
+                    throw new Exception($"图片URL {url} 没有图片名称。");
+
+                var imgsPath = Path.Combine(_pageDocTempPath, "images");
+                if (!Directory.Exists(imgsPath))
+                    Directory.CreateDirectory(imgsPath);
+
+                var localFileName = Path.Combine(imgsPath, fileName);
+                using var client = new WebClient();
+                    client.Headers.Add("user-agent", " Mozilla/5.0 (Windows NT 6.1; WOW64; rv:25.0) Gecko/20100101 Firefox/25.0");
+                    client.DownloadFile(new Uri(url), localFileName);
+
+                imgPath = $"images/{fileName}";
+            }
+            catch (Exception e)
+            {
+                imgPath = null;
+                message = e.Message;
+                return false;
+            }
+            
+            return true;
+        }
+
+
+        /// <summary>
+        /// 搜索
+        /// </summary>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
+        private string FindWizLocation()
+        {
+            var wizDocPath = string.Empty;
+//#if DEBUG
+
+//            WizDbPath = "C:\\Users\\duanxin\\Documents\\My Knowledge\\Data\\xxinduan@hotmail.com\\index.db";
+//#endif
+            if (string.IsNullOrEmpty(WizDbPath))
+                throw new Exception("为知笔记数据库路径为空！");
+            if (string.IsNullOrEmpty(WizDefaultFolder))
+                throw new Exception("必须指定为知笔记默认保存文件夹！");
+
+            var wizDb = new WizDatabaseClass();
+            wizDb.Open(WizDbPath);
+
+
+            WizDocument document = null;
+            //查找相同URL的文档
+            if (!string.IsNullOrEmpty(Url))
+            {
+                var documents = (WizDocumentCollection)wizDb.DocumentsFromURL(Url);
+                if (documents.count > 0)
+                {
+                    document = (WizDocument)documents[0];
+                    wizDocPath = document.Location;
+                }
+            }
+
+            //创建新文档
+            //WizFolderLocation = System.Configuration.ConfigurationManager.AppSettings["DefaultFolder"];
+            if (document == null)
+            {
+
+                //查找相似文档的目录
+                var splits = Name.Split();
+                var firstWord = true;
+                var sb = new StringBuilder();
+                foreach (var split in splits)
+                {
+                    if (split.Length <= 2) continue;
+                    if (firstWord)
+                    {
+                        sb.Append($"DOCUMENT_TITLE like '%{split}%'");
+                        firstWord = false;
+                        continue;
+                    }
+                    sb.Append($"AND DOCUMENT_TITLE like '%{split}%'");
+                }
+
+                var similarDocuments = (WizDocumentCollection)wizDb.DocumentsFromSQL(sb.ToString());
+                if (similarDocuments.count > 0)
+                {
+                    var similarDocument = (WizDocument)similarDocuments[0];
+                    wizDocPath = similarDocument.Location;
+                }
+
+                //Folder 对象 https://www.wiz.cn/m/api/descriptions/IWizFolder.html
+                var folder = (WizFolder)wizDb.GetFolderByLocation(WizFolderLocation, false);
+
+            }
+            wizDb.Close();
+            if (string.IsNullOrEmpty(wizDocPath)) return string.Empty;
+            if(wizDocPath.StartsWith("/") || wizDocPath.StartsWith("\\"))
+                wizDocPath = wizDocPath.Substring(1);
+
+            wizDocPath = wizDocPath.Replace("/", "\\");
+            var rootPath = Path.GetDirectoryName(WizDbPath);
+
+            return Path.Combine(rootPath,wizDocPath);
+        }
+
 
         //检查wiz笔记数据库是否有同名同url的文章
         public bool ExistsInWizDb()

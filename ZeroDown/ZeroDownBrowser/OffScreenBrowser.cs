@@ -4,7 +4,6 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
-using AngleSharp.Html.Parser;
 using CefSharp;
 using mySharedLib;
 using ZeroDownLib;
@@ -70,7 +69,7 @@ namespace ZeroDownBrowser
                     var article = new ZeroDayDownArticle(html, url);
                     try
                     {
-                        article.SaveToWiz();
+                        article.Save();
                         Log($"[OK] 保存成功！{article.WizFolderLocation} {article.Title}");
 
                     }
@@ -93,9 +92,9 @@ namespace ZeroDownBrowser
                     //File.WriteAllText("d:\\temp\\3.text",htmlSource,Encoding.UTF8);
                     try
                     {
-                        var parser = new HtmlParser();
-                        var document = parser.ParseDocument(htmlSource);
-                        var aLinks = document.All.Where(a => a.LocalName == "a" && a.ParentElement.LocalName == "h2").ToArray();
+                        var document = new HtmlAgilityPack.HtmlDocument();
+                        document.LoadHtml(htmlSource);
+                        var aLinks = document.DocumentNode.SelectNodes("//a").Where(a => a.ParentNode.Name == "h2").ToArray();
                         foreach (var aLink in aLinks)
                         {
                             if (BrowserForm.ApplicationExiting)

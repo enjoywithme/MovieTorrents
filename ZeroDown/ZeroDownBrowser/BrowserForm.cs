@@ -11,7 +11,6 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using AngleSharp.Html.Parser;
 using CefSharp;
 using CefSharp.WinForms;
 using mySharedLib;
@@ -129,8 +128,10 @@ namespace ZeroDownBrowser
         //初始化
         private void Initialize()
         {
-            ZeroDayDownArticle.WizDbPath = mySharedLib.Utility.GetSetting("IndexDbPath", "");
-            ZeroDayDownArticle.WizDefaultFolder = mySharedLib.Utility.GetSetting("DefaultFolder", "");
+            ZeroDayDownArticle.WizDbPath = Utility.GetSetting("IndexDbPath", "");
+            ZeroDayDownArticle.WizDefaultFolder = Utility.GetSetting("DefaultFolder", "");
+            ZeroDayDownArticle.MyPageTempPath = Utility.GetSetting("MyPageTempPath", "");
+            ZeroDayDownArticle.SaveFormat = Utility.GetSetting("SaveFormat", "");
 
             var settings = new CefSettings
             {
@@ -202,9 +203,9 @@ namespace ZeroDownBrowser
                 //File.WriteAllText("d:\\temp\\3.text",htmlSource,Encoding.UTF8);
                 try
                 {
-                    var parser = new HtmlParser();
-                    var document = parser.ParseDocument(htmlSource);
-                    var aLinks = document.All.Where(a => a.LocalName == "a" && a.ParentElement.LocalName == "h2").ToArray();
+                    var document = new HtmlAgilityPack.HtmlDocument();
+                    document.LoadHtml(htmlSource);
+                    var aLinks = document.DocumentNode.SelectNodes("//a").Where(a => a.ParentNode.Name == "h2").ToArray();
                     foreach (var aLink in aLinks)
                     {
 
@@ -499,7 +500,7 @@ $(el).css({'background-color':'yellow','color':'red'});});";
                     var article = new ZeroDayDownArticle();
                     var ok = article.SaveFromClipboard(out var msg);
 
-                    MessageBox.Show(this,$"{msg}\r\n{article.WizFolderLocation}\r\n{article.Title}", ok ? "提示" : "错误", MessageBoxButtons.OK,
+                    MessageBox.Show(this,$"{msg}\r\n{article.Title}\r\n{article.PizFileName}", ok ? "提示" : "错误", MessageBoxButtons.OK,
                         ok ? MessageBoxIcon.Information : MessageBoxIcon.Error);
                 });
 

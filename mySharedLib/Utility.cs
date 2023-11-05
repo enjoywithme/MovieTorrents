@@ -236,6 +236,18 @@ namespace mySharedLib
                 @"\\u(?<Value>[a-zA-Z0-9]{4})",
                 m => ((char)Int32.Parse(m.Groups["Value"].Value, NumberStyles.HexNumber)).ToString());
         }
+
+        /// <summary>
+        /// 检查是否有效的图片连接地址，包含完整文件名
+        /// </summary>
+        /// <param name="url"></param>
+        /// <returns></returns>
+        public static bool IsValidateImageUrl(string url)
+        {
+            if (!Uri.IsWellFormedUriString(url, UriKind.Absolute)) return false;
+            if(!url.StartsWith("http",StringComparison.InvariantCultureIgnoreCase)) return false;
+            return true;
+        }
     }
 
     

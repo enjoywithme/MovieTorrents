@@ -120,7 +120,8 @@ $(el).css({'background-color':'yellow','color':'red'});});";
         {
             ZeroDayDownArticle.WizDbPath = System.Configuration.ConfigurationManager.AppSettings["IndexDbPath"];
             ZeroDayDownArticle.WizDefaultFolder = System.Configuration.ConfigurationManager.AppSettings["DefaultFolder"];
-
+            ZeroDayDownArticle.MyPageTempPath = System.Configuration.ConfigurationManager.AppSettings["MyPageTempPath"];
+            ZeroDayDownArticle.SaveFormat = System.Configuration.ConfigurationManager.AppSettings["SaveFormat"];
 
         }
 
@@ -299,7 +300,7 @@ $(el).css({'background-color':'yellow','color':'red'});});";
                 var article = new ZeroDayDownArticle(html,url);
                 try
                 {
-                    article.SaveToWiz();
+                    article.Save();
                     File.WriteAllText("d:\\temp\\1.html",html);
                     this.InvokeOnUiThreadIfRequired(() => ShowSaveResult(true, $"保存成功！\r\n{article.WizFolderLocation}\r\n{article.Title}"));
 
