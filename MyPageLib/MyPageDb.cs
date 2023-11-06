@@ -87,6 +87,22 @@ namespace MyPageLib
             return _db.Queryable<PageDocumentPoCo>().First(it => it.OriginUrl == originUrl);
         }
 
+        /// <summary>
+        /// 按照更改日期返回最后N条纪录
+        /// </summary>
+        /// <param name="n"></param>
+        /// <returns></returns>
+        public IList<PageDocumentPoCo> FindLastN(int n)
+        {
+            return _db.Queryable<PageDocumentPoCo>().OrderByDescending(co => co.DtModified).Take(n).ToList();
+        }
+
+        public IList<PageDocumentPoCo> FindLastDays(int n)
+        {
+            var dt = DateTime.Now.AddDays(-n);
+            return _db.Queryable<PageDocumentPoCo>().Where(co=>co.DtModified>=dt).OrderByDescending(co => co.DtModified).ToList();
+        }
+
 
         private ConditionalCollections BuildConditionalCollections(string field, string[] values)
         {
