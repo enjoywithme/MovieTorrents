@@ -3,6 +3,7 @@ using System.IO;
 using System.IO.Compression;
 using System.Security.Cryptography;
 using System.Text;
+using mySharedLib;
 using Newtonsoft.Json.Linq;
 using SqlSugar;
 
@@ -17,6 +18,7 @@ namespace MyPageLib.PoCo
 
         public string Title { get; set; }
         public string FilePath { get; set; }
+        public string FolderPath { get; set; }
         public long FileSize { get; set; }
         public string Data_Md5 { get; set; }
         public DateTime DtCreated { get; set; }
@@ -25,11 +27,17 @@ namespace MyPageLib.PoCo
         public int Rate { get; set; }
         public string OriginUrl { get; set; }
         public int Indexed { get; set; }
+        [SugarColumn(ColumnName = "LOCAL_PRESENT")]
+        public int LocalPresent { get; set; }
 
         public override string ToString()
         {
             return Title;
         }
+
+        [SugarColumn(IsIgnore = true)]
+        public string Description =>
+            $"大小:{FileSize.FormatFileSize()},修改时间:{DtModified.FormatModifiedDateTime()},路径:{FolderPath}";
 
         public void CheckInfo()
         {
@@ -37,6 +45,8 @@ namespace MyPageLib.PoCo
             FileSize = fi.Length;
             DtCreated = fi.CreationTime;
             DtModified = fi.LastWriteTime;
+
+            FolderPath = Path.GetDirectoryName(FilePath);
 
             //MD5
             using var md5 = MD5.Create();
@@ -61,5 +71,6 @@ namespace MyPageLib.PoCo
             if (string.IsNullOrEmpty(Title))
                 Title = Name;
         }
+
     }
 }

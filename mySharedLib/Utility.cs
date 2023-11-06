@@ -248,6 +248,34 @@ namespace mySharedLib
             if(!url.StartsWith("http",StringComparison.InvariantCultureIgnoreCase)) return false;
             return true;
         }
+
+
+        /// <summary>
+        /// 格式化文件大小
+        /// </summary>
+        /// <param name="fileSize"></param>
+        /// <returns></returns>
+        public static string FormatFileSize(this long fileSize)
+        {
+            string[] sizes = { "B", "KB", "MB", "GB", "TB" };
+            double len = fileSize;
+            var order = 0;
+            while (len >= 1024 && order < sizes.Length - 1)
+            {
+                order++;
+                len /= 1024;
+            }
+
+            // Adjust the format string to your preferences. For example "{0:0.#}{1}" would
+            // show a single decimal place, and no space.
+            var result = $"{len:0.##} {sizes[order]}";
+            return result;
+        }
+
+        public static string FormatModifiedDateTime(this DateTime modifiedDateTime)
+        {
+            return modifiedDateTime.ToString("yyyy-MM-dd HH:mm:ss");
+        }
     }
 
     

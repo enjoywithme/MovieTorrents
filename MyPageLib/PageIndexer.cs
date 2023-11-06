@@ -34,25 +34,38 @@ namespace MyPageLib
         private void Processing()
         {
             IsRunning = true;
-            foreach (var folder in MyPageSettings.Instance.ScanFolders)
+            try
             {
-                foreach (var file in Directory.EnumerateFiles(folder, "*.piz", SearchOption.AllDirectories))
+                //先更新所有纪录的Local present 为 false
+                MyPageDb.Instance.UpdateLocalPresentFalse();
+
+                foreach (var folder in MyPageSettings.Instance.ScanFolders)
                 {
-                    Debug.WriteLine(file);
-                    IndexFileChanged?.Invoke(this,file);
+                    foreach (var file in Directory.EnumerateFiles(folder, "*.piz", SearchOption.AllDirectories))
+                    {
+                        Debug.WriteLine(file);
+                        IndexFileChanged?.Invoke(this, file);
 
 
-                    if(_stopPending) break;
+                        if (_stopPending) break;
 
-                    var poCo = new PageDocumentPoCo() { FilePath = file, 
-                        Name = Path.GetFileNameWithoutExtension(file),
-                        Indexed = 0
-                    };
-                    poCo.CheckInfo();
-                    MyPageDb.Instance.InsertUpdateDocument(poCo);
+                        var poCo = new PageDocumentPoCo()
+                        {
+                            FilePath = file,
+                            Name = Path.GetFileNameWithoutExtension(file),
+                            LocalPresent = 1
+                        };
+                        poCo.CheckInfo();
+                        MyPageDb.Instance.InsertUpdateDocument(poCo);
 
+                    }
                 }
             }
+            catch (Exception e)
+            {
+                System.Diagnostics.Debug.WriteLine(e.Message);
+            }
+            
 
             IsRunning = false;
             IndexStopped?.Invoke(this,EventArgs.Empty);

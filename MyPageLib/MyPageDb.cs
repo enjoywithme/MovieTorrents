@@ -11,7 +11,7 @@ namespace MyPageLib
 {
     public class MyPageDb
     {
-        public static MyPageDb Instance { get; }= new();
+        public static MyPageDb Instance { get; } = new();
 
         public string DataBaseName => Path.Combine(MyPageSettings.Instance.WorkingDirectory, "myPage.db");
 
@@ -54,8 +54,21 @@ namespace MyPageLib
             {
                 Debug.WriteLine(e.Message);
             }
-            
+
         }
+
+        /// <summary>
+        /// 更新所有纪录的本地文件标志为FALSE
+        /// </summary>
+        public void UpdateLocalPresentFalse()
+        {
+            _db.Updateable<object>()
+                .AS("PG_DOCUMENT")
+                .SetColumns("LOCAL_PRESENT", 0)
+                .Where("LOCAL_PRESENT=1")
+                .ExecuteCommand();
+        }
+
 
         public async void DeleteDocument(PageDocumentPoCo documentPoCo)
         {
@@ -79,17 +92,17 @@ namespace MyPageLib
         {
             var list = new List<KeyValuePair<WhereType, ConditionalModel>>();
 
-            var first =true;
+            var first = true;
             foreach (var split in values)
             {
-                list.Add(new KeyValuePair<WhereType, ConditionalModel>(first? WhereType.Or : WhereType.And, 
+                list.Add(new KeyValuePair<WhereType, ConditionalModel>(first ? WhereType.Or : WhereType.And,
                     new ConditionalModel()
-                {
+                    {
 
-                    FieldName =field,
-                    ConditionalType = ConditionalType.InLike,
-                    FieldValue = split
-                }));
+                        FieldName = field,
+                        ConditionalType = ConditionalType.InLike,
+                        FieldValue = split
+                    }));
                 first = false;
             }
 
@@ -99,6 +112,50 @@ namespace MyPageLib
             };
             return c;
 
+        }
+
+        private ConditionalCollections BuildNotDeletedCondition()
+        {
+            var list = new List<KeyValuePair<WhereType, ConditionalModel>>();
+
+            list.Add(new KeyValuePair<WhereType, ConditionalModel>(WhereType.And,
+                new ConditionalModel
+                {
+
+                    FieldName = "LOCAL_PRESENT",
+                    ConditionalType = ConditionalType.Equal,
+                    FieldValue = "1"
+                }));
+            list.Add(new KeyValuePair<WhereType, ConditionalModel>(WhereType.And,
+                new ConditionalModel
+                {
+
+                    FieldName = "DELETED",
+                    ConditionalType = ConditionalType.Equal,
+                    FieldValue = "0"
+                }));
+
+            var c = new ConditionalCollections
+            {
+                ConditionalList = list
+            };
+            return c;
+
+        }
+
+
+        public IList<PageDocumentPoCo> FindFolderPath(string folderPath)
+        {
+            try
+            {
+                return _db.Queryable<PageDocumentPoCo>().Where(it => it.FolderPath == folderPath).ToList();
+            }
+            catch (Exception)
+            {
+                // ignored
+            }
+
+            return null;
         }
 
         /// <summary>
@@ -111,18 +168,20 @@ namespace MyPageLib
         {
             try
             {
-                if (string.IsNullOrWhiteSpace(searchString)||searchString.Length<2)
+                if (string.IsNullOrWhiteSpace(searchString) || searchString.Length < 2)
                     return null;
 
                 var splits = searchString.Split(Array.Empty<char>(), StringSplitOptions.RemoveEmptyEntries);
-                
-                var conModels = new List<IConditionalModel>();
-                
-                conModels.Add(BuildConditionalCollections("Title",splits));
-                conModels.Add(BuildConditionalCollections("FilePath", splits));
+
+                var conModels = new List<IConditionalModel>
+                {
+                    BuildConditionalCollections("Title", splits),
+                    BuildConditionalCollections("FilePath", splits),
+                    BuildNotDeletedCondition()
+                };
 
                 return await _db.Queryable<PageDocumentPoCo>().Where(conModels).ToListAsync(cancellationToken);
-                
+
 
                 //return await _db.Queryable<PageDocumentPoCo>().Where(it => 
                 //        splits.All(s=> it.Title.Contains(s)) 
