@@ -1,18 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Formats.Asn1;
-using System.Linq;
-using System.Security.Cryptography.Pkcs;
-using System.Text;
+using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.Data.Sqlite;
-using MyPageViewer.PoCo;
+using MyPageLib.PoCo;
 using SqlSugar;
 
-namespace MyPageViewer.Model
+namespace MyPageLib
 {
-    internal class MyPageDb
+    public class MyPageDb
     {
         public static MyPageDb Instance { get; }= new();
 
@@ -28,7 +25,7 @@ namespace MyPageViewer.Model
             _db = new SqlSugarScope(new ConnectionConfig()
             {
                 ConnectionString = ConnectionString,
-                DbType = DbType.Sqlite,
+                DbType = SqlSugar.DbType.Sqlite,
                 IsAutoCloseConnection = true
             }
                 );
@@ -70,6 +67,11 @@ namespace MyPageViewer.Model
         public PageDocumentPoCo FindFilePath(string filePath)
         {
             return _db.Queryable<PageDocumentPoCo>().First(it => it.FilePath == filePath);
+        }
+
+        public PageDocumentPoCo FindOriginUrl(string originUrl)
+        {
+            return _db.Queryable<PageDocumentPoCo>().First(it => it.OriginUrl == originUrl);
         }
 
 

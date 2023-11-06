@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.IO;
 using System.Reflection;
 using System.Text;
-using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Serialization;
 
-namespace MyPageViewer.Model
+namespace MyPageLib
 {
     [Serializable]
     public class MyPageSettings
@@ -96,9 +95,9 @@ namespace MyPageViewer.Model
         public static string ExecutePath => Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
         private const string SettingFileName = "mypages.xml";
 
-        static MyPageSettings()
+        public static void InitInstance(string settingsPath)
         {
-            var settingsFile = Path.Combine(ExecutePath, SettingFileName);
+            var settingsFile = Path.Combine(settingsPath, SettingFileName);
             if (!File.Exists(settingsFile))
             {
                 Instance = new MyPageSettings();
@@ -117,9 +116,10 @@ namespace MyPageViewer.Model
             }
         }
 
-        public void Save(bool force=false)
+        public bool Save(out string message,bool force=false)
         {
-            if (!_modified && !force) return;
+            message = string.Empty;
+            if (!_modified && !force) return true;
             try
             {
                 var serializer = new XmlSerializer(typeof(MyPageSettings));
@@ -133,8 +133,10 @@ namespace MyPageViewer.Model
             }
             catch (Exception exception)
             {
-                Program.ShowError(exception.Message);
+                message = exception.Message;
+                return false;
             }
+            return true;
         }
     }
 }

@@ -108,7 +108,7 @@ namespace ZeroDownBrowser
                                 Title = aLink.InnerHtml
                             };
 
-                            if (article.ExistsInWizDb())
+                            if (article.ExistsInMyPageDb())
                             {
                                 ContinueSearch = false;
                                 Log($"[SAVED] {article.Title}");

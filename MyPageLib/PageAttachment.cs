@@ -1,4 +1,7 @@
-﻿namespace MyPageViewer.Model
+﻿using System.Collections.Generic;
+using System.IO;
+
+namespace MyPageLib
 {
     public class PageAttachment
     {

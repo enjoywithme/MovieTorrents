@@ -1,18 +1,17 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using Microsoft.Web.WebView2.Core.Raw;
-using MyPageViewer.PoCo;
+using MyPageLib.PoCo;
 
-namespace MyPageViewer.Model
+namespace MyPageLib
 {
     public class PageIndexer
     {
         public static PageIndexer Instance { get; } =new();
+
+        public event EventHandler IndexStopped;
+        public event EventHandler<string> IndexFileChanged; 
 
         public bool IsRunning { get; private set; }
         private bool _stopPending;
@@ -28,6 +27,7 @@ namespace MyPageViewer.Model
         public void Stop()
         {
             _stopPending=true;
+
         }
 
 
@@ -39,17 +39,23 @@ namespace MyPageViewer.Model
                 foreach (var file in Directory.EnumerateFiles(folder, "*.piz", SearchOption.AllDirectories))
                 {
                     Debug.WriteLine(file);
+                    IndexFileChanged?.Invoke(this,file);
+
+
                     if(_stopPending) break;
 
                     var poCo = new PageDocumentPoCo() { FilePath = file, 
-                        Title = Path.GetFileNameWithoutExtension(file),
+                        Name = Path.GetFileNameWithoutExtension(file),
                         Indexed = 0
                     };
+                    poCo.CheckInfo();
                     MyPageDb.Instance.InsertUpdateDocument(poCo);
+
                 }
             }
 
             IsRunning = false;
+            IndexStopped?.Invoke(this,EventArgs.Empty);
         }
 
         

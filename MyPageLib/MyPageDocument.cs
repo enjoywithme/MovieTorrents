@@ -1,11 +1,15 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
+using System.IO;
+using System.Linq;
 using System.Text;
-using MyPageViewer.PoCo;
+using MyPageLib.PoCo;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
-namespace MyPageViewer.Model
+namespace MyPageLib
 {
     public class MyPageDocument:IDisposable
     {
@@ -190,7 +194,7 @@ namespace MyPageViewer.Model
                 if(File.Exists(tempZip))
                     File.Delete(tempZip); 
                 System.IO.Compression.ZipFile.CreateFromDirectory(DocTempPath, tempZip);
-                File.Move(tempZip,FilePath,true);
+                File.Move(tempZip,FilePath);
 
                 _manifestChanged = false;
                 IsModified = false;

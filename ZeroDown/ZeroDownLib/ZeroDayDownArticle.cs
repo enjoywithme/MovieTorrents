@@ -9,6 +9,7 @@ using System.Windows.Forms;
 using mySharedLib;
 using WizKMCoreLib;
 using System.Net;
+using MyPageLib;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
@@ -490,6 +491,15 @@ namespace ZeroDownLib
             wizDb.Close();
             return yes;
         }
+
+        public bool ExistsInMyPageDb()
+        {
+            var pageDb = new MyPageDb();
+            var doc = pageDb.FindOriginUrl(Url);
+            
+            return doc!=null;
+        }
+
 
         //检查wiz笔记数据库是否有类似标题的文章
         public bool SimilarInWizDb()

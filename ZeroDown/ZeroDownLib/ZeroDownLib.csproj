@@ -80,6 +80,10 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\MyPageLib\MyPageLib.csproj">
+      <Project>{afbd4fd3-8c1f-4fea-a89f-60b81bf8cd44}</Project>
+      <Name>MyPageLib</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\mySharedLib\mySharedLib.csproj">
       <Project>{5cf2aa19-7c87-4de1-8a6a-97041b373cec}</Project>
       <Name>mySharedLib</Name>
