@@ -103,6 +103,31 @@ namespace MyPageLib
             return _db.Queryable<PageDocumentPoCo>().Where(co=>co.DtModified>=dt).OrderByDescending(co => co.DtModified).ToList();
         }
 
+        /// <summary>
+        /// 删除一组文档
+        /// </summary>
+        /// <param name="documents"></param>
+        public bool BatchDelete(IList<PageDocumentPoCo> documents,out string message)
+        {
+            
+            try
+            {
+                _db.Deleteable<PageDocumentPoCo>(documents).ExecuteCommand(); //批量删除
+                foreach (var co in documents)
+                {
+                    if(File.Exists(co.FilePath))
+                        File.Delete(co.FilePath);
+                }
+            }
+            catch (Exception ex)
+            {
+                message = ex.Message;
+                return false;
+            }
+
+            message = $"成功删除{documents.Count}条纪录。";
+            return true;
+        }
 
         private ConditionalCollections BuildConditionalCollections(string field, string[] values)
         {

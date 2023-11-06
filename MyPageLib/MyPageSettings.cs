@@ -11,6 +11,10 @@ namespace MyPageLib
     [Serializable]
     public class MyPageSettings
     {
+        [XmlIgnore]
+        public string SettingFilePath { get; set; }
+        
+
         public static MyPageSettings Instance
         {
             get => _instance;
@@ -92,15 +96,22 @@ namespace MyPageLib
             }
         }
 
+        public bool AutoIndex { get; set; }
+        public int AutoIndexInterval { get; set; }
+        public int AutoIndexIntervalUnit { get; set; } //0 = 小时，1=分钟
+        [XmlIgnore]
+        public int AutoIndexIntervalSeconds => AutoIndexInterval * (AutoIndexIntervalUnit == 0 ? 3600 : 60) * 1000;
         public static string ExecutePath => Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
         private const string SettingFileName = "mypages.xml";
 
         public static void InitInstance(string settingsPath)
         {
             var settingsFile = Path.Combine(settingsPath, SettingFileName);
+
             if (!File.Exists(settingsFile))
             {
-                Instance = new MyPageSettings();
+                Instance = new MyPageSettings() { SettingFilePath = settingsFile };
+
                 return;
             }
 
@@ -109,11 +120,13 @@ namespace MyPageLib
                 var serializer = new XmlSerializer(typeof(MyPageSettings));
                 using Stream reader = new FileStream(settingsFile, FileMode.Open);
                 Instance = (MyPageSettings)serializer.Deserialize(reader);
+                Instance.SettingFilePath = settingsFile;
             }
             catch (Exception e)
             {
-                Instance = new MyPageSettings();
+                Instance = new MyPageSettings() { SettingFilePath = settingsFile };
             }
+
         }
 
         public bool Save(out string message,bool force=false)
@@ -123,9 +136,9 @@ namespace MyPageLib
             try
             {
                 var serializer = new XmlSerializer(typeof(MyPageSettings));
-                var settingsFile = Path.Combine(ExecutePath, SettingFileName);
+                //var settingsFile = Path.Combine(ExecutePath, SettingFileName);
 
-                Stream fs = new FileStream(settingsFile, FileMode.Create);
+                Stream fs = new FileStream(SettingFilePath, FileMode.Create);
                 XmlWriter writer = new XmlTextWriter(fs, Encoding.UTF8);
                 serializer.Serialize(writer, this);
                 writer.Close();
