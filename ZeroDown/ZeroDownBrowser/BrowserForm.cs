@@ -31,10 +31,8 @@ namespace ZeroDownBrowser
         public static bool ApplicationExiting;
 
         private NotifyIcon _notifyIcon;
-        // TODO MenuItem is no longer supported. Use ToolStripMenuItem instead. For more details see https://docs.microsoft.com/en-us/dotnet/core/compatibility/winforms#removed-controls
-        private MenuItem _hideMenu;
-        // TODO MenuItem is no longer supported. Use ToolStripMenuItem instead. For more details see https://docs.microsoft.com/en-us/dotnet/core/compatibility/winforms#removed-controls
-        private MenuItem _restoreMenu;
+        private ToolStripMenuItem _hideMenu;
+        private ToolStripMenuItem _restoreMenu;
 
         #region Form主要函数
 
@@ -65,18 +63,14 @@ namespace ZeroDownBrowser
             };
             _notifyIcon.MouseClick += notifyIcon_MouseClick;
 
-            // TODO ContextMenu is no longer supported. Use ContextMenuStrip instead. For more details see https://docs.microsoft.com/en-us/dotnet/core/compatibility/winforms#removed-controls
-            var menu = new ContextMenu();
-            // TODO MenuItem is no longer supported. Use ToolStripMenuItem instead. For more details see https://docs.microsoft.com/en-us/dotnet/core/compatibility/winforms#removed-controls
-            _hideMenu = new MenuItem("Hide", Minimize_Click);
-            // TODO MenuItem is no longer supported. Use ToolStripMenuItem instead. For more details see https://docs.microsoft.com/en-us/dotnet/core/compatibility/winforms#removed-controls
-            _restoreMenu = new MenuItem("Restore", Maximize_Click);
+            var menu = new ContextMenuStrip();
+            _hideMenu = new ToolStripMenuItem("Hide", null,Minimize_Click);
+            _restoreMenu = new ToolStripMenuItem("Restore",null, Maximize_Click);
 
-            menu.MenuItems.Add(_restoreMenu);
-            menu.MenuItems.Add(_hideMenu);
-            // TODO MenuItem is no longer supported. Use ToolStripMenuItem instead. For more details see https://docs.microsoft.com/en-us/dotnet/core/compatibility/winforms#removed-controls
-            menu.MenuItems.Add(new MenuItem("Exit", CleanExit));
-            _notifyIcon.ContextMenu = menu;
+            menu.Items.Add(_restoreMenu);
+            menu.Items.Add(_hideMenu);
+            menu.Items.Add(new ToolStripMenuItem("Exit", null, CleanExit));
+            _notifyIcon.ContextMenuStrip = menu;
 
             startAutoSaveToWizNoteToolStripMenuItem.Click += startAutoSaveToWizNoteToolStripMenuItem_Click;
             startAutoSaveToWizNoteToolStripMenuItem.Enabled = true;
@@ -221,7 +215,7 @@ namespace ZeroDownBrowser
                             Title = aLink.InnerHtml
                         };
 
-                        if (article.ExistsInWizDb())
+                        if (article.ExistsInMyPageDb())
                         {
                             var script = @"$('a').each(function(index,el) 
 {if($(el).html()==('" + article.Title + @"')) 

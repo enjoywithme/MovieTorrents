@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using mySharedLib;
 
@@ -32,8 +28,7 @@ namespace ZeroDownBrowser
             }
 
             //https://stackoverflow.com/questions/10202987/in-c-sharp-how-to-collect-stack-trace-of-program-crash
-            var currentDomain = default(AppDomain);
-            currentDomain = AppDomain.CurrentDomain;
+            var currentDomain = AppDomain.CurrentDomain;
             // Handler for unhandled exceptions.
             currentDomain.UnhandledException += GlobalUnhandledExceptionHandler;
             // Handler for exceptions in threads behind forms.
@@ -42,6 +37,9 @@ namespace ZeroDownBrowser
             ZeroDownHomeUrl = Utility.GetSetting("ZeroDownHomeUrl", "www.0daydown.com");
             ZeroDownPageUrlPattern =
                 Utility.GetSetting("ZeroDownPageUrlPattern", "0daydown.com/[\\d]+/.+\\.html");
+
+            //初始化mypage
+            MyPageLib.MyPageSettings.InitInstance(Utility.GetSetting("MyPageSettingPath",""));
 
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);

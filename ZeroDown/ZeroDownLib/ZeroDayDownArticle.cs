@@ -294,6 +294,9 @@ namespace ZeroDownLib
             //删除临时目录
             Directory.Delete(_pageDocTempPath,true);
 
+            //提交my page 索引
+            MyPageLib.PageIndexer.Instance.Enqueue(PizFileName);
+
         }
 
         private static readonly JsonSerializerSettings JsonSerializerSettings
