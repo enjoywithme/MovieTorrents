@@ -38,7 +38,11 @@ namespace mySharedLib
             }
             try
             {
-                Process.Start(LogFilePath);
+                var p = new Process()
+                {
+                    StartInfo = new ProcessStartInfo(LogFilePath) { UseShellExecute = true }
+                };
+                p.Start();
 
             }
             catch (Exception e)
