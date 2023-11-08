@@ -360,7 +360,8 @@ namespace MovieTorrents
         {
             if (lvResults.SelectedObjects.Count == 0) return;
             var torrentFile = (TorrentFile)lvResults.SelectedObjects[0];
-            torrentFile.OpenDoubanLink();
+            if(torrentFile.OpenDoubanLink(out var message)) return;
+            MessageBox.Show(message, Resource.TextError, MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
         #endregion
 

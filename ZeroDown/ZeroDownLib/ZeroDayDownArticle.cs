@@ -295,7 +295,7 @@ namespace ZeroDownLib
             Directory.Delete(_pageDocTempPath,true);
 
             //提交my page 索引
-            MyPageLib.PageIndexer.Instance.Enqueue(PizFileName);
+            MyPageLib.MyPageIndexer.Instance.Enqueue(PizFileName);
 
         }
 

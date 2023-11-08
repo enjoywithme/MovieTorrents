@@ -64,8 +64,8 @@ namespace ZeroDownBrowser
             _notifyIcon.MouseClick += notifyIcon_MouseClick;
 
             var menu = new ContextMenuStrip();
-            _hideMenu = new ToolStripMenuItem("Hide", null,Minimize_Click);
-            _restoreMenu = new ToolStripMenuItem("Restore",null, Maximize_Click);
+            _hideMenu = new ToolStripMenuItem("Hide", null, Minimize_Click);
+            _restoreMenu = new ToolStripMenuItem("Restore", null, Maximize_Click);
 
             menu.Items.Add(_restoreMenu);
             menu.Items.Add(_hideMenu);
@@ -500,13 +500,13 @@ $(el).css({'background-color':'yellow','color':'red'});});";
                     var article = new ZeroDayDownArticle();
                     var ok = article.SaveFromClipboard(out var msg);
 
-                    MessageBox.Show(this,$"{msg}\r\n{article.Title}\r\n{article.PizFileName}", ok ? "提示" : "错误", MessageBoxButtons.OK,
+                    MessageBox.Show(this, $"{msg}\r\n{article.Title}\r\n{article.PizFileName}", ok ? "提示" : "错误", MessageBoxButtons.OK,
                         ok ? MessageBoxIcon.Information : MessageBoxIcon.Error);
                 });
 
             }, TaskScheduler.FromCurrentSynchronizationContext());
 
-            
+
         }
 
         private void tsbShowLog_Click(object sender, EventArgs e)

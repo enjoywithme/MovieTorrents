@@ -1428,10 +1428,24 @@ where file_nid in ({sFids})";
             return ok;
         }
 
-        public void OpenDoubanLink()
+        public bool OpenDoubanLink(out string message)
         {
-            if (string.IsNullOrEmpty(DoubanId)) return;
-            Process.Start($"https://movie.douban.com/subject/{DoubanId}/");
+            message = string.Empty;
+            if (string.IsNullOrEmpty(DoubanId)) return true;
+            try
+            {
+                var p = new Process()
+                {
+                    StartInfo = new ProcessStartInfo($"https://movie.douban.com/subject/{DoubanId}/") { UseShellExecute = true }
+                };
+                p.Start();
+            }
+            catch (Exception e)
+            {
+                message = e.Message;
+                return false;
+            }
+            return true;
         }
     }
 }
