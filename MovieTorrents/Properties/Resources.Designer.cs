@@ -63,9 +63,9 @@ namespace MovieTorrents.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap Blogs {
+        internal static System.Drawing.Bitmap btbt24 {
             get {
-                object obj = ResourceManager.GetObject("Blogs", resourceCulture);
+                object obj = ResourceManager.GetObject("btbt24", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -73,9 +73,9 @@ namespace MovieTorrents.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap BTBT {
+        internal static System.Drawing.Bitmap Delete24 {
             get {
-                object obj = ResourceManager.GetObject("BTBT", resourceCulture);
+                object obj = ResourceManager.GetObject("Delete24", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -83,9 +83,9 @@ namespace MovieTorrents.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap Delete {
+        internal static System.Drawing.Bitmap douban24 {
             get {
-                object obj = ResourceManager.GetObject("Delete", resourceCulture);
+                object obj = ResourceManager.GetObject("douban24", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -93,9 +93,9 @@ namespace MovieTorrents.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap dou {
+        internal static System.Drawing.Bitmap Folder_upload24 {
             get {
-                object obj = ResourceManager.GetObject("dou", resourceCulture);
+                object obj = ResourceManager.GetObject("Folder_upload24", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -103,9 +103,9 @@ namespace MovieTorrents.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap Folderupload16 {
+        internal static System.Drawing.Bitmap Move_To_Folder24 {
             get {
-                object obj = ResourceManager.GetObject("Folderupload16", resourceCulture);
+                object obj = ResourceManager.GetObject("Move_To_Folder24", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -113,9 +113,9 @@ namespace MovieTorrents.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap Folderupload32 {
+        internal static System.Drawing.Bitmap Page_Copy24 {
             get {
-                object obj = ResourceManager.GetObject("Folderupload32", resourceCulture);
+                object obj = ResourceManager.GetObject("Page_Copy24", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -123,9 +123,9 @@ namespace MovieTorrents.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap Move_To_Folder {
+        internal static System.Drawing.Bitmap Pencil_and_Ruler24 {
             get {
-                object obj = ResourceManager.GetObject("Move-To-Folder", resourceCulture);
+                object obj = ResourceManager.GetObject("Pencil_and_Ruler24", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -133,39 +133,9 @@ namespace MovieTorrents.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap Page_Copy {
+        internal static System.Drawing.Bitmap Search24 {
             get {
-                object obj = ResourceManager.GetObject("Page-Copy", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap Pencil_and_Ruler {
-            get {
-                object obj = ResourceManager.GetObject("Pencil-and-Ruler", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap search16 {
-            get {
-                object obj = ResourceManager.GetObject("search16", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap search32 {
-            get {
-                object obj = ResourceManager.GetObject("search32", resourceCulture);
+                object obj = ResourceManager.GetObject("Search24", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

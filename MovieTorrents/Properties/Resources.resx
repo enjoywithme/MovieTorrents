@@ -118,37 +118,28 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="search32" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\search32.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="btbt24" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\btbt24.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="search16" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\search16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="Folder_upload24" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Folder-upload24.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="Pencil-and-Ruler" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Pencil-and-Ruler.ico;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="Move_To_Folder24" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Move-To-Folder24.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="Delete" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Delete.ico;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="Page_Copy24" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Page-Copy24.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="Move-To-Folder" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Move-To-Folder.ico;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="Pencil_and_Ruler24" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Pencil-and-Ruler24.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="dou" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\dou.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="Delete24" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Delete24.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="BTBT" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\BTBT.ico;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="douban24" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\douban24.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="Page-Copy" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Page-Copy.ico;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="Blogs" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Blogs.ico;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="Folderupload16" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Folderupload16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="Folderupload32" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Folderupload32.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="Search24" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Search24.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
 </root>

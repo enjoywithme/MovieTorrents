@@ -28,895 +28,823 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
+            components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormMain));
-            this.menuStrip1 = new System.Windows.Forms.MenuStrip();
-            this.文件FToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.tsmiShowStatistics = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripMenuItem7 = new System.Windows.Forms.ToolStripSeparator();
-            this.tsmiScanFile = new System.Windows.Forms.ToolStripMenuItem();
-            this.tsmiClearRecords = new System.Windows.Forms.ToolStripMenuItem();
-            this.tsmiClearDuplicates = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripSeparator();
-            this.tsmiExit = new System.Windows.Forms.ToolStripMenuItem();
-            this.过滤TToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.tsmiFilterRecent = new System.Windows.Forms.ToolStripMenuItem();
-            this.tsmiFilterSeelater = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripSeparator6 = new System.Windows.Forms.ToolStripSeparator();
-            this.tsmiHaveDoubanId = new System.Windows.Forms.ToolStripMenuItem();
-            this.tsmiNoDoubanId = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
-            this.tsmiFilterWatched = new System.Windows.Forms.ToolStripMenuItem();
-            this.tsmiFilterNotWatched = new System.Windows.Forms.ToolStripMenuItem();
-            this.tsmiFilterSeeNoWant = new System.Windows.Forms.ToolStripMenuItem();
-            this.tsmiHideSameSubject = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripMenuItem6 = new System.Windows.Forms.ToolStripSeparator();
-            this.tsmiLimit100 = new System.Windows.Forms.ToolStripMenuItem();
-            this.tsmiLimit200 = new System.Windows.Forms.ToolStripMenuItem();
-            this.tsmiLimit500 = new System.Windows.Forms.ToolStripMenuItem();
-            this.tsmiLimit1000 = new System.Windows.Forms.ToolStripMenuItem();
-            this.tsmiLimit2000 = new System.Windows.Forms.ToolStripMenuItem();
-            this.statusStrip1 = new System.Windows.Forms.StatusStrip();
-            this.tssState = new System.Windows.Forms.ToolStripStatusLabel();
-            this.tssInfo = new System.Windows.Forms.ToolStripStatusLabel();
-            this.tsSummary = new System.Windows.Forms.ToolStripStatusLabel();
-            this.tsCurrentDir = new System.Windows.Forms.ToolStripStatusLabel();
-            this.tsButtonWatch = new System.Windows.Forms.ToolStripDropDownButton();
-            this.tsmiToggleWatch = new System.Windows.Forms.ToolStripMenuItem();
-            this.lvContextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.tsmiSetWatched = new System.Windows.Forms.ToolStripMenuItem();
-            this.tsmiSetSeelater = new System.Windows.Forms.ToolStripMenuItem();
-            this.tsmiToggleSeeNoWant = new System.Windows.Forms.ToolStripMenuItem();
-            this.tsmiSearchDouban = new System.Windows.Forms.ToolStripMenuItem();
-            this.tsmiCopyDouban = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripMenuItem3 = new System.Windows.Forms.ToolStripSeparator();
-            this.tsmiOpenFile = new System.Windows.Forms.ToolStripMenuItem();
-            this.tsmiShowFileLocation = new System.Windows.Forms.ToolStripMenuItem();
-            this.tsmiCopyName = new System.Windows.Forms.ToolStripMenuItem();
-            this.tsmiCopyPath = new System.Windows.Forms.ToolStripMenuItem();
-            this.tsmiCopyFile = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripMenuItem4 = new System.Windows.Forms.ToolStripSeparator();
-            this.tsmiMove = new System.Windows.Forms.ToolStripMenuItem();
-            this.tsmiMovePath = new System.Windows.Forms.ToolStripMenuItem();
-            this.tsmiDelete = new System.Windows.Forms.ToolStripMenuItem();
-            this.notifyIcon1 = new System.Windows.Forms.NotifyIcon(this.components);
-            this.lbGenres = new System.Windows.Forms.Label();
-            this.lbRating = new System.Windows.Forms.Label();
-            this.lbKeyName = new System.Windows.Forms.Label();
-            this.lbOtherName = new System.Windows.Forms.Label();
-            this.pictureBox1 = new System.Windows.Forms.PictureBox();
-            this.lbZone = new System.Windows.Forms.Label();
-            this.toolStrip1 = new System.Windows.Forms.ToolStrip();
-            this.toolStripButton1 = new System.Windows.Forms.ToolStripButton();
-            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
-            this.tsbMove = new System.Windows.Forms.ToolStripButton();
-            this.tsbMovePath = new System.Windows.Forms.ToolStripButton();
-            this.tsbNormalize = new System.Windows.Forms.ToolStripButton();
-            this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
-            this.tsbSearchDouban = new System.Windows.Forms.ToolStripButton();
-            this.tsbDelete = new System.Windows.Forms.ToolStripButton();
-            this.tsbCopyDouban = new System.Windows.Forms.ToolStripButton();
-            this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
-            this.tsbFindSimilar = new System.Windows.Forms.ToolStripButton();
-            this.tsbRating0 = new System.Windows.Forms.ToolStripButton();
-            this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
-            this.tsbRating8 = new System.Windows.Forms.ToolStripButton();
-            this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
-            this.tsbRating9 = new System.Windows.Forms.ToolStripButton();
-            this.tbSearchText = new System.Windows.Forms.ComboBox();
-            this.btClearSearch = new System.Windows.Forms.Button();
-            this.lbYear = new System.Windows.Forms.Label();
-            this.lvResults = new BrightIdeasSoftware.FastObjectListView();
-            this.olvColName = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
-            this.olvColRating = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
-            this.olvColYear = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
-            this.olvColAddDate = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
-            this.olvColPath = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
-            this.olvColSeelater = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
-            this.olvColNoWant = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
-            this.olvColSeen = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
-            this.olvColSeeDate = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
-            this.olvColSeeComment = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
-            this.tsmiClearPoster = new System.Windows.Forms.ToolStripMenuItem();
-            this.menuStrip1.SuspendLayout();
-            this.statusStrip1.SuspendLayout();
-            this.lvContextMenu.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
-            this.toolStrip1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.lvResults)).BeginInit();
-            this.SuspendLayout();
+            menuStrip1 = new System.Windows.Forms.MenuStrip();
+            文件FToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            tsmiShowStatistics = new System.Windows.Forms.ToolStripMenuItem();
+            toolStripMenuItem7 = new System.Windows.Forms.ToolStripSeparator();
+            tsmiScanFile = new System.Windows.Forms.ToolStripMenuItem();
+            tsmiClearRecords = new System.Windows.Forms.ToolStripMenuItem();
+            tsmiClearDuplicates = new System.Windows.Forms.ToolStripMenuItem();
+            tsmiClearPoster = new System.Windows.Forms.ToolStripMenuItem();
+            toolStripMenuItem2 = new System.Windows.Forms.ToolStripSeparator();
+            tsmiExit = new System.Windows.Forms.ToolStripMenuItem();
+            过滤TToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            tsmiFilterRecent = new System.Windows.Forms.ToolStripMenuItem();
+            tsmiFilterSeelater = new System.Windows.Forms.ToolStripMenuItem();
+            toolStripSeparator6 = new System.Windows.Forms.ToolStripSeparator();
+            tsmiHaveDoubanId = new System.Windows.Forms.ToolStripMenuItem();
+            tsmiNoDoubanId = new System.Windows.Forms.ToolStripMenuItem();
+            toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
+            tsmiFilterWatched = new System.Windows.Forms.ToolStripMenuItem();
+            tsmiFilterNotWatched = new System.Windows.Forms.ToolStripMenuItem();
+            tsmiFilterSeeNoWant = new System.Windows.Forms.ToolStripMenuItem();
+            tsmiHideSameSubject = new System.Windows.Forms.ToolStripMenuItem();
+            toolStripMenuItem6 = new System.Windows.Forms.ToolStripSeparator();
+            tsmiLimit100 = new System.Windows.Forms.ToolStripMenuItem();
+            tsmiLimit200 = new System.Windows.Forms.ToolStripMenuItem();
+            tsmiLimit500 = new System.Windows.Forms.ToolStripMenuItem();
+            tsmiLimit1000 = new System.Windows.Forms.ToolStripMenuItem();
+            tsmiLimit2000 = new System.Windows.Forms.ToolStripMenuItem();
+            statusStrip1 = new System.Windows.Forms.StatusStrip();
+            tssState = new System.Windows.Forms.ToolStripStatusLabel();
+            tssInfo = new System.Windows.Forms.ToolStripStatusLabel();
+            tsSummary = new System.Windows.Forms.ToolStripStatusLabel();
+            tsCurrentDir = new System.Windows.Forms.ToolStripStatusLabel();
+            tsButtonWatch = new System.Windows.Forms.ToolStripDropDownButton();
+            tsmiToggleWatch = new System.Windows.Forms.ToolStripMenuItem();
+            lvContextMenu = new System.Windows.Forms.ContextMenuStrip(components);
+            tsmiSetWatched = new System.Windows.Forms.ToolStripMenuItem();
+            tsmiSetSeelater = new System.Windows.Forms.ToolStripMenuItem();
+            tsmiToggleSeeNoWant = new System.Windows.Forms.ToolStripMenuItem();
+            tsmiSearchDouban = new System.Windows.Forms.ToolStripMenuItem();
+            tsmiCopyDouban = new System.Windows.Forms.ToolStripMenuItem();
+            toolStripMenuItem3 = new System.Windows.Forms.ToolStripSeparator();
+            tsmiOpenFile = new System.Windows.Forms.ToolStripMenuItem();
+            tsmiShowFileLocation = new System.Windows.Forms.ToolStripMenuItem();
+            tsmiCopyName = new System.Windows.Forms.ToolStripMenuItem();
+            tsmiCopyPath = new System.Windows.Forms.ToolStripMenuItem();
+            tsmiCopyFile = new System.Windows.Forms.ToolStripMenuItem();
+            toolStripMenuItem4 = new System.Windows.Forms.ToolStripSeparator();
+            tsmiMove = new System.Windows.Forms.ToolStripMenuItem();
+            tsmiMovePath = new System.Windows.Forms.ToolStripMenuItem();
+            tsmiDelete = new System.Windows.Forms.ToolStripMenuItem();
+            notifyIcon1 = new System.Windows.Forms.NotifyIcon(components);
+            lbGenres = new System.Windows.Forms.Label();
+            lbRating = new System.Windows.Forms.Label();
+            lbKeyName = new System.Windows.Forms.Label();
+            lbOtherName = new System.Windows.Forms.Label();
+            pictureBox1 = new System.Windows.Forms.PictureBox();
+            lbZone = new System.Windows.Forms.Label();
+            toolStrip1 = new System.Windows.Forms.ToolStrip();
+            toolStripButton1 = new System.Windows.Forms.ToolStripButton();
+            toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+            tsbMove = new System.Windows.Forms.ToolStripButton();
+            tsbMovePath = new System.Windows.Forms.ToolStripButton();
+            tsbNormalize = new System.Windows.Forms.ToolStripButton();
+            toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
+            tsbSearchDouban = new System.Windows.Forms.ToolStripButton();
+            tsbDelete = new System.Windows.Forms.ToolStripButton();
+            tsbCopyDouban = new System.Windows.Forms.ToolStripButton();
+            toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
+            tsbFindSimilar = new System.Windows.Forms.ToolStripButton();
+            tsbRating0 = new System.Windows.Forms.ToolStripButton();
+            toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
+            tsbRating8 = new System.Windows.Forms.ToolStripButton();
+            toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
+            tsbRating9 = new System.Windows.Forms.ToolStripButton();
+            tbSearchText = new System.Windows.Forms.ComboBox();
+            btClearSearch = new System.Windows.Forms.Button();
+            lbYear = new System.Windows.Forms.Label();
+            lvResults = new BrightIdeasSoftware.FastObjectListView();
+            olvColName = new BrightIdeasSoftware.OLVColumn();
+            olvColRating = new BrightIdeasSoftware.OLVColumn();
+            olvColYear = new BrightIdeasSoftware.OLVColumn();
+            olvColAddDate = new BrightIdeasSoftware.OLVColumn();
+            olvColPath = new BrightIdeasSoftware.OLVColumn();
+            olvColSeelater = new BrightIdeasSoftware.OLVColumn();
+            olvColNoWant = new BrightIdeasSoftware.OLVColumn();
+            olvColSeen = new BrightIdeasSoftware.OLVColumn();
+            olvColSeeDate = new BrightIdeasSoftware.OLVColumn();
+            olvColSeeComment = new BrightIdeasSoftware.OLVColumn();
+            menuStrip1.SuspendLayout();
+            statusStrip1.SuspendLayout();
+            lvContextMenu.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
+            toolStrip1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)lvResults).BeginInit();
+            SuspendLayout();
             // 
             // menuStrip1
             // 
-            this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.文件FToolStripMenuItem,
-            this.过滤TToolStripMenuItem});
-            this.menuStrip1.Location = new System.Drawing.Point(0, 0);
-            this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(1129, 25);
-            this.menuStrip1.TabIndex = 0;
-            this.menuStrip1.Text = "menuStrip1";
+            menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { 文件FToolStripMenuItem, 过滤TToolStripMenuItem });
+            menuStrip1.Location = new System.Drawing.Point(0, 0);
+            menuStrip1.Name = "menuStrip1";
+            menuStrip1.Padding = new System.Windows.Forms.Padding(7, 3, 0, 3);
+            menuStrip1.Size = new System.Drawing.Size(1317, 27);
+            menuStrip1.TabIndex = 0;
+            menuStrip1.Text = "menuStrip1";
             // 
             // 文件FToolStripMenuItem
             // 
-            this.文件FToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.tsmiShowStatistics,
-            this.toolStripMenuItem7,
-            this.tsmiScanFile,
-            this.tsmiClearRecords,
-            this.tsmiClearDuplicates,
-            this.tsmiClearPoster,
-            this.toolStripMenuItem2,
-            this.tsmiExit});
-            this.文件FToolStripMenuItem.Name = "文件FToolStripMenuItem";
-            this.文件FToolStripMenuItem.Size = new System.Drawing.Size(58, 21);
-            this.文件FToolStripMenuItem.Text = "文件(&F)";
+            文件FToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { tsmiShowStatistics, toolStripMenuItem7, tsmiScanFile, tsmiClearRecords, tsmiClearDuplicates, tsmiClearPoster, toolStripMenuItem2, tsmiExit });
+            文件FToolStripMenuItem.Name = "文件FToolStripMenuItem";
+            文件FToolStripMenuItem.Size = new System.Drawing.Size(58, 21);
+            文件FToolStripMenuItem.Text = "文件(&F)";
             // 
             // tsmiShowStatistics
             // 
-            this.tsmiShowStatistics.Name = "tsmiShowStatistics";
-            this.tsmiShowStatistics.Size = new System.Drawing.Size(180, 22);
-            this.tsmiShowStatistics.Text = "统计(&T)";
-            this.tsmiShowStatistics.Click += new System.EventHandler(this.MenuItemShowStatistics_Click);
+            tsmiShowStatistics.Name = "tsmiShowStatistics";
+            tsmiShowStatistics.Size = new System.Drawing.Size(165, 22);
+            tsmiShowStatistics.Text = "统计(&T)";
+            tsmiShowStatistics.Click += MenuItemShowStatistics_Click;
             // 
             // toolStripMenuItem7
             // 
-            this.toolStripMenuItem7.Name = "toolStripMenuItem7";
-            this.toolStripMenuItem7.Size = new System.Drawing.Size(177, 6);
+            toolStripMenuItem7.Name = "toolStripMenuItem7";
+            toolStripMenuItem7.Size = new System.Drawing.Size(162, 6);
             // 
             // tsmiScanFile
             // 
-            this.tsmiScanFile.Name = "tsmiScanFile";
-            this.tsmiScanFile.Size = new System.Drawing.Size(180, 22);
-            this.tsmiScanFile.Text = "扫描种子文件(&S)";
-            this.tsmiScanFile.Click += new System.EventHandler(this.MenuItemScanFile_Click);
+            tsmiScanFile.Name = "tsmiScanFile";
+            tsmiScanFile.Size = new System.Drawing.Size(165, 22);
+            tsmiScanFile.Text = "扫描种子文件(&S)";
+            tsmiScanFile.Click += MenuItemScanFile_Click;
             // 
             // tsmiClearRecords
             // 
-            this.tsmiClearRecords.Name = "tsmiClearRecords";
-            this.tsmiClearRecords.Size = new System.Drawing.Size(180, 22);
-            this.tsmiClearRecords.Text = "清理无效记录(&C)";
-            this.tsmiClearRecords.Click += new System.EventHandler(this.MenuItemClearRecords_Click);
+            tsmiClearRecords.Name = "tsmiClearRecords";
+            tsmiClearRecords.Size = new System.Drawing.Size(165, 22);
+            tsmiClearRecords.Text = "清理无效记录(&C)";
+            tsmiClearRecords.Click += MenuItemClearRecords_Click;
             // 
             // tsmiClearDuplicates
             // 
-            this.tsmiClearDuplicates.Name = "tsmiClearDuplicates";
-            this.tsmiClearDuplicates.Size = new System.Drawing.Size(180, 22);
-            this.tsmiClearDuplicates.Text = "清理重复记录(&D)";
-            // 
-            // toolStripMenuItem2
-            // 
-            this.toolStripMenuItem2.Name = "toolStripMenuItem2";
-            this.toolStripMenuItem2.Size = new System.Drawing.Size(177, 6);
-            // 
-            // tsmiExit
-            // 
-            this.tsmiExit.Name = "tsmiExit";
-            this.tsmiExit.Size = new System.Drawing.Size(180, 22);
-            this.tsmiExit.Text = "退出(X)";
-            this.tsmiExit.Click += new System.EventHandler(this.MenuitemExit_Click);
-            // 
-            // 过滤TToolStripMenuItem
-            // 
-            this.过滤TToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.tsmiFilterRecent,
-            this.tsmiFilterSeelater,
-            this.toolStripSeparator6,
-            this.tsmiHaveDoubanId,
-            this.tsmiNoDoubanId,
-            this.toolStripMenuItem1,
-            this.tsmiFilterWatched,
-            this.tsmiFilterNotWatched,
-            this.tsmiFilterSeeNoWant,
-            this.tsmiHideSameSubject,
-            this.toolStripMenuItem6,
-            this.tsmiLimit100,
-            this.tsmiLimit200,
-            this.tsmiLimit500,
-            this.tsmiLimit1000,
-            this.tsmiLimit2000});
-            this.过滤TToolStripMenuItem.Name = "过滤TToolStripMenuItem";
-            this.过滤TToolStripMenuItem.Size = new System.Drawing.Size(59, 21);
-            this.过滤TToolStripMenuItem.Text = "过滤(&T)";
-            // 
-            // tsmiFilterRecent
-            // 
-            this.tsmiFilterRecent.Name = "tsmiFilterRecent";
-            this.tsmiFilterRecent.Size = new System.Drawing.Size(187, 22);
-            this.tsmiFilterRecent.Text = "最近添加(&N)";
-            this.tsmiFilterRecent.Click += new System.EventHandler(this.tsmiFilterRecent_Click);
-            // 
-            // tsmiFilterSeelater
-            // 
-            this.tsmiFilterSeelater.Name = "tsmiFilterSeelater";
-            this.tsmiFilterSeelater.Size = new System.Drawing.Size(187, 22);
-            this.tsmiFilterSeelater.Text = "稍后看(&L)";
-            this.tsmiFilterSeelater.Click += new System.EventHandler(this.tsmiFilterSeelater_Click);
-            // 
-            // toolStripSeparator6
-            // 
-            this.toolStripSeparator6.Name = "toolStripSeparator6";
-            this.toolStripSeparator6.Size = new System.Drawing.Size(184, 6);
-            // 
-            // tsmiHaveDoubanId
-            // 
-            this.tsmiHaveDoubanId.Name = "tsmiHaveDoubanId";
-            this.tsmiHaveDoubanId.Size = new System.Drawing.Size(187, 22);
-            this.tsmiHaveDoubanId.Text = "有豆瓣ID";
-            this.tsmiHaveDoubanId.Click += new System.EventHandler(this.tsmiHaveDoubanId_Click);
-            // 
-            // tsmiNoDoubanId
-            // 
-            this.tsmiNoDoubanId.Name = "tsmiNoDoubanId";
-            this.tsmiNoDoubanId.Size = new System.Drawing.Size(187, 22);
-            this.tsmiNoDoubanId.Text = "没有豆瓣ID";
-            this.tsmiNoDoubanId.Click += new System.EventHandler(this.tsmiNoDoubanId_Click);
-            // 
-            // toolStripMenuItem1
-            // 
-            this.toolStripMenuItem1.Name = "toolStripMenuItem1";
-            this.toolStripMenuItem1.Size = new System.Drawing.Size(184, 6);
-            // 
-            // tsmiFilterWatched
-            // 
-            this.tsmiFilterWatched.Name = "tsmiFilterWatched";
-            this.tsmiFilterWatched.Size = new System.Drawing.Size(187, 22);
-            this.tsmiFilterWatched.Text = "看过";
-            this.tsmiFilterWatched.Click += new System.EventHandler(this.tsmiFilterWatched_Click);
-            // 
-            // tsmiFilterNotWatched
-            // 
-            this.tsmiFilterNotWatched.Name = "tsmiFilterNotWatched";
-            this.tsmiFilterNotWatched.Size = new System.Drawing.Size(187, 22);
-            this.tsmiFilterNotWatched.Text = "没有看过";
-            this.tsmiFilterNotWatched.Click += new System.EventHandler(this.tsmiFilterNotWatched_Click);
-            // 
-            // tsmiFilterSeeNoWant
-            // 
-            this.tsmiFilterSeeNoWant.Name = "tsmiFilterSeeNoWant";
-            this.tsmiFilterSeeNoWant.Size = new System.Drawing.Size(187, 22);
-            this.tsmiFilterSeeNoWant.Text = "隐藏不想看";
-            this.tsmiFilterSeeNoWant.Click += new System.EventHandler(this.tsmiFilterSeeNoWant_Click);
-            // 
-            // tsmiHideSameSubject
-            // 
-            this.tsmiHideSameSubject.Checked = true;
-            this.tsmiHideSameSubject.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.tsmiHideSameSubject.Enabled = false;
-            this.tsmiHideSameSubject.Name = "tsmiHideSameSubject";
-            this.tsmiHideSameSubject.Size = new System.Drawing.Size(187, 22);
-            this.tsmiHideSameSubject.Text = "隐藏已看同名电影(&S)";
-            this.tsmiHideSameSubject.Click += new System.EventHandler(this.tsmiHideSameSubject_Click);
-            // 
-            // toolStripMenuItem6
-            // 
-            this.toolStripMenuItem6.Name = "toolStripMenuItem6";
-            this.toolStripMenuItem6.Size = new System.Drawing.Size(184, 6);
-            // 
-            // tsmiLimit100
-            // 
-            this.tsmiLimit100.Checked = true;
-            this.tsmiLimit100.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.tsmiLimit100.Name = "tsmiLimit100";
-            this.tsmiLimit100.Size = new System.Drawing.Size(187, 22);
-            this.tsmiLimit100.Tag = "100";
-            this.tsmiLimit100.Text = "限制100条";
-            // 
-            // tsmiLimit200
-            // 
-            this.tsmiLimit200.Name = "tsmiLimit200";
-            this.tsmiLimit200.Size = new System.Drawing.Size(187, 22);
-            this.tsmiLimit200.Tag = "200";
-            this.tsmiLimit200.Text = "限制200条";
-            // 
-            // tsmiLimit500
-            // 
-            this.tsmiLimit500.Name = "tsmiLimit500";
-            this.tsmiLimit500.Size = new System.Drawing.Size(187, 22);
-            this.tsmiLimit500.Tag = "300";
-            this.tsmiLimit500.Text = "限制500条";
-            // 
-            // tsmiLimit1000
-            // 
-            this.tsmiLimit1000.Name = "tsmiLimit1000";
-            this.tsmiLimit1000.Size = new System.Drawing.Size(187, 22);
-            this.tsmiLimit1000.Tag = "1000";
-            this.tsmiLimit1000.Text = "限制1000条";
-            // 
-            // tsmiLimit2000
-            // 
-            this.tsmiLimit2000.Name = "tsmiLimit2000";
-            this.tsmiLimit2000.Size = new System.Drawing.Size(187, 22);
-            this.tsmiLimit2000.Tag = "2000";
-            this.tsmiLimit2000.Text = "限制2000条";
-            // 
-            // statusStrip1
-            // 
-            this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.tssState,
-            this.tssInfo,
-            this.tsSummary,
-            this.tsCurrentDir,
-            this.tsButtonWatch});
-            this.statusStrip1.Location = new System.Drawing.Point(0, 547);
-            this.statusStrip1.Name = "statusStrip1";
-            this.statusStrip1.Size = new System.Drawing.Size(1129, 26);
-            this.statusStrip1.TabIndex = 2;
-            this.statusStrip1.Text = "statusStrip1";
-            // 
-            // tssState
-            // 
-            this.tssState.AutoSize = false;
-            this.tssState.BackColor = System.Drawing.SystemColors.Control;
-            this.tssState.Image = global::MovieTorrents.Resource.InfoGree32;
-            this.tssState.Name = "tssState";
-            this.tssState.Size = new System.Drawing.Size(17, 21);
-            this.tssState.Click += new System.EventHandler(this.tssState_Click);
-            // 
-            // tssInfo
-            // 
-            this.tssInfo.AutoSize = false;
-            this.tssInfo.Name = "tssInfo";
-            this.tssInfo.Size = new System.Drawing.Size(1001, 21);
-            this.tssInfo.Spring = true;
-            this.tssInfo.Text = "空闲";
-            this.tssInfo.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            // 
-            // tsSummary
-            // 
-            this.tsSummary.BorderSides = ((System.Windows.Forms.ToolStripStatusLabelBorderSides)((((System.Windows.Forms.ToolStripStatusLabelBorderSides.Left | System.Windows.Forms.ToolStripStatusLabelBorderSides.Top) 
-            | System.Windows.Forms.ToolStripStatusLabelBorderSides.Right) 
-            | System.Windows.Forms.ToolStripStatusLabelBorderSides.Bottom)));
-            this.tsSummary.BorderStyle = System.Windows.Forms.Border3DStyle.Etched;
-            this.tsSummary.Name = "tsSummary";
-            this.tsSummary.Size = new System.Drawing.Size(4, 21);
-            // 
-            // tsCurrentDir
-            // 
-            this.tsCurrentDir.BorderSides = ((System.Windows.Forms.ToolStripStatusLabelBorderSides)((((System.Windows.Forms.ToolStripStatusLabelBorderSides.Left | System.Windows.Forms.ToolStripStatusLabelBorderSides.Top) 
-            | System.Windows.Forms.ToolStripStatusLabelBorderSides.Right) 
-            | System.Windows.Forms.ToolStripStatusLabelBorderSides.Bottom)));
-            this.tsCurrentDir.BorderStyle = System.Windows.Forms.Border3DStyle.Etched;
-            this.tsCurrentDir.Name = "tsCurrentDir";
-            this.tsCurrentDir.Size = new System.Drawing.Size(63, 21);
-            this.tsCurrentDir.Text = "种子目录:";
-            // 
-            // tsButtonWatch
-            // 
-            this.tsButtonWatch.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.tsButtonWatch.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.tsmiToggleWatch});
-            this.tsButtonWatch.Image = ((System.Drawing.Image)(resources.GetObject("tsButtonWatch.Image")));
-            this.tsButtonWatch.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.tsButtonWatch.Name = "tsButtonWatch";
-            this.tsButtonWatch.Size = new System.Drawing.Size(29, 24);
-            // 
-            // tsmiToggleWatch
-            // 
-            this.tsmiToggleWatch.Name = "tsmiToggleWatch";
-            this.tsmiToggleWatch.Size = new System.Drawing.Size(192, 22);
-            this.tsmiToggleWatch.Text = "toolStripMenuItem7";
-            this.tsmiToggleWatch.Click += new System.EventHandler(this.MenuItemToggleWatch_Click);
-            // 
-            // lvContextMenu
-            // 
-            this.lvContextMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.tsmiSetWatched,
-            this.tsmiSetSeelater,
-            this.tsmiToggleSeeNoWant,
-            this.tsmiSearchDouban,
-            this.tsmiCopyDouban,
-            this.toolStripMenuItem3,
-            this.tsmiOpenFile,
-            this.tsmiShowFileLocation,
-            this.tsmiCopyName,
-            this.tsmiCopyPath,
-            this.tsmiCopyFile,
-            this.toolStripMenuItem4,
-            this.tsmiMove,
-            this.tsmiMovePath,
-            this.tsmiDelete});
-            this.lvContextMenu.Name = "lvContextMenu";
-            this.lvContextMenu.Size = new System.Drawing.Size(213, 302);
-            this.lvContextMenu.Text = "设置已看";
-            this.lvContextMenu.Opening += new System.ComponentModel.CancelEventHandler(this.lvContextMenu_Opening);
-            // 
-            // tsmiSetWatched
-            // 
-            this.tsmiSetWatched.Name = "tsmiSetWatched";
-            this.tsmiSetWatched.Size = new System.Drawing.Size(212, 22);
-            this.tsmiSetWatched.Text = "设置为已观看(&W)";
-            this.tsmiSetWatched.Click += new System.EventHandler(this.MenuItemSetWatched_Click);
-            // 
-            // tsmiSetSeelater
-            // 
-            this.tsmiSetSeelater.Name = "tsmiSetSeelater";
-            this.tsmiSetSeelater.Size = new System.Drawing.Size(212, 22);
-            this.tsmiSetSeelater.Text = "切换稍后看(&L)";
-            this.tsmiSetSeelater.Click += new System.EventHandler(this.MenuItemSetSeeLater_Click);
-            // 
-            // tsmiToggleSeeNoWant
-            // 
-            this.tsmiToggleSeeNoWant.Name = "tsmiToggleSeeNoWant";
-            this.tsmiToggleSeeNoWant.Size = new System.Drawing.Size(212, 22);
-            this.tsmiToggleSeeNoWant.Text = "切换不想看(&N)";
-            this.tsmiToggleSeeNoWant.Click += new System.EventHandler(this.MenuItemToggleSeeNoWant_Click);
-            // 
-            // tsmiSearchDouban
-            // 
-            this.tsmiSearchDouban.Image = global::MovieTorrents.Properties.Resources.dou;
-            this.tsmiSearchDouban.Name = "tsmiSearchDouban";
-            this.tsmiSearchDouban.Size = new System.Drawing.Size(212, 22);
-            this.tsmiSearchDouban.Text = "搜索豆瓣信息(&S)";
-            this.tsmiSearchDouban.Click += new System.EventHandler(this.MenuItemSearchDouBan_Click);
-            // 
-            // tsmiCopyDouban
-            // 
-            this.tsmiCopyDouban.Image = global::MovieTorrents.Properties.Resources.Blogs;
-            this.tsmiCopyDouban.Name = "tsmiCopyDouban";
-            this.tsmiCopyDouban.Size = new System.Drawing.Size(212, 22);
-            this.tsmiCopyDouban.Text = "设置豆瓣信息为勾选项(&K)";
-            this.tsmiCopyDouban.Click += new System.EventHandler(this.MenuItemCopyDouBan_Click);
-            // 
-            // toolStripMenuItem3
-            // 
-            this.toolStripMenuItem3.Name = "toolStripMenuItem3";
-            this.toolStripMenuItem3.Size = new System.Drawing.Size(209, 6);
-            // 
-            // tsmiOpenFile
-            // 
-            this.tsmiOpenFile.Name = "tsmiOpenFile";
-            this.tsmiOpenFile.Size = new System.Drawing.Size(212, 22);
-            this.tsmiOpenFile.Text = "打开文件(&O)";
-            this.tsmiOpenFile.Click += new System.EventHandler(this.MenuItemOpenFile_Click);
-            // 
-            // tsmiShowFileLocation
-            // 
-            this.tsmiShowFileLocation.Name = "tsmiShowFileLocation";
-            this.tsmiShowFileLocation.Size = new System.Drawing.Size(212, 22);
-            this.tsmiShowFileLocation.Text = "打开文件所在位置(&L)";
-            this.tsmiShowFileLocation.Click += new System.EventHandler(this.MenuItemShowFileLocation_Click);
-            // 
-            // tsmiCopyName
-            // 
-            this.tsmiCopyName.Name = "tsmiCopyName";
-            this.tsmiCopyName.Size = new System.Drawing.Size(212, 22);
-            this.tsmiCopyName.Text = "复制名称(&C)";
-            this.tsmiCopyName.Click += new System.EventHandler(this.MenuItemCopyName_Click);
-            // 
-            // tsmiCopyPath
-            // 
-            this.tsmiCopyPath.Name = "tsmiCopyPath";
-            this.tsmiCopyPath.Size = new System.Drawing.Size(212, 22);
-            this.tsmiCopyPath.Text = "复制文件完整路径(&P)";
-            this.tsmiCopyPath.Click += new System.EventHandler(this.MenuItemCopyPath_Click);
-            // 
-            // tsmiCopyFile
-            // 
-            this.tsmiCopyFile.Name = "tsmiCopyFile";
-            this.tsmiCopyFile.Size = new System.Drawing.Size(212, 22);
-            this.tsmiCopyFile.Text = "拷贝文件(&F)";
-            this.tsmiCopyFile.Click += new System.EventHandler(this.MenuItemCopyFile_Click);
-            // 
-            // toolStripMenuItem4
-            // 
-            this.toolStripMenuItem4.Name = "toolStripMenuItem4";
-            this.toolStripMenuItem4.Size = new System.Drawing.Size(209, 6);
-            // 
-            // tsmiMove
-            // 
-            this.tsmiMove.Image = global::MovieTorrents.Properties.Resources.Move_To_Folder;
-            this.tsmiMove.Name = "tsmiMove";
-            this.tsmiMove.Size = new System.Drawing.Size(212, 22);
-            this.tsmiMove.Text = "移动...(&M)";
-            this.tsmiMove.Click += new System.EventHandler(this.ToolBarMove_Click);
-            // 
-            // tsmiMovePath
-            // 
-            this.tsmiMovePath.Image = global::MovieTorrents.Properties.Resources.Folderupload16;
-            this.tsmiMovePath.Name = "tsmiMovePath";
-            this.tsmiMovePath.Size = new System.Drawing.Size(212, 22);
-            this.tsmiMovePath.Text = "移动路径(&P)";
-            this.tsmiMovePath.Click += new System.EventHandler(this.ToolbarMovePath_Click);
-            // 
-            // tsmiDelete
-            // 
-            this.tsmiDelete.Name = "tsmiDelete";
-            this.tsmiDelete.Size = new System.Drawing.Size(212, 22);
-            this.tsmiDelete.Text = "删除(&D)";
-            this.tsmiDelete.Click += new System.EventHandler(this.ToolBarDelete_Click);
-            // 
-            // notifyIcon1
-            // 
-            this.notifyIcon1.BalloonTipIcon = System.Windows.Forms.ToolTipIcon.Info;
-            this.notifyIcon1.BalloonTipText = "双击恢复窗口";
-            this.notifyIcon1.BalloonTipTitle = global::MovieTorrents.Resource.TextHint;
-            this.notifyIcon1.Text = "Movie torrents";
-            this.notifyIcon1.Visible = true;
-            this.notifyIcon1.BalloonTipClicked += new System.EventHandler(this.notifyIcon1_BalloonTipClicked);
-            this.notifyIcon1.MouseClick += new System.Windows.Forms.MouseEventHandler(this.notifyIcon1_MouseClick);
-            this.notifyIcon1.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.notifyIcon1_MouseDoubleClick);
-            // 
-            // lbGenres
-            // 
-            this.lbGenres.Location = new System.Drawing.Point(14, 469);
-            this.lbGenres.Name = "lbGenres";
-            this.lbGenres.Size = new System.Drawing.Size(98, 44);
-            this.lbGenres.TabIndex = 1;
-            this.lbGenres.Text = "Genres";
-            this.lbGenres.TextAlign = System.Drawing.ContentAlignment.TopCenter;
-            // 
-            // lbRating
-            // 
-            this.lbRating.Location = new System.Drawing.Point(12, 247);
-            this.lbRating.Name = "lbRating";
-            this.lbRating.Size = new System.Drawing.Size(100, 23);
-            this.lbRating.TabIndex = 6;
-            this.lbRating.Text = "Rating";
-            this.lbRating.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // lbKeyName
-            // 
-            this.lbKeyName.Location = new System.Drawing.Point(14, 314);
-            this.lbKeyName.Name = "lbKeyName";
-            this.lbKeyName.Size = new System.Drawing.Size(98, 53);
-            this.lbKeyName.TabIndex = 1;
-            this.lbKeyName.Text = "keyName";
-            this.lbKeyName.TextAlign = System.Drawing.ContentAlignment.TopCenter;
-            // 
-            // lbOtherName
-            // 
-            this.lbOtherName.Location = new System.Drawing.Point(14, 389);
-            this.lbOtherName.Name = "lbOtherName";
-            this.lbOtherName.Size = new System.Drawing.Size(98, 58);
-            this.lbOtherName.TabIndex = 1;
-            this.lbOtherName.Text = "otherName";
-            this.lbOtherName.TextAlign = System.Drawing.ContentAlignment.TopCenter;
-            // 
-            // pictureBox1
-            // 
-            this.pictureBox1.Location = new System.Drawing.Point(0, 74);
-            this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(126, 164);
-            this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
-            this.pictureBox1.TabIndex = 0;
-            this.pictureBox1.TabStop = false;
-            this.pictureBox1.DoubleClick += new System.EventHandler(this.pictureBox1_DoubleClick);
-            // 
-            // lbZone
-            // 
-            this.lbZone.Location = new System.Drawing.Point(12, 526);
-            this.lbZone.Name = "lbZone";
-            this.lbZone.Size = new System.Drawing.Size(98, 31);
-            this.lbZone.TabIndex = 1;
-            this.lbZone.Text = "zone";
-            this.lbZone.TextAlign = System.Drawing.ContentAlignment.TopCenter;
-            // 
-            // toolStrip1
-            // 
-            this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.toolStripButton1,
-            this.toolStripSeparator1,
-            this.tsbMove,
-            this.tsbMovePath,
-            this.tsbNormalize,
-            this.toolStripSeparator5,
-            this.tsbSearchDouban,
-            this.tsbDelete,
-            this.tsbCopyDouban,
-            this.toolStripSeparator2,
-            this.tsbFindSimilar,
-            this.tsbRating0,
-            this.toolStripSeparator3,
-            this.tsbRating8,
-            this.toolStripSeparator4,
-            this.tsbRating9});
-            this.toolStrip1.Location = new System.Drawing.Point(0, 25);
-            this.toolStrip1.Name = "toolStrip1";
-            this.toolStrip1.Size = new System.Drawing.Size(1129, 25);
-            this.toolStrip1.TabIndex = 8;
-            this.toolStrip1.Text = "toolStrip1";
-            // 
-            // toolStripButton1
-            // 
-            this.toolStripButton1.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.toolStripButton1.Image = global::MovieTorrents.Properties.Resources.BTBT;
-            this.toolStripButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripButton1.Name = "toolStripButton1";
-            this.toolStripButton1.Size = new System.Drawing.Size(23, 22);
-            this.toolStripButton1.Text = "BtBTT下载";
-            this.toolStripButton1.Click += new System.EventHandler(this.MenuItemBtBtDownload_Click);
-            // 
-            // toolStripSeparator1
-            // 
-            this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(6, 25);
-            // 
-            // tsbMove
-            // 
-            this.tsbMove.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.tsbMove.Image = global::MovieTorrents.Properties.Resources.Move_To_Folder;
-            this.tsbMove.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.tsbMove.Name = "tsbMove";
-            this.tsbMove.Size = new System.Drawing.Size(23, 22);
-            this.tsbMove.Text = "移动";
-            // 
-            // tsbMovePath
-            // 
-            this.tsbMovePath.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.tsbMovePath.Image = global::MovieTorrents.Properties.Resources.Folderupload16;
-            this.tsbMovePath.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.tsbMovePath.Name = "tsbMovePath";
-            this.tsbMovePath.Size = new System.Drawing.Size(23, 22);
-            this.tsbMovePath.Text = "移动路径";
-            // 
-            // tsbNormalize
-            // 
-            this.tsbNormalize.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.tsbNormalize.Image = global::MovieTorrents.Properties.Resources.Pencil_and_Ruler;
-            this.tsbNormalize.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.tsbNormalize.Name = "tsbNormalize";
-            this.tsbNormalize.Size = new System.Drawing.Size(23, 22);
-            this.tsbNormalize.Text = "规范名称";
-            // 
-            // toolStripSeparator5
-            // 
-            this.toolStripSeparator5.Name = "toolStripSeparator5";
-            this.toolStripSeparator5.Size = new System.Drawing.Size(6, 25);
-            // 
-            // tsbSearchDouban
-            // 
-            this.tsbSearchDouban.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.tsbSearchDouban.Image = global::MovieTorrents.Properties.Resources.dou;
-            this.tsbSearchDouban.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.tsbSearchDouban.Name = "tsbSearchDouban";
-            this.tsbSearchDouban.Size = new System.Drawing.Size(23, 22);
-            this.tsbSearchDouban.Text = "搜索豆瓣";
-            this.tsbSearchDouban.Click += new System.EventHandler(this.tsbSearchDouBan_Click);
-            // 
-            // tsbDelete
-            // 
-            this.tsbDelete.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.tsbDelete.Image = global::MovieTorrents.Properties.Resources.Delete;
-            this.tsbDelete.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.tsbDelete.Name = "tsbDelete";
-            this.tsbDelete.Size = new System.Drawing.Size(23, 22);
-            this.tsbDelete.Text = "删除";
-            // 
-            // tsbCopyDouban
-            // 
-            this.tsbCopyDouban.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.tsbCopyDouban.Image = global::MovieTorrents.Properties.Resources.Blogs;
-            this.tsbCopyDouban.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.tsbCopyDouban.Name = "tsbCopyDouban";
-            this.tsbCopyDouban.Size = new System.Drawing.Size(23, 22);
-            this.tsbCopyDouban.Text = "拷贝信息";
-            this.tsbCopyDouban.ToolTipText = "设置豆瓣信息为勾选项";
-            // 
-            // toolStripSeparator2
-            // 
-            this.toolStripSeparator2.Name = "toolStripSeparator2";
-            this.toolStripSeparator2.Size = new System.Drawing.Size(6, 25);
-            // 
-            // tsbFindSimilar
-            // 
-            this.tsbFindSimilar.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.tsbFindSimilar.Image = global::MovieTorrents.Properties.Resources.search16;
-            this.tsbFindSimilar.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.tsbFindSimilar.Name = "tsbFindSimilar";
-            this.tsbFindSimilar.Size = new System.Drawing.Size(23, 22);
-            this.tsbFindSimilar.Text = "搜索类似电影";
-            this.tsbFindSimilar.Click += new System.EventHandler(this.tsbFindSimilar_Click);
-            // 
-            // tsbRating0
-            // 
-            this.tsbRating0.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.tsbRating0.Image = ((System.Drawing.Image)(resources.GetObject("tsbRating0.Image")));
-            this.tsbRating0.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.tsbRating0.Name = "tsbRating0";
-            this.tsbRating0.Size = new System.Drawing.Size(65, 22);
-            this.tsbRating0.Text = "Rating=0";
-            // 
-            // toolStripSeparator3
-            // 
-            this.toolStripSeparator3.Name = "toolStripSeparator3";
-            this.toolStripSeparator3.Size = new System.Drawing.Size(6, 25);
-            // 
-            // tsbRating8
-            // 
-            this.tsbRating8.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.tsbRating8.Image = ((System.Drawing.Image)(resources.GetObject("tsbRating8.Image")));
-            this.tsbRating8.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.tsbRating8.Name = "tsbRating8";
-            this.tsbRating8.Size = new System.Drawing.Size(65, 22);
-            this.tsbRating8.Text = "Rating>8";
-            // 
-            // toolStripSeparator4
-            // 
-            this.toolStripSeparator4.Name = "toolStripSeparator4";
-            this.toolStripSeparator4.Size = new System.Drawing.Size(6, 25);
-            // 
-            // tsbRating9
-            // 
-            this.tsbRating9.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.tsbRating9.Image = ((System.Drawing.Image)(resources.GetObject("tsbRating9.Image")));
-            this.tsbRating9.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.tsbRating9.Name = "tsbRating9";
-            this.tsbRating9.Size = new System.Drawing.Size(65, 22);
-            this.tsbRating9.Text = "Rating>9";
-            // 
-            // tbSearchText
-            // 
-            this.tbSearchText.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.tbSearchText.Font = new System.Drawing.Font("Microsoft YaHei", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.tbSearchText.FormattingEnabled = true;
-            this.tbSearchText.Items.AddRange(new object[] {
-            "rating:>9",
-            "rating:>8",
-            "rating:0"});
-            this.tbSearchText.Location = new System.Drawing.Point(30, 48);
-            this.tbSearchText.Name = "tbSearchText";
-            this.tbSearchText.Size = new System.Drawing.Size(1099, 25);
-            this.tbSearchText.TabIndex = 9;
-            this.tbSearchText.TextChanged += new System.EventHandler(this.tbSearchText_TextChanged);
-            // 
-            // btClearSearch
-            // 
-            this.btClearSearch.Location = new System.Drawing.Point(4, 47);
-            this.btClearSearch.Name = "btClearSearch";
-            this.btClearSearch.Size = new System.Drawing.Size(22, 22);
-            this.btClearSearch.TabIndex = 10;
-            this.btClearSearch.Text = "X";
-            this.btClearSearch.UseVisualStyleBackColor = true;
-            this.btClearSearch.Click += new System.EventHandler(this.btClearSearch_Click);
-            // 
-            // lbYear
-            // 
-            this.lbYear.Location = new System.Drawing.Point(12, 278);
-            this.lbYear.Name = "lbYear";
-            this.lbYear.Size = new System.Drawing.Size(100, 23);
-            this.lbYear.TabIndex = 6;
-            this.lbYear.Text = "Year";
-            this.lbYear.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // lvResults
-            // 
-            this.lvResults.AllColumns.Add(this.olvColName);
-            this.lvResults.AllColumns.Add(this.olvColRating);
-            this.lvResults.AllColumns.Add(this.olvColYear);
-            this.lvResults.AllColumns.Add(this.olvColAddDate);
-            this.lvResults.AllColumns.Add(this.olvColPath);
-            this.lvResults.AllColumns.Add(this.olvColSeelater);
-            this.lvResults.AllColumns.Add(this.olvColNoWant);
-            this.lvResults.AllColumns.Add(this.olvColSeen);
-            this.lvResults.AllColumns.Add(this.olvColSeeDate);
-            this.lvResults.AllColumns.Add(this.olvColSeeComment);
-            this.lvResults.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.lvResults.CellEditUseWholeCell = false;
-            this.lvResults.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.olvColName,
-            this.olvColRating,
-            this.olvColYear,
-            this.olvColAddDate,
-            this.olvColPath,
-            this.olvColSeelater,
-            this.olvColNoWant,
-            this.olvColSeen,
-            this.olvColSeeDate,
-            this.olvColSeeComment});
-            this.lvResults.Cursor = System.Windows.Forms.Cursors.Default;
-            this.lvResults.HideSelection = false;
-            this.lvResults.Location = new System.Drawing.Point(132, 74);
-            this.lvResults.Name = "lvResults";
-            this.lvResults.ShowGroups = false;
-            this.lvResults.Size = new System.Drawing.Size(997, 473);
-            this.lvResults.TabIndex = 11;
-            this.lvResults.UseCompatibleStateImageBehavior = false;
-            this.lvResults.View = System.Windows.Forms.View.Details;
-            this.lvResults.VirtualMode = true;
-            // 
-            // olvColName
-            // 
-            this.olvColName.AspectName = "Name";
-            this.olvColName.Text = "名称";
-            this.olvColName.Width = 400;
-            // 
-            // olvColRating
-            // 
-            this.olvColRating.AspectName = "Rating";
-            this.olvColRating.Text = "评分";
-            // 
-            // olvColYear
-            // 
-            this.olvColYear.AspectName = "Year";
-            this.olvColYear.Text = "年代";
-            // 
-            // olvColAddDate
-            // 
-            this.olvColAddDate.AspectName = "CreationTime";
-            this.olvColAddDate.Text = "添加日期";
-            this.olvColAddDate.Width = 110;
-            // 
-            // olvColPath
-            // 
-            this.olvColPath.AspectName = "Path";
-            this.olvColPath.Text = "路径";
-            this.olvColPath.Width = 100;
-            // 
-            // olvColSeelater
-            // 
-            this.olvColSeelater.AspectName = "SeeLater";
-            this.olvColSeelater.Text = "稍后看";
-            // 
-            // olvColNoWant
-            // 
-            this.olvColNoWant.AspectName = "SeeNoWant";
-            this.olvColNoWant.Text = "不想看";
-            // 
-            // olvColSeen
-            // 
-            this.olvColSeen.AspectName = "SeeFlag";
-            this.olvColSeen.Text = "看过";
-            // 
-            // olvColSeeDate
-            // 
-            this.olvColSeeDate.AspectName = "SeeDate";
-            this.olvColSeeDate.Text = "观看日期";
-            this.olvColSeeDate.Width = 100;
-            // 
-            // olvColSeeComment
-            // 
-            this.olvColSeeComment.AspectName = "SeeComment";
-            this.olvColSeeComment.Text = "观看评论";
-            this.olvColSeeComment.Width = 120;
+            tsmiClearDuplicates.Name = "tsmiClearDuplicates";
+            tsmiClearDuplicates.Size = new System.Drawing.Size(165, 22);
+            tsmiClearDuplicates.Text = "清理重复记录(&D)";
             // 
             // tsmiClearPoster
             // 
-            this.tsmiClearPoster.Name = "tsmiClearPoster";
-            this.tsmiClearPoster.Size = new System.Drawing.Size(180, 22);
-            this.tsmiClearPoster.Text = "清理海报";
+            tsmiClearPoster.Name = "tsmiClearPoster";
+            tsmiClearPoster.Size = new System.Drawing.Size(165, 22);
+            tsmiClearPoster.Text = "清理海报";
+            // 
+            // toolStripMenuItem2
+            // 
+            toolStripMenuItem2.Name = "toolStripMenuItem2";
+            toolStripMenuItem2.Size = new System.Drawing.Size(162, 6);
+            // 
+            // tsmiExit
+            // 
+            tsmiExit.Name = "tsmiExit";
+            tsmiExit.Size = new System.Drawing.Size(165, 22);
+            tsmiExit.Text = "退出(X)";
+            tsmiExit.Click += MenuitemExit_Click;
+            // 
+            // 过滤TToolStripMenuItem
+            // 
+            过滤TToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { tsmiFilterRecent, tsmiFilterSeelater, toolStripSeparator6, tsmiHaveDoubanId, tsmiNoDoubanId, toolStripMenuItem1, tsmiFilterWatched, tsmiFilterNotWatched, tsmiFilterSeeNoWant, tsmiHideSameSubject, toolStripMenuItem6, tsmiLimit100, tsmiLimit200, tsmiLimit500, tsmiLimit1000, tsmiLimit2000 });
+            过滤TToolStripMenuItem.Name = "过滤TToolStripMenuItem";
+            过滤TToolStripMenuItem.Size = new System.Drawing.Size(59, 21);
+            过滤TToolStripMenuItem.Text = "过滤(&T)";
+            // 
+            // tsmiFilterRecent
+            // 
+            tsmiFilterRecent.Name = "tsmiFilterRecent";
+            tsmiFilterRecent.Size = new System.Drawing.Size(187, 22);
+            tsmiFilterRecent.Text = "最近添加(&N)";
+            tsmiFilterRecent.Click += tsmiFilterRecent_Click;
+            // 
+            // tsmiFilterSeelater
+            // 
+            tsmiFilterSeelater.Name = "tsmiFilterSeelater";
+            tsmiFilterSeelater.Size = new System.Drawing.Size(187, 22);
+            tsmiFilterSeelater.Text = "稍后看(&L)";
+            tsmiFilterSeelater.Click += tsmiFilterSeelater_Click;
+            // 
+            // toolStripSeparator6
+            // 
+            toolStripSeparator6.Name = "toolStripSeparator6";
+            toolStripSeparator6.Size = new System.Drawing.Size(184, 6);
+            // 
+            // tsmiHaveDoubanId
+            // 
+            tsmiHaveDoubanId.Name = "tsmiHaveDoubanId";
+            tsmiHaveDoubanId.Size = new System.Drawing.Size(187, 22);
+            tsmiHaveDoubanId.Text = "有豆瓣ID";
+            tsmiHaveDoubanId.Click += tsmiHaveDoubanId_Click;
+            // 
+            // tsmiNoDoubanId
+            // 
+            tsmiNoDoubanId.Name = "tsmiNoDoubanId";
+            tsmiNoDoubanId.Size = new System.Drawing.Size(187, 22);
+            tsmiNoDoubanId.Text = "没有豆瓣ID";
+            tsmiNoDoubanId.Click += tsmiNoDoubanId_Click;
+            // 
+            // toolStripMenuItem1
+            // 
+            toolStripMenuItem1.Name = "toolStripMenuItem1";
+            toolStripMenuItem1.Size = new System.Drawing.Size(184, 6);
+            // 
+            // tsmiFilterWatched
+            // 
+            tsmiFilterWatched.Name = "tsmiFilterWatched";
+            tsmiFilterWatched.Size = new System.Drawing.Size(187, 22);
+            tsmiFilterWatched.Text = "看过";
+            tsmiFilterWatched.Click += tsmiFilterWatched_Click;
+            // 
+            // tsmiFilterNotWatched
+            // 
+            tsmiFilterNotWatched.Name = "tsmiFilterNotWatched";
+            tsmiFilterNotWatched.Size = new System.Drawing.Size(187, 22);
+            tsmiFilterNotWatched.Text = "没有看过";
+            tsmiFilterNotWatched.Click += tsmiFilterNotWatched_Click;
+            // 
+            // tsmiFilterSeeNoWant
+            // 
+            tsmiFilterSeeNoWant.Name = "tsmiFilterSeeNoWant";
+            tsmiFilterSeeNoWant.Size = new System.Drawing.Size(187, 22);
+            tsmiFilterSeeNoWant.Text = "隐藏不想看";
+            tsmiFilterSeeNoWant.Click += tsmiFilterSeeNoWant_Click;
+            // 
+            // tsmiHideSameSubject
+            // 
+            tsmiHideSameSubject.Checked = true;
+            tsmiHideSameSubject.CheckState = System.Windows.Forms.CheckState.Checked;
+            tsmiHideSameSubject.Enabled = false;
+            tsmiHideSameSubject.Name = "tsmiHideSameSubject";
+            tsmiHideSameSubject.Size = new System.Drawing.Size(187, 22);
+            tsmiHideSameSubject.Text = "隐藏已看同名电影(&S)";
+            tsmiHideSameSubject.Click += tsmiHideSameSubject_Click;
+            // 
+            // toolStripMenuItem6
+            // 
+            toolStripMenuItem6.Name = "toolStripMenuItem6";
+            toolStripMenuItem6.Size = new System.Drawing.Size(184, 6);
+            // 
+            // tsmiLimit100
+            // 
+            tsmiLimit100.Checked = true;
+            tsmiLimit100.CheckState = System.Windows.Forms.CheckState.Checked;
+            tsmiLimit100.Name = "tsmiLimit100";
+            tsmiLimit100.Size = new System.Drawing.Size(187, 22);
+            tsmiLimit100.Tag = "100";
+            tsmiLimit100.Text = "限制100条";
+            // 
+            // tsmiLimit200
+            // 
+            tsmiLimit200.Name = "tsmiLimit200";
+            tsmiLimit200.Size = new System.Drawing.Size(187, 22);
+            tsmiLimit200.Tag = "200";
+            tsmiLimit200.Text = "限制200条";
+            // 
+            // tsmiLimit500
+            // 
+            tsmiLimit500.Name = "tsmiLimit500";
+            tsmiLimit500.Size = new System.Drawing.Size(187, 22);
+            tsmiLimit500.Tag = "300";
+            tsmiLimit500.Text = "限制500条";
+            // 
+            // tsmiLimit1000
+            // 
+            tsmiLimit1000.Name = "tsmiLimit1000";
+            tsmiLimit1000.Size = new System.Drawing.Size(187, 22);
+            tsmiLimit1000.Tag = "1000";
+            tsmiLimit1000.Text = "限制1000条";
+            // 
+            // tsmiLimit2000
+            // 
+            tsmiLimit2000.Name = "tsmiLimit2000";
+            tsmiLimit2000.Size = new System.Drawing.Size(187, 22);
+            tsmiLimit2000.Tag = "2000";
+            tsmiLimit2000.Text = "限制2000条";
+            // 
+            // statusStrip1
+            // 
+            statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { tssState, tssInfo, tsSummary, tsCurrentDir, tsButtonWatch });
+            statusStrip1.Location = new System.Drawing.Point(0, 786);
+            statusStrip1.Name = "statusStrip1";
+            statusStrip1.Padding = new System.Windows.Forms.Padding(1, 0, 16, 0);
+            statusStrip1.Size = new System.Drawing.Size(1317, 26);
+            statusStrip1.TabIndex = 2;
+            statusStrip1.Text = "statusStrip1";
+            // 
+            // tssState
+            // 
+            tssState.AutoSize = false;
+            tssState.BackColor = System.Drawing.SystemColors.Control;
+            tssState.Image = Resource.InfoGree32;
+            tssState.Name = "tssState";
+            tssState.Size = new System.Drawing.Size(17, 21);
+            tssState.Click += tssState_Click;
+            // 
+            // tssInfo
+            // 
+            tssInfo.AutoSize = false;
+            tssInfo.Name = "tssInfo";
+            tssInfo.Size = new System.Drawing.Size(1187, 21);
+            tssInfo.Spring = true;
+            tssInfo.Text = "空闲";
+            tssInfo.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // tsSummary
+            // 
+            tsSummary.BorderSides = System.Windows.Forms.ToolStripStatusLabelBorderSides.Left | System.Windows.Forms.ToolStripStatusLabelBorderSides.Top | System.Windows.Forms.ToolStripStatusLabelBorderSides.Right | System.Windows.Forms.ToolStripStatusLabelBorderSides.Bottom;
+            tsSummary.BorderStyle = System.Windows.Forms.Border3DStyle.Etched;
+            tsSummary.Name = "tsSummary";
+            tsSummary.Size = new System.Drawing.Size(4, 21);
+            // 
+            // tsCurrentDir
+            // 
+            tsCurrentDir.BorderSides = System.Windows.Forms.ToolStripStatusLabelBorderSides.Left | System.Windows.Forms.ToolStripStatusLabelBorderSides.Top | System.Windows.Forms.ToolStripStatusLabelBorderSides.Right | System.Windows.Forms.ToolStripStatusLabelBorderSides.Bottom;
+            tsCurrentDir.BorderStyle = System.Windows.Forms.Border3DStyle.Etched;
+            tsCurrentDir.Name = "tsCurrentDir";
+            tsCurrentDir.Size = new System.Drawing.Size(63, 21);
+            tsCurrentDir.Text = "种子目录:";
+            // 
+            // tsButtonWatch
+            // 
+            tsButtonWatch.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            tsButtonWatch.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { tsmiToggleWatch });
+            tsButtonWatch.Image = (System.Drawing.Image)resources.GetObject("tsButtonWatch.Image");
+            tsButtonWatch.ImageTransparentColor = System.Drawing.Color.Magenta;
+            tsButtonWatch.Name = "tsButtonWatch";
+            tsButtonWatch.Size = new System.Drawing.Size(29, 24);
+            // 
+            // tsmiToggleWatch
+            // 
+            tsmiToggleWatch.Name = "tsmiToggleWatch";
+            tsmiToggleWatch.Size = new System.Drawing.Size(192, 22);
+            tsmiToggleWatch.Text = "toolStripMenuItem7";
+            tsmiToggleWatch.Click += MenuItemToggleWatch_Click;
+            // 
+            // lvContextMenu
+            // 
+            lvContextMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { tsmiSetWatched, tsmiSetSeelater, tsmiToggleSeeNoWant, tsmiSearchDouban, tsmiCopyDouban, toolStripMenuItem3, tsmiOpenFile, tsmiShowFileLocation, tsmiCopyName, tsmiCopyPath, tsmiCopyFile, toolStripMenuItem4, tsmiMove, tsmiMovePath, tsmiDelete });
+            lvContextMenu.Name = "lvContextMenu";
+            lvContextMenu.Size = new System.Drawing.Size(213, 302);
+            lvContextMenu.Text = "设置已看";
+            lvContextMenu.Opening += lvContextMenu_Opening;
+            // 
+            // tsmiSetWatched
+            // 
+            tsmiSetWatched.Name = "tsmiSetWatched";
+            tsmiSetWatched.Size = new System.Drawing.Size(212, 22);
+            tsmiSetWatched.Text = "设置为已观看(&W)";
+            tsmiSetWatched.Click += MenuItemSetWatched_Click;
+            // 
+            // tsmiSetSeelater
+            // 
+            tsmiSetSeelater.Name = "tsmiSetSeelater";
+            tsmiSetSeelater.Size = new System.Drawing.Size(212, 22);
+            tsmiSetSeelater.Text = "切换稍后看(&L)";
+            tsmiSetSeelater.Click += MenuItemSetSeeLater_Click;
+            // 
+            // tsmiToggleSeeNoWant
+            // 
+            tsmiToggleSeeNoWant.Name = "tsmiToggleSeeNoWant";
+            tsmiToggleSeeNoWant.Size = new System.Drawing.Size(212, 22);
+            tsmiToggleSeeNoWant.Text = "切换不想看(&N)";
+            tsmiToggleSeeNoWant.Click += MenuItemToggleSeeNoWant_Click;
+            // 
+            // tsmiSearchDouban
+            // 
+            tsmiSearchDouban.Image = Properties.Resources.douban24;
+            tsmiSearchDouban.Name = "tsmiSearchDouban";
+            tsmiSearchDouban.Size = new System.Drawing.Size(212, 22);
+            tsmiSearchDouban.Text = "搜索豆瓣信息(&S)";
+            tsmiSearchDouban.Click += MenuItemSearchDouBan_Click;
+            // 
+            // tsmiCopyDouban
+            // 
+            tsmiCopyDouban.Image = Properties.Resources.Page_Copy24;
+            tsmiCopyDouban.Name = "tsmiCopyDouban";
+            tsmiCopyDouban.Size = new System.Drawing.Size(212, 22);
+            tsmiCopyDouban.Text = "设置豆瓣信息为勾选项(&K)";
+            tsmiCopyDouban.Click += MenuItemCopyDouBan_Click;
+            // 
+            // toolStripMenuItem3
+            // 
+            toolStripMenuItem3.Name = "toolStripMenuItem3";
+            toolStripMenuItem3.Size = new System.Drawing.Size(209, 6);
+            // 
+            // tsmiOpenFile
+            // 
+            tsmiOpenFile.Name = "tsmiOpenFile";
+            tsmiOpenFile.Size = new System.Drawing.Size(212, 22);
+            tsmiOpenFile.Text = "打开文件(&O)";
+            tsmiOpenFile.Click += MenuItemOpenFile_Click;
+            // 
+            // tsmiShowFileLocation
+            // 
+            tsmiShowFileLocation.Name = "tsmiShowFileLocation";
+            tsmiShowFileLocation.Size = new System.Drawing.Size(212, 22);
+            tsmiShowFileLocation.Text = "打开文件所在位置(&L)";
+            tsmiShowFileLocation.Click += MenuItemShowFileLocation_Click;
+            // 
+            // tsmiCopyName
+            // 
+            tsmiCopyName.Name = "tsmiCopyName";
+            tsmiCopyName.Size = new System.Drawing.Size(212, 22);
+            tsmiCopyName.Text = "复制名称(&C)";
+            tsmiCopyName.Click += MenuItemCopyName_Click;
+            // 
+            // tsmiCopyPath
+            // 
+            tsmiCopyPath.Name = "tsmiCopyPath";
+            tsmiCopyPath.Size = new System.Drawing.Size(212, 22);
+            tsmiCopyPath.Text = "复制文件完整路径(&P)";
+            tsmiCopyPath.Click += MenuItemCopyPath_Click;
+            // 
+            // tsmiCopyFile
+            // 
+            tsmiCopyFile.Name = "tsmiCopyFile";
+            tsmiCopyFile.Size = new System.Drawing.Size(212, 22);
+            tsmiCopyFile.Text = "拷贝文件(&F)";
+            tsmiCopyFile.Click += MenuItemCopyFile_Click;
+            // 
+            // toolStripMenuItem4
+            // 
+            toolStripMenuItem4.Name = "toolStripMenuItem4";
+            toolStripMenuItem4.Size = new System.Drawing.Size(209, 6);
+            // 
+            // tsmiMove
+            // 
+            tsmiMove.Image = Properties.Resources.Move_To_Folder24;
+            tsmiMove.Name = "tsmiMove";
+            tsmiMove.Size = new System.Drawing.Size(212, 22);
+            tsmiMove.Text = "移动...(&M)";
+            tsmiMove.Click += ToolBarMove_Click;
+            // 
+            // tsmiMovePath
+            // 
+            tsmiMovePath.Image = Properties.Resources.Folder_upload24;
+            tsmiMovePath.Name = "tsmiMovePath";
+            tsmiMovePath.Size = new System.Drawing.Size(212, 22);
+            tsmiMovePath.Text = "移动路径(&P)";
+            tsmiMovePath.Click += ToolbarMovePath_Click;
+            // 
+            // tsmiDelete
+            // 
+            tsmiDelete.Name = "tsmiDelete";
+            tsmiDelete.Size = new System.Drawing.Size(212, 22);
+            tsmiDelete.Text = "删除(&D)";
+            tsmiDelete.Click += ToolBarDelete_Click;
+            // 
+            // notifyIcon1
+            // 
+            notifyIcon1.BalloonTipIcon = System.Windows.Forms.ToolTipIcon.Info;
+            notifyIcon1.BalloonTipText = "双击恢复窗口";
+            notifyIcon1.BalloonTipTitle = Resource.TextHint;
+            notifyIcon1.Text = "Movie torrents";
+            notifyIcon1.Visible = true;
+            notifyIcon1.BalloonTipClicked += notifyIcon1_BalloonTipClicked;
+            notifyIcon1.MouseClick += notifyIcon1_MouseClick;
+            notifyIcon1.MouseDoubleClick += notifyIcon1_MouseDoubleClick;
+            // 
+            // lbGenres
+            // 
+            lbGenres.Location = new System.Drawing.Point(16, 664);
+            lbGenres.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            lbGenres.Name = "lbGenres";
+            lbGenres.Size = new System.Drawing.Size(114, 62);
+            lbGenres.TabIndex = 1;
+            lbGenres.Text = "Genres";
+            lbGenres.TextAlign = System.Drawing.ContentAlignment.TopCenter;
+            // 
+            // lbRating
+            // 
+            lbRating.Location = new System.Drawing.Point(14, 350);
+            lbRating.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            lbRating.Name = "lbRating";
+            lbRating.Size = new System.Drawing.Size(117, 33);
+            lbRating.TabIndex = 6;
+            lbRating.Text = "Rating";
+            lbRating.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // lbKeyName
+            // 
+            lbKeyName.Location = new System.Drawing.Point(16, 445);
+            lbKeyName.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            lbKeyName.Name = "lbKeyName";
+            lbKeyName.Size = new System.Drawing.Size(114, 75);
+            lbKeyName.TabIndex = 1;
+            lbKeyName.Text = "keyName";
+            lbKeyName.TextAlign = System.Drawing.ContentAlignment.TopCenter;
+            // 
+            // lbOtherName
+            // 
+            lbOtherName.Location = new System.Drawing.Point(16, 551);
+            lbOtherName.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            lbOtherName.Name = "lbOtherName";
+            lbOtherName.Size = new System.Drawing.Size(114, 82);
+            lbOtherName.TabIndex = 1;
+            lbOtherName.Text = "otherName";
+            lbOtherName.TextAlign = System.Drawing.ContentAlignment.TopCenter;
+            // 
+            // pictureBox1
+            // 
+            pictureBox1.Location = new System.Drawing.Point(0, 105);
+            pictureBox1.Margin = new System.Windows.Forms.Padding(4);
+            pictureBox1.Name = "pictureBox1";
+            pictureBox1.Size = new System.Drawing.Size(147, 232);
+            pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            pictureBox1.TabIndex = 0;
+            pictureBox1.TabStop = false;
+            pictureBox1.DoubleClick += pictureBox1_DoubleClick;
+            // 
+            // lbZone
+            // 
+            lbZone.Location = new System.Drawing.Point(14, 745);
+            lbZone.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            lbZone.Name = "lbZone";
+            lbZone.Size = new System.Drawing.Size(114, 44);
+            lbZone.TabIndex = 1;
+            lbZone.Text = "zone";
+            lbZone.TextAlign = System.Drawing.ContentAlignment.TopCenter;
+            // 
+            // toolStrip1
+            // 
+            toolStrip1.ImageScalingSize = new System.Drawing.Size(24, 24);
+            toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { toolStripButton1, toolStripSeparator1, tsbMove, tsbMovePath, tsbNormalize, toolStripSeparator5, tsbSearchDouban, tsbDelete, tsbCopyDouban, toolStripSeparator2, tsbFindSimilar, tsbRating0, toolStripSeparator3, tsbRating8, toolStripSeparator4, tsbRating9 });
+            toolStrip1.Location = new System.Drawing.Point(0, 27);
+            toolStrip1.Name = "toolStrip1";
+            toolStrip1.Size = new System.Drawing.Size(1317, 31);
+            toolStrip1.TabIndex = 8;
+            toolStrip1.Text = "toolStrip1";
+            // 
+            // toolStripButton1
+            // 
+            toolStripButton1.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            toolStripButton1.Image = Properties.Resources.btbt24;
+            toolStripButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
+            toolStripButton1.Name = "toolStripButton1";
+            toolStripButton1.Size = new System.Drawing.Size(28, 28);
+            toolStripButton1.Text = "BtBTT下载";
+            toolStripButton1.Click += MenuItemBtBtDownload_Click;
+            // 
+            // toolStripSeparator1
+            // 
+            toolStripSeparator1.Name = "toolStripSeparator1";
+            toolStripSeparator1.Size = new System.Drawing.Size(6, 31);
+            // 
+            // tsbMove
+            // 
+            tsbMove.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            tsbMove.Image = Properties.Resources.Move_To_Folder24;
+            tsbMove.ImageTransparentColor = System.Drawing.Color.Magenta;
+            tsbMove.Name = "tsbMove";
+            tsbMove.Size = new System.Drawing.Size(28, 28);
+            tsbMove.Text = "移动";
+            // 
+            // tsbMovePath
+            // 
+            tsbMovePath.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            tsbMovePath.Image = Properties.Resources.Folder_upload24;
+            tsbMovePath.ImageTransparentColor = System.Drawing.Color.Magenta;
+            tsbMovePath.Name = "tsbMovePath";
+            tsbMovePath.Size = new System.Drawing.Size(28, 28);
+            tsbMovePath.Text = "移动路径";
+            // 
+            // tsbNormalize
+            // 
+            tsbNormalize.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            tsbNormalize.Image = Properties.Resources.Pencil_and_Ruler24;
+            tsbNormalize.ImageTransparentColor = System.Drawing.Color.Magenta;
+            tsbNormalize.Name = "tsbNormalize";
+            tsbNormalize.Size = new System.Drawing.Size(28, 28);
+            tsbNormalize.Text = "规范名称";
+            // 
+            // toolStripSeparator5
+            // 
+            toolStripSeparator5.Name = "toolStripSeparator5";
+            toolStripSeparator5.Size = new System.Drawing.Size(6, 31);
+            // 
+            // tsbSearchDouban
+            // 
+            tsbSearchDouban.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            tsbSearchDouban.Image = Properties.Resources.douban24;
+            tsbSearchDouban.ImageTransparentColor = System.Drawing.Color.Magenta;
+            tsbSearchDouban.Name = "tsbSearchDouban";
+            tsbSearchDouban.Size = new System.Drawing.Size(28, 28);
+            tsbSearchDouban.Text = "搜索豆瓣";
+            tsbSearchDouban.Click += tsbSearchDouBan_Click;
+            // 
+            // tsbDelete
+            // 
+            tsbDelete.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            tsbDelete.Image = Properties.Resources.Delete24;
+            tsbDelete.ImageTransparentColor = System.Drawing.Color.Magenta;
+            tsbDelete.Name = "tsbDelete";
+            tsbDelete.Size = new System.Drawing.Size(28, 28);
+            tsbDelete.Text = "删除";
+            // 
+            // tsbCopyDouban
+            // 
+            tsbCopyDouban.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            tsbCopyDouban.Image = Properties.Resources.Page_Copy24;
+            tsbCopyDouban.ImageTransparentColor = System.Drawing.Color.Magenta;
+            tsbCopyDouban.Name = "tsbCopyDouban";
+            tsbCopyDouban.Size = new System.Drawing.Size(28, 28);
+            tsbCopyDouban.Text = "拷贝信息";
+            tsbCopyDouban.ToolTipText = "设置豆瓣信息为勾选项";
+            // 
+            // toolStripSeparator2
+            // 
+            toolStripSeparator2.Name = "toolStripSeparator2";
+            toolStripSeparator2.Size = new System.Drawing.Size(6, 31);
+            // 
+            // tsbFindSimilar
+            // 
+            tsbFindSimilar.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            tsbFindSimilar.Image = Properties.Resources.Search24;
+            tsbFindSimilar.ImageTransparentColor = System.Drawing.Color.Magenta;
+            tsbFindSimilar.Name = "tsbFindSimilar";
+            tsbFindSimilar.Size = new System.Drawing.Size(28, 28);
+            tsbFindSimilar.Text = "搜索类似电影";
+            tsbFindSimilar.Click += tsbFindSimilar_Click;
+            // 
+            // tsbRating0
+            // 
+            tsbRating0.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            tsbRating0.Image = (System.Drawing.Image)resources.GetObject("tsbRating0.Image");
+            tsbRating0.ImageTransparentColor = System.Drawing.Color.Magenta;
+            tsbRating0.Name = "tsbRating0";
+            tsbRating0.Size = new System.Drawing.Size(65, 28);
+            tsbRating0.Text = "Rating=0";
+            // 
+            // toolStripSeparator3
+            // 
+            toolStripSeparator3.Name = "toolStripSeparator3";
+            toolStripSeparator3.Size = new System.Drawing.Size(6, 31);
+            // 
+            // tsbRating8
+            // 
+            tsbRating8.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            tsbRating8.Image = (System.Drawing.Image)resources.GetObject("tsbRating8.Image");
+            tsbRating8.ImageTransparentColor = System.Drawing.Color.Magenta;
+            tsbRating8.Name = "tsbRating8";
+            tsbRating8.Size = new System.Drawing.Size(65, 28);
+            tsbRating8.Text = "Rating>8";
+            // 
+            // toolStripSeparator4
+            // 
+            toolStripSeparator4.Name = "toolStripSeparator4";
+            toolStripSeparator4.Size = new System.Drawing.Size(6, 31);
+            // 
+            // tsbRating9
+            // 
+            tsbRating9.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            tsbRating9.Image = (System.Drawing.Image)resources.GetObject("tsbRating9.Image");
+            tsbRating9.ImageTransparentColor = System.Drawing.Color.Magenta;
+            tsbRating9.Name = "tsbRating9";
+            tsbRating9.Size = new System.Drawing.Size(65, 28);
+            tsbRating9.Text = "Rating>9";
+            // 
+            // tbSearchText
+            // 
+            tbSearchText.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+            tbSearchText.Font = new System.Drawing.Font("Microsoft YaHei", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            tbSearchText.FormattingEnabled = true;
+            tbSearchText.Items.AddRange(new object[] { "rating:>9", "rating:>8", "rating:0" });
+            tbSearchText.Location = new System.Drawing.Point(35, 68);
+            tbSearchText.Margin = new System.Windows.Forms.Padding(4);
+            tbSearchText.Name = "tbSearchText";
+            tbSearchText.Size = new System.Drawing.Size(1282, 25);
+            tbSearchText.TabIndex = 9;
+            tbSearchText.TextChanged += tbSearchText_TextChanged;
+            // 
+            // btClearSearch
+            // 
+            btClearSearch.Location = new System.Drawing.Point(5, 67);
+            btClearSearch.Margin = new System.Windows.Forms.Padding(4);
+            btClearSearch.Name = "btClearSearch";
+            btClearSearch.Size = new System.Drawing.Size(26, 31);
+            btClearSearch.TabIndex = 10;
+            btClearSearch.Text = "X";
+            btClearSearch.UseVisualStyleBackColor = true;
+            btClearSearch.Click += btClearSearch_Click;
+            // 
+            // lbYear
+            // 
+            lbYear.Location = new System.Drawing.Point(14, 394);
+            lbYear.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            lbYear.Name = "lbYear";
+            lbYear.Size = new System.Drawing.Size(117, 33);
+            lbYear.TabIndex = 6;
+            lbYear.Text = "Year";
+            lbYear.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // lvResults
+            // 
+            lvResults.AllColumns.Add(olvColName);
+            lvResults.AllColumns.Add(olvColRating);
+            lvResults.AllColumns.Add(olvColYear);
+            lvResults.AllColumns.Add(olvColAddDate);
+            lvResults.AllColumns.Add(olvColPath);
+            lvResults.AllColumns.Add(olvColSeelater);
+            lvResults.AllColumns.Add(olvColNoWant);
+            lvResults.AllColumns.Add(olvColSeen);
+            lvResults.AllColumns.Add(olvColSeeDate);
+            lvResults.AllColumns.Add(olvColSeeComment);
+            lvResults.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+            lvResults.CellEditUseWholeCell = false;
+            lvResults.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] { olvColName, olvColRating, olvColYear, olvColAddDate, olvColPath, olvColSeelater, olvColNoWant, olvColSeen, olvColSeeDate, olvColSeeComment });
+            lvResults.Location = new System.Drawing.Point(154, 105);
+            lvResults.Margin = new System.Windows.Forms.Padding(4);
+            lvResults.Name = "lvResults";
+            lvResults.ShowGroups = false;
+            lvResults.Size = new System.Drawing.Size(1162, 668);
+            lvResults.TabIndex = 11;
+            lvResults.UseCompatibleStateImageBehavior = false;
+            lvResults.View = System.Windows.Forms.View.Details;
+            lvResults.VirtualMode = true;
+            // 
+            // olvColName
+            // 
+            olvColName.AspectName = "Name";
+            olvColName.Text = "名称";
+            olvColName.Width = 400;
+            // 
+            // olvColRating
+            // 
+            olvColRating.AspectName = "Rating";
+            olvColRating.Text = "评分";
+            // 
+            // olvColYear
+            // 
+            olvColYear.AspectName = "Year";
+            olvColYear.Text = "年代";
+            // 
+            // olvColAddDate
+            // 
+            olvColAddDate.AspectName = "CreationTime";
+            olvColAddDate.Text = "添加日期";
+            olvColAddDate.Width = 110;
+            // 
+            // olvColPath
+            // 
+            olvColPath.AspectName = "Path";
+            olvColPath.Text = "路径";
+            olvColPath.Width = 100;
+            // 
+            // olvColSeelater
+            // 
+            olvColSeelater.AspectName = "SeeLater";
+            olvColSeelater.Text = "稍后看";
+            // 
+            // olvColNoWant
+            // 
+            olvColNoWant.AspectName = "SeeNoWant";
+            olvColNoWant.Text = "不想看";
+            // 
+            // olvColSeen
+            // 
+            olvColSeen.AspectName = "SeeFlag";
+            olvColSeen.Text = "看过";
+            // 
+            // olvColSeeDate
+            // 
+            olvColSeeDate.AspectName = "SeeDate";
+            olvColSeeDate.Text = "观看日期";
+            olvColSeeDate.Width = 100;
+            // 
+            // olvColSeeComment
+            // 
+            olvColSeeComment.AspectName = "SeeComment";
+            olvColSeeComment.Text = "观看评论";
+            olvColSeeComment.Width = 120;
             // 
             // FormMain
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1129, 573);
-            this.Controls.Add(this.lvResults);
-            this.Controls.Add(this.btClearSearch);
-            this.Controls.Add(this.tbSearchText);
-            this.Controls.Add(this.toolStrip1);
-            this.Controls.Add(this.lbYear);
-            this.Controls.Add(this.lbRating);
-            this.Controls.Add(this.lbOtherName);
-            this.Controls.Add(this.lbKeyName);
-            this.Controls.Add(this.lbZone);
-            this.Controls.Add(this.lbGenres);
-            this.Controls.Add(this.pictureBox1);
-            this.Controls.Add(this.statusStrip1);
-            this.Controls.Add(this.menuStrip1);
-            this.MainMenuStrip = this.menuStrip1;
-            this.Name = "FormMain";
-            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "Movie torrents";
-            this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
-            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FormMain_FormClosing);
-            this.Load += new System.EventHandler(this.FormMain_Load);
-            this.Resize += new System.EventHandler(this.FormMain_Resize);
-            this.menuStrip1.ResumeLayout(false);
-            this.menuStrip1.PerformLayout();
-            this.statusStrip1.ResumeLayout(false);
-            this.statusStrip1.PerformLayout();
-            this.lvContextMenu.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
-            this.toolStrip1.ResumeLayout(false);
-            this.toolStrip1.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.lvResults)).EndInit();
-            this.ResumeLayout(false);
-            this.PerformLayout();
-
+            AutoScaleDimensions = new System.Drawing.SizeF(7F, 17F);
+            AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            ClientSize = new System.Drawing.Size(1317, 812);
+            Controls.Add(lvResults);
+            Controls.Add(btClearSearch);
+            Controls.Add(tbSearchText);
+            Controls.Add(toolStrip1);
+            Controls.Add(lbYear);
+            Controls.Add(lbRating);
+            Controls.Add(lbOtherName);
+            Controls.Add(lbKeyName);
+            Controls.Add(lbZone);
+            Controls.Add(lbGenres);
+            Controls.Add(pictureBox1);
+            Controls.Add(statusStrip1);
+            Controls.Add(menuStrip1);
+            MainMenuStrip = menuStrip1;
+            Margin = new System.Windows.Forms.Padding(4);
+            Name = "FormMain";
+            StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
+            Text = "Movie torrents";
+            WindowState = System.Windows.Forms.FormWindowState.Maximized;
+            FormClosing += FormMain_FormClosing;
+            Load += FormMain_Load;
+            Resize += FormMain_Resize;
+            menuStrip1.ResumeLayout(false);
+            menuStrip1.PerformLayout();
+            statusStrip1.ResumeLayout(false);
+            statusStrip1.PerformLayout();
+            lvContextMenu.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
+            toolStrip1.ResumeLayout(false);
+            toolStrip1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)lvResults).EndInit();
+            ResumeLayout(false);
+            PerformLayout();
         }
 
         #endregion

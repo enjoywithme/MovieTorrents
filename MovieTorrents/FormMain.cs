@@ -65,7 +65,7 @@ namespace MovieTorrents
             if (!string.IsNullOrEmpty(TorrentFile.TorrentRootPath) && !Directory.Exists(TorrentFile.TorrentRootPath))
             {
                 //MessageBox.Show(string.Format(Resource.TextRootFolderNotExists, TorrentFile.TorrentRootPath), Resource.TextError, MessageBoxButtons.OK, MessageBoxIcon.Error);
-                DisplayInfo(string.Format(Resource.TextRootFolderNotExists, TorrentFile.TorrentRootPath),true);
+                DisplayInfo(string.Format(Resource.TextRootFolderNotExists, TorrentFile.TorrentRootPath), true);
             }
 
             tsCurrentDir.Text = string.Format(Resource.TxtSeedRottDir, TorrentFile.TorrentRootPath);
@@ -206,7 +206,7 @@ namespace MovieTorrents
         {
             var totalFiles = torrentFiles.Count();
             var totalItems = torrentFiles.Where(x => !string.IsNullOrEmpty(x.DoubanId)).GroupBy(x => x.DoubanId).Count();
-            lvResults.SetObjects(torrentFiles,true);
+            lvResults.SetObjects(torrentFiles, true);
             lvResults.SelectedIndices.Clear();
             tsSummary.Text = string.Format(Resource.TextLoadNFiles, totalFiles, totalItems);
         }
@@ -241,7 +241,7 @@ namespace MovieTorrents
             //在鼠标点击和 item selection changed 时间之间有明显的延迟
             RefreshSelected();
         }
-        private void RefreshSelected(OLVListItem listItem=null)
+        private void RefreshSelected(OLVListItem listItem = null)
         {
             Debug.WriteLine("RefreshSelected");
 
@@ -989,7 +989,7 @@ namespace MovieTorrents
             if (ret == DialogResult.Cancel) return;
             var deleteFile = ret == DialogResult.Yes;
 
-            var msgs =new StringBuilder();
+            var msgs = new StringBuilder();
             var checkedObjects = lvResults.CheckedObjects;
             foreach (var item in checkedObjects)
             {
@@ -1002,7 +1002,7 @@ namespace MovieTorrents
                 lvResults.RemoveObject(torrentFile);
             }
 
-            if (msgs.Length>0)
+            if (msgs.Length > 0)
                 MessageBox.Show(msgs.ToString(), Resource.TextError, MessageBoxButtons.YesNo, MessageBoxIcon.Error);
 
 
@@ -1150,7 +1150,7 @@ namespace MovieTorrents
 
             var checkedId = ((TorrentFile)lvResults.CheckedObjects[0]).Fid;
             var selectedItems = lvResults.SelectedObjects.Cast<TorrentFile>();
-            
+
             var selectedIds = selectedItems.Select(x => x.Fid).ToList();
             if (selectedIds.Count - (selectedIds.Contains(checkedId) ? 1 : 0) <= 0)
             {
