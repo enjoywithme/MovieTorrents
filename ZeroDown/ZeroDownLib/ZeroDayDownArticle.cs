@@ -102,7 +102,7 @@ namespace ZeroDownLib
             //抽取版本号
             var match = Regex.Match(Title, "\\sv?(\\d+.[^\\s]*)\\b");
             Version = match.Success ? match.Groups[1].Value : "";
-            Debug.WriteLine($"Version={Version}");
+            //Debug.WriteLine($"Version={Version}");
 
             //名称
             if (string.IsNullOrEmpty(Version))
@@ -249,6 +249,8 @@ namespace ZeroDownLib
         {
             FindWizLocation();
             var targetPath = FindWizLocation();
+            if (string.IsNullOrEmpty(targetPath)) targetPath = FindMyPageLocation();
+
             if (string.IsNullOrEmpty(targetPath))
                 throw new Exception("找不到文章保存路径");
 
@@ -406,6 +408,13 @@ namespace ZeroDownLib
         }
 
 
+        private string FindMyPageLocation()
+        {
+            var pocos = MyPageDb.Instance.FindSimilarTitle(Name);
+            System.Diagnostics.Debug.WriteLine($"Name={pocos.Count}");
+            return pocos.Count > 0 ? Path.GetDirectoryName(pocos[0].FilePath) : WizDefaultFolder;
+        }
+
         /// <summary>
         /// 搜索
         /// </summary>
@@ -529,6 +538,16 @@ namespace ZeroDownLib
             var yes = similarDocuments.count > 0;
             wizDb.Close();
             return yes;
+        }
+
+
+        //检查MyPage是否有类似标题的文章
+        public bool SimilarInMyPageDb()
+        {
+            var pocos = MyPageDb.Instance.FindSimilarTitle(Name);
+            System.Diagnostics.Debug.WriteLine($"Name={pocos.Count}");
+            return pocos.Count > 0;
+
         }
     }
 }

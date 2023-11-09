@@ -114,7 +114,7 @@ namespace ZeroDownBrowser
                                 Log($"[SAVED] {article.Title}");
 
                             }
-                            else if (article.SimilarInWizDb())
+                            else if (article.SimilarInWizDb() || article.SimilarInMyPageDb())
                             {
                                 Log($"{article.Title}");
                                 Articles.Add(article);
