@@ -222,7 +222,7 @@ namespace ZeroDownBrowser
 $(el).css({'background-color':'green','color':'blue'});});";
                             frame.ExecuteJavaScriptAsync(script);
                         }
-                        else if (article.SimilarInMyPageDb()||article.SimilarInWizDb())
+                        else if (article.SimilarInMyPageDb())
                         {
                             var script = @"$('a').each(function(index,el) 
 {if($(el).html()==('" + article.Title + @"')) 

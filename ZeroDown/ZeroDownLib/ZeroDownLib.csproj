@@ -48,9 +48,4 @@
     <PackageReference Include="System.Data.DataSetExtensions" Version="4.5.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
   </ItemGroup>
-  <ItemGroup>
-    <Reference Include="WizKMCoreLib">
-      <HintPath>Lib\WizKMCoreLib.dll</HintPath>
-    </Reference>
-  </ItemGroup>
 </Project>

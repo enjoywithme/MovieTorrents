@@ -5,6 +5,7 @@ using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Net;
+using System.Reflection.Metadata.Ecma335;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -12,6 +13,7 @@ using AngleSharp.Dom;
 using AngleSharp.Html.Parser;
 using BencodeNET.Parsing;
 using BencodeNET.Torrents;
+using Microsoft.VisualBasic.FileIO;
 using mySharedLib;
 using Timer = System.Threading.Timer;
 
@@ -74,7 +76,7 @@ namespace MovieTorrents.Common
             AutoDownloadLastTid = Utility.GetSetting(nameof(AutoDownloadLastTid), 0);
             AutoDownloadLastPostDateTime = Utility.GetSetting<DateTime>(nameof(AutoDownloadLastPostDateTime));
 #if DEBUG
-            DownLoadRootPath = "x:\\temp";
+            DownLoadRootPath = "f:\\temp";
 #endif
 
             _btItemPrefix = null;
@@ -450,9 +452,6 @@ namespace MovieTorrents.Common
         //尝试重命名BBQDDQ的文件
         public static string RenameSpecialFiles()
         {
-#if DEBUG
-            DownLoadRootPath = "x:\\temp\\";
-#endif
             var files = Directory.GetFiles(DownLoadRootPath)
                 .Where(s => Path.GetExtension(s).ToLowerInvariant() == ".torrent");
             var sb = new StringBuilder();
@@ -522,6 +521,22 @@ namespace MovieTorrents.Common
 
                 foreach (var file in files)
                 {
+                    //不考虑第XX集的文件
+                    if (Regex.IsMatch(file, "第[\\s]*[0-9]*[\\s]*集"))
+                    {
+                        msg += $"\r\n{Path.GetFileName(file)} 非全季！";
+                        try
+                        {
+                            FileSystem.DeleteFile(file, UIOption.OnlyErrorDialogs, RecycleOption.SendToRecycleBin);
+                        }
+                        catch (Exception e)
+                        {
+                            msg += $"\r\n删除失败：{e.Message}";
+                        }
+                        continue;
+                    }
+
+
                     var destFileName = Path.GetFileName(file).NormalizeTorrentFileName();
                     var year = destFileName.ExtractYear();
                     if (year != 0)
@@ -534,7 +549,7 @@ namespace MovieTorrents.Common
                         var torrentFile = TorrentFile.FindByName(Path.GetFileNameWithoutExtension(file)) ?? TorrentFile.FindByName(Path.GetFileNameWithoutExtension(destFileName));
                         if (torrentFile == null)
                         {
-                            msg += $"\r\n文件 {destFileName} 没有年份！";
+                            msg += $"\r\n文件 {Path.GetFileName(file)} 没有年份！";
                             continue;
                         }
                         var destPath = Path.GetDirectoryName(torrentFile.FullName);
@@ -549,7 +564,7 @@ namespace MovieTorrents.Common
                     {
                         if (File.Exists(destFileName))
                         {
-                            msg += $"\r\n文件 {destFileName} 已经存在！";
+                            msg += $"\r\n文件 {Path.GetFileName(file)} 已经存在！";
                             File.Copy(file,destFileName,true);
                             File.Delete(file);
                         }
@@ -572,7 +587,7 @@ namespace MovieTorrents.Common
                 msg += $"\r\n{exception.Message}";
             }
 
-            msg+=$"\r\n成功转移{i}个文件。";
+            msg+=$"\r\n\r\n成功转移{i}个文件。";
             return msg;
         }
 

@@ -205,7 +205,8 @@ namespace mySharedLib
         public static int ExtractYear(this string text)
         {
             var match = Regex.Match(text, "(\\d{4})");
-            return !match.Success ? 0 : (from Group matchGroup in match.Groups select Int32.Parse(matchGroup.Value)).FirstOrDefault(d => d != 1080 && d != 2160);
+            var year =  !match.Success ? 0 : (from Group matchGroup in match.Groups select int.Parse(matchGroup.Value)).FirstOrDefault(d => d != 1080 && d != 2160);
+            return year is < 1900 or >= 3000 ? 0 : year;
         }
 
         //Convert a Unicode string to an escaped ASCII string

@@ -1,4 +1,9 @@
-﻿using System;
+﻿
+//是否使用为知笔记
+//#define ENABLE_WIZ
+
+
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -7,11 +12,14 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using mySharedLib;
+#if ENABLE_WIZ
 using WizKMCoreLib;
+#endif
 using System.Net;
 using MyPageLib;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+
 
 namespace ZeroDownLib
 {
@@ -160,12 +168,17 @@ namespace ZeroDownLib
 
         public void Save()
         {
+#if ENABLE_WIZ
             if(SaveFormat == "PIZ")
                 SaveAsPiz();
             else
                 SaveAsWiz();
+#else
+            SaveAsPiz();
+#endif
         }
 
+#if ENABLE_WIZ
         //保存为为知笔记文档
         //https://www.wiz.cn/zh-cn/m/api-summary.html
         public void SaveAsWiz()
@@ -245,11 +258,134 @@ namespace ZeroDownLib
             wizDb.Close();
         }
 
+                /// <summary>
+        /// 搜索
+        /// </summary>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
+        private string FindWizLocation()
+        {
+            var wizDocPath = string.Empty;
+//#if DEBUG
+
+//            WizDbPath = "C:\\Users\\duanxin\\Documents\\My Knowledge\\Data\\xxinduan@hotmail.com\\index.db";
+//#endif
+            if (string.IsNullOrEmpty(WizDbPath))
+                throw new Exception("为知笔记数据库路径为空！");
+            if (string.IsNullOrEmpty(WizDefaultFolder))
+                throw new Exception("必须指定为知笔记默认保存文件夹！");
+
+            var wizDb = new WizDatabaseClass();
+            wizDb.Open(WizDbPath);
+
+
+            WizDocument document = null;
+            //查找相同URL的文档
+            if (!string.IsNullOrEmpty(Url))
+            {
+                var documents = (WizDocumentCollection)wizDb.DocumentsFromURL(Url);
+                if (documents.count > 0)
+                {
+                    document = (WizDocument)documents[0];
+                    wizDocPath = document.Location;
+                }
+            }
+
+            //创建新文档
+            //WizFolderLocation = System.Configuration.ConfigurationManager.AppSettings["DefaultFolder"];
+            if (document == null)
+            {
+
+                //查找相似文档的目录
+                var splits = Name.Split();
+                var firstWord = true;
+                var sb = new StringBuilder();
+                foreach (var split in splits)
+                {
+                    if (split.Length <= 2) continue;
+                    if (firstWord)
+                    {
+                        sb.Append($"DOCUMENT_TITLE like '%{split}%'");
+                        firstWord = false;
+                        continue;
+                    }
+                    sb.Append($"AND DOCUMENT_TITLE like '%{split}%'");
+                }
+
+                var similarDocuments = (WizDocumentCollection)wizDb.DocumentsFromSQL(sb.ToString());
+                if (similarDocuments.count > 0)
+                {
+                    var similarDocument = (WizDocument)similarDocuments[0];
+                    wizDocPath = similarDocument.Location;
+                }
+
+                //Folder 对象 https://www.wiz.cn/m/api/descriptions/IWizFolder.html
+                var folder = (WizFolder)wizDb.GetFolderByLocation(WizFolderLocation, false);
+
+            }
+            wizDb.Close();
+            if (string.IsNullOrEmpty(wizDocPath)) return string.Empty;
+            if(wizDocPath.StartsWith("/") || wizDocPath.StartsWith("\\"))
+                wizDocPath = wizDocPath.Substring(1);
+
+            wizDocPath = wizDocPath.Replace("/", "\\");
+            var rootPath = Path.GetDirectoryName(WizDbPath);
+
+            return Path.Combine(rootPath,wizDocPath);
+        }
+
+
+        //检查wiz笔记数据库是否有同名同url的文章
+        public bool ExistsInWizDb()
+        {
+            var wizDb = new WizDatabaseClass();
+            wizDb.Open(WizDbPath);
+            var where = $"DOCUMENT_TITLE='{Title}' AND DOCUMENT_URL='{Url}'";
+            var documents = (WizDocumentCollection)wizDb.DocumentsFromSQL(where);
+            var yes = documents.count > 0;
+            wizDb.Close();
+            return yes;
+        }
+
+                //检查wiz笔记数据库是否有类似标题的文章
+        public bool SimilarInWizDb()
+        {
+            var splits = Name.Split();
+            var firstWord = true;
+            var sb = new StringBuilder();
+            foreach (var split in splits)
+            {
+                if (split.Length <= 2 || SimilarSkipWords.Any(x=>split.ToLower()==x)) continue;
+                if (firstWord)
+                {
+                    sb.Append($"DOCUMENT_TITLE like '%{split}%'");
+                    firstWord = false;
+                    continue;
+                }
+                sb.Append($"AND DOCUMENT_TITLE like '%{split}%'");
+            }
+
+            var wizDb = new WizDatabaseClass();
+            wizDb.Open(WizDbPath);
+
+            var similarDocuments = (WizDocumentCollection)wizDb.DocumentsFromSQL(sb.ToString());
+            var yes = similarDocuments.count > 0;
+            wizDb.Close();
+            return yes;
+        }
+
+
+#endif
+
         public void SaveAsPiz()
         {
+#if ENABLE_WIZ
             FindWizLocation();
             var targetPath = FindWizLocation();
             if (string.IsNullOrEmpty(targetPath)) targetPath = FindMyPageLocation();
+#else
+            var targetPath = FindMyPageLocation();
+#endif
 
             if (string.IsNullOrEmpty(targetPath))
                 throw new Exception("找不到文章保存路径");
@@ -411,134 +547,21 @@ namespace ZeroDownLib
         private string FindMyPageLocation()
         {
             var pocos = MyPageDb.Instance.FindSimilarTitle(Name);
-            System.Diagnostics.Debug.WriteLine($"Name={pocos.Count}");
+            Debug.WriteLine($"Name={pocos.Count}");
             return pocos.Count > 0 ? Path.GetDirectoryName(pocos[0].FilePath) : WizDefaultFolder;
         }
 
-        /// <summary>
-        /// 搜索
-        /// </summary>
-        /// <returns></returns>
-        /// <exception cref="Exception"></exception>
-        private string FindWizLocation()
-        {
-            var wizDocPath = string.Empty;
-//#if DEBUG
-
-//            WizDbPath = "C:\\Users\\duanxin\\Documents\\My Knowledge\\Data\\xxinduan@hotmail.com\\index.db";
-//#endif
-            if (string.IsNullOrEmpty(WizDbPath))
-                throw new Exception("为知笔记数据库路径为空！");
-            if (string.IsNullOrEmpty(WizDefaultFolder))
-                throw new Exception("必须指定为知笔记默认保存文件夹！");
-
-            var wizDb = new WizDatabaseClass();
-            wizDb.Open(WizDbPath);
 
 
-            WizDocument document = null;
-            //查找相同URL的文档
-            if (!string.IsNullOrEmpty(Url))
-            {
-                var documents = (WizDocumentCollection)wizDb.DocumentsFromURL(Url);
-                if (documents.count > 0)
-                {
-                    document = (WizDocument)documents[0];
-                    wizDocPath = document.Location;
-                }
-            }
-
-            //创建新文档
-            //WizFolderLocation = System.Configuration.ConfigurationManager.AppSettings["DefaultFolder"];
-            if (document == null)
-            {
-
-                //查找相似文档的目录
-                var splits = Name.Split();
-                var firstWord = true;
-                var sb = new StringBuilder();
-                foreach (var split in splits)
-                {
-                    if (split.Length <= 2) continue;
-                    if (firstWord)
-                    {
-                        sb.Append($"DOCUMENT_TITLE like '%{split}%'");
-                        firstWord = false;
-                        continue;
-                    }
-                    sb.Append($"AND DOCUMENT_TITLE like '%{split}%'");
-                }
-
-                var similarDocuments = (WizDocumentCollection)wizDb.DocumentsFromSQL(sb.ToString());
-                if (similarDocuments.count > 0)
-                {
-                    var similarDocument = (WizDocument)similarDocuments[0];
-                    wizDocPath = similarDocument.Location;
-                }
-
-                //Folder 对象 https://www.wiz.cn/m/api/descriptions/IWizFolder.html
-                var folder = (WizFolder)wizDb.GetFolderByLocation(WizFolderLocation, false);
-
-            }
-            wizDb.Close();
-            if (string.IsNullOrEmpty(wizDocPath)) return string.Empty;
-            if(wizDocPath.StartsWith("/") || wizDocPath.StartsWith("\\"))
-                wizDocPath = wizDocPath.Substring(1);
-
-            wizDocPath = wizDocPath.Replace("/", "\\");
-            var rootPath = Path.GetDirectoryName(WizDbPath);
-
-            return Path.Combine(rootPath,wizDocPath);
-        }
-
-
-        //检查wiz笔记数据库是否有同名同url的文章
-        public bool ExistsInWizDb()
-        {
-            var wizDb = new WizDatabaseClass();
-            wizDb.Open(WizDbPath);
-            var where = $"DOCUMENT_TITLE='{Title}' AND DOCUMENT_URL='{Url}'";
-            var documents = (WizDocumentCollection)wizDb.DocumentsFromSQL(where);
-            var yes = documents.count > 0;
-            wizDb.Close();
-            return yes;
-        }
-
-        public bool ExistsInMyPageDb()
+        public bool ExistsInMyPageDb(bool checkTitle=true)
         {
             var pageDb = new MyPageDb();
             var doc = pageDb.FindOriginUrl(Url);
-            
-            return doc!=null;
+            if (doc == null) return false;
+            return !checkTitle || Title.Equals(doc.Title, StringComparison.InvariantCultureIgnoreCase);
         }
 
 
-        //检查wiz笔记数据库是否有类似标题的文章
-        public bool SimilarInWizDb()
-        {
-            var splits = Name.Split();
-            var firstWord = true;
-            var sb = new StringBuilder();
-            foreach (var split in splits)
-            {
-                if (split.Length <= 2 || SimilarSkipWords.Any(x=>split.ToLower()==x)) continue;
-                if (firstWord)
-                {
-                    sb.Append($"DOCUMENT_TITLE like '%{split}%'");
-                    firstWord = false;
-                    continue;
-                }
-                sb.Append($"AND DOCUMENT_TITLE like '%{split}%'");
-            }
-
-            var wizDb = new WizDatabaseClass();
-            wizDb.Open(WizDbPath);
-
-            var similarDocuments = (WizDocumentCollection)wizDb.DocumentsFromSQL(sb.ToString());
-            var yes = similarDocuments.count > 0;
-            wizDb.Close();
-            return yes;
-        }
 
 
         //检查MyPage是否有类似标题的文章
