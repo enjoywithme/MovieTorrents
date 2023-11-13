@@ -15,7 +15,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\MyPages\MyPageLib\MyPageLib.csproj" />
-    <ProjectReference Include="..\..\mySharedLib\mySharedLib.csproj" />
   </ItemGroup>
 
   <ItemGroup>

@@ -277,6 +277,15 @@ namespace mySharedLib
         {
             return modifiedDateTime.ToString("yyyy-MM-dd HH:mm:ss");
         }
+
+        public static string ClearPathPrefix(this string path)
+        {
+            while (path.StartsWith("\\") || path.StartsWith("/"))
+            {
+                path = path[1..];
+            }
+            return path;    
+        }
     }
 
     

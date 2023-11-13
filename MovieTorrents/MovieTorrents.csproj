@@ -50,9 +50,6 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\mySharedLib\mySharedLib.csproj" />
-  </ItemGroup>
-  <ItemGroup>
     <PackageReference Include="AngleSharp">
       <Version>0.16.1</Version>
     </PackageReference>
