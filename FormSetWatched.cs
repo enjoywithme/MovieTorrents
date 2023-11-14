@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Windows.Forms;
+using MovieTorrents.Common;
 
 namespace MovieTorrents
 {
@@ -14,20 +15,21 @@ namespace MovieTorrents
 
         private void FormSetWatched_Load(object sender, EventArgs e)
         {
-            dtPicker.Value = _torrentFile.SeeDate;
-            tbComment.Text = _torrentFile.seecomment;
+            dtPicker.Value = _torrentFile.SeeDateDate;
+            tbComment.Text = _torrentFile.SeeComment;
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
-            if (!_torrentFile.SetWatched(FormMain.DbConnectionString, dtPicker.Value, tbComment.Text,out var msg))
+            if (!_torrentFile.SetWatched(dtPicker.Value, tbComment.Text,out var msg))
             {
-                MessageBox.Show(msg, Properties.Resources.TextError, MessageBoxButtons.YesNo, MessageBoxIcon.Error);
+                MessageBox.Show(msg, Resource.TextError, MessageBoxButtons.YesNo, MessageBoxIcon.Error);
                 return;
             }
 
-            _torrentFile.seelater = 0;
-            _torrentFile.seeflag = 1;
+            _torrentFile.SeeLater = 0;
+            _torrentFile.SeeFlag = 1;
+            _torrentFile.SeeComment = tbComment.Text;
 
             DialogResult = DialogResult.OK;
         }

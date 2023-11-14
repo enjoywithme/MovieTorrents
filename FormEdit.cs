@@ -1,13 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
+using MovieTorrents.Common;
 
 namespace MovieTorrents
 {
@@ -22,15 +16,20 @@ namespace MovieTorrents
 
         private void FormRenameTorrent_Load(object sender, EventArgs e)
         {
-            tbOldName.Text = tbNewName.Text = _torrentFile.name;
-            tbYear.Text = _torrentFile.year;
-            tbZone.Text = _torrentFile.zone;
-            tbKeyName.Text = _torrentFile.keyname;
-            tbOtherName.Text = _torrentFile.otherName;
-            tbGenres.Text = _torrentFile.genres;
-            cbWatched.Checked = _torrentFile.seeflag == 1;
-            dtPicker.Value = _torrentFile.SeeDate;
-            tbComment.Text = _torrentFile.seecomment;
+            tbOldName.Text = tbNewName.Text = _torrentFile.Name;
+            tbYear.Text = _torrentFile.Year;
+            tbZone.Text = _torrentFile.Zone;
+            tbDoubanId.Text = _torrentFile.DoubanId;
+            tbCasts.Text = _torrentFile.Casts;
+            tbDirectors.Text = _torrentFile.Directors;
+            tbRating.Text = _torrentFile.Rating.ToString("F");
+            tbposterpath.Text = _torrentFile.PosterPath;
+            tbKeyName.Text = _torrentFile.KeyName;
+            tbOtherName.Text = _torrentFile.OtherName;
+            tbGenres.Text = _torrentFile.Genres;
+            cbWatched.Checked = _torrentFile.SeeFlag == 1;
+            dtPicker.Value = _torrentFile.SeeDateDate;
+            tbComment.Text = _torrentFile.SeeComment;
 
         }
 
@@ -44,9 +43,16 @@ namespace MovieTorrents
                 return;
             }
 
-            if (!_torrentFile.EditRecord(FormMain.DbConnectionString, newName,tbYear.Text,tbZone.Text,
+            if (!double.TryParse(tbRating.Text, out var newRating))
+            {
+                MessageBox.Show("无效的评分", "错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            if (!_torrentFile.EditRecord(newName,tbYear.Text,tbZone.Text,
                 tbKeyName.Text,tbOtherName.Text,tbGenres.Text,
                 cbWatched.Checked,dtPicker.Value,tbComment.Text,
+                tbDoubanId.Text,newRating,tbposterpath.Text,tbCasts.Text,tbDirectors.Text,
                 out var msg))
             {
                 MessageBox.Show(msg, "错误", MessageBoxButtons.OK, MessageBoxIcon.Warning);

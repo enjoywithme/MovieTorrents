@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Forms;
+using mySharedLib;
 
 namespace MovieTorrents
 {
@@ -15,16 +12,21 @@ namespace MovieTorrents
         [STAThread]
         static void Main()
         {
-
-            if (!SingleInstance.Start())
+            if (!SingleInstance.InitInstance(out var message))
             {
-                SingleInstance.ShowFirstInstance();
+                ShowError(message);
+                return;
+            }
+
+            if (!SingleInstance.Instance.Start())
+            {
+                SingleInstance.Instance.ShowFirstInstance();
                 return;
             }
 
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-
+           
             try
             {
                 Application.Run(new FormMain());
@@ -32,12 +34,18 @@ namespace MovieTorrents
             }
             catch (Exception e)
             {
-                MessageBox.Show(e.Message, "错误", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                ShowError(message);
             }
 
 
-            SingleInstance.Stop();
+            SingleInstance.Instance.Stop();
 
         }
+
+        public static void ShowError(string message)
+        {
+            MessageBox.Show(message, Resource.TextError, MessageBoxButtons.OK, MessageBoxIcon.Error);
+        }
+
     }
 }

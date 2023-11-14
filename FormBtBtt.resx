@@ -117,29 +117,29 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="btbt24" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\btbt24.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="Folder_upload24" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Folder-upload24.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="Move_To_Folder24" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Move-To-Folder24.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="Page_Copy24" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Page-Copy24.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="Pencil_and_Ruler24" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Pencil-and-Ruler24.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="Delete24" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Delete24.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="douban24" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\douban24.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="Search24" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Search24.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  <data name="$this.Icon" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        AAABAAEAEBAAAAEAIABoBAAAFgAAACgAAAAQAAAAIAAAAAEAIAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAA
+        AAD/////////////////////////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////////////////////////////
+        ////////////////////////TFFX/z9DS/8/Q0v/P0NL/z9DS/8/Q0v/P0NL/0BETP//////dHZ6/42Q
+        k///////////////////////EhYg/9SoB//Yqwb/2KsG/9irBv/Yqwb/2KsG/9irBv/Spgj/FRkj/wup
+        jv8WPT7/UFNa/////////////////yorJv/uuwD/7rsA/+67AP/uuwD/7rsA/+67AP/uuwD/7rsA/xIX
+        If8Dzqr/As+q/xQYIf////////////////8qKyb/7rsA/+m3Av8LESL/CxIi/woRIf8KESH/z6MK/+67
+        AP8SFyH/A86q/wLPqv8VGCL/////////////////Kism/+67AP+hhBT/vJcO//K+AP/yvgD/8r4A/+67
+        AP/uuwD/Ehch/wPOqv8Cz6r/FBgi/////////////////yorJv/uuwD/oYQU/+y5Af/uuwD/7rsA/+67
+        AP/uuwD/7rsA/xUYIv8Dzqr/As+q/xUYIv////////////////8qKyb/7rsA/6GEFf8VGSL/7rsA/+67
+        AP8NEiL/FBki/xQYIv8UEx7/A86q/wLSrf8UGCL/FBkh/xQYIv/l5Of/Kism/+67AP+hhBX/5rQD/+67
+        AP/uuwD/FRIe/wLOqv8Czqr/A86q/wPOqv8Dzqr/As6q/wLOqv8B0av/FRci/wsRIf/uuwD/MjAk/+Kx
+        Bf/uuwD/77sA/xUTH/8Dzqr/A86q/wPOqv8Dzqr/A86q/wPOqv8Dzqr/As+r/xUXIv//////QEVM/97g
+        4P/X2dn/LTI5/0FGTP//////OT1F/y0yOf8tMjn/LTI5/y0yOf8tMjn/LTI5/0JHTf//////////////
+        ////////////////////////////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////////////////////////////
+        ////////AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+        AAAAAAAAAAAAAA==
+</value>
   </data>
 </root>

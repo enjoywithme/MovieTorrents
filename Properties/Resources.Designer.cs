@@ -19,7 +19,7 @@ namespace MovieTorrents.Properties {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class Resources {
@@ -63,9 +63,9 @@ namespace MovieTorrents.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap dou {
+        internal static System.Drawing.Bitmap btbt24 {
             get {
-                object obj = ResourceManager.GetObject("dou", resourceCulture);
+                object obj = ResourceManager.GetObject("btbt24", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -73,9 +73,9 @@ namespace MovieTorrents.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap Eye32 {
+        internal static System.Drawing.Bitmap Delete24 {
             get {
-                object obj = ResourceManager.GetObject("Eye32", resourceCulture);
+                object obj = ResourceManager.GetObject("Delete24", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -83,9 +83,9 @@ namespace MovieTorrents.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap EyeStop32 {
+        internal static System.Drawing.Bitmap douban24 {
             get {
-                object obj = ResourceManager.GetObject("EyeStop32", resourceCulture);
+                object obj = ResourceManager.GetObject("douban24", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -93,9 +93,9 @@ namespace MovieTorrents.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap InfoBlue32 {
+        internal static System.Drawing.Bitmap Folder_upload24 {
             get {
-                object obj = ResourceManager.GetObject("InfoBlue32", resourceCulture);
+                object obj = ResourceManager.GetObject("Folder_upload24", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -103,9 +103,9 @@ namespace MovieTorrents.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap InfoGree32 {
+        internal static System.Drawing.Bitmap Move_To_Folder24 {
             get {
-                object obj = ResourceManager.GetObject("InfoGree32", resourceCulture);
+                object obj = ResourceManager.GetObject("Move_To_Folder24", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -113,9 +113,9 @@ namespace MovieTorrents.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap InfoRed32 {
+        internal static System.Drawing.Bitmap Page_Copy24 {
             get {
-                object obj = ResourceManager.GetObject("InfoRed32", resourceCulture);
+                object obj = ResourceManager.GetObject("Page_Copy24", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -123,28 +123,20 @@ namespace MovieTorrents.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap InfoYellow32 {
+        internal static System.Drawing.Bitmap Pencil_and_Ruler24 {
             get {
-                object obj = ResourceManager.GetObject("InfoYellow32", resourceCulture);
+                object obj = ResourceManager.GetObject("Pencil_and_Ruler24", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 错误.
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static string TextError {
+        internal static System.Drawing.Bitmap Search24 {
             get {
-                return ResourceManager.GetString("TextError", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to 提示.
-        /// </summary>
-        internal static string TextHint {
-            get {
-                return ResourceManager.GetString("TextHint", resourceCulture);
+                object obj = ResourceManager.GetObject("Search24", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
             }
         }
     }

@@ -1,26 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.Web;
-using System.Net;
 using System.IO;
 using System.Diagnostics;
-using System.Runtime.InteropServices;
-using Newtonsoft.Json.Linq;
-using Newtonsoft.Json;
+using MovieTorrents.Common;
+using MovieTorrents.WebPWrapper;
 
 namespace MovieTorrents
 {
     public partial class FormSearchDouban : Form
     {
         private readonly TorrentFile _torrentFile;
-        public DoubanSubject DoubanSubject { get; private set; }
+        public DouBanSubject DouBanSubject { get; private set; }
 
         public FormSearchDouban(TorrentFile torrentFile)
         {
@@ -30,34 +22,49 @@ namespace MovieTorrents
 
         private void FormSearchDouban_Load(object sender, EventArgs e)
         {
-            tbOrigTitle.Text = "原标题：" +  _torrentFile.PurifiedName;
-
-            tbSearchText.Text = _torrentFile.ChineseName;
+            tbOrigTitle.Text = "原标题：" + _torrentFile.PurifiedName;
+            tbSearchText.Text = _torrentFile.FirstName;
+            if (!string.IsNullOrWhiteSpace(tbSearchText.Text))
+                DoSearcch();
 
 #if DEBUG
             //tbSearchText.Text = "https://movie.douban.com/subject/26811825/";
 #endif
         }
 
-        private void DoSearcch(bool searchId=false)
+        private void DoSearcch(bool searchId = false)
         {
             listView1.Items.Clear();
-            var subjects = searchId ? DoubanSubject.SearchById(tbSearchText.Text.Trim(), out var msg)
-                : DoubanSubject.SearchSuggest(tbSearchText.Text.Trim(), out msg);
+#if true
+            var subjects = searchId ? 
+                DouBanSubject.SearchById(tbSearchText.Text.Trim(), out var msg)
+                : DouBanSubject.SearchSuggest(tbSearchText.Text.Trim(), out msg);
             //if(subjects.Count==0)
             //    subjects = DoubanSubject.SearchSubject(tbSearchText.Text.Trim());
             tbInfo.Text = msg;
 
+#else
+            var subjects = new List<DoubanSubject>()
+            {
+                DoubanSubject.InitFromPageHtml(@"https://movie.douban.com/subject/1866471/",
+                    File.ReadAllText(@"d:\temp\2.txt"))
+            };
+
+#endif
+
             foreach (var subject in subjects)
             {
                 string[] row = {subject.title,
-                                subject.sub_title,
-                                subject.year,
-                                subject.type
-                            };
+                    subject.sub_title,
+                    subject.year,
+                    subject.type
+                };
 
                 listView1.Items.Add(new ListViewItem(row) { Tag = subject });
             }
+
+            if (listView1.Items.Count > 0)
+                listView1.Items[0].Selected = true;
 
         }
 
@@ -83,13 +90,29 @@ namespace MovieTorrents
             }
             if (listView1.SelectedItems.Count == 0) return;
 
-            var subject = (DoubanSubject)listView1.SelectedItems[0].Tag;
+            var subject = (DouBanSubject)listView1.SelectedItems[0].Tag;
             if (!string.IsNullOrEmpty(subject.img_local) && File.Exists(subject.img_local))
             {
-                using (var stream = new FileStream(subject.img_local, FileMode.Open, FileAccess.Read))
+                try
                 {
-                    pictureBox1.Image = Image.FromStream(stream);
+                    var ext = Path.GetExtension(subject.img_local);
+                    if (ext.Equals(".webp", StringComparison.InvariantCultureIgnoreCase))
+                    {
+                        using var webp = new WebP();
+                        pictureBox1.Image = webp.Load(subject.img_local);
+                    }
+                    else
+                    {
+                        using var stream = new FileStream(subject.img_local, FileMode.Open, FileAccess.Read);
+                        pictureBox1.Image = Image.FromStream(stream);
+                    }
+
                 }
+                catch (Exception exception)
+                {
+                    tbInfo.AppendText(exception.Message);
+                }
+
             }
 
 
@@ -98,19 +121,19 @@ namespace MovieTorrents
         private void btSave_Click(object sender, EventArgs e)
         {
             if (listView1.SelectedItems.Count == 0) return;
-            var subject = (DoubanSubject)listView1.SelectedItems[0].Tag;
+            var subject = (DouBanSubject)listView1.SelectedItems[0].Tag;
             if (!subject.TryQueryDetail(out var msg))
             {
-                MessageBox.Show($"查找豆瓣详细信息失败：{msg}", Properties.Resources.TextError, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show($"查找豆瓣详细信息失败：{msg}", Resource.TextError, MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
-            if (!_torrentFile.UpdateDoubanInfo(FormMain.DbConnectionString, subject,out msg))
+            if (!_torrentFile.UpdateDoubanInfo(subject, out msg))
             {
-                MessageBox.Show(msg, Properties.Resources.TextError, MessageBoxButtons.YesNo, MessageBoxIcon.Error);
+                MessageBox.Show(msg, Resource.TextError, MessageBoxButtons.YesNo, MessageBoxIcon.Error);
                 return;
             }
-            DoubanSubject = subject;
+            DouBanSubject = subject;
             DialogResult = DialogResult.OK;
 
         }
@@ -122,8 +145,22 @@ namespace MovieTorrents
 
         private void btnSearchBrowser_Click(object sender, EventArgs e)
         {
-            var url = $"https://movie.douban.com/subject_search?search_text={Uri.EscapeUriString(tbSearchText.Text.Trim())}";
-            Process.Start(url);
+            var searchText = Uri.EscapeUriString(tbSearchText.Text.Trim());
+            var url = $"https://movie.douban.com/subject_search?search_text={searchText}";
+            var formWebBrowser = new FormWebBrowser(url);
+            if (formWebBrowser.ShowDialog() != DialogResult.OK || formWebBrowser.DouBanSubject == null)
+            {
+                Close();
+                return;
+            }
+
+            if (!_torrentFile.UpdateDoubanInfo(formWebBrowser.DouBanSubject, out var msg))
+            {
+                MessageBox.Show(msg, Resource.TextError, MessageBoxButtons.YesNo, MessageBoxIcon.Error);
+                return;
+            }
+            DouBanSubject = formWebBrowser.DouBanSubject;
+            DialogResult = DialogResult.OK;
         }
 
         private void FormSearchDouban_KeyDown(object sender, KeyEventArgs e)

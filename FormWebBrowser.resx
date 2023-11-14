@@ -117,29 +117,62 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="btbt24" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\btbt24.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="Folder_upload24" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Folder-upload24.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="Move_To_Folder24" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Move-To-Folder24.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="Page_Copy24" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Page-Copy24.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="Pencil_and_Ruler24" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Pencil-and-Ruler24.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="Delete24" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Delete24.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="douban24" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\douban24.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="Search24" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Search24.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <metadata name="menuStrip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>17, 17</value>
+  </metadata>
+  <metadata name="$this.TrayHeight" type="System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>37</value>
+  </metadata>
+  <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  <data name="$this.BackgroundImage" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        /9j/4AAQSkZJRgABAQEAkACQAAD/4QA6RXhpZgAATU0AKgAAAAgAA1EQAAEAAAABAQAAAFERAAQAAAAB
+        AAAAAFESAAQAAAABAAAAAAAAAAD/2wBDAAIBAQIBAQICAgICAgICAwUDAwMDAwYEBAMFBwYHBwcGBwcI
+        CQsJCAgKCAcHCg0KCgsMDAwMBwkODw0MDgsMDAz/2wBDAQICAgMDAwYDAwYMCAcIDAwMDAwMDAwMDAwM
+        DAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAz/wAARCABQAFADASIAAhEBAxEB/8QA
+        HwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIh
+        MUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVW
+        V1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXG
+        x8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQF
+        BgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAV
+        YnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOE
+        hYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq
+        8vP09fb3+Pn6/9oADAMBAAIRAxEAPwD9/KK/n08b/wDBev8AaY8ReLdRvtL8c2vh7Tbq4eS20230HTp4
+        rKMn5Y1ea3eRsDjczEnr7VkN/wAF1P2px/zVL/y29I/+Ra/SY+FubNXc6a8ry/8AkD8/fiRll7KFT7o/
+        /JH9EVFfztn/AILrftUf9FS/8trSP/kWmn/gux+1SP8AmqX/AJbWkf8AyLS/4hdmv/Pyn98v/kCv+IjZ
+        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
+        uc/vj/8AIn//2Q==
+</value>
   </data>
 </root>
