@@ -11,14 +11,14 @@ Movie Torrents
 --------
 
 - 监视文件夹，即刻处理新添加文件
-- 使用豆瓣查询页面内API，如果遭限制，可以IE登录，程序读取IE cookie提交访问
+- 使用豆瓣查询页面内API，或者打开浏览器手工搜索选择
 
 
 运行
 ---------
 
 - VS2017 C#编写，自行编译后置于zogvm 目录下
-- 使用 zogvm 数据库，添加 seecomment字段到表tb_file 和视图 filelist_view
+
 
 限制
 -------
