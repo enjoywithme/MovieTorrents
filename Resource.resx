@@ -1,0 +1,233 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="Eye32" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\Eye32.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="EyeStop32" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\EyeStop32.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="InfoBlue32" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\InfoBlue32.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="InfoGree32" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\InfoGree32.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="InfoRed32" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\InfoRed32.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="InfoYellow32" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\InfoYellow32.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="TextError" xml:space="preserve">
+    <value>错误</value>
+  </data>
+  <data name="TextFolderNotExists" xml:space="preserve">
+    <value>文件夹不存在:\r\n{0}</value>
+  </data>
+  <data name="TextHint" xml:space="preserve">
+    <value>提示</value>
+  </data>
+  <data name="TextSelectCorrectFolder" xml:space="preserve">
+    <value>请选择一个正确的目录</value>
+  </data>
+  <data name="TxtFileNotExists" xml:space="preserve">
+    <value>文件 {0} 不存在!</value>
+  </data>
+  <data name="TextDirInMonitor" xml:space="preserve">
+    <value>目录监视中</value>
+  </data>
+  <data name="TxtStopDirMonitor" xml:space="preserve">
+    <value>停止监视</value>
+  </data>
+  <data name="TxtWaitForOtherOperation" xml:space="preserve">
+    <value>正在执行其他操作，等待完成后操作</value>
+  </data>
+  <data name="TextDirMonitorStopped" xml:space="preserve">
+    <value>目录监视停止</value>
+  </data>
+  <data name="TxtStartDirMonitor" xml:space="preserve">
+    <value>启动监视</value>
+  </data>
+  <data name="TxtLoadZeroFiles" xml:space="preserve">
+    <value>加载了0 个文件，0 已知项目。</value>
+  </data>
+  <data name="TxtSeedRottDir" xml:space="preserve">
+    <value>种子目录[{0}]</value>
+  </data>
+  <data name="TxtConfirmCancelCurrentOperation" xml:space="preserve">
+    <value>确定取消当前操作?</value>
+  </data>
+  <data name="TextLoadNFiles" xml:space="preserve">
+    <value>加载了{0} 个文件，{1} 已知项目。</value>
+  </data>
+  <data name="TextNoRootFolder" xml:space="preserve">
+    <value>种子文件根目录没有配置</value>
+  </data>
+  <data name="TextRootFolderNotExists" xml:space="preserve">
+    <value>种子文件根目录"{0}"不存在！</value>
+  </data>
+  <data name="TextNoCheckedItems" xml:space="preserve">
+    <value>没有勾选任何记录！</value>
+  </data>
+  <data name="TextConfirmDelete" xml:space="preserve">
+    <value>确定删除勾选的记录？
+选择是同时删除文件
+否仅删除记录</value>
+  </data>
+  <data name="TextPathMustInRoot" xml:space="preserve">
+    <value>选择的目录必须是种子文件目录"{0}"的子目录！</value>
+  </data>
+  <data name="TextFilesMoved" xml:space="preserve">
+    <value>成功移动{0}条记录。
+{1}</value>
+  </data>
+  <data name="TextWaitOtherOperation" xml:space="preserve">
+    <value>正在执行其他操作，等待完成后操作</value>
+  </data>
+  <data name="TextPathNotExists" xml:space="preserve">
+    <value>目录"{0}"不存在！</value>
+  </data>
+  <data name="TextPathHasChildDirectory" xml:space="preserve">
+    <value>{0}文件夹下有子文件夹！</value>
+  </data>
+  <data name="TextPathHavePlentyFiles" xml:space="preserve">
+    <value>目录 {0} 下有大量的文件，确认转移？</value>
+  </data>
+  <data name="TextNoSelectedItems" xml:space="preserve">
+    <value>没有选择任何记录！</value>
+  </data>
+  <data name="TextFilesRenamed" xml:space="preserve">
+    <value>成功重命名{0}条记录。
+{1}</value>
+  </data>
+  <data name="TextCheckOnlyOneItem" xml:space="preserve">
+    <value>请只勾选一项作为要拷贝豆瓣信息的原始项！</value>
+  </data>
+  <data name="TextSelectItemsExcludeSource" xml:space="preserve">
+    <value>请选择除源项以外的更多项操作！</value>
+  </data>
+  <data name="TextConfirmCopDoubanInfo" xml:space="preserve">
+    <value>确认拷贝豆瓣信息到所选记录？</value>
+  </data>
+  <data name="TextNoResultsFound" xml:space="preserve">
+    <value>没有搜索到任何结果</value>
+  </data>
+</root>
