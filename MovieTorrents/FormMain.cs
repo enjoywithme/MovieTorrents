@@ -957,7 +957,12 @@ namespace MovieTorrents
 
             try
             {
-                Process.Start(torrentFile.FullName);
+                //Process.Start(torrentFile.FullName);
+                Process.Start(new ProcessStartInfo(torrentFile.FullName)
+                {
+                    UseShellExecute = true,
+                    Verb = "open"
+                });
 
             }
             catch (Exception exception)
