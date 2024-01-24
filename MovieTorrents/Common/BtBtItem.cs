@@ -61,12 +61,11 @@ namespace MovieTorrents.Common
         public decimal Rating { get; private set; }
 
 
-        private static string[] _btItemPrefix;
 
         static BtBtItem()
         {
             BtBtHomeUrl = Utility.GetSetting(nameof(BtBtHomeUrl), "https://www.btbtt.me/");
-            DownLoadRootPath = Utility.GetSetting(nameof(DownLoadRootPath), "f:\\temp");
+            DownLoadRootPath = Utility.GetSetting(nameof(DownLoadRootPath), "");
             WebProxy = Utility.GetSetting(nameof(WebProxy), "");
 
             AutoDownloadInterval = Utility.GetSetting(nameof(AutoDownloadInterval), 20);
@@ -75,16 +74,7 @@ namespace MovieTorrents.Common
 
             AutoDownloadLastTid = Utility.GetSetting(nameof(AutoDownloadLastTid), 0);
             AutoDownloadLastPostDateTime = Utility.GetSetting<DateTime>(nameof(AutoDownloadLastPostDateTime));
-#if DEBUG
-            DownLoadRootPath = "f:\\temp";
-#endif
 
-            _btItemPrefix = null;
-            var btPrefixFile = Path.Combine(Utility.ExecutingAssemblyPath(), "BtItemPrefix.txt");
-            if (File.Exists(btPrefixFile))
-            {
-                _btItemPrefix = File.ReadAllLines(btPrefixFile);
-            }
 
         }
 
@@ -495,9 +485,9 @@ namespace MovieTorrents.Common
 
         public static string StripBtPrefix(string name,string fileName)
         {
-            if (_btItemPrefix == null || _btItemPrefix.Length == 0) return fileName;
+            if (Utility._btItemPrefix == null || Utility._btItemPrefix.Length == 0) return fileName;
 
-            foreach (var s in _btItemPrefix)
+            foreach (var s in Utility._btItemPrefix)
             {
                 if(string.IsNullOrWhiteSpace(s)) continue;
                 var match = Regex.Match(name, s, RegexOptions.IgnoreCase);
