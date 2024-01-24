@@ -56,7 +56,10 @@ namespace MovieTorrents
 
             DefaultInstance = this;
 
-            if (!TorrentFile.CheckTorrentPath(out var msg))
+            var dataPath = System.Configuration.ConfigurationManager.AppSettings["DataPath"];
+
+
+            if (!TorrentFile.CheckTorrentPath(out var msg,dataPath))
             {
                 MessageBox.Show(msg, Resource.TextError, MessageBoxButtons.OK, MessageBoxIcon.Error);
                 Close();
@@ -81,6 +84,10 @@ namespace MovieTorrents
             _folderWatch = new FolderWatch(TorrentFile.TorrentRootPath);
             _folderWatch.FolderWatchEvent += _folderWatch_FolderWatchEvent;
             _folderWatch.Start();
+
+
+            //初始化 utitiliy
+            Utility.UtilityInit(TorrentFile.CurrentPath);;
 
 
             //查询limit菜单项
@@ -1124,7 +1131,6 @@ namespace MovieTorrents
             foreach (var selectedItem in selectedItems)
             {
                 var torrentFile = (TorrentFile)selectedItem;
-                Utility.ReadBadWords();
                 var newName = torrentFile.Name.PurifyName().NormalizeTorrentFileName();
                 var (ret, msg) = torrentFile.MoveTo(null, newName);
                 if (!ret)

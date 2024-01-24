@@ -12,6 +12,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using BencodeNET.Torrents;
 using mySharedLib;
 using static System.Net.Mime.MediaTypeNames;
 
@@ -104,13 +105,16 @@ namespace MovieTorrents.Common
         public static string CurrentPath;
         public static string TorrentRootPath { get; set; }
         public static string DbConnectionString;
-        public static bool CheckTorrentPath(out string msg)
+        public static bool CheckTorrentPath(out string msg,string currentPath)
         {
             var ok = true;
             msg = string.Empty;
 
+            if (!string.IsNullOrEmpty(currentPath) && Directory.Exists(currentPath))
+                CurrentPath = currentPath;
+            else
+                CurrentPath = Utility.ExecutingAssemblyPath();
 
-            CurrentPath = Utility.ExecutingAssemblyPath();
             if (!File.Exists($"{CurrentPath}\\zogvm.db"))
             {
                 msg = $"数据库文件不存在！\r\n{CurrentPath}\\zogvm.db";
@@ -379,7 +383,7 @@ namespace MovieTorrents.Common
 
             try
             {
-                File.Copy($"{ CurrentPath}\\zogvm.db", "E:\\MyWinDoc\\My Movies\\zogvm.db", true);
+                File.Copy($"{ CurrentPath}\\zogvm.db", $"{ CurrentPath}\\zogvm.db.bak", true);
             }
             catch (Exception ex)
             {
@@ -1447,5 +1451,8 @@ where file_nid in ({sFids})";
             }
             return true;
         }
+
+
+
     }
 }
