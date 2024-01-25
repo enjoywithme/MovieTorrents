@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Windows.Forms;
+using MovieTorrents.Common;
 using mySharedLib;
 
 namespace MovieTorrents
@@ -26,7 +27,22 @@ namespace MovieTorrents
 
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-           
+
+            //初始化设置
+            var dataPath = System.Configuration.ConfigurationManager.AppSettings["DataPath"];
+
+            if (!MyMtSettings.InitInstance(dataPath, out message))
+            {
+                MessageBox.Show(message, Resource.TextError, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+            if (!TorrentFile.CheckTorrentPath(out message, dataPath))
+            {
+                MessageBox.Show(message, Resource.TextError, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+
             try
             {
                 Application.Run(new FormMain());
@@ -34,10 +50,11 @@ namespace MovieTorrents
             }
             catch (Exception e)
             {
-                ShowError(message);
+                ShowError(e.Message);
             }
 
-
+            MyMtSettings.Instance?.UnRegisterMonitor();
+            MyMtSettings.Instance?.Save();
             SingleInstance.Instance.Stop();
 
         }

@@ -61,7 +61,7 @@ namespace MovieTorrents.Common
 
             var filename = Path.GetFileName(img_url);
             if (string.IsNullOrEmpty(filename)) return;
-            var tempFileName = TorrentFile.CurrentPath + "\\temp\\" + filename;
+            var tempFileName = MyMtSettings.Instance.CurrentPath + "\\temp\\" + filename;
 
             using var client = new WebClient();
             var uri = new Uri(img_url);
@@ -196,7 +196,7 @@ namespace MovieTorrents.Common
                 html = sr.ReadToEnd();
                 //Debug.WriteLine(html);
 #if DEBUG
-                File.WriteAllText(TorrentFile.CurrentPath + "\\temp\\sample_subject.txt", html);
+                File.WriteAllText(MyMtSettings.Instance.CurrentPath + "\\temp\\sample_subject.txt", html);
 #endif
             }
             catch (Exception e)
