@@ -21,17 +21,9 @@ namespace MovieTorrents.Common
 {
     public class BtBtItem
     {
-        public static string BtBtHomeUrl;
-        public static string DownLoadRootPath;
-        public static string WebProxy { get; set; }
 
         //自动下载
-        public static int AutoDownloadInterval;
-        public static int AutoDownloadSearchPages;
-        public static int AutoDownloadSearchHours;
         public static int AutoDownloadRunning;
-        public static int AutoDownloadLastTid;
-        public static DateTime AutoDownloadLastPostDateTime;
         private static Timer _autoDownloadTimer;
         
         //成员
@@ -62,22 +54,6 @@ namespace MovieTorrents.Common
 
 
 
-        static BtBtItem()
-        {
-            BtBtHomeUrl = Utility.GetSetting(nameof(BtBtHomeUrl), "https://www.btbtt.me/");
-            DownLoadRootPath = Utility.GetSetting(nameof(DownLoadRootPath), "");
-            WebProxy = Utility.GetSetting(nameof(WebProxy), "");
-
-            AutoDownloadInterval = Utility.GetSetting(nameof(AutoDownloadInterval), 20);
-            AutoDownloadSearchPages = Utility.GetSetting(nameof(AutoDownloadSearchPages), 10);
-            AutoDownloadSearchHours = Utility.GetSetting(nameof(AutoDownloadSearchHours), 24);
-
-            AutoDownloadLastTid = Utility.GetSetting(nameof(AutoDownloadLastTid), 0);
-            AutoDownloadLastPostDateTime = Utility.GetSetting<DateTime>(nameof(AutoDownloadLastPostDateTime));
-
-
-        }
-
         public void Parse()
         {
             if (!string.IsNullOrEmpty(DouBanRating) && decimal.TryParse(DouBanRating, out var result))
@@ -98,74 +74,74 @@ namespace MovieTorrents.Common
         public static string NextPageUrl(string pageUrl)
         {
             //搜索下一页
-            var match = Regex.Match(pageUrl, $"{BtBtHomeUrl}search-index-fid-0-orderby-timedesc-daterage-0-keyword-(.*)-page-([0-9]*).htm");
+            var match = Regex.Match(pageUrl, $"{MyMtSettings.Instance.BtBtHomeUrl}search-index-fid-0-orderby-timedesc-daterage-0-keyword-(.*)-page-([0-9]*).htm");
             if (match.Success)
             {
                 if (!int.TryParse(match.Groups[2].Value, out var p)) return pageUrl;
                 p += 1;
                 return
-                    $"{BtBtHomeUrl}search-index-fid-0-orderby-timedesc-daterage-0-keyword-{match.Groups[1].Value}-page-{p}.htm";
+                    $"{MyMtSettings.Instance.BtBtHomeUrl}search-index-fid-0-orderby-timedesc-daterage-0-keyword-{match.Groups[1].Value}-page-{p}.htm";
             }
 
             //搜索第二页
-            match = Regex.Match(pageUrl, $"{BtBtHomeUrl}search-index-keyword-(.*).htm");
+            match = Regex.Match(pageUrl, $"{MyMtSettings.Instance.BtBtHomeUrl}search-index-keyword-(.*).htm");
             if(match.Success)
-                return $"{BtBtHomeUrl}search-index-fid-0-orderby-timedesc-daterage-0-keyword-{match.Groups[1].Value}-page-2.htm";
+                return $"{MyMtSettings.Instance.BtBtHomeUrl}search-index-fid-0-orderby-timedesc-daterage-0-keyword-{match.Groups[1].Value}-page-2.htm";
 
             //主页下一页
-            match = Regex.Match(pageUrl, $"{BtBtHomeUrl}index-index-page-([0-9]*).htm");
+            match = Regex.Match(pageUrl, $"{MyMtSettings.Instance.BtBtHomeUrl}index-index-page-([0-9]*).htm");
             if (match.Success)
             {
                 var p = int.Parse(match.Groups[1].Value) + 1;
-                return $"{BtBtHomeUrl}index-index-page-{p}.htm";
+                return $"{MyMtSettings.Instance.BtBtHomeUrl}index-index-page-{p}.htm";
             }
 
-            return $"{BtBtHomeUrl}index-index-page-2.htm";
+            return $"{MyMtSettings.Instance.BtBtHomeUrl}index-index-page-2.htm";
         }
 
         //上一页url
         public static string PrevPageUrl(string pageUrl)
         {
             //搜索前一页
-            var match = Regex.Match(pageUrl, $"{BtBtHomeUrl}search-index-fid-0-orderby-timedesc-daterage-0-keyword-(.*)-page-([0-9]*).htm");
+            var match = Regex.Match(pageUrl, $"{MyMtSettings.Instance.BtBtHomeUrl}search-index-fid-0-orderby-timedesc-daterage-0-keyword-(.*)-page-([0-9]*).htm");
             if (match.Success)
             {
                 if (!int.TryParse(match.Groups[2].Value, out var p)) return pageUrl;
-                if (p == 2) return $"{BtBtHomeUrl}search-index-keyword-{match.Groups[1].Value}.htm";
+                if (p == 2) return $"{MyMtSettings.Instance.BtBtHomeUrl}search-index-keyword-{match.Groups[1].Value}.htm";
                 p -= 1;
-                return $"{BtBtHomeUrl}search-index-fid-0-orderby-timedesc-daterage-0-keyword-{match.Groups[1].Value}-page-{p}.htm";
+                return $"{MyMtSettings.Instance.BtBtHomeUrl}search-index-fid-0-orderby-timedesc-daterage-0-keyword-{match.Groups[1].Value}-page-{p}.htm";
             }
 
             //搜索当前页
-            match = Regex.Match(pageUrl, $"{BtBtHomeUrl}search-index-keyword-(.*).htm");
+            match = Regex.Match(pageUrl, $"{MyMtSettings.Instance.BtBtHomeUrl}search-index-keyword-(.*).htm");
             if (match.Success) return pageUrl;
 
             //主页下一页
-            match = Regex.Match(pageUrl, $"{BtBtHomeUrl}index-index-page-([0-9]*).htm");
+            match = Regex.Match(pageUrl, $"{MyMtSettings.Instance.BtBtHomeUrl}index-index-page-([0-9]*).htm");
             if (match.Success)
             {
 
                 var p = int.Parse(match.Groups[1].Value);
-                if (p <= 2) return BtBtHomeUrl;
+                if (p <= 2) return MyMtSettings.Instance.BtBtHomeUrl;
                 p--;
-                return $"{BtBtHomeUrl}index-index-page-{p}.htm";
+                return $"{MyMtSettings.Instance.BtBtHomeUrl}index-index-page-{p}.htm";
             }
 
-            return BtBtHomeUrl;
+            return MyMtSettings.Instance.BtBtHomeUrl;
         }
 
         //搜索页url
         public static string SearPageUrl(string searchText)
         {
-            return $"{BtBtHomeUrl}search-index-keyword-{searchText}.htm";
+            return $"{MyMtSettings.Instance.BtBtHomeUrl}search-index-keyword-{searchText}.htm";
         }
 
         //构造webclient
         private static WebClient CreateWebClient()
         {
             var client = new WebClient();
-            if (string.IsNullOrEmpty(WebProxy)) return client;
-            var wp = new WebProxy(WebProxy);
+            if (string.IsNullOrEmpty(MyMtSettings.Instance.WebProxy)) return client;
+            var wp = new WebProxy(MyMtSettings.Instance.WebProxy);
             client.Proxy = wp;
 
             return client;
@@ -181,7 +157,7 @@ namespace MovieTorrents.Common
                 return null;
             }
 
-            if (!pageUrl.StartsWith(BtBtHomeUrl))
+            if (!pageUrl.StartsWith(MyMtSettings.Instance.BtBtHomeUrl))
             {
                 msg = "非BtBt网页";
                 return null;
@@ -225,7 +201,7 @@ namespace MovieTorrents.Common
                         btItem.tid = tid;
 
                     //下载具体页面
-                    var pageData = client.DownloadData($"{BtBtHomeUrl}{detailLink}");
+                    var pageData = client.DownloadData($"{MyMtSettings.Instance.BtBtHomeUrl}{detailLink}");
                     var pageCode = Encoding.UTF8.GetString(pageData);
                     //File.WriteAllText("d:\\temp\\2.txt", pageCode, Encoding.UTF8);
 
@@ -302,9 +278,9 @@ namespace MovieTorrents.Common
         {
             msg = string.Empty;
             if (AttachmentUrls.Count == 0) return 0;
-            if (string.IsNullOrEmpty(DownLoadRootPath) || !Directory.Exists(DownLoadRootPath))
+            if (string.IsNullOrEmpty(MyMtSettings.Instance.DownLoadRootPath) || !Directory.Exists(MyMtSettings.Instance.DownLoadRootPath))
             {
-                msg = $"下载路径\"{DownLoadRootPath}\"不存在";
+                msg = $"下载路径\"{MyMtSettings.Instance.DownLoadRootPath}\"不存在";
                 return 0;
             }
 
@@ -316,18 +292,18 @@ namespace MovieTorrents.Common
                 {
                     case 1:
                         //如果只有一个附件，使用电影标题作为文件名
-                        DownloadAttachmentFile(client, $"{BtBtHomeUrl}{AttachmentUrls[0]}", DownLoadRootPath,
+                        DownloadAttachmentFile(client, $"{MyMtSettings.Instance.BtBtHomeUrl}{AttachmentUrls[0]}", MyMtSettings.Instance.DownLoadRootPath,
                             Title.SanitizeFileName());
                         i++;
                         break;
                     case > 1:
                     {
                         //下载到标题下的子目录
-                        var subPath = Path.Combine(DownLoadRootPath, Title.SanitizeFileName());
+                        var subPath = Path.Combine(MyMtSettings.Instance.DownLoadRootPath, Title.SanitizeFileName());
                         Directory.CreateDirectory(subPath);
                         foreach (var attachmentUrl in AttachmentUrls)
                         {
-                            DownloadAttachmentFile(client, $"{BtBtHomeUrl}{attachmentUrl}", subPath);
+                            DownloadAttachmentFile(client, $"{MyMtSettings.Instance.BtBtHomeUrl}{attachmentUrl}", subPath);
                             i++;
                         }
 
@@ -392,9 +368,9 @@ namespace MovieTorrents.Common
             var msg = "";
             try
             {
-                var zipFiles = Directory.GetFiles(DownLoadRootPath)
+                var zipFiles = Directory.GetFiles(MyMtSettings.Instance.DownLoadRootPath)
                     .Where(s => Path.GetExtension(s).ToLowerInvariant() == ".zip");
-                MyLog.Log($"有{zipFiles.Count()}个zip 文件：{DownLoadRootPath}");
+                MyLog.Log($"有{zipFiles.Count()}个zip 文件：{MyMtSettings.Instance.DownLoadRootPath}");
                 foreach (var file in zipFiles)
                 {
                     try
@@ -409,7 +385,7 @@ namespace MovieTorrents.Common
                                 continue;
                             }
 
-                            entry.ExtractToFile(Path.Combine(DownLoadRootPath,
+                            entry.ExtractToFile(Path.Combine(MyMtSettings.Instance.DownLoadRootPath,
                                 Path.GetFileNameWithoutExtension(file) + ".torrent"));
                         }
 
@@ -442,7 +418,7 @@ namespace MovieTorrents.Common
         //尝试重命名BBQDDQ的文件
         public static string RenameSpecialFiles()
         {
-            var files = Directory.GetFiles(DownLoadRootPath)
+            var files = Directory.GetFiles(MyMtSettings.Instance.DownLoadRootPath)
                 .Where(s => Path.GetExtension(s).ToLowerInvariant() == ".torrent");
             var sb = new StringBuilder();
             try
@@ -507,7 +483,7 @@ namespace MovieTorrents.Common
             var i = 0;
             try
             {
-                var files = Directory.GetFiles(DownLoadRootPath, "*.torrent");
+                var files = Directory.GetFiles(MyMtSettings.Instance.DownLoadRootPath, "*.torrent");
 
                 foreach (var file in files)
                 {
@@ -592,7 +568,7 @@ namespace MovieTorrents.Common
                 var items = new List<BtBtItem>();
 
                 var pages = 0;
-                var pageUrl = BtBtHomeUrl;
+                var pageUrl = MyMtSettings.Instance.BtBtHomeUrl;
                 while (true)
                 {
                     var searched = QueryPage(pageUrl,out var msg);
@@ -601,10 +577,10 @@ namespace MovieTorrents.Common
                         items.AddRange(searched);
 
                         //如果上次已经有查询，退出
-                        if (AutoDownloadLastTid!=0 
-                            && AutoDownloadLastPostDateTime != default(DateTime)
+                        if (MyMtSettings.Instance.AutoDownloadLastTid !=0 
+                            && MyMtSettings.Instance.AutoDownloadLastPostDateTime != default(DateTime)
                             && searched.Any(x =>
-                                x.tid == AutoDownloadLastTid && x.PostDateTime == AutoDownloadLastPostDateTime))
+                                x.tid == MyMtSettings.Instance.AutoDownloadLastTid && x.PostDateTime == MyMtSettings.Instance.AutoDownloadLastPostDateTime))
                         {
 
                             MyLog.Log("=====已抵达上次搜索文章，退出======");
@@ -614,23 +590,23 @@ namespace MovieTorrents.Common
                         //如果超过24小时的贴，退出
                         var now = DateTime.Now;
                         if (searched.Any(x =>
-                            x.PostDateTime != null && (now - x.PostDateTime.Value).TotalHours > AutoDownloadSearchHours))
+                            x.PostDateTime != null && (now - x.PostDateTime.Value).TotalHours > MyMtSettings.Instance.AutoDownloadSearchHours))
                         {
-                            MyLog.Log($"====已搜索{AutoDownloadSearchHours}小时的文章，退出======");
+                            MyLog.Log($"====已搜索{MyMtSettings.Instance.AutoDownloadSearchHours}小时的文章，退出======");
                             break;
                         }
 
                     }
 
                     pages++;
-                    if(pages>AutoDownloadSearchPages) break;
+                    if(pages> MyMtSettings.Instance.AutoDownloadSearchPages) break;
                     pageUrl = NextPageUrl(pageUrl);
                     MyLog.Log($"====Page {pages}====={pageUrl}");
                 }
 
                 //下载附件
                 var checkedItems = items.Where(x => x.Checked 
-                                                    &&(x.tid==0 ||AutoDownloadLastTid==0 ||x.tid>AutoDownloadLastTid)
+                                                    &&(x.tid==0 ||MyMtSettings.Instance.AutoDownloadLastTid ==0 ||x.tid>MyMtSettings.Instance.AutoDownloadLastTid)
                                                     ).ToList();
                 var i = 0;
                 foreach (var btItem in checkedItems)
@@ -644,10 +620,11 @@ namespace MovieTorrents.Common
                 var latestItem = items.FirstOrDefault(x => x.tid != 0 && x.tid == maxTid);
                 if (latestItem?.PostDateTime != null)
                 {
-                    AutoDownloadLastPostDateTime = latestItem.PostDateTime.Value;
-                    AutoDownloadLastTid = latestItem.tid;
-                    Utility.SaveSetting(nameof(AutoDownloadLastPostDateTime), AutoDownloadLastPostDateTime.ToString("yyyy-MM-dd HH:mm:ss"));
-                    Utility.SaveSetting(nameof(AutoDownloadLastTid), AutoDownloadLastTid.ToString());
+                    MyMtSettings.Instance.AutoDownloadLastPostDateTime = latestItem.PostDateTime.Value;
+                    MyMtSettings.Instance.AutoDownloadLastTid = latestItem.tid;
+                    //Utility.SaveSetting(nameof(AutoDownloadLastPostDateTime), AutoDownloadLastPostDateTime.ToString("yyyy-MM-dd HH:mm:ss"));
+                    //Utility.SaveSetting(nameof(AutoDownloadLastTid), AutoDownloadLastTid.ToString());
+                    MyMtSettings.Instance.Save();
                     MyLog.Log($"===Last item===={latestItem.Title}=={latestItem.tid}=={latestItem.PostDateTime}");
                 }
             }
@@ -676,7 +653,7 @@ namespace MovieTorrents.Common
                     _autoDownloadTimer = new Timer(AutoDownloadCallback,null,Timeout.Infinite,Timeout.Infinite);
                 }
 
-                _autoDownloadTimer.Change(10 * 1000, AutoDownloadInterval * 60 * 1000);
+                _autoDownloadTimer.Change(10 * 1000, MyMtSettings.Instance.AutoDownloadInterval * 60 * 1000);
             }
             else
             {

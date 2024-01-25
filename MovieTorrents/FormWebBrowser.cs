@@ -61,7 +61,7 @@ namespace MovieTorrents
                 {
                     var filename = Path.GetFileName(DouBanSubject.img_url);
                     if (IsNullOrEmpty(filename)) return;
-                    var downloadedFilePath = TorrentFile.CurrentPath + "\\temp\\" + Path.GetFileNameWithoutExtension(filename) + ".jpg";
+                    var downloadedFilePath = MyMtSettings.Instance.CurrentPath + "\\temp\\" + Path.GetFileNameWithoutExtension(filename) + ".jpg";
 
                     var imageData = await GetImageBytesAsync();
                     File.WriteAllBytes(downloadedFilePath, imageData);

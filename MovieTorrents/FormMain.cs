@@ -56,14 +56,6 @@ namespace MovieTorrents
 
             DefaultInstance = this;
 
-            var dataPath = System.Configuration.ConfigurationManager.AppSettings["DataPath"];
-
-
-            if (!TorrentFile.CheckTorrentPath(out var msg,dataPath))
-            {
-                MessageBox.Show(msg, Resource.TextError, MessageBoxButtons.OK, MessageBoxIcon.Error);
-                Close();
-            }
 
             if (!string.IsNullOrEmpty(TorrentFile.TorrentRootPath) && !Directory.Exists(TorrentFile.TorrentRootPath))
             {
@@ -81,13 +73,20 @@ namespace MovieTorrents
             tsSummary.Text = Resource.TxtLoadZeroFiles;
 
             //Folder watch
-            _folderWatch = new FolderWatch(TorrentFile.TorrentRootPath);
-            _folderWatch.FolderWatchEvent += _folderWatch_FolderWatchEvent;
-            _folderWatch.Start();
+            if (MyMtSettings.Instance.RegisterMonitor())
+            {
+                _folderWatch = new FolderWatch(TorrentFile.TorrentRootPath);
+                _folderWatch.FolderWatchEvent += _folderWatch_FolderWatchEvent;
+                _folderWatch.Start();
+            }
+            else
+            {
+                tsButtonWatch.Enabled =false;
+                tsButtonWatch.Image = Resource.EyeStop32;
+            }
 
-
-            //初始化 utitiliy
-            Utility.UtilityInit(TorrentFile.CurrentPath);;
+            //初始化 设置
+            Utility.UtilityInit(MyMtSettings.Instance.CurrentPath);
 
 
             //查询limit菜单项
@@ -195,6 +194,8 @@ namespace MovieTorrents
 
         private void MenuItemToggleWatch_Click(object sender, EventArgs e)
         {
+            if(_folderWatch == null) return;
+
             if (_folderWatch.IsWatching)
                 _folderWatch.Stop();
             else

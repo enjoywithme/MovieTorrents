@@ -19,7 +19,7 @@ namespace MovieTorrents
 
         private void FormBtBtt_Load(object sender, EventArgs e)
         {
-            tbUrl.Text = BtBtItem.BtBtHomeUrl;
+            tbUrl.Text = MyMtSettings.Instance.BtBtHomeUrl;
             btArchiveTorrent.Click += BtArchiveTorrent_Click;
 #if DEBUG
             tbSearch.Text = "模范刑警";
@@ -35,7 +35,7 @@ namespace MovieTorrents
 
         private void BtHomePage_Click(object sender, EventArgs e)
         {
-            tbUrl.Text = BtBtItem.BtBtHomeUrl;
+            tbUrl.Text = MyMtSettings.Instance.BtBtHomeUrl;
             DoQuery();
         }
 
@@ -242,7 +242,17 @@ namespace MovieTorrents
 
         private void cbAutoDownload_CheckedChanged(object sender, EventArgs e)
         {
-            BtBtItem.EnableAutoDownload(cbAutoDownload.Checked);
+            if (MyMtSettings.Instance.IsCurrentMonitor())
+            {
+                BtBtItem.EnableAutoDownload(cbAutoDownload.Checked);
+            }
+            else
+            {
+                if (!cbAutoDownload.Checked) return;
+                MessageBox.Show("当前电脑不是监视电脑，不能启动。", Resource.TextHint, MessageBoxButtons.OK, MessageBoxIcon.Information);
+                cbAutoDownload.Checked=false;
+
+            }
         }
     }
 }

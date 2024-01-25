@@ -102,7 +102,7 @@ namespace MovieTorrents.Common
         private static byte HddNid { get; set; }
         public static string DefaultArea { get; set; }
         private static string _shortRootPath;
-        public static string CurrentPath;
+        private static string CurrentPath;
         public static string TorrentRootPath { get; set; }
         public static string DbConnectionString;
         public static bool CheckTorrentPath(out string msg,string currentPath)
