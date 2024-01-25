@@ -12,9 +12,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using BencodeNET.Torrents;
 using mySharedLib;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace MovieTorrents.Common
 {
@@ -22,7 +20,8 @@ namespace MovieTorrents.Common
     {
         public long Fid { get; set; }
         //public byte hdd_nid { get; set; }
-        public string Area { get; set; }
+        public int DirNid { get; set; }
+        public string DirPath { get; set; }
         public string Path { get; set; }
         public string KeyName { get; set; }
         public string Casts { get; set; }
@@ -43,7 +42,7 @@ namespace MovieTorrents.Common
         public string Zone { get; set; }
         public string PosterPath { get; set; }
         public string DoubanId { get; set; }
-        public string FullName => Area + Path + Name + Ext;
+        public string FullName => DirPath + Path + Name + Ext;
         private long? _creationTime;
         public string CreationTime => _creationTime.SqlLiteToDateTime();
         public string PurifiedName => Name.Purify();
@@ -68,7 +67,7 @@ namespace MovieTorrents.Common
             get
             {
                 if (string.IsNullOrEmpty(PosterPath)) return null;
-                return CurrentPath + "\\poster\\douban\\" + System.IO.Path.GetFileName(PosterPath);
+                return _currentPath + "\\poster\\douban\\" + System.IO.Path.GetFileName(PosterPath);
             }
         }
 
@@ -79,7 +78,7 @@ namespace MovieTorrents.Common
         {
             var torrentFile = new TorrentFile { Name = System.IO.Path.GetFileNameWithoutExtension(fullName) };
             var dir = System.IO.Path.GetDirectoryName(fullName);
-            torrentFile.Path = dir?.Substring(System.IO.Path.GetPathRoot(dir).Length) + "\\";
+            torrentFile.Path = dir?.Substring(TorrentRootPath.Length) + "\\";
             torrentFile.Ext = System.IO.Path.GetExtension(fullName);
             torrentFile.FileSize = new FileInfo(fullName).Length;
 
@@ -99,11 +98,12 @@ namespace MovieTorrents.Common
 
         #region 静态变量/函数
         public static TorrentFilter Filter { get; } = new();
-        private static byte HddNid { get; set; }
-        public static string DefaultArea { get; set; }
-        private static string _shortRootPath;
-        private static string CurrentPath;
+        //public static string DefaultArea { get; set; }
+        //private static string _shortRootPath;
+        private static string _currentPath;
         public static string TorrentRootPath { get; set; }
+        public static int TorrentRootPathNid { get; private set; } //tb_dir表中的dir_nid
+
         public static string DbConnectionString;
         public static bool CheckTorrentPath(out string msg,string currentPath)
         {
@@ -111,21 +111,21 @@ namespace MovieTorrents.Common
             msg = string.Empty;
 
             if (!string.IsNullOrEmpty(currentPath) && Directory.Exists(currentPath))
-                CurrentPath = currentPath;
+                _currentPath = currentPath;
             else
-                CurrentPath = Utility.ExecutingAssemblyPath();
+                _currentPath = Utility.ExecutingAssemblyPath();
 
-            if (!File.Exists($"{CurrentPath}\\zogvm.db"))
+            if (!File.Exists($"{_currentPath}\\zogvm.db"))
             {
-                msg = $"数据库文件不存在！\r\n{CurrentPath}\\zogvm.db";
+                msg = $"数据库文件不存在！\r\n{_currentPath}\\zogvm.db";
                 return false;
             }
 
 
-            DbConnectionString = $"Data Source ={CurrentPath}//zogvm.db; Version = 3; ";
+            DbConnectionString = $"Data Source ={_currentPath}//zogvm.db; Version = 3; ";
 
             using var connection = new SQLiteConnection(DbConnectionString);
-            const string sql = "select d.hdd_nid,area,path from tb_dir as d inner join tb_hdd as h on h.hdd_nid=d.hdd_nid  limit 1";
+            const string sql = "select d.dir_nid,area,path from tb_dir as d inner join tb_hdd as h on h.hdd_nid=d.hdd_nid  limit 1";
             try
             {
                 connection.Open();
@@ -135,10 +135,10 @@ namespace MovieTorrents.Common
                     using var reader = command.ExecuteReader();
                     if (reader.Read())
                     {
-                        HddNid = reader.GetByte(0);// ["hdd_nid"];
-                        DefaultArea = (string)reader["area"];
-                        _shortRootPath = (string)reader["path"];
-                        TorrentFile.TorrentRootPath = DefaultArea + _shortRootPath;
+                        TorrentRootPathNid = reader.GetByte(0);// ["hdd_nid"];
+                        //DefaultArea = (string)reader["area"];
+                        //_shortRootPath = (string)reader["path"];
+                        TorrentRootPath = (string)reader["path"];
                     }
                 }
                 catch (Exception e)
@@ -173,7 +173,7 @@ namespace MovieTorrents.Common
         private void ReadFromDbReader(DbDataReader reader)
         {
             Fid = (long)reader["file_nid"];
-            Area = DefaultArea;
+            DirPath = (string)reader["DirPath"];
             Path = (string)reader["path"];
             Name = (string)reader["name"];
             KeyName = reader.GetReaderFieldString("keyname");
@@ -383,7 +383,7 @@ namespace MovieTorrents.Common
 
             try
             {
-                File.Copy($"{ CurrentPath}\\zogvm.db", $"{ CurrentPath}\\zogvm.db.bak", true);
+                File.Copy($"{ _currentPath}\\zogvm.db", $"{ _currentPath}\\zogvm.db.bak", true);
             }
             catch (Exception ex)
             {
@@ -405,49 +405,46 @@ namespace MovieTorrents.Common
             {
                 connection.Open();
 
-                using (var commandInsert = new SQLiteCommand($@"insert into tb_file
-(hdd_nid,path,name,ext,year,filesize,CreationTime,LastWriteTime,LastOpenTime,maintype,resolutionW,resolutionH,filetime,bitrateKbps,zidian_sound,zidian_sub)
-select {HddNid},$path,$name,$ext,$year,$filesize,$n,$n,$n,0,0,0,0,0,'',''
-where not exists (select 1 from tb_file where hdd_nid={HddNid} and path=$path and name=$name and ext=$ext)", connection))
+                using var commandInsert = new SQLiteCommand($@"insert into tb_file
+(dir_nid,path,name,ext,year,filesize,CreationTime,LastWriteTime,LastOpenTime,maintype,resolutionW,resolutionH,filetime,bitrateKbps,zidian_sound,zidian_sub)
+select {TorrentRootPathNid},$path,$name,$ext,$year,$filesize,$n,$n,$n,0,0,0,0,0,'',''
+where not exists (select 1 from tb_file where dir_nid={TorrentRootPathNid} and path=$path and name=$name and ext=$ext)", connection);
+                commandInsert.Parameters.Add("$path", DbType.String, 520);
+                commandInsert.Parameters.Add("$name", DbType.String, 520);
+                commandInsert.Parameters.Add("$ext", DbType.String, 32);
+                commandInsert.Parameters.Add("$year", DbType.String, 16);
+                commandInsert.Parameters.Add("$filesize", DbType.Int64);
+                commandInsert.Parameters.Add("$n", DbType.Int64);
+
+                commandInsert.Prepare();
+
+                while (!filesToProcess.IsCompleted)
                 {
-                    commandInsert.Parameters.Add("$path", DbType.String, 520);
-                    commandInsert.Parameters.Add("$name", DbType.String, 520);
-                    commandInsert.Parameters.Add("$ext", DbType.String, 32);
-                    commandInsert.Parameters.Add("$year", DbType.String, 16);
-                    commandInsert.Parameters.Add("$filesize", DbType.Int64);
-                    commandInsert.Parameters.Add("$n", DbType.Int64);
-
-                    commandInsert.Prepare();
-
-                    while (!filesToProcess.IsCompleted)
+                    TorrentFile torrentFile = null;
+                    try
                     {
-                        TorrentFile torrentFile = null;
-                        try
-                        {
-                            torrentFile = filesToProcess.Take();
-                        }
-                        catch (InvalidOperationException) { }
-
-                        if (torrentFile == null) continue;
-
-                        Debug.WriteLine($"Processing:{torrentFile.Name}");
-
-                        fileProcessed++;
-                        var n = DateTime.Now.ToSqlLiteInt64();
-
-                        commandInsert.Parameters["$path"].Value = torrentFile.Path;
-                        commandInsert.Parameters["$name"].Value = torrentFile.Name;
-                        commandInsert.Parameters["$ext"].Value = torrentFile.Ext;
-                        commandInsert.Parameters["$year"].Value = torrentFile.Year;
-                        commandInsert.Parameters["$filesize"].Value = torrentFile.FileSize;
-                        commandInsert.Parameters["$n"].Value = n;
-
-                        fileAdded += commandInsert.ExecuteNonQuery();
+                        torrentFile = filesToProcess.Take();
                     }
+                    catch (InvalidOperationException) { }
 
-                    filesToProcess.Dispose();
+                    if (torrentFile == null) continue;
+
+                    Debug.WriteLine($"Processing:{torrentFile.Name}");
+
+                    fileProcessed++;
+                    var n = DateTime.Now.ToSqlLiteInt64();
+
+                    commandInsert.Parameters["$path"].Value = torrentFile.Path;
+                    commandInsert.Parameters["$name"].Value = torrentFile.Name;
+                    commandInsert.Parameters["$ext"].Value = torrentFile.Ext;
+                    commandInsert.Parameters["$year"].Value = torrentFile.Year;
+                    commandInsert.Parameters["$filesize"].Value = torrentFile.FileSize;
+                    commandInsert.Parameters["$n"].Value = n;
+
+                    fileAdded += commandInsert.ExecuteNonQuery();
                 }
 
+                filesToProcess.Dispose();
             }
 
             return (fileProcessed, fileAdded);
@@ -791,7 +788,7 @@ where file_nid =$fid", connection);
                     {
                         if (!string.IsNullOrEmpty(posterUpdate.NewPosterFileName))
                         {
-                            var newFullName = System.IO.Path.Combine(CurrentPath, "poster\\douban\\" , posterUpdate.NewPosterFileName);
+                            var newFullName = System.IO.Path.Combine(_currentPath, "poster\\douban\\" , posterUpdate.NewPosterFileName);
                             if (!File.Exists(newFullName))
                             {
                                 if(!File.Exists(posterUpdate.TorrentFile.RealPosterPath)) continue;
@@ -958,7 +955,13 @@ where file_nid =$fid", connection);
             return ok;
         }
 
-        //移动重命名文件
+
+        /// <summary>
+        /// 移动文件
+        /// </summary>
+        /// <param name="destFolder">完整的文件夹路径,带末尾\\</param>
+        /// <param name="destName">可以重新命名</param>
+        /// <returns></returns>
         public (bool,string) MoveTo(string destFolder,string destName=null)
         {
 
@@ -967,12 +970,20 @@ where file_nid =$fid", connection);
                 return (false, $"文件{FullName} 不存在。");
             }
 
+            if (!destFolder.StartsWith(TorrentRootPath, StringComparison.InvariantCultureIgnoreCase))
+            {
+                return (false, "目标目录不在Torrent根目录下！");
+            }
+            if (!destFolder.EndsWith("\\")) destFolder += "\\";
+
+
             var mDbConnection = new SQLiteConnection(DbConnectionString);
 
             var ok=true;
-            var newPath = string.IsNullOrEmpty(destFolder)?Path:destFolder.Substring(System.IO.Path.GetPathRoot(destFolder).Length) + "\\";//取根目录下的相对位置
+            var newPath = string.IsNullOrEmpty(destFolder)?Path:destFolder.Substring(TorrentRootPath.Length);//取根目录下的相对位置
             var newName = string.IsNullOrEmpty(destName) ? Name : destName;
-            var newFullName = Area + newPath  + newName + Ext;
+            var newFullName =  destFolder  + newName + Ext;
+            
 
             var msg = "";
 
@@ -982,17 +993,6 @@ where file_nid =$fid", connection);
                 try
                 {
 
-                    //var command = new SQLiteCommand("select path from tb_file where file_nid=$fid",mDbConnection);
-                    //command.Parameters.AddWithValue("$fid", fid);
-
-                    //var reader = command.ExecuteReader();
-                    //var ret = reader.Read();
-                    //var currentPath = "";
-                    //if (ret)
-                    //{
-                    //    currentPath = reader.GetString(0);
-                    //}
-                    //reader.Close();
 
                     if (!newFullName.Equals(FullName, StringComparison.InvariantCultureIgnoreCase))
                     {
@@ -1027,11 +1027,23 @@ where file_nid =$fid", connection);
             return (ok,msg);
         }
 
-        //移动路径
+        /// <summary>
+        /// 移动整个路径
+        /// </summary>
+        /// <param name="destFolder">完整的文件夹，末尾带\\</param>
+        /// <param name="sourcePath">相对torrent根目录的相对文件夹</param>
+        /// <param name="rename"></param>
+        /// <returns></returns>
         public static (bool, string) MovePath(string destFolder, string sourcePath,bool rename=false)
         {
             if (string.IsNullOrEmpty(sourcePath))
                 return (false, "源路径空");
+
+            if (!destFolder.StartsWith(TorrentRootPath, StringComparison.InvariantCultureIgnoreCase))
+            {
+                return (false, "目标目录不在Torrent根目录下！");
+            }
+            if (!destFolder.EndsWith("\\")) destFolder += "\\";
 
             var ret = true;
             var msg = "";
@@ -1044,10 +1056,11 @@ where file_nid =$fid", connection);
 
                 try
                 {
-                    var sourceFullPath = System.IO.Path.Combine(DefaultArea, sourcePath);
-                    var destFullPath = rename?destFolder: System.IO.Path.Combine(destFolder, new DirectoryInfo(sourceFullPath).Name);
+                    var sourceFullPath = System.IO.Path.Combine(TorrentRootPath, sourcePath);
+                    var sourceDirName = new DirectoryInfo(sourceFullPath).Name;
+                    var destFullPath = rename?destFolder: System.IO.Path.Combine(destFolder, sourceDirName)+"\\";
 
-                    var newPath = destFullPath.Substring(System.IO.Path.GetPathRoot(destFullPath).Length) + "\\";//取根目录下的相对位置
+                    var newPath = destFullPath.Substring(TorrentRootPath.Length);//取根目录下的相对位置
                     var command = new SQLiteCommand("update tb_file set path=$newPath where path=$path", mDbConnection);
                     command.Parameters.AddWithValue("$path", sourcePath);
                     command.Parameters.AddWithValue("$newPath", newPath);
@@ -1136,7 +1149,7 @@ where file_nid =$fid", connection);
             msg = string.Empty;
             var reNameFile = false;
             newName = newName.Trim();
-            var newFullName = Area + Path + newName + Ext;
+            var newFullName = TorrentRootPath + Path + newName + Ext;
 
             if (string.Compare(Name, newName, StringComparison.InvariantCultureIgnoreCase) != 0)
             {
@@ -1327,7 +1340,7 @@ rating=$rating,genres=$genres,directors=$directors,casts=$casts where file_nid=$
                 {
                     var fileExt = System.IO.Path.GetExtension(subject.img_local);
 
-                    posterImageFileName = CurrentPath + "\\poster\\douban\\d" + subject.id + fileExt;
+                    posterImageFileName = _currentPath + "\\poster\\douban\\d" + subject.id + fileExt;
                     File.Copy(subject.img_local, posterImageFileName, true);
                     posterImageFileName = $"d{subject.id}{fileExt}";//使用豆瓣ID命名海报文件
                 }

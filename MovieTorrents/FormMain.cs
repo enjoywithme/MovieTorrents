@@ -1070,7 +1070,9 @@ namespace MovieTorrents
             }
             if (lvResults.SelectedObjects.Count == 0) return;
             var torrentFile = (TorrentFile)lvResults.SelectedObjects[0];
-            var sourcePath = Path.Combine(TorrentFile.DefaultArea, torrentFile.Path);
+            if(torrentFile == null) return;
+
+            var sourcePath = Path.Combine(TorrentFile.TorrentRootPath, torrentFile.Path);
             if (!Directory.Exists(sourcePath))
             {
                 MessageBox.Show(string.Format(Resource.TextPathNotExists, sourcePath), Resource.TextError,
@@ -1078,6 +1080,7 @@ namespace MovieTorrents
                 return;
             }
 
+            //如果源目录有子文件夹不允许移动
             if (Directory.GetDirectories(sourcePath).Length > 0)
             {
                 MessageBox.Show(string.Format(Resource.TextPathHasChildDirectory, sourcePath), Resource.TextError,
@@ -1085,6 +1088,7 @@ namespace MovieTorrents
                 return;
             }
 
+            //不允许移动年度目录或者多于10个文件的目录
             var dirName = new DirectoryInfo(sourcePath).Name;
             if (int.TryParse(dirName, out var _) || Directory.GetFiles(sourcePath).Length > 10)
             {
