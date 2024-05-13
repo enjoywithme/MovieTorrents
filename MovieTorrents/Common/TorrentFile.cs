@@ -167,10 +167,14 @@ namespace MovieTorrents.Common
 
         public TorrentFile(DbDataReader reader)
         {
-            ReadFromDbReader(reader);
+            InitializeFromDbReader(reader);
         }
 
-        private void ReadFromDbReader(DbDataReader reader)
+        /// <summary>
+        /// 从DbDataReader初始化属性
+        /// </summary>
+        /// <param name="reader"></param>
+        private void InitializeFromDbReader(DbDataReader reader)
         {
             Fid = (long)reader["file_nid"];
             DirPath = (string)reader["DirPath"];
@@ -209,12 +213,12 @@ namespace MovieTorrents.Common
 
             try
             {
-                using var connection = new SQLiteConnection(DbConnectionString);
-                using var command = Filter.BuildSearchCommand(searchText, withFilter);
+                await using var connection = new SQLiteConnection(DbConnectionString);
+                await using var command = Filter.BuildSearchCommand(searchText, withFilter);
                 command.Connection = connection;
 
                 await connection.OpenAsync(cancelToken);
-                using var reader = await command.ExecuteReaderAsync(cancelToken);
+                await using var reader = await command.ExecuteReaderAsync(cancelToken);
                 while (await reader.ReadAsync(cancelToken))
                 {
                     result.TorrentFiles.Add(new TorrentFile(reader));
@@ -830,6 +834,100 @@ where file_nid =$fid", connection);
         #endregion
 
 
+        /// <summary>
+        ///匹配豆瓣影视信息
+        /// </summary>
+        /// <param name="cancelToken"></param>
+        /// <returns></returns>
+        public static async Task<(int, string msg, bool error)> DoMatchMovieInfo(CancellationToken cancelToken)
+        {
+
+            var countUpdated = 0;
+            var msg = string.Empty;
+            var error = false;
+
+            var unknownTorrents = new List<TorrentFile>();
+
+            try
+            {
+                await using var connection = new SQLiteConnection(DbConnectionString);
+                await connection.OpenAsync(cancelToken);
+
+                //读取未知豆瓣信息的条目到列表
+                await using var commandRead = new SQLiteCommand("select * from filelist_view where doubanid is null order by file_nid DESC", connection);
+                await using var reader = await commandRead.ExecuteReaderAsync(cancelToken);
+                while (await reader.ReadAsync(cancelToken))
+                {
+                    var tf = new TorrentFile(reader);
+                    unknownTorrents.Add(tf);
+                }
+
+                await reader.CloseAsync();
+
+                //update the file not exists field
+                for (var i = 0; i < unknownTorrents.Count; i++)
+                {
+                    var tf = unknownTorrents[i];
+                    var otherName = tf.FirstName;
+                    Debug.WriteLine(otherName);
+                    
+                    //使用净化后的名称搜索条目豆瓣名称
+                    await using var cmdCountMovieId =
+                        new SQLiteCommand(
+                            "select count(DISTINCT doubanid) as cnt from filelist_view where keyname=$name",connection);
+                    cmdCountMovieId.Parameters.AddWithValue("$name", otherName);
+                    await using var readerCountMovieId = await cmdCountMovieId.ExecuteReaderAsync(cancelToken);
+                    if(!await readerCountMovieId.ReadAsync(cancelToken)) continue;
+                    var countIds = readerCountMovieId.GetInt32(0);
+                    await readerCountMovieId.CloseAsync();
+
+                    if(countIds !=1) continue;
+
+                    //取得第一条同豆瓣ID的FID
+                    await using var cmdQueryMovieId =
+                        new SQLiteCommand(
+                            "select file_nid from filelist_view where keyname=$name and doubanid is not null limit 1", connection);
+                    cmdQueryMovieId.Parameters.AddWithValue("$name", otherName);
+                    await using var readerQueryMovieId = await cmdQueryMovieId.ExecuteReaderAsync(cancelToken);
+                    if (!await readerQueryMovieId.ReadAsync(cancelToken)) continue;
+                    var fid = readerQueryMovieId.GetInt64(0);
+                    await readerCountMovieId.CloseAsync();
+
+                    //更新到当前条目
+                    await using var cmdUpdateMovieInfo = new SQLiteCommand($@"update tb_file set
+year=(select year from tb_file where file_nid=$fid),
+keyname=(select keyname from tb_file where file_nid=$fid),
+othername=(select othername from tb_file where file_nid=$fid),
+posterpath=(select posterpath from tb_file where file_nid=$fid),
+doubanid=(select doubanid from tb_file where file_nid=$fid),
+rating=(select rating from tb_file where file_nid=$fid),
+casts=(select casts from tb_file where file_nid=$fid),
+directors=(select directors from tb_file where file_nid=$fid),
+genres=(select genres from tb_file where file_nid=$fid),
+zone=(select zone from tb_file where file_nid=$fid)
+where file_nid =$this_fid", connection);
+                    cmdUpdateMovieInfo.Parameters.AddWithValue("$fid", fid);
+                    cmdUpdateMovieInfo.Parameters.AddWithValue("$this_fid", tf.Fid);
+                    await cmdUpdateMovieInfo.ExecuteNonQueryAsync(cancelToken);
+
+                    Debug.WriteLine("---matched");
+                    countUpdated++;
+                }
+
+                await connection.CloseAsync();
+
+            }
+            catch
+                (Exception e)
+            {
+                msg = $"{e.Message}。";
+                error = true;
+            }
+
+            return (countUpdated, msg, error);
+
+        }
+
         //返回归档年份子目录
         public static string ArchiveYearSubPath(int year)
         {
@@ -1381,7 +1479,7 @@ rating=$rating,genres=$genres,directors=$directors,casts=$casts where file_nid=$
 
             if (!ok) return false;
             Genres = subject.genres;
-            KeyName = subject.name;
+            KeyName = subject.name;//豆瓣标题
             OtherName = string.IsNullOrEmpty(subject.othername) ? OtherName : subject.othername;
             Year = string.IsNullOrEmpty(subject.year) ? Year : subject.year;
             Zone = string.IsNullOrEmpty(subject.zone) ? Zone : subject.zone;
@@ -1393,6 +1491,13 @@ rating=$rating,genres=$genres,directors=$directors,casts=$casts where file_nid=$
             return true;
         }
 
+        /// <summary>
+        /// 拷贝指定条目的豆瓣信息到选定的列表
+        /// </summary>
+        /// <param name="sFid">指定豆瓣信息的条目</param>
+        /// <param name="dFids">选定的条目</param>
+        /// <param name="msg"></param>
+        /// <returns></returns>
         public static bool CopyDoubanInfo(long sFid, List<long> dFids, out string msg)
         {
             msg = string.Empty;

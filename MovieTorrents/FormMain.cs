@@ -36,6 +36,8 @@ namespace MovieTorrents
         private const int OperationQueryFile = 1;
         private const int OperationProcessingAddedFile = 2;
         private const int OperationClearFile = 3;
+        private const int OperationMatchMovieInfo = 4;
+
 
         private string _searchText;
 
@@ -105,6 +107,7 @@ namespace MovieTorrents
             tsbNormalize.Click += TsbNormalizeName;//规范文件名称
             tsmiClearDuplicates.Click += MenuItemClearDuplicates_Click;//清理重复文件
             tsmiClearPoster.Click += TsmiClearPoster_Click;//清理海报
+            tsmiMatchMovieInfo.Click += TsmiMatchMovieInfo_Click;//匹配豆瓣影视信息
 
             tsbRating0.Click += (_, _) => { tbSearchText.Text = @"Rating:0"; };
             tsbRating8.Click += (_, _) => { tbSearchText.Text = @"Rating:>8"; };
@@ -681,6 +684,39 @@ namespace MovieTorrents
         }
 
         #endregion
+
+
+        //匹配条目影视信息
+        private async void TsmiMatchMovieInfo_Click(object sender, EventArgs e)
+        {
+            if (Interlocked.CompareExchange(ref _currentOperation, OperationMatchMovieInfo, OperationNone) != OperationNone)
+            {
+                MessageBox.Show(Resource.TextWaitOtherOperation, Resource.TextHint, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+
+            if (_operationTokenSource != null)
+            {
+                _operationTokenSource.Dispose();
+                _operationTokenSource = null;
+            }
+
+            _operationTokenSource = new CancellationTokenSource();
+
+            DisplayInfo("匹配电影中...", false, false);
+
+            await Task.Run(async () =>
+            {
+                var (count, msg, error) = await TorrentFile.DoMatchMovieInfo(_operationTokenSource.Token);
+                DisplayInfo($"{msg}匹配{count}条海报!", error);
+
+            });
+
+            
+            Interlocked.Exchange(ref _currentOperation, OperationNone);
+        }
+
 
         //通知栏图标
         #region 通知栏图标 

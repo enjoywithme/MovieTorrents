@@ -35,11 +35,12 @@
             tsmiShowStatistics = new System.Windows.Forms.ToolStripMenuItem();
             toolStripMenuItem7 = new System.Windows.Forms.ToolStripSeparator();
             tsmiScanFile = new System.Windows.Forms.ToolStripMenuItem();
+            toolStripMenuItem2 = new System.Windows.Forms.ToolStripSeparator();
+            tsmiExit = new System.Windows.Forms.ToolStripMenuItem();
+            工具ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             tsmiClearRecords = new System.Windows.Forms.ToolStripMenuItem();
             tsmiClearDuplicates = new System.Windows.Forms.ToolStripMenuItem();
             tsmiClearPoster = new System.Windows.Forms.ToolStripMenuItem();
-            toolStripMenuItem2 = new System.Windows.Forms.ToolStripSeparator();
-            tsmiExit = new System.Windows.Forms.ToolStripMenuItem();
             过滤TToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             tsmiFilterRecent = new System.Windows.Forms.ToolStripMenuItem();
             tsmiFilterSeelater = new System.Windows.Forms.ToolStripMenuItem();
@@ -118,6 +119,8 @@
             olvColSeen = new BrightIdeasSoftware.OLVColumn();
             olvColSeeDate = new BrightIdeasSoftware.OLVColumn();
             olvColSeeComment = new BrightIdeasSoftware.OLVColumn();
+            tsmiMatchMovieInfo = new System.Windows.Forms.ToolStripMenuItem();
+            toolStripMenuItem5 = new System.Windows.Forms.ToolStripSeparator();
             menuStrip1.SuspendLayout();
             statusStrip1.SuspendLayout();
             lvContextMenu.SuspendLayout();
@@ -128,7 +131,7 @@
             // 
             // menuStrip1
             // 
-            menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { 文件FToolStripMenuItem, 过滤TToolStripMenuItem });
+            menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { 文件FToolStripMenuItem, 工具ToolStripMenuItem, 过滤TToolStripMenuItem });
             menuStrip1.Location = new System.Drawing.Point(0, 0);
             menuStrip1.Name = "menuStrip1";
             menuStrip1.Padding = new System.Windows.Forms.Padding(7, 3, 0, 3);
@@ -138,7 +141,7 @@
             // 
             // 文件FToolStripMenuItem
             // 
-            文件FToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { tsmiShowStatistics, toolStripMenuItem7, tsmiScanFile, tsmiClearRecords, tsmiClearDuplicates, tsmiClearPoster, toolStripMenuItem2, tsmiExit });
+            文件FToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { tsmiShowStatistics, toolStripMenuItem7, tsmiScanFile, toolStripMenuItem2, tsmiExit });
             文件FToolStripMenuItem.Name = "文件FToolStripMenuItem";
             文件FToolStripMenuItem.Size = new System.Drawing.Size(58, 21);
             文件FToolStripMenuItem.Text = "文件(&F)";
@@ -146,59 +149,65 @@
             // tsmiShowStatistics
             // 
             tsmiShowStatistics.Name = "tsmiShowStatistics";
-            tsmiShowStatistics.Size = new System.Drawing.Size(165, 22);
+            tsmiShowStatistics.Size = new System.Drawing.Size(163, 22);
             tsmiShowStatistics.Text = "统计(&T)";
             tsmiShowStatistics.Click += MenuItemShowStatistics_Click;
             // 
             // toolStripMenuItem7
             // 
             toolStripMenuItem7.Name = "toolStripMenuItem7";
-            toolStripMenuItem7.Size = new System.Drawing.Size(162, 6);
+            toolStripMenuItem7.Size = new System.Drawing.Size(160, 6);
             // 
             // tsmiScanFile
             // 
             tsmiScanFile.Name = "tsmiScanFile";
-            tsmiScanFile.Size = new System.Drawing.Size(165, 22);
+            tsmiScanFile.Size = new System.Drawing.Size(163, 22);
             tsmiScanFile.Text = "扫描种子文件(&S)";
             tsmiScanFile.Click += MenuItemScanFile_Click;
+            // 
+            // toolStripMenuItem2
+            // 
+            toolStripMenuItem2.Name = "toolStripMenuItem2";
+            toolStripMenuItem2.Size = new System.Drawing.Size(160, 6);
+            // 
+            // tsmiExit
+            // 
+            tsmiExit.Name = "tsmiExit";
+            tsmiExit.Size = new System.Drawing.Size(163, 22);
+            tsmiExit.Text = "退出(X)";
+            tsmiExit.Click += MenuitemExit_Click;
+            // 
+            // 工具ToolStripMenuItem
+            // 
+            工具ToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { tsmiMatchMovieInfo, toolStripMenuItem5, tsmiClearRecords, tsmiClearDuplicates, tsmiClearPoster });
+            工具ToolStripMenuItem.Name = "工具ToolStripMenuItem";
+            工具ToolStripMenuItem.Size = new System.Drawing.Size(59, 21);
+            工具ToolStripMenuItem.Text = "工具(&T)";
             // 
             // tsmiClearRecords
             // 
             tsmiClearRecords.Name = "tsmiClearRecords";
-            tsmiClearRecords.Size = new System.Drawing.Size(165, 22);
+            tsmiClearRecords.Size = new System.Drawing.Size(180, 22);
             tsmiClearRecords.Text = "清理无效记录(&C)";
-            tsmiClearRecords.Click += MenuItemClearRecords_Click;
             // 
             // tsmiClearDuplicates
             // 
             tsmiClearDuplicates.Name = "tsmiClearDuplicates";
-            tsmiClearDuplicates.Size = new System.Drawing.Size(165, 22);
+            tsmiClearDuplicates.Size = new System.Drawing.Size(180, 22);
             tsmiClearDuplicates.Text = "清理重复记录(&D)";
             // 
             // tsmiClearPoster
             // 
             tsmiClearPoster.Name = "tsmiClearPoster";
-            tsmiClearPoster.Size = new System.Drawing.Size(165, 22);
+            tsmiClearPoster.Size = new System.Drawing.Size(180, 22);
             tsmiClearPoster.Text = "清理海报";
-            // 
-            // toolStripMenuItem2
-            // 
-            toolStripMenuItem2.Name = "toolStripMenuItem2";
-            toolStripMenuItem2.Size = new System.Drawing.Size(162, 6);
-            // 
-            // tsmiExit
-            // 
-            tsmiExit.Name = "tsmiExit";
-            tsmiExit.Size = new System.Drawing.Size(165, 22);
-            tsmiExit.Text = "退出(X)";
-            tsmiExit.Click += MenuitemExit_Click;
             // 
             // 过滤TToolStripMenuItem
             // 
             过滤TToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { tsmiFilterRecent, tsmiFilterSeelater, toolStripSeparator6, tsmiHaveDoubanId, tsmiNoDoubanId, toolStripMenuItem1, tsmiFilterWatched, tsmiFilterNotWatched, tsmiFilterSeeNoWant, tsmiHideSameSubject, toolStripMenuItem6, tsmiLimit100, tsmiLimit200, tsmiLimit500, tsmiLimit1000, tsmiLimit2000 });
             过滤TToolStripMenuItem.Name = "过滤TToolStripMenuItem";
-            过滤TToolStripMenuItem.Size = new System.Drawing.Size(59, 21);
-            过滤TToolStripMenuItem.Text = "过滤(&T)";
+            过滤TToolStripMenuItem.Size = new System.Drawing.Size(58, 21);
+            过滤TToolStripMenuItem.Text = "过滤(&L)";
             // 
             // tsmiFilterRecent
             // 
@@ -807,6 +816,18 @@
             olvColSeeComment.Text = "观看评论";
             olvColSeeComment.Width = 120;
             // 
+            // tsmiMatchMovieInfo
+            // 
+            tsmiMatchMovieInfo.Name = "tsmiMatchMovieInfo";
+            tsmiMatchMovieInfo.Size = new System.Drawing.Size(180, 22);
+            tsmiMatchMovieInfo.Text = "匹配影视信息";
+            tsmiMatchMovieInfo.ToolTipText = "根据已有条目影视信息匹配未知条目。";
+            // 
+            // toolStripMenuItem5
+            // 
+            toolStripMenuItem5.Name = "toolStripMenuItem5";
+            toolStripMenuItem5.Size = new System.Drawing.Size(177, 6);
+            // 
             // FormMain
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(7F, 17F);
@@ -858,7 +879,6 @@
         private System.Windows.Forms.ToolStripMenuItem tsmiScanFile;
         private System.Windows.Forms.ToolStripStatusLabel tssInfo;
         private System.Windows.Forms.ToolStripStatusLabel tssState;
-        private System.Windows.Forms.ToolStripMenuItem tsmiClearRecords;
         private System.Windows.Forms.ToolStripMenuItem tsmiCopyName;
         private System.Windows.Forms.NotifyIcon notifyIcon1;
         private System.Windows.Forms.ToolStripMenuItem tsmiShowFileLocation;
@@ -916,7 +936,6 @@
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator4;
         private System.Windows.Forms.ToolStripButton tsbRating9;
         private System.Windows.Forms.ToolStripButton tsbNormalize;
-        private System.Windows.Forms.ToolStripMenuItem tsmiClearDuplicates;
         private System.Windows.Forms.ToolStripButton tsbMovePath;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator5;
         private System.Windows.Forms.ToolStripMenuItem tsmiMovePath;
@@ -936,7 +955,12 @@
         private BrightIdeasSoftware.OLVColumn olvColSeeDate;
         private BrightIdeasSoftware.OLVColumn olvColAddDate;
         private BrightIdeasSoftware.OLVColumn olvColSeeComment;
+        private System.Windows.Forms.ToolStripMenuItem 工具ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem tsmiClearRecords;
+        private System.Windows.Forms.ToolStripMenuItem tsmiClearDuplicates;
         private System.Windows.Forms.ToolStripMenuItem tsmiClearPoster;
+        private System.Windows.Forms.ToolStripMenuItem tsmiMatchMovieInfo;
+        private System.Windows.Forms.ToolStripSeparator toolStripMenuItem5;
     }
 }
 
