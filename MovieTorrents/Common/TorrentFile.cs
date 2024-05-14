@@ -23,7 +23,7 @@ namespace MovieTorrents.Common
         public int DirNid { get; set; }
         public string DirPath { get; set; }
         public string Path { get; set; }
-        public string KeyName { get; set; }
+        //public string KeyName { get; set; }
         public string Casts { get; set; }
         public string Directors { get; set; }
         public string Name { get; set; }
@@ -42,6 +42,8 @@ namespace MovieTorrents.Common
         public string Zone { get; set; }
         public string PosterPath { get; set; }
         public string DoubanId { get; set; }
+        public string DoubanTitle { get; set; }
+        public string DoubanSubTitle { get; set; }
         public string FullName => DirPath + Path + Name + Ext;
         private long? _creationTime;
         public string CreationTime => _creationTime.SqlLiteToDateTime();
@@ -50,6 +52,7 @@ namespace MovieTorrents.Common
         public string RatingString => Math.Abs(Rating) < 0.0001 ? null : Rating.ToString(CultureInfo.InvariantCulture);
 
         public string FirstName => PurifiedName.ExtractFirstToken();
+        public string Title => DoubanTitle + " " + DoubanSubTitle;
 
         public DateTime SeeDateDate
         {
@@ -180,7 +183,9 @@ namespace MovieTorrents.Common
             DirPath = (string)reader["DirPath"];
             Path = (string)reader["path"];
             Name = (string)reader["name"];
-            KeyName = reader.GetReaderFieldString("keyname");
+            //KeyName = reader.GetReaderFieldString("keyname");
+            DoubanTitle = reader.GetReaderFieldString("doubantitle");
+            DoubanSubTitle = reader.GetReaderFieldString("doubansubtitle");
             OtherName = reader.GetReaderFieldString("othername");
             Ext = (string)reader["ext"];
             Rating = (double)reader["rating"];
@@ -347,7 +352,7 @@ namespace MovieTorrents.Common
                 try
                 {
                     var sql =
-                        "select count(*) from filelist_view where (keyname like $pName or othername like $pName)";
+                        "select count(*) from filelist_view where (name like $pName or othername like $pName)";
                     if (year != null)
                         sql += $" and year={year.Value}";
 
@@ -581,8 +586,11 @@ where not exists (select 1 from tb_file where dir_nid={TorrentRootPathNid} and p
                         if (string.IsNullOrEmpty(firstTorrent.DoubanId) && !string.IsNullOrEmpty(torrentFile.DoubanId))
                             firstTorrent.DoubanId = torrentFile.DoubanId;
 
-                        if (string.IsNullOrEmpty(firstTorrent.KeyName) && !string.IsNullOrEmpty(torrentFile.KeyName))
-                            firstTorrent.KeyName = torrentFile.KeyName;
+                        if (string.IsNullOrEmpty(firstTorrent.DoubanTitle) && !string.IsNullOrEmpty(torrentFile.DoubanTitle))
+                            firstTorrent.DoubanTitle = torrentFile.DoubanTitle;
+
+                        if (string.IsNullOrEmpty(firstTorrent.DoubanSubTitle) && !string.IsNullOrEmpty(torrentFile.DoubanSubTitle))
+                            firstTorrent.DoubanSubTitle = torrentFile.DoubanSubTitle;
 
                         if (string.IsNullOrEmpty(firstTorrent.Casts) && !string.IsNullOrEmpty(torrentFile.Casts))
                             firstTorrent.Casts = torrentFile.Casts;
@@ -637,7 +645,6 @@ where not exists (select 1 from tb_file where dir_nid={TorrentRootPathNid} and p
                 using var commandUpdate = new SQLiteCommand(@"update tb_file set 
 year =$year, 
 zone =$zone,
-keyname =$keyname, 
 othername =$othername, 
 genres =$genres,
 seelater =$seelater, 
@@ -646,6 +653,8 @@ seedate =$seedate,
 seenowant=$seenowant, 
 seecomment =$seecomment,
 doubanid =$doubanid, 
+doubantitle = $doubantitle,
+doubansubtitle = $doubansubtitle,
 rating =$rating, 
 posterpath =$posterpath, 
 casts =$casts, 
@@ -654,7 +663,8 @@ where file_nid =$fid", connection);
                 commandUpdate.Parameters.Add("$fid", DbType.Int32);
                 commandUpdate.Parameters.Add("$year", DbType.String);
                 commandUpdate.Parameters.Add("$zone", DbType.String);
-                commandUpdate.Parameters.Add("$keyname", DbType.String);
+                commandUpdate.Parameters.Add("$doubantitle", DbType.String);
+                commandUpdate.Parameters.Add("$doubansubtitle", DbType.String);
                 commandUpdate.Parameters.Add("$othername", DbType.String);
                 commandUpdate.Parameters.Add("$genres", DbType.String);
                 commandUpdate.Parameters.Add("$seelater", DbType.Int32);
@@ -676,7 +686,7 @@ where file_nid =$fid", connection);
                     commandUpdate.Parameters["$fid"].Value = torrent.Fid;
                     commandUpdate.Parameters["$year"].Value = torrent.Year;
                     commandUpdate.Parameters["$zone"].Value = torrent.Zone;
-                    commandUpdate.Parameters["$keyname"].Value = torrent.KeyName;
+                    //commandUpdate.Parameters["$keyname"].Value = torrent.KeyName;
                     commandUpdate.Parameters["$othername"].Value = torrent.OtherName;
                     commandUpdate.Parameters["$genres"].Value = torrent.Genres;
                     commandUpdate.Parameters["$seelater"].Value = torrent.SeeLater;
@@ -685,6 +695,8 @@ where file_nid =$fid", connection);
                     commandUpdate.Parameters["$seedate"].Value = torrent.SeeDate;
                     commandUpdate.Parameters["$seecomment"].Value = torrent.SeeComment;
                     commandUpdate.Parameters["$doubanid"].Value = torrent.DoubanId;
+                    commandUpdate.Parameters["$doubantitle"].Value = torrent.DoubanTitle;
+                    commandUpdate.Parameters["$doubansubtitle"].Value = torrent.DoubanSubTitle;
                     commandUpdate.Parameters["$rating"].Value = torrent.Rating;
                     commandUpdate.Parameters["$posterpath"].Value = torrent.PosterPath;
                     commandUpdate.Parameters["$casts"].Value = torrent.Casts;
@@ -874,7 +886,7 @@ where file_nid =$fid", connection);
                     //使用净化后的名称搜索条目豆瓣名称
                     await using var cmdCountMovieId =
                         new SQLiteCommand(
-                            "select count(DISTINCT doubanid) as cnt from filelist_view where keyname=$name",connection);
+                            "select count(DISTINCT doubanid) as cnt from filelist_view where doubantitle=$name",connection);
                     cmdCountMovieId.Parameters.AddWithValue("$name", otherName);
                     await using var readerCountMovieId = await cmdCountMovieId.ExecuteReaderAsync(cancelToken);
                     if(!await readerCountMovieId.ReadAsync(cancelToken)) continue;
@@ -886,7 +898,7 @@ where file_nid =$fid", connection);
                     //取得第一条同豆瓣ID的FID
                     await using var cmdQueryMovieId =
                         new SQLiteCommand(
-                            "select file_nid from filelist_view where keyname=$name and doubanid is not null limit 1", connection);
+                            "select file_nid from filelist_view where doubantitle=$name and doubanid is not null limit 1", connection);
                     cmdQueryMovieId.Parameters.AddWithValue("$name", otherName);
                     await using var readerQueryMovieId = await cmdQueryMovieId.ExecuteReaderAsync(cancelToken);
                     if (!await readerQueryMovieId.ReadAsync(cancelToken)) continue;
@@ -896,10 +908,10 @@ where file_nid =$fid", connection);
                     //更新到当前条目
                     await using var cmdUpdateMovieInfo = new SQLiteCommand($@"update tb_file set
 year=(select year from tb_file where file_nid=$fid),
-keyname=(select keyname from tb_file where file_nid=$fid),
-othername=(select othername from tb_file where file_nid=$fid),
 posterpath=(select posterpath from tb_file where file_nid=$fid),
 doubanid=(select doubanid from tb_file where file_nid=$fid),
+doubantitle=(select doubantitle from tb_file where file_nid=$fid),
+doubansubtitle=(select doubansubtitle from tb_file where file_nid=$fid),
 rating=(select rating from tb_file where file_nid=$fid),
 casts=(select casts from tb_file where file_nid=$fid),
 directors=(select directors from tb_file where file_nid=$fid),
@@ -1238,18 +1250,14 @@ where file_nid =$this_fid", connection);
             return ok;
         }
 
-        public bool EditRecord(string newName, string newYear, string newZone,
-            string newKeyName, string newOtherName, string newGenres,
-            bool newWatched, DateTime newWatchDate, string newSeeComment,
-            string newdoubandid,double newRating,string newposterpath,string newcasts,string newdirectors,
-            out string msg)
+        public bool EditRecord(TorrentFile ediTorrentFile, out string msg)
         {
             msg = string.Empty;
             var reNameFile = false;
-            newName = newName.Trim();
-            var newFullName = TorrentRootPath + Path + newName + Ext;
+            ediTorrentFile.Name = ediTorrentFile.Name.Trim();
+            var newFullName = TorrentRootPath + Path + ediTorrentFile.Name + Ext;
 
-            if (string.Compare(Name, newName, StringComparison.InvariantCultureIgnoreCase) != 0)
+            if (string.Compare(Name, ediTorrentFile.Name, StringComparison.InvariantCultureIgnoreCase) != 0)
             {
                 reNameFile = true;
                 if (File.Exists(newFullName))
@@ -1259,14 +1267,12 @@ where file_nid =$this_fid", connection);
                 }
             }
 
-            var watchDate = newWatched ? newWatchDate.ToString("yyyy-MM-dd") : "";
-            var newSeelater = newWatched ? 0 : SeeLater;
-
             var mDbConnection = new SQLiteConnection(DbConnectionString);
             var sql = @"update tb_file set name=$name,year=$year,zone=$zone,
-keyname=$keyname,othername=$othername,genres=$genres,
+othername=$othername,genres=$genres,
 seelater=$seelater,seeflag=$seeflag,seedate=$seedate,seecomment=$comment,
-doubanid=$doubanid,rating=$rating,posterpath=$posterpath,casts=$casts,directors=$directors
+doubanid=$doubanid,doubantitle=$doubantitle,doubansubtitle=$doubansubtitle,
+rating=$rating,posterpath=$posterpath,casts=$casts,directors=$directors
 where file_nid=$fid";
             var ok = true;
             try
@@ -1280,22 +1286,25 @@ where file_nid=$fid";
 
                     var command = new SQLiteCommand(sql, mDbConnection);
 
-                    command.Parameters.AddWithValue("$name", newName);
-                    command.Parameters.AddWithValue("$year", newYear);
-                    command.Parameters.AddWithValue("$zone", newZone);
-                    command.Parameters.AddWithValue("$keyname", newKeyName);
-                    command.Parameters.AddWithValue("$othername", newOtherName);
-                    command.Parameters.AddWithValue("$genres", newGenres);
-                    command.Parameters.AddWithValue("seelater", newSeelater);
-                    command.Parameters.AddWithValue("$seeflag", newWatched ? 1 : 0);
-                    command.Parameters.AddWithValue("$seedate", watchDate);
-                    command.Parameters.AddWithValue("$comment", newSeeComment);
+                    command.Parameters.AddWithValue("$name", ediTorrentFile.Name);
+                    command.Parameters.AddWithValue("$year", ediTorrentFile.Year);
+                    command.Parameters.AddWithValue("$zone", ediTorrentFile.Zone);
+                    //command.Parameters.AddWithValue("$keyname", newKeyName);
+                    command.Parameters.AddWithValue("$othername", ediTorrentFile.OtherName);
+                    command.Parameters.AddWithValue("$genres", ediTorrentFile.Genres);
+                    command.Parameters.AddWithValue("seelater", ediTorrentFile.SeeLater);
+                    command.Parameters.AddWithValue("$seeflag", ediTorrentFile.SeeFlag);
+                    command.Parameters.AddWithValue("$seedate", ediTorrentFile.SeeDate);
+                    command.Parameters.AddWithValue("$comment", ediTorrentFile.SeeComment);
 
-                    command.Parameters.AddWithValue("$doubanid", newdoubandid);
-                    command.Parameters.AddWithValue("$rating", newRating);
-                    command.Parameters.AddWithValue("$posterpath", newposterpath);
-                    command.Parameters.AddWithValue("$casts", newcasts);
-                    command.Parameters.AddWithValue("$directors", newdirectors);
+                    command.Parameters.AddWithValue("$doubanid", ediTorrentFile.DoubanId);
+                    command.Parameters.AddWithValue("$doubantitle", ediTorrentFile.DoubanTitle);
+                    command.Parameters.AddWithValue("$doubansubtitle", ediTorrentFile.DoubanSubTitle);
+
+                    command.Parameters.AddWithValue("$rating", ediTorrentFile.Rating);
+                    command.Parameters.AddWithValue("$posterpath", ediTorrentFile.PosterPath);
+                    command.Parameters.AddWithValue("$casts", ediTorrentFile.Casts);
+                    command.Parameters.AddWithValue("$directors", ediTorrentFile.Directors);
 
                     command.Parameters.AddWithValue("$fid", Fid);
                     command.ExecuteNonQuery();
@@ -1319,21 +1328,23 @@ where file_nid=$fid";
 
             if (!ok) return false;
 
-            Name = newName;
-            Year = newYear;
-            Zone = newZone;
-            KeyName = newKeyName;
-            OtherName = newOtherName;
-            Genres = newGenres;
-            SeeLater = newSeelater;
-            SeeFlag = newWatched ? 1 : 0;
-            SeeDate = watchDate;
-            SeeComment = newSeeComment;
-            DoubanId = newdoubandid;
-            Rating = newRating;
-            PosterPath = newposterpath;
-            Casts = newcasts;
-            Directors = newdirectors;
+            Name = ediTorrentFile.Name;
+            Year = ediTorrentFile.Year;
+            Zone = ediTorrentFile.Zone;
+            //KeyName = newKeyName;
+            DoubanTitle = ediTorrentFile.DoubanTitle;
+            DoubanSubTitle = ediTorrentFile.DoubanSubTitle;
+            OtherName = ediTorrentFile.OtherName;
+            Genres = ediTorrentFile.Genres;
+            SeeLater = ediTorrentFile.SeeLater;
+            SeeFlag = ediTorrentFile.SeeFlag;
+            SeeDate = ediTorrentFile.SeeDate;
+            SeeComment = ediTorrentFile.SeeComment;
+            DoubanId = ediTorrentFile.DoubanId;
+            Rating = ediTorrentFile.Rating;
+            PosterPath = ediTorrentFile.PosterPath;
+            Casts = ediTorrentFile.Casts;
+            Directors = ediTorrentFile.Directors;
 
             return true;
         }
@@ -1428,7 +1439,9 @@ order by year_month desc
             var posterImageFileName = string.Empty;
 
             var mDbConnection = new SQLiteConnection(DbConnectionString);
-            var sql = @"update tb_file set year=$year,zone=$zone,keyname=$keyname,othername=$othername,doubanid=$doubanid,posterpath=$posterpath,
+            var sql = @"update tb_file set year=$year,zone=$zone,othername=$othername,
+doubanid=$doubanid,doubantitle=$doubantitle,doubansubtitle=$doubansubtitle,
+posterpath=$posterpath,
 rating=$rating,genres=$genres,directors=$directors,casts=$casts where file_nid=$fid";
             var ok = true;
             try
@@ -1449,7 +1462,8 @@ rating=$rating,genres=$genres,directors=$directors,casts=$casts where file_nid=$
                     var command = new SQLiteCommand(sql, mDbConnection);
                     command.Parameters.AddWithValue("$year", string.IsNullOrEmpty(subject.year) ? Year : subject.year);
                     command.Parameters.AddWithValue("$zone", subject.zone);
-                    command.Parameters.AddWithValue("$keyname", subject.name);
+                    command.Parameters.AddWithValue("$doubantitle", subject.title);
+                    command.Parameters.AddWithValue("$doubansubtitle", subject.sub_title);
                     command.Parameters.AddWithValue("$othername", string.IsNullOrEmpty(subject.othername) ? OtherName : subject.othername);
                     command.Parameters.AddWithValue("$doubanid", subject.id);
                     command.Parameters.AddWithValue("$posterpath", posterImageFileName);
@@ -1479,7 +1493,8 @@ rating=$rating,genres=$genres,directors=$directors,casts=$casts where file_nid=$
 
             if (!ok) return false;
             Genres = subject.genres;
-            KeyName = subject.name;//豆瓣标题
+            DoubanTitle = subject.title;//豆瓣标题
+            DoubanSubTitle = subject.sub_title;
             OtherName = string.IsNullOrEmpty(subject.othername) ? OtherName : subject.othername;
             Year = string.IsNullOrEmpty(subject.year) ? Year : subject.year;
             Zone = string.IsNullOrEmpty(subject.zone) ? Zone : subject.zone;
@@ -1509,7 +1524,8 @@ rating=$rating,genres=$genres,directors=$directors,casts=$casts where file_nid=$
             var mDbConnection = new SQLiteConnection(DbConnectionString);
             var sql = $@"update tb_file set
 year=(select year from tb_file where file_nid=$fid),
-keyname=(select keyname from tb_file where file_nid=$fid),
+doubantitle=(select doubantitle from tb_file where file_nid=$fid),
+doubansubtitle=(select doubansubtitle from tb_file where file_nid=$fid),
 othername=(select othername from tb_file where file_nid=$fid),
 posterpath=(select posterpath from tb_file where file_nid=$fid),
 doubanid=(select doubanid from tb_file where file_nid=$fid),

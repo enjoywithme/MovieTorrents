@@ -84,7 +84,7 @@
             notifyIcon1 = new System.Windows.Forms.NotifyIcon(components);
             lbGenres = new System.Windows.Forms.Label();
             lbRating = new System.Windows.Forms.Label();
-            lbKeyName = new System.Windows.Forms.Label();
+            lbTitle = new System.Windows.Forms.Label();
             lbOtherName = new System.Windows.Forms.Label();
             pictureBox1 = new System.Windows.Forms.PictureBox();
             lbZone = new System.Windows.Forms.Label();
@@ -523,15 +523,15 @@
             lbRating.Text = "Rating";
             lbRating.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
-            // lbKeyName
+            // lbTitle
             // 
-            lbKeyName.Location = new System.Drawing.Point(16, 445);
-            lbKeyName.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            lbKeyName.Name = "lbKeyName";
-            lbKeyName.Size = new System.Drawing.Size(114, 75);
-            lbKeyName.TabIndex = 1;
-            lbKeyName.Text = "keyName";
-            lbKeyName.TextAlign = System.Drawing.ContentAlignment.TopCenter;
+            lbTitle.Location = new System.Drawing.Point(16, 445);
+            lbTitle.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            lbTitle.Name = "lbTitle";
+            lbTitle.Size = new System.Drawing.Size(114, 75);
+            lbTitle.TabIndex = 1;
+            lbTitle.Text = "keyName";
+            lbTitle.TextAlign = System.Drawing.ContentAlignment.TopCenter;
             // 
             // lbOtherName
             // 
@@ -840,7 +840,7 @@
             Controls.Add(lbYear);
             Controls.Add(lbRating);
             Controls.Add(lbOtherName);
-            Controls.Add(lbKeyName);
+            Controls.Add(lbTitle);
             Controls.Add(lbZone);
             Controls.Add(lbGenres);
             Controls.Add(pictureBox1);
@@ -898,7 +898,7 @@
         private System.Windows.Forms.ToolStripSeparator toolStripMenuItem4;
         private System.Windows.Forms.ToolStripMenuItem tsmiSetSeelater;
         private System.Windows.Forms.ToolStripMenuItem tsmiFilterSeelater;
-        private System.Windows.Forms.Label lbKeyName;
+        private System.Windows.Forms.Label lbTitle;
         private System.Windows.Forms.Label lbOtherName;
         private System.Windows.Forms.ToolStripSeparator toolStripMenuItem6;
         private System.Windows.Forms.ToolStripMenuItem tsmiLimit100;

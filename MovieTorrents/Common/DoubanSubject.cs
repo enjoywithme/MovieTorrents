@@ -16,7 +16,7 @@ namespace MovieTorrents.Common
         public string id { get; set; }
         public string title { get; set; }
         public string sub_title { get; set; }
-        public string name { get; set; }
+        //public string name { get; set; }
         public string othername { get; set; }
         public string type { get; set; }
         public string year { get; set; }
@@ -166,8 +166,9 @@ namespace MovieTorrents.Common
             {
                 var subject = new DouBanSubject() { id = subjectId };
                 subject.TryQueryDetail(out msg);
-                subject.title = subject.name;
-                subject.sub_title = subject.othername;
+                //subject.title = subject.name;
+                if(string.IsNullOrEmpty(subject.sub_title))
+                    subject.sub_title = subject.othername;
                 list.Add(subject);
             }
 
@@ -234,7 +235,8 @@ namespace MovieTorrents.Common
             try
             {
                 var jo = JObject.Parse(html);
-                name = (string)jo["name"];
+                if(string.IsNullOrEmpty(title))
+                    title = (string)jo["name"];
                 if (string.IsNullOrEmpty(img_url)) img_url = (string)jo["image"];
 
                 var datePublished = (string)jo["datePublished"];
@@ -269,7 +271,7 @@ namespace MovieTorrents.Common
 
             //名称 <span property="v:itemreviewed">雷神 Thor</span>
             match = Regex.Match(html, @"""v:itemreviewed"">(.*?)</span>", RegexOptions.IgnoreCase);
-            if (match.Success) subject.name = match.Groups[1].Value;
+            if (match.Success) subject.title = match.Groups[1].Value;
 
             //year <span class="year">(2011)</span>
             match = Regex.Match(html, @"class=""year"">\((.*?)\)</span>", RegexOptions.IgnoreCase);
@@ -303,8 +305,9 @@ namespace MovieTorrents.Common
 
             subject.TryToDownloadSubjectImg();
 
-            subject.title = subject.name;
-            subject.sub_title = subject.othername;
+            //subject.title = subject.name;
+            if(string.IsNullOrEmpty(subject.sub_title))
+                subject.sub_title = subject.othername;
 
             return subject;
         }

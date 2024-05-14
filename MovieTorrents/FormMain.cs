@@ -71,7 +71,7 @@ namespace MovieTorrents
             notifyIcon1.Icon = Icon;
 
 
-            lbYear.Text = lbGenres.Text = lbKeyName.Text = lbOtherName.Text = lbZone.Text = lbRating.Text = string.Empty;
+            lbYear.Text = lbGenres.Text = lbTitle.Text = lbOtherName.Text = lbZone.Text = lbRating.Text = string.Empty;
             tsSummary.Text = Resource.TxtLoadZeroFiles;
 
             //Folder watch
@@ -264,7 +264,7 @@ namespace MovieTorrents
 
             lbGenres.Text = torrentFile?.Genres;
             lbYear.Text = torrentFile?.Year;
-            lbKeyName.Text = torrentFile?.KeyName;
+            lbTitle.Text = torrentFile?.Title;
             lbOtherName.Text = torrentFile?.OtherName;
             lbZone.Text = torrentFile?.Zone;
             lbRating.Text = torrentFile?.RatingString;
