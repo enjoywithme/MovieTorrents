@@ -28,345 +28,420 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.label1 = new System.Windows.Forms.Label();
-            this.tbOldName = new System.Windows.Forms.TextBox();
-            this.label2 = new System.Windows.Forms.Label();
-            this.tbNewName = new System.Windows.Forms.TextBox();
-            this.btOk = new System.Windows.Forms.Button();
-            this.btCancel = new System.Windows.Forms.Button();
-            this.label3 = new System.Windows.Forms.Label();
-            this.tbYear = new System.Windows.Forms.TextBox();
-            this.label4 = new System.Windows.Forms.Label();
-            this.tbKeyName = new System.Windows.Forms.TextBox();
-            this.label5 = new System.Windows.Forms.Label();
-            this.tbOtherName = new System.Windows.Forms.TextBox();
-            this.label6 = new System.Windows.Forms.Label();
-            this.tbGenres = new System.Windows.Forms.TextBox();
-            this.tbComment = new System.Windows.Forms.TextBox();
-            this.label7 = new System.Windows.Forms.Label();
-            this.label8 = new System.Windows.Forms.Label();
-            this.dtPicker = new System.Windows.Forms.DateTimePicker();
-            this.cbWatched = new System.Windows.Forms.CheckBox();
-            this.label9 = new System.Windows.Forms.Label();
-            this.tbZone = new System.Windows.Forms.TextBox();
-            this.label10 = new System.Windows.Forms.Label();
-            this.tbDoubanId = new System.Windows.Forms.TextBox();
-            this.label11 = new System.Windows.Forms.Label();
-            this.tbRating = new System.Windows.Forms.TextBox();
-            this.label12 = new System.Windows.Forms.Label();
-            this.tbDirectors = new System.Windows.Forms.TextBox();
-            this.label13 = new System.Windows.Forms.Label();
-            this.tbCasts = new System.Windows.Forms.TextBox();
-            this.label14 = new System.Windows.Forms.Label();
-            this.tbposterpath = new System.Windows.Forms.TextBox();
-            this.SuspendLayout();
+            label1 = new System.Windows.Forms.Label();
+            tbOldName = new System.Windows.Forms.TextBox();
+            label2 = new System.Windows.Forms.Label();
+            tbNewName = new System.Windows.Forms.TextBox();
+            btOk = new System.Windows.Forms.Button();
+            btCancel = new System.Windows.Forms.Button();
+            label3 = new System.Windows.Forms.Label();
+            tbYear = new System.Windows.Forms.TextBox();
+            label4 = new System.Windows.Forms.Label();
+            tbKeyName = new System.Windows.Forms.TextBox();
+            label5 = new System.Windows.Forms.Label();
+            tbOtherName = new System.Windows.Forms.TextBox();
+            label6 = new System.Windows.Forms.Label();
+            tbGenres = new System.Windows.Forms.TextBox();
+            tbComment = new System.Windows.Forms.TextBox();
+            label7 = new System.Windows.Forms.Label();
+            label8 = new System.Windows.Forms.Label();
+            dtPicker = new System.Windows.Forms.DateTimePicker();
+            cbWatched = new System.Windows.Forms.CheckBox();
+            label9 = new System.Windows.Forms.Label();
+            tbZone = new System.Windows.Forms.TextBox();
+            label10 = new System.Windows.Forms.Label();
+            tbDoubanId = new System.Windows.Forms.TextBox();
+            label11 = new System.Windows.Forms.Label();
+            tbRating = new System.Windows.Forms.TextBox();
+            label12 = new System.Windows.Forms.Label();
+            tbDirectors = new System.Windows.Forms.TextBox();
+            label13 = new System.Windows.Forms.Label();
+            tbCasts = new System.Windows.Forms.TextBox();
+            label14 = new System.Windows.Forms.Label();
+            tbposterpath = new System.Windows.Forms.TextBox();
+            label15 = new System.Windows.Forms.Label();
+            tbDoubanTitle = new System.Windows.Forms.TextBox();
+            tbDoubanSubTitle = new System.Windows.Forms.TextBox();
+            label16 = new System.Windows.Forms.Label();
+            SuspendLayout();
             // 
             // label1
             // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(16, 39);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(41, 12);
-            this.label1.TabIndex = 0;
-            this.label1.Text = "原名称";
+            label1.AutoSize = true;
+            label1.Location = new System.Drawing.Point(19, 55);
+            label1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            label1.Name = "label1";
+            label1.Size = new System.Drawing.Size(44, 17);
+            label1.TabIndex = 0;
+            label1.Text = "原名称";
             // 
             // tbOldName
             // 
-            this.tbOldName.Location = new System.Drawing.Point(66, 35);
-            this.tbOldName.Name = "tbOldName";
-            this.tbOldName.ReadOnly = true;
-            this.tbOldName.Size = new System.Drawing.Size(381, 21);
-            this.tbOldName.TabIndex = 1;
+            tbOldName.Location = new System.Drawing.Point(77, 50);
+            tbOldName.Margin = new System.Windows.Forms.Padding(4);
+            tbOldName.Name = "tbOldName";
+            tbOldName.ReadOnly = true;
+            tbOldName.Size = new System.Drawing.Size(444, 23);
+            tbOldName.TabIndex = 1;
             // 
             // label2
             // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(16, 74);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(41, 12);
-            this.label2.TabIndex = 0;
-            this.label2.Text = "新名称";
+            label2.AutoSize = true;
+            label2.Location = new System.Drawing.Point(19, 105);
+            label2.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            label2.Name = "label2";
+            label2.Size = new System.Drawing.Size(44, 17);
+            label2.TabIndex = 0;
+            label2.Text = "新名称";
             // 
             // tbNewName
             // 
-            this.tbNewName.Location = new System.Drawing.Point(66, 70);
-            this.tbNewName.Name = "tbNewName";
-            this.tbNewName.Size = new System.Drawing.Size(381, 21);
-            this.tbNewName.TabIndex = 0;
+            tbNewName.Location = new System.Drawing.Point(77, 99);
+            tbNewName.Margin = new System.Windows.Forms.Padding(4);
+            tbNewName.Name = "tbNewName";
+            tbNewName.Size = new System.Drawing.Size(444, 23);
+            tbNewName.TabIndex = 0;
             // 
             // btOk
             // 
-            this.btOk.Location = new System.Drawing.Point(476, 34);
-            this.btOk.Name = "btOk";
-            this.btOk.Size = new System.Drawing.Size(75, 23);
-            this.btOk.TabIndex = 8;
-            this.btOk.Text = "确定(&O)";
-            this.btOk.UseVisualStyleBackColor = true;
-            this.btOk.Click += new System.EventHandler(this.btOk_Click);
+            btOk.Location = new System.Drawing.Point(555, 48);
+            btOk.Margin = new System.Windows.Forms.Padding(4);
+            btOk.Name = "btOk";
+            btOk.Size = new System.Drawing.Size(88, 33);
+            btOk.TabIndex = 8;
+            btOk.Text = "确定(&O)";
+            btOk.UseVisualStyleBackColor = true;
+            btOk.Click += btOk_Click;
             // 
             // btCancel
             // 
-            this.btCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.btCancel.Location = new System.Drawing.Point(476, 75);
-            this.btCancel.Name = "btCancel";
-            this.btCancel.Size = new System.Drawing.Size(75, 23);
-            this.btCancel.TabIndex = 9;
-            this.btCancel.Text = "取消(&C)";
-            this.btCancel.UseVisualStyleBackColor = true;
+            btCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            btCancel.Location = new System.Drawing.Point(555, 106);
+            btCancel.Margin = new System.Windows.Forms.Padding(4);
+            btCancel.Name = "btCancel";
+            btCancel.Size = new System.Drawing.Size(88, 33);
+            btCancel.TabIndex = 9;
+            btCancel.Text = "取消(&C)";
+            btCancel.UseVisualStyleBackColor = true;
             // 
             // label3
             // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(28, 109);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(29, 12);
-            this.label3.TabIndex = 0;
-            this.label3.Text = "年份";
+            label3.AutoSize = true;
+            label3.Location = new System.Drawing.Point(33, 237);
+            label3.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            label3.Name = "label3";
+            label3.Size = new System.Drawing.Size(32, 17);
+            label3.TabIndex = 0;
+            label3.Text = "年份";
             // 
             // tbYear
             // 
-            this.tbYear.Location = new System.Drawing.Point(66, 105);
-            this.tbYear.Name = "tbYear";
-            this.tbYear.Size = new System.Drawing.Size(100, 21);
-            this.tbYear.TabIndex = 1;
+            tbYear.Location = new System.Drawing.Point(77, 232);
+            tbYear.Margin = new System.Windows.Forms.Padding(4);
+            tbYear.Name = "tbYear";
+            tbYear.Size = new System.Drawing.Size(116, 23);
+            tbYear.TabIndex = 1;
             // 
             // label4
             // 
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(16, 257);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(41, 12);
-            this.label4.TabIndex = 0;
-            this.label4.Text = "关键字";
+            label4.AutoSize = true;
+            label4.Location = new System.Drawing.Point(19, 157);
+            label4.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            label4.Name = "label4";
+            label4.Size = new System.Drawing.Size(44, 17);
+            label4.TabIndex = 0;
+            label4.Text = "关键字";
             // 
             // tbKeyName
             // 
-            this.tbKeyName.Location = new System.Drawing.Point(66, 245);
-            this.tbKeyName.Multiline = true;
-            this.tbKeyName.Name = "tbKeyName";
-            this.tbKeyName.Size = new System.Drawing.Size(381, 37);
-            this.tbKeyName.TabIndex = 2;
+            tbKeyName.Location = new System.Drawing.Point(77, 140);
+            tbKeyName.Margin = new System.Windows.Forms.Padding(4);
+            tbKeyName.Multiline = true;
+            tbKeyName.Name = "tbKeyName";
+            tbKeyName.Size = new System.Drawing.Size(444, 51);
+            tbKeyName.TabIndex = 2;
             // 
             // label5
             // 
-            this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(4, 307);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(53, 12);
-            this.label5.TabIndex = 0;
-            this.label5.Text = "其他名称";
+            label5.AutoSize = true;
+            label5.Location = new System.Drawing.Point(5, 368);
+            label5.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            label5.Name = "label5";
+            label5.Size = new System.Drawing.Size(56, 17);
+            label5.TabIndex = 0;
+            label5.Text = "其他名称";
             // 
             // tbOtherName
             // 
-            this.tbOtherName.Location = new System.Drawing.Point(66, 296);
-            this.tbOtherName.Multiline = true;
-            this.tbOtherName.Name = "tbOtherName";
-            this.tbOtherName.Size = new System.Drawing.Size(381, 34);
-            this.tbOtherName.TabIndex = 3;
+            tbOtherName.Location = new System.Drawing.Point(77, 352);
+            tbOtherName.Margin = new System.Windows.Forms.Padding(4);
+            tbOtherName.Multiline = true;
+            tbOtherName.Name = "tbOtherName";
+            tbOtherName.Size = new System.Drawing.Size(444, 46);
+            tbOtherName.TabIndex = 3;
             // 
             // label6
             // 
-            this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(28, 348);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(29, 12);
-            this.label6.TabIndex = 0;
-            this.label6.Text = "类型";
+            label6.AutoSize = true;
+            label6.Location = new System.Drawing.Point(33, 501);
+            label6.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            label6.Name = "label6";
+            label6.Size = new System.Drawing.Size(32, 17);
+            label6.TabIndex = 0;
+            label6.Text = "类型";
             // 
             // tbGenres
             // 
-            this.tbGenres.Location = new System.Drawing.Point(66, 344);
-            this.tbGenres.Name = "tbGenres";
-            this.tbGenres.Size = new System.Drawing.Size(381, 21);
-            this.tbGenres.TabIndex = 4;
+            tbGenres.Location = new System.Drawing.Point(77, 495);
+            tbGenres.Margin = new System.Windows.Forms.Padding(4);
+            tbGenres.Name = "tbGenres";
+            tbGenres.Size = new System.Drawing.Size(444, 23);
+            tbGenres.TabIndex = 4;
             // 
             // tbComment
             // 
-            this.tbComment.Location = new System.Drawing.Point(66, 414);
-            this.tbComment.Multiline = true;
-            this.tbComment.Name = "tbComment";
-            this.tbComment.Size = new System.Drawing.Size(381, 73);
-            this.tbComment.TabIndex = 6;
+            tbComment.Location = new System.Drawing.Point(77, 593);
+            tbComment.Margin = new System.Windows.Forms.Padding(4);
+            tbComment.Multiline = true;
+            tbComment.Name = "tbComment";
+            tbComment.Size = new System.Drawing.Size(444, 102);
+            tbComment.TabIndex = 6;
             // 
             // label7
             // 
-            this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(28, 444);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(29, 12);
-            this.label7.TabIndex = 4;
-            this.label7.Text = "评论";
+            label7.AutoSize = true;
+            label7.Location = new System.Drawing.Point(33, 636);
+            label7.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            label7.Name = "label7";
+            label7.Size = new System.Drawing.Size(32, 17);
+            label7.TabIndex = 4;
+            label7.Text = "评论";
             // 
             // label8
             // 
-            this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(4, 383);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(53, 12);
-            this.label8.TabIndex = 5;
-            this.label8.Text = "观看日期";
+            label8.AutoSize = true;
+            label8.Location = new System.Drawing.Point(5, 550);
+            label8.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            label8.Name = "label8";
+            label8.Size = new System.Drawing.Size(56, 17);
+            label8.TabIndex = 5;
+            label8.Text = "观看日期";
             // 
             // dtPicker
             // 
-            this.dtPicker.Location = new System.Drawing.Point(66, 379);
-            this.dtPicker.Name = "dtPicker";
-            this.dtPicker.Size = new System.Drawing.Size(200, 21);
-            this.dtPicker.TabIndex = 5;
+            dtPicker.Location = new System.Drawing.Point(77, 544);
+            dtPicker.Margin = new System.Windows.Forms.Padding(4);
+            dtPicker.Name = "dtPicker";
+            dtPicker.Size = new System.Drawing.Size(233, 23);
+            dtPicker.TabIndex = 5;
             // 
             // cbWatched
             // 
-            this.cbWatched.AutoSize = true;
-            this.cbWatched.Location = new System.Drawing.Point(369, 381);
-            this.cbWatched.Name = "cbWatched";
-            this.cbWatched.Size = new System.Drawing.Size(48, 16);
-            this.cbWatched.TabIndex = 7;
-            this.cbWatched.Text = "已看";
-            this.cbWatched.UseVisualStyleBackColor = true;
+            cbWatched.AutoSize = true;
+            cbWatched.Location = new System.Drawing.Point(430, 547);
+            cbWatched.Margin = new System.Windows.Forms.Padding(4);
+            cbWatched.Name = "cbWatched";
+            cbWatched.Size = new System.Drawing.Size(51, 21);
+            cbWatched.TabIndex = 7;
+            cbWatched.Text = "已看";
+            cbWatched.UseVisualStyleBackColor = true;
             // 
             // label9
             // 
-            this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(176, 109);
-            this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(53, 12);
-            this.label9.TabIndex = 0;
-            this.label9.Text = "制片地区";
+            label9.AutoSize = true;
+            label9.Location = new System.Drawing.Point(205, 237);
+            label9.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            label9.Name = "label9";
+            label9.Size = new System.Drawing.Size(56, 17);
+            label9.TabIndex = 0;
+            label9.Text = "制片地区";
             // 
             // tbZone
             // 
-            this.tbZone.Location = new System.Drawing.Point(235, 105);
-            this.tbZone.Name = "tbZone";
-            this.tbZone.Size = new System.Drawing.Size(212, 21);
-            this.tbZone.TabIndex = 1;
+            tbZone.Location = new System.Drawing.Point(274, 232);
+            tbZone.Margin = new System.Windows.Forms.Padding(4);
+            tbZone.Name = "tbZone";
+            tbZone.Size = new System.Drawing.Size(247, 23);
+            tbZone.TabIndex = 1;
             // 
             // label10
             // 
-            this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(16, 144);
-            this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(41, 12);
-            this.label10.TabIndex = 0;
-            this.label10.Text = "豆瓣ID";
+            label10.AutoSize = true;
+            label10.Location = new System.Drawing.Point(19, 287);
+            label10.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            label10.Name = "label10";
+            label10.Size = new System.Drawing.Size(45, 17);
+            label10.TabIndex = 0;
+            label10.Text = "豆瓣ID";
             // 
             // tbDoubanId
             // 
-            this.tbDoubanId.Location = new System.Drawing.Point(66, 140);
-            this.tbDoubanId.Name = "tbDoubanId";
-            this.tbDoubanId.Size = new System.Drawing.Size(100, 21);
-            this.tbDoubanId.TabIndex = 1;
+            tbDoubanId.Location = new System.Drawing.Point(77, 281);
+            tbDoubanId.Margin = new System.Windows.Forms.Padding(4);
+            tbDoubanId.Name = "tbDoubanId";
+            tbDoubanId.Size = new System.Drawing.Size(116, 23);
+            tbDoubanId.TabIndex = 1;
             // 
             // label11
             // 
-            this.label11.AutoSize = true;
-            this.label11.Location = new System.Drawing.Point(200, 144);
-            this.label11.Name = "label11";
-            this.label11.Size = new System.Drawing.Size(29, 12);
-            this.label11.TabIndex = 0;
-            this.label11.Text = "评分";
+            label11.AutoSize = true;
+            label11.Location = new System.Drawing.Point(233, 287);
+            label11.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            label11.Name = "label11";
+            label11.Size = new System.Drawing.Size(32, 17);
+            label11.TabIndex = 0;
+            label11.Text = "评分";
             // 
             // tbRating
             // 
-            this.tbRating.Location = new System.Drawing.Point(235, 140);
-            this.tbRating.Name = "tbRating";
-            this.tbRating.Size = new System.Drawing.Size(61, 21);
-            this.tbRating.TabIndex = 1;
+            tbRating.Location = new System.Drawing.Point(274, 281);
+            tbRating.Margin = new System.Windows.Forms.Padding(4);
+            tbRating.Name = "tbRating";
+            tbRating.Size = new System.Drawing.Size(247, 23);
+            tbRating.TabIndex = 1;
             // 
             // label12
             // 
-            this.label12.AutoSize = true;
-            this.label12.Location = new System.Drawing.Point(28, 179);
-            this.label12.Name = "label12";
-            this.label12.Size = new System.Drawing.Size(29, 12);
-            this.label12.TabIndex = 0;
-            this.label12.Text = "导演";
+            label12.AutoSize = true;
+            label12.Location = new System.Drawing.Point(33, 420);
+            label12.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            label12.Name = "label12";
+            label12.Size = new System.Drawing.Size(32, 17);
+            label12.TabIndex = 0;
+            label12.Text = "导演";
             // 
             // tbDirectors
             // 
-            this.tbDirectors.Location = new System.Drawing.Point(66, 175);
-            this.tbDirectors.Name = "tbDirectors";
-            this.tbDirectors.Size = new System.Drawing.Size(100, 21);
-            this.tbDirectors.TabIndex = 1;
+            tbDirectors.Location = new System.Drawing.Point(77, 414);
+            tbDirectors.Margin = new System.Windows.Forms.Padding(4);
+            tbDirectors.Name = "tbDirectors";
+            tbDirectors.Size = new System.Drawing.Size(116, 23);
+            tbDirectors.TabIndex = 1;
             // 
             // label13
             // 
-            this.label13.AutoSize = true;
-            this.label13.Location = new System.Drawing.Point(200, 179);
-            this.label13.Name = "label13";
-            this.label13.Size = new System.Drawing.Size(29, 12);
-            this.label13.TabIndex = 0;
-            this.label13.Text = "主演";
+            label13.AutoSize = true;
+            label13.Location = new System.Drawing.Point(233, 420);
+            label13.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            label13.Name = "label13";
+            label13.Size = new System.Drawing.Size(32, 17);
+            label13.TabIndex = 0;
+            label13.Text = "主演";
             // 
             // tbCasts
             // 
-            this.tbCasts.Location = new System.Drawing.Point(235, 175);
-            this.tbCasts.Name = "tbCasts";
-            this.tbCasts.Size = new System.Drawing.Size(212, 21);
-            this.tbCasts.TabIndex = 1;
+            tbCasts.Location = new System.Drawing.Point(274, 414);
+            tbCasts.Margin = new System.Windows.Forms.Padding(4);
+            tbCasts.Name = "tbCasts";
+            tbCasts.Size = new System.Drawing.Size(247, 23);
+            tbCasts.TabIndex = 1;
             // 
             // label14
             // 
-            this.label14.AutoSize = true;
-            this.label14.Location = new System.Drawing.Point(28, 214);
-            this.label14.Name = "label14";
-            this.label14.Size = new System.Drawing.Size(29, 12);
-            this.label14.TabIndex = 0;
-            this.label14.Text = "海报";
+            label14.AutoSize = true;
+            label14.Location = new System.Drawing.Point(33, 469);
+            label14.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            label14.Name = "label14";
+            label14.Size = new System.Drawing.Size(32, 17);
+            label14.TabIndex = 0;
+            label14.Text = "海报";
             // 
             // tbposterpath
             // 
-            this.tbposterpath.Location = new System.Drawing.Point(66, 210);
-            this.tbposterpath.Name = "tbposterpath";
-            this.tbposterpath.Size = new System.Drawing.Size(381, 21);
-            this.tbposterpath.TabIndex = 1;
+            tbposterpath.Location = new System.Drawing.Point(77, 464);
+            tbposterpath.Margin = new System.Windows.Forms.Padding(4);
+            tbposterpath.Name = "tbposterpath";
+            tbposterpath.Size = new System.Drawing.Size(444, 23);
+            tbposterpath.TabIndex = 1;
+            // 
+            // label15
+            // 
+            label15.AutoSize = true;
+            label15.Location = new System.Drawing.Point(233, 327);
+            label15.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            label15.Name = "label15";
+            label15.Size = new System.Drawing.Size(44, 17);
+            label15.TabIndex = 0;
+            label15.Text = "副标题";
+            // 
+            // tbDoubanTitle
+            // 
+            tbDoubanTitle.Location = new System.Drawing.Point(77, 321);
+            tbDoubanTitle.Margin = new System.Windows.Forms.Padding(4);
+            tbDoubanTitle.Name = "tbDoubanTitle";
+            tbDoubanTitle.Size = new System.Drawing.Size(116, 23);
+            tbDoubanTitle.TabIndex = 1;
+            // 
+            // tbDoubanSubTitle
+            // 
+            tbDoubanSubTitle.Location = new System.Drawing.Point(274, 321);
+            tbDoubanSubTitle.Margin = new System.Windows.Forms.Padding(4);
+            tbDoubanSubTitle.Name = "tbDoubanSubTitle";
+            tbDoubanSubTitle.Size = new System.Drawing.Size(247, 23);
+            tbDoubanSubTitle.TabIndex = 1;
+            // 
+            // label16
+            // 
+            label16.AutoSize = true;
+            label16.Location = new System.Drawing.Point(13, 327);
+            label16.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            label16.Name = "label16";
+            label16.Size = new System.Drawing.Size(56, 17);
+            label16.TabIndex = 0;
+            label16.Text = "豆瓣标题";
             // 
             // FormEdit
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.CancelButton = this.btCancel;
-            this.ClientSize = new System.Drawing.Size(579, 518);
-            this.Controls.Add(this.cbWatched);
-            this.Controls.Add(this.tbComment);
-            this.Controls.Add(this.label7);
-            this.Controls.Add(this.label8);
-            this.Controls.Add(this.dtPicker);
-            this.Controls.Add(this.btCancel);
-            this.Controls.Add(this.btOk);
-            this.Controls.Add(this.tbOtherName);
-            this.Controls.Add(this.label5);
-            this.Controls.Add(this.tbKeyName);
-            this.Controls.Add(this.label4);
-            this.Controls.Add(this.tbGenres);
-            this.Controls.Add(this.label6);
-            this.Controls.Add(this.tbZone);
-            this.Controls.Add(this.label9);
-            this.Controls.Add(this.tbRating);
-            this.Controls.Add(this.tbposterpath);
-            this.Controls.Add(this.tbCasts);
-            this.Controls.Add(this.tbDirectors);
-            this.Controls.Add(this.label14);
-            this.Controls.Add(this.tbDoubanId);
-            this.Controls.Add(this.label13);
-            this.Controls.Add(this.label11);
-            this.Controls.Add(this.label12);
-            this.Controls.Add(this.tbYear);
-            this.Controls.Add(this.label10);
-            this.Controls.Add(this.label3);
-            this.Controls.Add(this.tbNewName);
-            this.Controls.Add(this.label2);
-            this.Controls.Add(this.tbOldName);
-            this.Controls.Add(this.label1);
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
-            this.MaximizeBox = false;
-            this.MinimizeBox = false;
-            this.Name = "FormEdit";
-            this.ShowInTaskbar = false;
-            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "修改记录";
-            this.Load += new System.EventHandler(this.FormRenameTorrent_Load);
-            this.ResumeLayout(false);
-            this.PerformLayout();
-
+            AutoScaleDimensions = new System.Drawing.SizeF(7F, 17F);
+            AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            CancelButton = btCancel;
+            ClientSize = new System.Drawing.Size(681, 729);
+            Controls.Add(cbWatched);
+            Controls.Add(tbComment);
+            Controls.Add(label7);
+            Controls.Add(label8);
+            Controls.Add(dtPicker);
+            Controls.Add(btCancel);
+            Controls.Add(btOk);
+            Controls.Add(tbOtherName);
+            Controls.Add(label5);
+            Controls.Add(tbKeyName);
+            Controls.Add(label4);
+            Controls.Add(tbGenres);
+            Controls.Add(label6);
+            Controls.Add(tbZone);
+            Controls.Add(label9);
+            Controls.Add(tbDoubanSubTitle);
+            Controls.Add(tbRating);
+            Controls.Add(tbposterpath);
+            Controls.Add(tbCasts);
+            Controls.Add(tbDirectors);
+            Controls.Add(tbDoubanTitle);
+            Controls.Add(label14);
+            Controls.Add(tbDoubanId);
+            Controls.Add(label15);
+            Controls.Add(label13);
+            Controls.Add(label11);
+            Controls.Add(label12);
+            Controls.Add(tbYear);
+            Controls.Add(label16);
+            Controls.Add(label10);
+            Controls.Add(label3);
+            Controls.Add(tbNewName);
+            Controls.Add(label2);
+            Controls.Add(tbOldName);
+            Controls.Add(label1);
+            FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+            Margin = new System.Windows.Forms.Padding(4);
+            MaximizeBox = false;
+            MinimizeBox = false;
+            Name = "FormEdit";
+            ShowInTaskbar = false;
+            StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
+            Text = "修改记录";
+            Load += FormRenameTorrent_Load;
+            ResumeLayout(false);
+            PerformLayout();
         }
 
         #endregion
@@ -402,5 +477,9 @@
         private System.Windows.Forms.TextBox tbCasts;
         private System.Windows.Forms.Label label14;
         private System.Windows.Forms.TextBox tbposterpath;
+        private System.Windows.Forms.Label label15;
+        private System.Windows.Forms.TextBox tbDoubanTitle;
+        private System.Windows.Forms.TextBox tbDoubanSubTitle;
+        private System.Windows.Forms.Label label16;
     }
 }
