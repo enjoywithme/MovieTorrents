@@ -58,7 +58,7 @@ namespace MovieTorrents
             editTorrentFile.OtherName = tbOtherName.Text;
             editTorrentFile.Genres = tbGenres.Text;
             editTorrentFile.SeeFlag = cbWatched.Checked ? 1 : 0;
-            editTorrentFile.SeeDate = cbWatched.Checked ? "" : dtPicker.Value.ToString("yyyy-MM-dd");
+            editTorrentFile.SeeDate = cbWatched.Checked ? dtPicker.Value.ToString("yyyy-MM-dd"):"";
             editTorrentFile.SeeComment = tbComment.Text;
             editTorrentFile.DoubanId = tbDoubanId.Text;
             editTorrentFile.DoubanTitle = tbDoubanTitle.Text;
