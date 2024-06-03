@@ -898,7 +898,7 @@ where file_nid =$fid", connection);
                     //取得第一条同豆瓣ID的FID
                     await using var cmdQueryMovieId =
                         new SQLiteCommand(
-                            "select file_nid from filelist_view where doubantitle=$name and doubanid is not null limit 1", connection);
+                            "select file_nid from filelist_view where doubantitle=$name and doubanid is not null order by file_nid DESC limit 1", connection);
                     cmdQueryMovieId.Parameters.AddWithValue("$name", otherName);
                     await using var readerQueryMovieId = await cmdQueryMovieId.ExecuteReaderAsync(cancelToken);
                     if (!await readerQueryMovieId.ReadAsync(cancelToken)) continue;
