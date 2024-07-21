@@ -230,4 +230,10 @@
   <data name="TextNoResultsFound" xml:space="preserve">
     <value>没有搜索到任何结果</value>
   </data>
+  <data name="BTIsWorking" xml:space="preserve">
+	  <value>正在查询中，稍后重试。</value>
+  </data>
+  <data name="BtCurrentPcIsNotMonitor" xml:space="preserve">
+	  <value>当前电脑不是监视电脑，不能启动。</value>
+  </data>
 </root>

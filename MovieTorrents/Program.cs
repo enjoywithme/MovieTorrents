@@ -1,4 +1,8 @@
 ﻿using System;
+using System.IO;
+using System.Reflection;
+using System.Text;
+using System.Text.Unicode;
 using System.Windows.Forms;
 using MovieTorrents.Common;
 using mySharedLib;
@@ -64,5 +68,16 @@ namespace MovieTorrents
             MessageBox.Show(message, Resource.TextError, MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
 
+
+        public static string AssemblyDirectory
+        {
+            get
+            {
+                var codeBase = Assembly.GetExecutingAssembly().Location;
+                var uri = new UriBuilder(codeBase);
+                var path = Uri.UnescapeDataString(uri.Path);
+                return Path.GetDirectoryName(path);
+            }
+        }
     }
 }

@@ -61,6 +61,24 @@ namespace MovieTorrents {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to 当前电脑不是监视电脑，不能启动。.
+        /// </summary>
+        internal static string BtCurrentPcIsNotMonitor {
+            get {
+                return ResourceManager.GetString("BtCurrentPcIsNotMonitor", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 正在查询中，稍后重试。.
+        /// </summary>
+        internal static string BTIsWorking {
+            get {
+                return ResourceManager.GetString("BTIsWorking", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
         internal static System.Drawing.Bitmap Eye32 {

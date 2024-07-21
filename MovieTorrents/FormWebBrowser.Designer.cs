@@ -33,272 +33,263 @@ namespace MovieTorrents
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormWebBrowser));
-            this.btnBack = new System.Windows.Forms.Button();
-            this.btnForward = new System.Windows.Forms.Button();
-            this.btnRefresh = new System.Windows.Forms.Button();
-            this.btnStop = new System.Windows.Forms.Button();
-            this.btnGo = new System.Windows.Forms.Button();
-            this.txtUrl = new System.Windows.Forms.TextBox();
-            this.menuStrip1 = new System.Windows.Forms.MenuStrip();
-            this.controlToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.acceleratorKeysEnabledToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.allowExternalDropMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.viewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.zoomToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.xToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.xToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
-            this.xToolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
-            this.xToolStripMenuItem3 = new System.Windows.Forms.ToolStripMenuItem();
-            this.backgroundColorMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.whiteBackgroundColorMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.redBackgroundColorMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.blueBackgroundColorMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.transparentBackgroundColorMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.webView2Control = new Microsoft.Web.WebView2.WinForms.WebView2();
-            this.btnOk = new System.Windows.Forms.Button();
-            this.menuStrip1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.webView2Control)).BeginInit();
-            this.SuspendLayout();
+            btnBack = new System.Windows.Forms.Button();
+            btnForward = new System.Windows.Forms.Button();
+            btnRefresh = new System.Windows.Forms.Button();
+            btnStop = new System.Windows.Forms.Button();
+            btnGo = new System.Windows.Forms.Button();
+            txtUrl = new System.Windows.Forms.TextBox();
+            menuStrip1 = new System.Windows.Forms.MenuStrip();
+            controlToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            acceleratorKeysEnabledToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            allowExternalDropMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            viewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            zoomToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            xToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            xToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            xToolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
+            xToolStripMenuItem3 = new System.Windows.Forms.ToolStripMenuItem();
+            backgroundColorMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            whiteBackgroundColorMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            redBackgroundColorMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            blueBackgroundColorMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            transparentBackgroundColorMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            btnOk = new System.Windows.Forms.Button();
+            webView2Control = new Microsoft.Web.WebView2.WinForms.WebView2();
+            menuStrip1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)webView2Control).BeginInit();
+            SuspendLayout();
             // 
             // btnBack
             // 
-            this.btnBack.Enabled = false;
-            this.btnBack.Location = new System.Drawing.Point(12, 23);
-            this.btnBack.Name = "btnBack";
-            this.btnBack.Size = new System.Drawing.Size(75, 21);
-            this.btnBack.TabIndex = 0;
-            this.btnBack.Text = "Back";
-            this.btnBack.UseVisualStyleBackColor = true;
-            this.btnBack.Click += new System.EventHandler(this.btnBack_Click);
+            btnBack.Enabled = false;
+            btnBack.Location = new System.Drawing.Point(14, 33);
+            btnBack.Margin = new System.Windows.Forms.Padding(4);
+            btnBack.Name = "btnBack";
+            btnBack.Size = new System.Drawing.Size(88, 30);
+            btnBack.TabIndex = 0;
+            btnBack.Text = "Back";
+            btnBack.UseVisualStyleBackColor = true;
+            btnBack.Click += btnBack_Click;
             // 
             // btnForward
             // 
-            this.btnForward.Enabled = false;
-            this.btnForward.Location = new System.Drawing.Point(93, 23);
-            this.btnForward.Name = "btnForward";
-            this.btnForward.Size = new System.Drawing.Size(75, 21);
-            this.btnForward.TabIndex = 1;
-            this.btnForward.Text = "Forward";
-            this.btnForward.UseVisualStyleBackColor = true;
-            this.btnForward.Click += new System.EventHandler(this.btnForward_Click);
+            btnForward.Enabled = false;
+            btnForward.Location = new System.Drawing.Point(108, 33);
+            btnForward.Margin = new System.Windows.Forms.Padding(4);
+            btnForward.Name = "btnForward";
+            btnForward.Size = new System.Drawing.Size(88, 30);
+            btnForward.TabIndex = 1;
+            btnForward.Text = "Forward";
+            btnForward.UseVisualStyleBackColor = true;
+            btnForward.Click += btnForward_Click;
             // 
             // btnRefresh
             // 
-            this.btnRefresh.Location = new System.Drawing.Point(174, 23);
-            this.btnRefresh.Name = "btnRefresh";
-            this.btnRefresh.Size = new System.Drawing.Size(75, 21);
-            this.btnRefresh.TabIndex = 2;
-            this.btnRefresh.Text = "Refresh";
-            this.btnRefresh.UseVisualStyleBackColor = true;
-            this.btnRefresh.Click += new System.EventHandler(this.BtnRefresh_Click);
+            btnRefresh.Location = new System.Drawing.Point(203, 33);
+            btnRefresh.Margin = new System.Windows.Forms.Padding(4);
+            btnRefresh.Name = "btnRefresh";
+            btnRefresh.Size = new System.Drawing.Size(88, 30);
+            btnRefresh.TabIndex = 2;
+            btnRefresh.Text = "Refresh";
+            btnRefresh.UseVisualStyleBackColor = true;
+            btnRefresh.Click += BtnRefresh_Click;
             // 
             // btnStop
             // 
-            this.btnStop.Location = new System.Drawing.Point(255, 23);
-            this.btnStop.Name = "btnStop";
-            this.btnStop.Size = new System.Drawing.Size(75, 21);
-            this.btnStop.TabIndex = 3;
-            this.btnStop.Text = "Stop";
-            this.btnStop.UseVisualStyleBackColor = true;
+            btnStop.Location = new System.Drawing.Point(298, 33);
+            btnStop.Margin = new System.Windows.Forms.Padding(4);
+            btnStop.Name = "btnStop";
+            btnStop.Size = new System.Drawing.Size(88, 30);
+            btnStop.TabIndex = 3;
+            btnStop.Text = "Stop";
+            btnStop.UseVisualStyleBackColor = true;
             // 
             // btnGo
             // 
-            this.btnGo.Location = new System.Drawing.Point(713, 23);
-            this.btnGo.Name = "btnGo";
-            this.btnGo.Size = new System.Drawing.Size(75, 21);
-            this.btnGo.TabIndex = 5;
-            this.btnGo.Text = "Go";
-            this.btnGo.UseVisualStyleBackColor = true;
-            this.btnGo.Click += new System.EventHandler(this.BtnGo_Click);
+            btnGo.Location = new System.Drawing.Point(832, 33);
+            btnGo.Margin = new System.Windows.Forms.Padding(4);
+            btnGo.Name = "btnGo";
+            btnGo.Size = new System.Drawing.Size(88, 30);
+            btnGo.TabIndex = 5;
+            btnGo.Text = "Go";
+            btnGo.UseVisualStyleBackColor = true;
+            btnGo.Click += BtnGo_Click;
             // 
             // txtUrl
             // 
-            this.txtUrl.Location = new System.Drawing.Point(336, 23);
-            this.txtUrl.Name = "txtUrl";
-            this.txtUrl.Size = new System.Drawing.Size(371, 21);
-            this.txtUrl.TabIndex = 4;
-            this.txtUrl.Text = "https://www.bing.com/";
+            txtUrl.Location = new System.Drawing.Point(392, 37);
+            txtUrl.Margin = new System.Windows.Forms.Padding(4);
+            txtUrl.Name = "txtUrl";
+            txtUrl.Size = new System.Drawing.Size(432, 23);
+            txtUrl.TabIndex = 4;
+            txtUrl.Text = "https://www.bing.com/";
             // 
             // menuStrip1
             // 
-            this.menuStrip1.ImageScalingSize = new System.Drawing.Size(32, 32);
-            this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.controlToolStripMenuItem,
-            this.viewToolStripMenuItem});
-            this.menuStrip1.Location = new System.Drawing.Point(0, 0);
-            this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Padding = new System.Windows.Forms.Padding(3, 1, 0, 1);
-            this.menuStrip1.Size = new System.Drawing.Size(1044, 24);
-            this.menuStrip1.TabIndex = 7;
-            this.menuStrip1.Text = "menuStrip1";
+            menuStrip1.ImageScalingSize = new System.Drawing.Size(32, 32);
+            menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { controlToolStripMenuItem, viewToolStripMenuItem });
+            menuStrip1.Location = new System.Drawing.Point(0, 0);
+            menuStrip1.Name = "menuStrip1";
+            menuStrip1.Padding = new System.Windows.Forms.Padding(4, 1, 0, 1);
+            menuStrip1.Size = new System.Drawing.Size(1218, 24);
+            menuStrip1.TabIndex = 7;
+            menuStrip1.Text = "menuStrip1";
             // 
             // controlToolStripMenuItem
             // 
-            this.controlToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.acceleratorKeysEnabledToolStripMenuItem,
-            this.allowExternalDropMenuItem});
-            this.controlToolStripMenuItem.Name = "controlToolStripMenuItem";
-            this.controlToolStripMenuItem.Size = new System.Drawing.Size(63, 22);
-            this.controlToolStripMenuItem.Text = "Control";
+            controlToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { acceleratorKeysEnabledToolStripMenuItem, allowExternalDropMenuItem });
+            controlToolStripMenuItem.Name = "controlToolStripMenuItem";
+            controlToolStripMenuItem.Size = new System.Drawing.Size(63, 22);
+            controlToolStripMenuItem.Text = "Control";
             // 
             // acceleratorKeysEnabledToolStripMenuItem
             // 
-            this.acceleratorKeysEnabledToolStripMenuItem.Checked = true;
-            this.acceleratorKeysEnabledToolStripMenuItem.CheckOnClick = true;
-            this.acceleratorKeysEnabledToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.acceleratorKeysEnabledToolStripMenuItem.Name = "acceleratorKeysEnabledToolStripMenuItem";
-            this.acceleratorKeysEnabledToolStripMenuItem.Size = new System.Drawing.Size(234, 22);
-            this.acceleratorKeysEnabledToolStripMenuItem.Text = "AcceleratorKeys Enabled";
+            acceleratorKeysEnabledToolStripMenuItem.Checked = true;
+            acceleratorKeysEnabledToolStripMenuItem.CheckOnClick = true;
+            acceleratorKeysEnabledToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
+            acceleratorKeysEnabledToolStripMenuItem.Name = "acceleratorKeysEnabledToolStripMenuItem";
+            acceleratorKeysEnabledToolStripMenuItem.Size = new System.Drawing.Size(234, 22);
+            acceleratorKeysEnabledToolStripMenuItem.Text = "AcceleratorKeys Enabled";
             // 
             // allowExternalDropMenuItem
             // 
-            this.allowExternalDropMenuItem.Checked = true;
-            this.allowExternalDropMenuItem.CheckOnClick = true;
-            this.allowExternalDropMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.allowExternalDropMenuItem.Name = "allowExternalDropMenuItem";
-            this.allowExternalDropMenuItem.Size = new System.Drawing.Size(234, 22);
-            this.allowExternalDropMenuItem.Text = "AllowExternalDrop Enabled";
-            this.allowExternalDropMenuItem.Click += new System.EventHandler(this.allowExternalDropMenuItem_Click);
+            allowExternalDropMenuItem.Checked = true;
+            allowExternalDropMenuItem.CheckOnClick = true;
+            allowExternalDropMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
+            allowExternalDropMenuItem.Name = "allowExternalDropMenuItem";
+            allowExternalDropMenuItem.Size = new System.Drawing.Size(234, 22);
+            allowExternalDropMenuItem.Text = "AllowExternalDrop Enabled";
+            allowExternalDropMenuItem.Click += allowExternalDropMenuItem_Click;
             // 
             // viewToolStripMenuItem
             // 
-            this.viewToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.zoomToolStripMenuItem,
-            this.backgroundColorMenuItem});
-            this.viewToolStripMenuItem.Name = "viewToolStripMenuItem";
-            this.viewToolStripMenuItem.Size = new System.Drawing.Size(47, 22);
-            this.viewToolStripMenuItem.Text = "View";
+            viewToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { zoomToolStripMenuItem, backgroundColorMenuItem });
+            viewToolStripMenuItem.Name = "viewToolStripMenuItem";
+            viewToolStripMenuItem.Size = new System.Drawing.Size(47, 22);
+            viewToolStripMenuItem.Text = "View";
             // 
             // zoomToolStripMenuItem
             // 
-            this.zoomToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.xToolStripMenuItem,
-            this.xToolStripMenuItem1,
-            this.xToolStripMenuItem2,
-            this.xToolStripMenuItem3});
-            this.zoomToolStripMenuItem.Name = "zoomToolStripMenuItem";
-            this.zoomToolStripMenuItem.Size = new System.Drawing.Size(183, 22);
-            this.zoomToolStripMenuItem.Text = "Zoom";
+            zoomToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { xToolStripMenuItem, xToolStripMenuItem1, xToolStripMenuItem2, xToolStripMenuItem3 });
+            zoomToolStripMenuItem.Name = "zoomToolStripMenuItem";
+            zoomToolStripMenuItem.Size = new System.Drawing.Size(183, 22);
+            zoomToolStripMenuItem.Text = "Zoom";
             // 
             // xToolStripMenuItem
             // 
-            this.xToolStripMenuItem.Name = "xToolStripMenuItem";
-            this.xToolStripMenuItem.Size = new System.Drawing.Size(170, 22);
-            this.xToolStripMenuItem.Text = "0.5x";
-            this.xToolStripMenuItem.Click += new System.EventHandler(this.xToolStripMenuItem05_Click);
+            xToolStripMenuItem.Name = "xToolStripMenuItem";
+            xToolStripMenuItem.Size = new System.Drawing.Size(170, 22);
+            xToolStripMenuItem.Text = "0.5x";
+            xToolStripMenuItem.Click += xToolStripMenuItem05_Click;
             // 
             // xToolStripMenuItem1
             // 
-            this.xToolStripMenuItem1.Name = "xToolStripMenuItem1";
-            this.xToolStripMenuItem1.Size = new System.Drawing.Size(170, 22);
-            this.xToolStripMenuItem1.Text = "1.0x";
-            this.xToolStripMenuItem1.Click += new System.EventHandler(this.xToolStripMenuItem1_Click);
+            xToolStripMenuItem1.Name = "xToolStripMenuItem1";
+            xToolStripMenuItem1.Size = new System.Drawing.Size(170, 22);
+            xToolStripMenuItem1.Text = "1.0x";
+            xToolStripMenuItem1.Click += xToolStripMenuItem1_Click;
             // 
             // xToolStripMenuItem2
             // 
-            this.xToolStripMenuItem2.Name = "xToolStripMenuItem2";
-            this.xToolStripMenuItem2.Size = new System.Drawing.Size(170, 22);
-            this.xToolStripMenuItem2.Text = "2.0x";
-            this.xToolStripMenuItem2.Click += new System.EventHandler(this.xToolStripMenuItem2_Click);
+            xToolStripMenuItem2.Name = "xToolStripMenuItem2";
+            xToolStripMenuItem2.Size = new System.Drawing.Size(170, 22);
+            xToolStripMenuItem2.Text = "2.0x";
+            xToolStripMenuItem2.Click += xToolStripMenuItem2_Click;
             // 
             // xToolStripMenuItem3
             // 
-            this.xToolStripMenuItem3.Name = "xToolStripMenuItem3";
-            this.xToolStripMenuItem3.Size = new System.Drawing.Size(170, 22);
-            this.xToolStripMenuItem3.Text = "Get ZoomFactor";
-            this.xToolStripMenuItem3.Click += new System.EventHandler(this.xToolStripMenuItem3_Click);
+            xToolStripMenuItem3.Name = "xToolStripMenuItem3";
+            xToolStripMenuItem3.Size = new System.Drawing.Size(170, 22);
+            xToolStripMenuItem3.Text = "Get ZoomFactor";
+            xToolStripMenuItem3.Click += xToolStripMenuItem3_Click;
             // 
             // backgroundColorMenuItem
             // 
-            this.backgroundColorMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.whiteBackgroundColorMenuItem,
-            this.redBackgroundColorMenuItem,
-            this.blueBackgroundColorMenuItem,
-            this.transparentBackgroundColorMenuItem});
-            this.backgroundColorMenuItem.Name = "backgroundColorMenuItem";
-            this.backgroundColorMenuItem.Size = new System.Drawing.Size(183, 22);
-            this.backgroundColorMenuItem.Text = "Background Color";
+            backgroundColorMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { whiteBackgroundColorMenuItem, redBackgroundColorMenuItem, blueBackgroundColorMenuItem, transparentBackgroundColorMenuItem });
+            backgroundColorMenuItem.Name = "backgroundColorMenuItem";
+            backgroundColorMenuItem.Size = new System.Drawing.Size(183, 22);
+            backgroundColorMenuItem.Text = "Background Color";
             // 
             // whiteBackgroundColorMenuItem
             // 
-            this.whiteBackgroundColorMenuItem.Name = "whiteBackgroundColorMenuItem";
-            this.whiteBackgroundColorMenuItem.Size = new System.Drawing.Size(146, 22);
-            this.whiteBackgroundColorMenuItem.Text = "White";
-            this.whiteBackgroundColorMenuItem.Click += new System.EventHandler(this.backgroundColorMenuItem_Click);
+            whiteBackgroundColorMenuItem.Name = "whiteBackgroundColorMenuItem";
+            whiteBackgroundColorMenuItem.Size = new System.Drawing.Size(146, 22);
+            whiteBackgroundColorMenuItem.Text = "White";
+            whiteBackgroundColorMenuItem.Click += backgroundColorMenuItem_Click;
             // 
             // redBackgroundColorMenuItem
             // 
-            this.redBackgroundColorMenuItem.Name = "redBackgroundColorMenuItem";
-            this.redBackgroundColorMenuItem.Size = new System.Drawing.Size(146, 22);
-            this.redBackgroundColorMenuItem.Text = "Red";
-            this.redBackgroundColorMenuItem.Click += new System.EventHandler(this.backgroundColorMenuItem_Click);
+            redBackgroundColorMenuItem.Name = "redBackgroundColorMenuItem";
+            redBackgroundColorMenuItem.Size = new System.Drawing.Size(146, 22);
+            redBackgroundColorMenuItem.Text = "Red";
+            redBackgroundColorMenuItem.Click += backgroundColorMenuItem_Click;
             // 
             // blueBackgroundColorMenuItem
             // 
-            this.blueBackgroundColorMenuItem.Name = "blueBackgroundColorMenuItem";
-            this.blueBackgroundColorMenuItem.Size = new System.Drawing.Size(146, 22);
-            this.blueBackgroundColorMenuItem.Text = "Blue";
-            this.blueBackgroundColorMenuItem.Click += new System.EventHandler(this.backgroundColorMenuItem_Click);
+            blueBackgroundColorMenuItem.Name = "blueBackgroundColorMenuItem";
+            blueBackgroundColorMenuItem.Size = new System.Drawing.Size(146, 22);
+            blueBackgroundColorMenuItem.Text = "Blue";
+            blueBackgroundColorMenuItem.Click += backgroundColorMenuItem_Click;
             // 
             // transparentBackgroundColorMenuItem
             // 
-            this.transparentBackgroundColorMenuItem.Name = "transparentBackgroundColorMenuItem";
-            this.transparentBackgroundColorMenuItem.Size = new System.Drawing.Size(146, 22);
-            this.transparentBackgroundColorMenuItem.Text = "Transparent";
-            this.transparentBackgroundColorMenuItem.Click += new System.EventHandler(this.backgroundColorMenuItem_Click);
-            // 
-            // webView2Control
-            // 
-            this.webView2Control.AllowExternalDrop = true;
-            this.webView2Control.CreationProperties = null;
-            this.webView2Control.DefaultBackgroundColor = System.Drawing.Color.White;
-            this.webView2Control.Location = new System.Drawing.Point(0, 46);
-            this.webView2Control.Margin = new System.Windows.Forms.Padding(2, 1, 2, 1);
-            this.webView2Control.Name = "webView2Control";
-            this.webView2Control.Size = new System.Drawing.Size(394, 197);
-            this.webView2Control.Source = new System.Uri("https://movie.douban.com", System.UriKind.Absolute);
-            this.webView2Control.TabIndex = 7;
-            this.webView2Control.ZoomFactor = 1D;
+            transparentBackgroundColorMenuItem.Name = "transparentBackgroundColorMenuItem";
+            transparentBackgroundColorMenuItem.Size = new System.Drawing.Size(146, 22);
+            transparentBackgroundColorMenuItem.Text = "Transparent";
+            transparentBackgroundColorMenuItem.Click += backgroundColorMenuItem_Click;
             // 
             // btnOk
             // 
-            this.btnOk.Location = new System.Drawing.Point(794, 23);
-            this.btnOk.Name = "btnOk";
-            this.btnOk.Size = new System.Drawing.Size(75, 21);
-            this.btnOk.TabIndex = 5;
-            this.btnOk.Text = "OK";
-            this.btnOk.UseVisualStyleBackColor = true;
-            this.btnOk.Click += new System.EventHandler(this.btnOk_Click);
+            btnOk.Location = new System.Drawing.Point(926, 33);
+            btnOk.Margin = new System.Windows.Forms.Padding(4);
+            btnOk.Name = "btnOk";
+            btnOk.Size = new System.Drawing.Size(88, 30);
+            btnOk.TabIndex = 5;
+            btnOk.Text = "OK";
+            btnOk.UseVisualStyleBackColor = true;
+            btnOk.Click += btnOk_Click;
+            // 
+            // webView2Control
+            // 
+            webView2Control.AllowExternalDrop = true;
+            webView2Control.CreationProperties = null;
+            webView2Control.DefaultBackgroundColor = System.Drawing.Color.White;
+            webView2Control.Location = new System.Drawing.Point(0, 90);
+            webView2Control.Name = "webView2Control";
+            webView2Control.Size = new System.Drawing.Size(537, 391);
+            webView2Control.TabIndex = 8;
+            webView2Control.ZoomFactor = 1D;
             // 
             // FormWebBrowser
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("$this.BackgroundImage")));
-            this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.ClientSize = new System.Drawing.Size(1044, 593);
-            this.Controls.Add(this.webView2Control);
-            this.Controls.Add(this.btnOk);
-            this.Controls.Add(this.btnGo);
-            this.Controls.Add(this.txtUrl);
-            this.Controls.Add(this.btnStop);
-            this.Controls.Add(this.btnRefresh);
-            this.Controls.Add(this.btnForward);
-            this.Controls.Add(this.btnBack);
-            this.Controls.Add(this.menuStrip1);
-            this.MainMenuStrip = this.menuStrip1;
-            this.Name = "FormWebBrowser";
-            this.ShowInTaskbar = false;
-            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "BrowserForm";
-            this.Load += new System.EventHandler(this.FormWebBrowser_Load);
-            this.Resize += new System.EventHandler(this.Form_Resize);
-            this.menuStrip1.ResumeLayout(false);
-            this.menuStrip1.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.webView2Control)).EndInit();
-            this.ResumeLayout(false);
-            this.PerformLayout();
-
+            AutoScaleDimensions = new System.Drawing.SizeF(7F, 17F);
+            AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            BackgroundImage = (System.Drawing.Image)resources.GetObject("$this.BackgroundImage");
+            BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            ClientSize = new System.Drawing.Size(1218, 840);
+            Controls.Add(webView2Control);
+            Controls.Add(btnOk);
+            Controls.Add(btnGo);
+            Controls.Add(txtUrl);
+            Controls.Add(btnStop);
+            Controls.Add(btnRefresh);
+            Controls.Add(btnForward);
+            Controls.Add(btnBack);
+            Controls.Add(menuStrip1);
+            MainMenuStrip = menuStrip1;
+            Margin = new System.Windows.Forms.Padding(4);
+            Name = "FormWebBrowser";
+            ShowInTaskbar = false;
+            StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
+            Text = "BrowserForm";
+            Load += FormWebBrowser_Load;
+            Resize += Form_Resize;
+            menuStrip1.ResumeLayout(false);
+            menuStrip1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)webView2Control).EndInit();
+            ResumeLayout(false);
+            PerformLayout();
         }
         #endregion
         private System.Windows.Forms.Button btnBack;
@@ -307,7 +298,6 @@ namespace MovieTorrents
         private System.Windows.Forms.Button btnStop;
         private System.Windows.Forms.Button btnGo;
         private System.Windows.Forms.TextBox txtUrl;
-        private Microsoft.Web.WebView2.WinForms.WebView2 webView2Control;
         private System.Windows.Forms.MenuStrip menuStrip1;
         private System.Windows.Forms.ToolStripMenuItem controlToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem acceleratorKeysEnabledToolStripMenuItem;
@@ -324,5 +314,6 @@ namespace MovieTorrents
         private System.Windows.Forms.ToolStripMenuItem transparentBackgroundColorMenuItem;
         private System.Windows.Forms.ToolStripMenuItem allowExternalDropMenuItem;
         private System.Windows.Forms.Button btnOk;
+        private Microsoft.Web.WebView2.WinForms.WebView2 webView2Control;
     }
 }
