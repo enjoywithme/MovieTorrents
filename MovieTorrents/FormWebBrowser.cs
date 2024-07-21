@@ -19,26 +19,38 @@ namespace MovieTorrents
     {
         private readonly string _startUrl;
         private bool _downloadingPoster;
+        private string _webViewUserDataFolder;
+        CoreWebView2Environment _environment;
+
+
 
         public DouBanSubject DouBanSubject { get; private set; }
         public FormWebBrowser(string startUrl)
         {
+
             _startUrl = startUrl;
             InitializeComponent();
-            AttachControlEventHandlers(this.webView2Control);
-            HandleResize();
         }
 
-        private void FormWebBrowser_Load(object sender, EventArgs e)
+        private async void FormWebBrowser_Load(object sender, EventArgs e)
         {
             DouBanSubject = null;
             txtUrl.Text= _startUrl;
+
+            _webViewUserDataFolder = Path.Combine(Program.AssemblyDirectory, "webViewCache\\douban\\");
+            _environment = await CoreWebView2Environment.CreateAsync(null,_webViewUserDataFolder);
+            await webView2Control.EnsureCoreWebView2Async(_environment);
+            AttachControlEventHandlers(webView2Control);
+            
+            HandleResize();
+
+
             GoUrl(_startUrl);
         }
 
         private void UpdateTitleWithEvent(string message)
         {
-            string currentDocumentTitle = this.webView2Control?.CoreWebView2?.DocumentTitle ?? "Uninitialized";
+            var currentDocumentTitle = this.webView2Control?.CoreWebView2?.DocumentTitle ?? "Uninitialized";
             this.Text = currentDocumentTitle + " (" + message + ")";
         }
 
@@ -90,10 +102,10 @@ namespace MovieTorrents
                 return;
             }
 
-            this.webView2Control.CoreWebView2.SourceChanged += CoreWebView2_SourceChanged;
-            this.webView2Control.CoreWebView2.HistoryChanged += CoreWebView2_HistoryChanged;
-            this.webView2Control.CoreWebView2.DocumentTitleChanged += CoreWebView2_DocumentTitleChanged;
-            this.webView2Control.CoreWebView2.AddWebResourceRequestedFilter("*", CoreWebView2WebResourceContext.Image);
+            webView2Control.CoreWebView2.SourceChanged += CoreWebView2_SourceChanged;
+            webView2Control.CoreWebView2.HistoryChanged += CoreWebView2_HistoryChanged;
+            webView2Control.CoreWebView2.DocumentTitleChanged += CoreWebView2_DocumentTitleChanged;
+            webView2Control.CoreWebView2.AddWebResourceRequestedFilter("*", CoreWebView2WebResourceContext.Image);
             UpdateTitleWithEvent("CoreWebView2InitializationCompleted succeeded");
         }
 

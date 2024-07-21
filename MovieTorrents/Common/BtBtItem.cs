@@ -15,6 +15,7 @@ using BencodeNET.Parsing;
 using BencodeNET.Torrents;
 using Microsoft.VisualBasic.FileIO;
 using mySharedLib;
+using static System.Windows.Forms.LinkLabel;
 using Timer = System.Threading.Timer;
 
 namespace MovieTorrents.Common
@@ -74,57 +75,57 @@ namespace MovieTorrents.Common
         public static string NextPageUrl(string pageUrl)
         {
             //搜索下一页
-            var match = Regex.Match(pageUrl, $"{MyMtSettings.Instance.BtBtHomeUrl}search-index-fid-0-orderby-timedesc-daterage-0-keyword-(.*)-page-([0-9]*).htm");
+            var match = Regex.Match(pageUrl, $"{MyMtSettings.Instance.BtBtHomeUrl}search-(.*)-1-([0-9]*).htm");
             if (match.Success)
             {
                 if (!int.TryParse(match.Groups[2].Value, out var p)) return pageUrl;
                 p += 1;
                 return
-                    $"{MyMtSettings.Instance.BtBtHomeUrl}search-index-fid-0-orderby-timedesc-daterage-0-keyword-{match.Groups[1].Value}-page-{p}.htm";
+                    $"{MyMtSettings.Instance.BtBtHomeUrl}search-{match.Groups[1].Value}-1-{p}.htm";
             }
 
             //搜索第二页
-            match = Regex.Match(pageUrl, $"{MyMtSettings.Instance.BtBtHomeUrl}search-index-keyword-(.*).htm");
+            match = Regex.Match(pageUrl, $"{MyMtSettings.Instance.BtBtHomeUrl}search-(.*).htm");
             if(match.Success)
-                return $"{MyMtSettings.Instance.BtBtHomeUrl}search-index-fid-0-orderby-timedesc-daterage-0-keyword-{match.Groups[1].Value}-page-2.htm";
+                return $"{MyMtSettings.Instance.BtBtHomeUrl}search-{match.Groups[1].Value}-1-2.htm";
 
             //主页下一页
-            match = Regex.Match(pageUrl, $"{MyMtSettings.Instance.BtBtHomeUrl}index-index-page-([0-9]*).htm");
+            match = Regex.Match(pageUrl, $"{MyMtSettings.Instance.BtBtHomeUrl}index-([0-9]*).htm");
             if (match.Success)
             {
                 var p = int.Parse(match.Groups[1].Value) + 1;
-                return $"{MyMtSettings.Instance.BtBtHomeUrl}index-index-page-{p}.htm";
+                return $"{MyMtSettings.Instance.BtBtHomeUrl}index-{p}.htm";
             }
 
-            return $"{MyMtSettings.Instance.BtBtHomeUrl}index-index-page-2.htm";
+            return $"{MyMtSettings.Instance.BtBtHomeUrl}index-2.htm";
         }
 
         //上一页url
         public static string PrevPageUrl(string pageUrl)
         {
             //搜索前一页
-            var match = Regex.Match(pageUrl, $"{MyMtSettings.Instance.BtBtHomeUrl}search-index-fid-0-orderby-timedesc-daterage-0-keyword-(.*)-page-([0-9]*).htm");
+            var match = Regex.Match(pageUrl, $"{MyMtSettings.Instance.BtBtHomeUrl}search-(.*)-1-([0-9]*).htm");
             if (match.Success)
             {
                 if (!int.TryParse(match.Groups[2].Value, out var p)) return pageUrl;
-                if (p == 2) return $"{MyMtSettings.Instance.BtBtHomeUrl}search-index-keyword-{match.Groups[1].Value}.htm";
+                if (p == 2) return $"{MyMtSettings.Instance.BtBtHomeUrl}search-{match.Groups[1].Value}-1-1.htm";
                 p -= 1;
-                return $"{MyMtSettings.Instance.BtBtHomeUrl}search-index-fid-0-orderby-timedesc-daterage-0-keyword-{match.Groups[1].Value}-page-{p}.htm";
+                return $"{MyMtSettings.Instance.BtBtHomeUrl}search-{match.Groups[1].Value}-1-{p}.htm";
             }
 
             //搜索当前页
-            match = Regex.Match(pageUrl, $"{MyMtSettings.Instance.BtBtHomeUrl}search-index-keyword-(.*).htm");
+            match = Regex.Match(pageUrl, $"{MyMtSettings.Instance.BtBtHomeUrl}search-(.*).htm");
             if (match.Success) return pageUrl;
 
             //主页下一页
-            match = Regex.Match(pageUrl, $"{MyMtSettings.Instance.BtBtHomeUrl}index-index-page-([0-9]*).htm");
+            match = Regex.Match(pageUrl, $"{MyMtSettings.Instance.BtBtHomeUrl}index-([0-9]*).htm");
             if (match.Success)
             {
 
                 var p = int.Parse(match.Groups[1].Value);
                 if (p <= 2) return MyMtSettings.Instance.BtBtHomeUrl;
                 p--;
-                return $"{MyMtSettings.Instance.BtBtHomeUrl}index-index-page-{p}.htm";
+                return $"{MyMtSettings.Instance.BtBtHomeUrl}index-{p}.htm";
             }
 
             return MyMtSettings.Instance.BtBtHomeUrl;
@@ -133,7 +134,8 @@ namespace MovieTorrents.Common
         //搜索页url
         public static string SearPageUrl(string searchText)
         {
-            return $"{MyMtSettings.Instance.BtBtHomeUrl}search-index-keyword-{searchText}.htm";
+            
+            return $"{MyMtSettings.Instance.BtBtHomeUrl}search-{searchText}-1-1.htm";
         }
 
         //构造webclient
@@ -273,6 +275,204 @@ namespace MovieTorrents.Common
             return items;
         }
 
+        /// <summary>
+        /// Parse the list index page
+        /// </summary>
+        /// <param name="html"></param>
+        /// <param name="msg"></param>
+        /// <returns></returns>
+        public static List<string> ParseIndexPage(string html, out string msg)
+        { 
+            msg = string.Empty;
+            var items = new List<string>();
+            var parser = new HtmlParser(new HtmlParserOptions
+            {
+                IsKeepingSourceReferences = true,
+            });//保留元素在文章中的位置 https://anglesharp.github.io/docs/Questions.html#can-i-retrieve-the-positions-of-elements-in-the-source-code
+
+            try
+            {
+                var document = parser.ParseDocument(html);
+                var topDiv = document.All.Where(d => d.LocalName == "div" && d.ClassList.Contains("bg2")).ToArray();//置顶帖分割线
+
+                var links = document.All.Where(a => a.LocalName == "a" && a.ClassList.Contains("text-title"));
+                foreach (var link in links)
+                {
+                    //略过置顶帖
+                    if (topDiv.Length > 0 && link.SourceReference.Position.Position < topDiv[0].SourceReference.Position.Position)
+                        continue;
+
+                    var title = link.TextContent.Trim();
+                    if (string.IsNullOrEmpty(title)) continue;
+
+                    var detailLink = link.Attributes["href"].Value;
+                    if (string.IsNullOrEmpty(detailLink)) continue;
+
+                    items.Add(detailLink);
+
+                    
+
+
+                }
+            }
+            catch (Exception e)
+            {
+                msg = e.Message;
+            }
+
+            return items;
+        }
+
+        public static List<string> ParseSearchPage(string html, out string msg)
+        {
+            msg = string.Empty;
+            var items = new List<string>();
+            var parser = new HtmlParser(new HtmlParserOptions
+            {
+                IsKeepingSourceReferences = true,
+            });//保留元素在文章中的位置 https://anglesharp.github.io/docs/Questions.html#can-i-retrieve-the-positions-of-elements-in-the-source-code
+
+            try
+            {
+                var document = parser.ParseDocument(html);
+                var divs = document.All.Where(d => d.LocalName == "div" && d.ClassName == "subject break-all").ToArray();//置顶帖分割线
+
+                foreach (var div in divs)
+                {
+                    var links = div.Children.Where(a => a.LocalName == "a"
+                                            && a.HasAttribute("href")
+                                            && a.GetAttribute("href").StartsWith("thread-")).ToList();
+
+                    if(!links.Any()) continue;
+
+                    var title = div.TextContent;
+                    
+
+                    var detailLink = links[0].Attributes["href"].Value;
+                    if (string.IsNullOrEmpty(detailLink)) continue;
+
+                    items.Add(detailLink);
+
+
+
+
+                }
+            }
+            catch (Exception e)
+            {
+                msg = e.Message;
+            }
+
+            return items;
+        }
+
+
+        /// <summary>
+        /// Parse the thread page to BT item
+        /// </summary>
+        /// <param name="pageCode"></param>
+        /// <param name="url"></param>
+        /// <param name="msg"></param>
+        /// <returns></returns>
+        public static BtBtItem ParseThreadPage(string pageCode, string url,out string msg)
+        {
+            msg = string.Empty;
+            var parser = new HtmlParser(new HtmlParserOptions
+            {
+                IsKeepingSourceReferences = true,
+            });//保留元素在文章中的位置 https://anglesharp.github.io/docs/Questions.html#can-i-retrieve-the-positions-of-elements-in-the-source-code
+
+            try
+            {
+                var document = parser.ParseDocument(pageCode);
+                var titles = document.All.Where(a => a.LocalName == "h4" && a.ClassList.Contains("break-all")).ToList();
+                if (!titles.Any())
+                {
+                    return null;
+                }
+
+                var btItem = new BtBtItem { Title = Regex.Replace(titles[0].Text(), @"\t|\n|\r", "")  };
+
+                /*附件
+                 *
+                    <ul class="attachlist">
+                    <li aid="1369169">
+		                    <a href="attach-download-1369169.htm" target="_blank">
+			                    <i class="icon filetype torrent"></i>
+			                    无法抗拒的谎言[全24集][国语配音+中文字幕].Liars.in.Love.S01.2024.1080p.WEB-DL.H264.AAC-ZeroTV 13.71GB[1lou.me].torrent
+		                    </a>
+                    </li>
+                    </ul>
+                 * */
+                var attachments = document.All.Where(a =>
+                    a.LocalName == "a"
+                    && a.HasAttribute("href")
+                    && a.Attributes["href"].Value.Contains("attach-download-")).ToArray();
+                foreach (var attachment in attachments)
+                {
+                    var attachmentName = attachment.Text().Trim();
+                    var attachmentUrl = attachment.Attributes["href"].Value;
+
+                    if (!attachmentName.ToLower().EndsWith(".zip") &&
+                        !attachmentName.ToLower().EndsWith(".torrent")) continue;
+
+                    btItem.AttachmentUrls.Add(attachmentUrl.Replace("dialog", "download"));
+
+                }
+
+                if(btItem.AttachmentUrls.Count ==0)
+                    return null;
+
+                //Thread id thread-487019.htm
+                var match = Regex.Match(url, "thread-([0-9]*).");
+                if (match.Success && int.TryParse(match.Groups[1].Value, out var tid))
+                    btItem.tid = tid;
+
+                //查找可能的完整标题 完整标题：无法抗拒的谎言[全24集][国语配音/中文字幕].Liars.in.Love.S01.2024.1080p.WEB-DL.H264.AAC-ZeroTV 13.71GB
+                match = Regex.Match(pageCode, "<br>完整标题：(.+?)<br>");
+                if (match.Success)
+                    btItem.Title = match.Groups[1].Value;
+
+                //查找豆瓣评分
+                match = Regex.Match(pageCode, "豆瓣评分(.*?)/10");//非贪婪
+                btItem.DouBanRating = match.Success ? match.Groups[1].Value.Trim() : "";
+
+                
+                match = Regex.Match(pageCode, "<span class=\"grey\">发帖时间：</span><b>(.*?)</b>");
+                btItem.PublishTime = match.Success ? match.Groups[1].Value : "";
+
+                //◎年　　代　1954<br />
+                match = Regex.Match(pageCode, "年　　代(.*?)<br />");
+                if (match.Success && int.TryParse(match.Groups[1].Value, out var d)) btItem.Year = d;
+
+                //◎类　　别　剧情 / 喜剧 / 爱情 / 悬疑 / 音乐<br />
+                match = Regex.Match(pageCode, "类　　别(.*?)<br />");
+                btItem.Gene = match.Success ? match.Groups[1].Value.Trim() : "";
+
+                //标　　签　西班牙 | 西班牙电影 | JulioMedem | 爱情 | 1993 | 红松鼠杀人事件 | Julio_Medem | 密谭<br />
+                match = Regex.Match(pageCode, "标　　签(.*?)<br />");
+                btItem.Tag = match.Success ? match.Groups[1].Value.Trim() : "";
+
+                //发帖时间 <span class="date text-grey ml-2">2024-07-21 10:31</span>
+                var elements = document.All.Where(e => e.LocalName == "span" && e.ClassName == "date text-grey ml-2").ToList();
+                if (elements.Count > 0 && DateTime.TryParse(elements[0].TextContent,out var dt))
+                    btItem.PostDateTime = dt;
+
+ 
+
+                btItem.Parse();
+
+                return btItem;
+
+            }
+            catch (Exception e)
+            {
+                msg = e.Message;
+            }
+
+            return null;
+        }
+
         //下载附件
         public int DownLoadAttachments(out string msg)
         {
@@ -342,20 +542,20 @@ namespace MovieTorrents.Common
 
             if (originalFileName.Length > 0)
             {
-                if (string.IsNullOrEmpty(fileName))
-                    fileName = originalFileName;
-                else
-                {
-                    fileName += Path.GetExtension(originalFileName);
-                    fileName = fileName.Replace("[BT下载]", "");
-                }
+                fileName = originalFileName;
+
+                //if (string.IsNullOrEmpty(fileName))
+                //    fileName = originalFileName;
+                //else
+                //{
+                //    fileName += Path.GetExtension(originalFileName);
+                //    fileName = fileName.Replace("[BT下载]", "");
+                //}
 
                 var path = Path.Combine(downloadPath, fileName);
 
-                using (var outputFileStream = new FileStream(path, FileMode.Create))
-                {
-                    rawStream.CopyTo(outputFileStream);
-                }
+                using var outputFileStream = new FileStream(path, FileMode.Create);
+                rawStream.CopyTo(outputFileStream);
             }
 
             rawStream.Close();
