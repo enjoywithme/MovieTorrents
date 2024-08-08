@@ -45,9 +45,6 @@ namespace MovieTorrents
         private string _lastSearchText = string.Empty;
 
 
-        private FolderWatch _folderWatch;
-
-
         public FormMain()
         {
             InitializeComponent();
@@ -77,9 +74,9 @@ namespace MovieTorrents
             //Folder watch
             if (MyMtSettings.Instance.RegisterMonitor())
             {
-                _folderWatch = new FolderWatch(TorrentFile.TorrentRootPath);
-                _folderWatch.FolderWatchEvent += _folderWatch_FolderWatchEvent;
-                _folderWatch.Start();
+                FolderWatch.Instance = new FolderWatch(TorrentFile.TorrentRootPath);
+                FolderWatch.Instance.FolderWatchEvent += _folderWatch_FolderWatchEvent;
+                FolderWatch.Instance.Start();
             }
             else
             {
@@ -159,11 +156,11 @@ namespace MovieTorrents
             //Status
             if (e.StatusChanged)
             {
-                tsButtonWatch.Image = _folderWatch.IsWatching ? Resource.Eye32 : Resource.EyeStop32;
-                tsButtonWatch.ToolTipText = _folderWatch.IsWatching ? Resource.TextDirInMonitor : Resource.TextDirMonitorStopped;
-                tsmiToggleWatch.Text = _folderWatch.IsWatching ? Resource.TxtStopDirMonitor : Resource.TxtStartDirMonitor;
+                tsButtonWatch.Image = FolderWatch.Instance.IsWatching ? Resource.Eye32 : Resource.EyeStop32;
+                tsButtonWatch.ToolTipText = FolderWatch.Instance.IsWatching ? Resource.TextDirInMonitor : Resource.TextDirMonitorStopped;
+                tsmiToggleWatch.Text = FolderWatch.Instance.IsWatching ? Resource.TxtStopDirMonitor : Resource.TxtStartDirMonitor;
 
-                if (_folderWatch.IsWatching)
+                if (FolderWatch.Instance.IsWatching)
                     DisplayInfo("目录监视已启动", false, false);
                 else DisplayInfo("目录监视已停止", true);
 
@@ -174,7 +171,7 @@ namespace MovieTorrents
             {
                 var filesToProcess = new BlockingCollection<TorrentFile>();
 
-                while (_folderWatch.FilesAdded.TryDequeue(out var file))
+                while (FolderWatch.Instance.FilesAdded.TryDequeue(out var file))
                 {
                     filesToProcess.Add(TorrentFile.FromFullPath(file));
                 }
@@ -197,12 +194,12 @@ namespace MovieTorrents
 
         private void MenuItemToggleWatch_Click(object sender, EventArgs e)
         {
-            if(_folderWatch == null) return;
+            if(FolderWatch.Instance == null) return;
 
-            if (_folderWatch.IsWatching)
-                _folderWatch.Stop();
+            if (FolderWatch.Instance.IsWatching)
+                FolderWatch.Instance.Stop();
             else
-                _folderWatch.Start();
+                FolderWatch.Instance.Start();
 
         }
 
@@ -1080,7 +1077,7 @@ namespace MovieTorrents
 
             var errorMsg = new StringBuilder();
             var moved = 0;
-            _folderWatch.IgnoreFileWatch();
+            FolderWatch.Instance.Suspend();
             var selectedItems = lvResults.SelectedObjects;
             foreach (var selectedItem in selectedItems)
             {
@@ -1090,7 +1087,7 @@ namespace MovieTorrents
                     errorMsg.AppendLine(msg);
                 else moved++;
             }
-            _folderWatch.IgnoreFileWatch(false);
+            FolderWatch.Instance.Resume();
             MessageBox.Show(string.Format(Resource.TextFilesMoved, moved, errorMsg), Resource.TextHint, MessageBoxButtons.OK, MessageBoxIcon.Information);
 
             RefreshSelected();
@@ -1143,10 +1140,10 @@ namespace MovieTorrents
                 return;
             }
 
-            _folderWatch.IgnoreFileWatch();
+            FolderWatch.Instance.Suspend();
             var (ret, msg) = TorrentFile.MovePath(formBrowseTorrentFolder.SelectedPath, torrentFile.Path, formBrowseTorrentFolder.FolderRename);
 
-            _folderWatch.IgnoreFileWatch(false);
+            FolderWatch.Instance.Resume();
             MessageBox.Show(ret ? $"成功移动目录 {torrentFile.Path}。" : $"移动目录 {torrentFile.Path} 失败。\r\n{msg}",
                 Resource.TextHint, MessageBoxButtons.OK,
                 ret ? MessageBoxIcon.Information : MessageBoxIcon.Error);
@@ -1165,7 +1162,7 @@ namespace MovieTorrents
                 return;
             }
 
-            _folderWatch.IgnoreFileWatch();
+            FolderWatch.Instance.Suspend();
             var errorMsg = new StringBuilder();
             var renamed = 0;
             var selectedItems = lvResults.SelectedObjects;
@@ -1180,7 +1177,7 @@ namespace MovieTorrents
             }
 
 
-            _folderWatch.IgnoreFileWatch(false);
+            FolderWatch.Instance.Resume();
             MessageBox.Show(string.Format(Resource.TextFilesRenamed, renamed, errorMsg), Resource.TextHint, MessageBoxButtons.OK, MessageBoxIcon.Information);
 
             RefreshSelected();

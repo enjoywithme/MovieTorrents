@@ -16,10 +16,12 @@ namespace MovieTorrents.Common
 
     public class FolderWatch
     {
+        public static FolderWatch Instance { get; set; }
+
         private FileSystemWatcher _watcher;
         private Timer _watchTimer;
         private bool _isWatching;
-        private bool _ignoreFileWatch;
+        private int _ignoreCounter=0;
         private readonly string _watchPath;
 
         public ConcurrentQueue<string> FilesAdded { get; } = new();
@@ -33,7 +35,7 @@ namespace MovieTorrents.Common
 
         public bool IsWatching
         {
-            set
+            private set
             {
                 if (_isWatching == value) return;
                 _isWatching = value;
@@ -43,9 +45,15 @@ namespace MovieTorrents.Common
             get => _isWatching;
         }
 
-        public void IgnoreFileWatch(bool ignore = true)
+        public void Suspend()
         {
-            _ignoreFileWatch = ignore;
+            _ignoreCounter++;
+        }
+
+        public void Resume()
+        {
+            _ignoreCounter--;
+
         }
 
         public void Start()
@@ -106,7 +114,7 @@ namespace MovieTorrents.Common
 
         private void Watcher_File_Created(object sender, FileSystemEventArgs e)
         {
-            if (_ignoreFileWatch) return;
+            if (_ignoreCounter>0) return;
 
             //添加一个文件会发现生成2个事件，https://blogs.msdn.microsoft.com/ahamza/2006/02/04/filesystemwatcher-generates-duplicate-events-how-to-workaround/ 
             Debug.WriteLine($"File monitored added:{e.FullPath}");

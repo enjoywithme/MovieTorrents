@@ -399,11 +399,17 @@ namespace MovieTorrents
         //将目录下的种子文件转移到收藏目录
         private void BtArchiveTorrent_Click(object sender, EventArgs e)
         {
+            Cursor.Current = Cursors.WaitCursor;
+
             var sb=new StringBuilder();
             sb.AppendLine(BtBtItem.ExtractZipFiles());
             sb.Append(BtBtItem.RenameSpecialFiles());
             sb.Append(BtBtItem.ArchiveTorrentFiles());
-            MessageBox.Show(sb.ToString(), Resource.TextHint, MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+            Cursor.Current = Cursors.Default;
+
+            (new DlgMessageBox(sb.ToString(), Resource.TextHint)).ShowDialog(this);
+            //MessageBox.Show(sb.ToString(), Resource.TextHint, MessageBoxButtons.OK, MessageBoxIcon.Information);
 
 
         }

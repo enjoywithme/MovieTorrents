@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -684,6 +685,7 @@ namespace MovieTorrents.Common
             try
             {
                 var files = Directory.GetFiles(MyMtSettings.Instance.DownLoadRootPath, "*.torrent");
+                var filesToProcess = new BlockingCollection<TorrentFile>();
 
                 foreach (var file in files)
                 {
@@ -712,15 +714,17 @@ namespace MovieTorrents.Common
                     }
                     else
                     {
-                        var torrentFile = TorrentFile.FindByName(Path.GetFileNameWithoutExtension(file)) ?? TorrentFile.FindByName(Path.GetFileNameWithoutExtension(destFileName));
-                        if (torrentFile == null)
-                        {
-                            msg += $"\r\n文件 {Path.GetFileName(file)} 没有年份！";
-                            continue;
-                        }
-                        var destPath = Path.GetDirectoryName(torrentFile.FullName);
+                        msg += $"\r\n文件 {Path.GetFileName(file)} 没有年份！";
+                        continue;
+                        //var torrentFile = TorrentFile.FindByName(Path.GetFileNameWithoutExtension(file)) ?? TorrentFile.FindByName(Path.GetFileNameWithoutExtension(destFileName));
+                        //if (torrentFile == null)
+                        //{
+                        //    continue;
+                        //}
+                        //var destPath = Path.GetDirectoryName(torrentFile.FullName);
 
-                        destFileName = Path.Combine(destPath, destFileName);
+                        //destFileName = Path.Combine(destPath, destFileName);
+
 
                     }
 
@@ -737,6 +741,7 @@ namespace MovieTorrents.Common
                         else
                         {
                             File.Move(file, destFileName);
+                            filesToProcess.Add(TorrentFile.FromFullPath(destFileName));
                         }
 
                         i++;
@@ -747,13 +752,26 @@ namespace MovieTorrents.Common
                     }
                 }
 
+                msg += $"\r\n\r\n成功转移{i}个文件。";
+
+                //添加到数据库
+                filesToProcess.CompleteAdding();
+
+                FolderWatch.Instance?.Suspend();
+                var (fileProcessed, fileAdded) = TorrentFile.InsertToDb(filesToProcess);
+
+                msg += $"处理了{fileProcessed}个文件，{fileAdded}添加到数据库。";
+
+                FolderWatch.Instance?.Resume();
+
             }
             catch (Exception exception)
             {
                 msg += $"\r\n{exception.Message}";
+                FolderWatch.Instance?.Resume();
+
             }
 
-            msg+=$"\r\n\r\n成功转移{i}个文件。";
             return msg;
         }
 
