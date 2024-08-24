@@ -300,18 +300,17 @@ namespace MovieTorrents.Common
                 foreach (var link in links)
                 {
                     //略过置顶帖
-                    if (topDiv.Length > 0 && link.SourceReference.Position.Position < topDiv[0].SourceReference.Position.Position)
+                    if (topDiv.Length > 0 && link.SourceReference!=null && topDiv[0].SourceReference!=null &&
+                        link.SourceReference.Position.Position < topDiv[0].SourceReference.Position.Position)
                         continue;
 
                     var title = link.TextContent.Trim();
                     if (string.IsNullOrEmpty(title)) continue;
 
-                    var detailLink = link.Attributes["href"].Value;
+                    var detailLink = link.Attributes["href"]?.Value;
                     if (string.IsNullOrEmpty(detailLink)) continue;
 
                     items.Add(detailLink);
-
-                    
 
 
                 }
@@ -757,18 +756,15 @@ namespace MovieTorrents.Common
                 //添加到数据库
                 filesToProcess.CompleteAdding();
 
-                FolderWatch.Instance?.Suspend();
                 var (fileProcessed, fileAdded) = TorrentFile.InsertToDb(filesToProcess);
 
                 msg += $"处理了{fileProcessed}个文件，{fileAdded}添加到数据库。";
 
-                FolderWatch.Instance?.Resume();
 
             }
             catch (Exception exception)
             {
                 msg += $"\r\n{exception.Message}";
-                FolderWatch.Instance?.Resume();
 
             }
 

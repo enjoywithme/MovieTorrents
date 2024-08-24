@@ -400,11 +400,14 @@ namespace MovieTorrents
         private void BtArchiveTorrent_Click(object sender, EventArgs e)
         {
             Cursor.Current = Cursors.WaitCursor;
+            FolderWatch.Instance?.Suspend();
 
-            var sb=new StringBuilder();
+            var sb =new StringBuilder();
             sb.AppendLine(BtBtItem.ExtractZipFiles());
             sb.Append(BtBtItem.RenameSpecialFiles());
             sb.Append(BtBtItem.ArchiveTorrentFiles());
+
+            FolderWatch.Instance?.Resume();
 
             Cursor.Current = Cursors.Default;
 
