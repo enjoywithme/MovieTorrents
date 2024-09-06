@@ -4,8 +4,10 @@ using System.Drawing;
 using System.Windows.Forms;
 using System.IO;
 using System.Diagnostics;
+using System.Threading.Tasks;
 using MovieTorrents.Common;
 using MovieTorrents.WebPWrapper;
+using Nito.AsyncEx.Synchronous;
 
 namespace MovieTorrents
 {
@@ -20,28 +22,32 @@ namespace MovieTorrents
             _torrentFile = torrentFile;
         }
 
-        private void FormSearchDouban_Load(object sender, EventArgs e)
+        private async void FormSearchDouban_Load(object sender, EventArgs e)
         {
             tbOrigTitle.Text = "原标题：" + _torrentFile.PurifiedName;
             tbSearchText.Text = _torrentFile.FirstName;
             if (!string.IsNullOrWhiteSpace(tbSearchText.Text))
-                DoSearcch();
+                await DoSearcch();
 
 #if DEBUG
             //tbSearchText.Text = "https://movie.douban.com/subject/26811825/";
 #endif
         }
 
-        private void DoSearcch(bool searchId = false)
+
+
+        private async Task DoSearcch(bool searchId = false)
         {
             listView1.Items.Clear();
 #if true
-            var subjects = searchId ? 
-                DouBanSubject.SearchById(tbSearchText.Text.Trim(), out var msg)
-                : DouBanSubject.SearchSuggest(tbSearchText.Text.Trim(), out msg);
+
+
+            var sr = searchId ? await DouBanSubject.SearchById(tbSearchText.Text.Trim()) 
+                : await DouBanSubject.SearchSuggest(tbSearchText.Text.Trim());
+
             //if(subjects.Count==0)
             //    subjects = DoubanSubject.SearchSubject(tbSearchText.Text.Trim());
-            tbInfo.Text = msg;
+            tbInfo.Text = sr.Message;
 
 #else
             var subjects = new List<DoubanSubject>()
@@ -52,7 +58,7 @@ namespace MovieTorrents
 
 #endif
 
-            foreach (var subject in subjects)
+            foreach (var subject in sr.Subjects)
             {
                 string[] row = {subject.title,
                     subject.sub_title,
@@ -69,18 +75,18 @@ namespace MovieTorrents
         }
 
 
-        private void btSearch_Click(object sender, EventArgs e)
+        private async void btSearch_Click(object sender, EventArgs e)
         {
-            DoSearcch();
+            await DoSearcch();
         }
 
-        private void btSearchId_Click(object sender, EventArgs e)
+        private async void btSearchId_Click(object sender, EventArgs e)
         {
-            DoSearcch(true);
+            await DoSearcch(true);
         }
 
 
-        private void listView1_SelectedIndexChanged(object sender, EventArgs e)
+        private async void listView1_SelectedIndexChanged(object sender, EventArgs e)
         {
 
             if (pictureBox1.Image != null)
@@ -91,19 +97,23 @@ namespace MovieTorrents
             if (listView1.SelectedItems.Count == 0) return;
 
             var subject = (DouBanSubject)listView1.SelectedItems[0].Tag;
-            if (!string.IsNullOrEmpty(subject.img_local) && File.Exists(subject.img_local))
+
+            if(string.IsNullOrEmpty(subject.ImgLocal))
+              await subject.TryToDownloadSubjectImg();
+
+            if (!string.IsNullOrEmpty(subject.ImgLocal) && File.Exists(subject.ImgLocal))
             {
                 try
                 {
-                    var ext = Path.GetExtension(subject.img_local);
+                    var ext = Path.GetExtension(subject.ImgLocal);
                     if (ext.Equals(".webp", StringComparison.InvariantCultureIgnoreCase))
                     {
                         using var webp = new WebP();
-                        pictureBox1.Image = webp.Load(subject.img_local);
+                        pictureBox1.Image = webp.Load(subject.ImgLocal);
                     }
                     else
                     {
-                        using var stream = new FileStream(subject.img_local, FileMode.Open, FileAccess.Read);
+                        await using var stream = new FileStream(subject.ImgLocal, FileMode.Open, FileAccess.Read);
                         pictureBox1.Image = Image.FromStream(stream);
                     }
 
@@ -118,11 +128,12 @@ namespace MovieTorrents
 
         }
 
-        private void btSave_Click(object sender, EventArgs e)
+        private async void btSave_Click(object sender, EventArgs e)
         {
             if (listView1.SelectedItems.Count == 0) return;
             var subject = (DouBanSubject)listView1.SelectedItems[0].Tag;
-            if (!subject.TryQueryDetail(out var msg))
+            var (ret, msg) = await subject.TryQueryDetail();
+            if (!ret)
             {
                 MessageBox.Show($"查找豆瓣详细信息失败：{msg}", Resource.TextError, MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
@@ -138,9 +149,9 @@ namespace MovieTorrents
 
         }
 
-        private void tbSearchText_KeyDown(object sender, KeyEventArgs e)
+        private async void tbSearchText_KeyDown(object sender, KeyEventArgs e)
         {
-            if (e.KeyCode == Keys.Return) DoSearcch();
+            if (e.KeyCode == Keys.Return) await DoSearcch();
         }
 
         private void btnSearchBrowser_Click(object sender, EventArgs e)

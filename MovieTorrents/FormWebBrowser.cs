@@ -77,7 +77,7 @@ namespace MovieTorrents
 
                     var imageData = await GetImageBytesAsync();
                     File.WriteAllBytes(downloadedFilePath, imageData);
-                    DouBanSubject.img_local = downloadedFilePath;
+                    DouBanSubject.ImgLocal = downloadedFilePath;
                 }
                 catch (Exception)
                 {
@@ -204,7 +204,7 @@ namespace MovieTorrents
             try
             {
                 DouBanSubject = DouBanSubject.InitFromPageHtml(webView2Control.Source.AbsoluteUri, html);
-                if(IsNullOrEmpty(DouBanSubject.img_local) && !IsNullOrEmpty(DouBanSubject?.img_url))
+                if(IsNullOrEmpty(DouBanSubject.ImgLocal) && !IsNullOrEmpty(DouBanSubject?.img_url))
                 {
 
                     //从浏览器中下载 https://stackoverflow.com/questions/76647184/how-to-save-image-in-microsoft-webview2-page-to-local-file/77003697#77003697

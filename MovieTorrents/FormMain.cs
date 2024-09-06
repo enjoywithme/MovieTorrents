@@ -123,7 +123,7 @@ namespace MovieTorrents
             lvResults.EmptyListMsg = Resource.TextNoResultsFound;
             lvResults.EmptyListMsgFont = new Font("Microsoft YaHei", 24);
 #if DEBUG
-            tbSearchText.Text = @"雷神";
+            tbSearchText.Text = @"猫鼠游戏";
 #endif
         }
 

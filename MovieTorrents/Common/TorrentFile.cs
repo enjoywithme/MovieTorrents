@@ -1447,12 +1447,12 @@ rating=$rating,genres=$genres,directors=$directors,casts=$casts where file_nid=$
             try
             {
 
-                if (!string.IsNullOrEmpty(subject.img_local))
+                if (!string.IsNullOrEmpty(subject.ImgLocal))
                 {
-                    var fileExt = System.IO.Path.GetExtension(subject.img_local);
+                    var fileExt = System.IO.Path.GetExtension(subject.ImgLocal);
 
                     posterImageFileName = _currentPath + "\\poster\\douban\\d" + subject.id + fileExt;
-                    File.Copy(subject.img_local, posterImageFileName, true);
+                    File.Copy(subject.ImgLocal, posterImageFileName, true);
                     posterImageFileName = $"d{subject.id}{fileExt}";//使用豆瓣ID命名海报文件
                 }
 

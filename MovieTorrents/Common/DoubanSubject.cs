@@ -3,12 +3,20 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Net;
+using System.Net.Http;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
 
 namespace MovieTorrents.Common
 {
+
+    public class DoubanSearchResult
+    {
+        public List<DouBanSubject> Subjects { get; set; } = [];
+        public string Message { get; set; } = string.Empty;
+
+    }
     public class DouBanSubject
     {
 
@@ -32,18 +40,8 @@ namespace MovieTorrents.Common
                 return d;
             } }
         public string img_url { get; set; }
-        private string _img_local = string.Empty;
 
-        public string img_local
-        {
-            get
-            {
-                if (!string.IsNullOrEmpty(_img_local)) return _img_local;
-                TryToDownloadSubjectImg();
-                return _img_local;
-            }
-            set => _img_local = value;
-        }
+        public string ImgLocal { get; set; } = string.Empty;
 
 
         private bool _triedDetail=false;
@@ -55,33 +53,36 @@ namespace MovieTorrents.Common
             genres = string.Empty;
         }
 
-        private void TryToDownloadSubjectImg()
+        public async Task TryToDownloadSubjectImg(HttpClient client=null)
         {
-            if(!string.IsNullOrEmpty(_img_local) && File.Exists(_img_local)) return;
+            if(!string.IsNullOrEmpty(ImgLocal) && File.Exists(ImgLocal)) 
+                return;
 
             var filename = Path.GetFileName(img_url);
-            if (string.IsNullOrEmpty(filename)) return;
-            var tempFileName = MyMtSettings.Instance.CurrentPath + "\\temp\\" + filename;
+            if (string.IsNullOrEmpty(filename)) 
+                return;
+            var tempFileName = Path.Combine(MyMtSettings.Instance.CurrentPath,"temp" , filename);
 
-            using var client = new WebClient();
             var uri = new Uri(img_url);
 
             try
             {
-                client.DownloadFile(uri, tempFileName);
-                _img_local = tempFileName;
+                client ??= new HttpClient();
+                await using var stream = await client.GetStreamAsync(uri);
+                await using var fs = new FileStream(tempFileName, FileMode.OpenOrCreate);
+                await stream.CopyToAsync(fs);
+
+                ImgLocal = tempFileName;
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                // ignored
+                Debug.WriteLine($"Failed to download image:{img_url}\r\n{e.Message}");
             }
         }
 
-        public static List<DouBanSubject> SearchSuggest(string text,out string msg)
+        public static async Task<DoubanSearchResult> SearchSuggest(string text)
         {
-            msg = string.Empty;
-
-            var list = new List<DouBanSubject>();
+            var sr = new DoubanSearchResult();
 
             var q = Uri.EscapeDataString(text);
             var sUrl = $"https://movie.douban.com/j/subject_suggest?q={q}";
@@ -91,20 +92,20 @@ namespace MovieTorrents.Common
             
             var jsonText = string.Empty;
 #if !LOCALTEST
+            using var client = new HttpClient();
+
             try
             {
-                var request = (HttpWebRequest)WebRequest.Create(uri);
-                request.Method = "GET";
-                request.Accept = "application/json; charset=utf-8";
-                var response = (HttpWebResponse)request.GetResponse();
-                using var sr = new StreamReader(response.GetResponseStream());
-                jsonText = sr.ReadToEnd();
+                var response = await client.GetAsync(uri);
+                //response.EnsureSuccessStatusCode();
+                jsonText = await response.Content.ReadAsStringAsync();
+
                 Debug.WriteLine(jsonText);
             }
             catch (Exception e)
             {
+                sr.Message = e.Message;
                 Debug.WriteLine(e.Message);
-                msg = e.Message;
             }
 #else
             jsonText = File.ReadAllText(FormMain.CurrentPath + "\\temp\\douban_suggest_sbuject.json");
@@ -112,7 +113,7 @@ namespace MovieTorrents.Common
 #endif
 
 
-            if (string.IsNullOrEmpty(jsonText)) return list;
+            if (string.IsNullOrEmpty(jsonText)) return sr;
 
 
             try
@@ -129,7 +130,10 @@ namespace MovieTorrents.Common
                         year = (string)jobject["year"],
                         img_url = (string)jobject["img"]
                     };
-                    list.Add(subject);
+
+                    await subject.TryToDownloadSubjectImg(client);
+
+                    sr.Subjects.Add(subject);
 
                     
 
@@ -138,17 +142,19 @@ namespace MovieTorrents.Common
             }
             catch (Exception ex)
             {
-                msg = ex.Message;
+                sr.Message = ex.Message;
             }
 
-            return list;
+            return sr;
         }
 
 
-        public static List<DouBanSubject> SearchById(string text,out string msg)
+        public static async Task<DoubanSearchResult> SearchById(string text)
         {
             var subjectId = string.Empty;
-            var list = new List<DouBanSubject>();
+
+            var sr = new DoubanSearchResult();
+
 
             var match = Regex.Match(text, "https:\\/\\/movie.douban.com\\/subject\\/(\\d+)",
                 RegexOptions.IgnoreCase);
@@ -161,24 +167,24 @@ namespace MovieTorrents.Common
             }
 
             if (string.IsNullOrEmpty(subjectId))
-                msg = "不正确的豆瓣ID";
+                sr.Message = "不正确的豆瓣ID";
             else
             {
                 var subject = new DouBanSubject() { id = subjectId };
-                subject.TryQueryDetail(out msg);
+                (var ret,sr.Message) = await subject.TryQueryDetail();
                 //subject.title = subject.name;
                 if(string.IsNullOrEmpty(subject.sub_title))
                     subject.sub_title = subject.othername;
-                list.Add(subject);
+                sr.Subjects.Add(subject);
             }
 
-            return list;
+            return sr;
         }
-        public bool TryQueryDetail(out string msg)
+        public async Task<(bool,string)> TryQueryDetail()
         {
-            msg = string.Empty;
+            var msg = string.Empty;
 
-            if (_triedDetail) return true;
+            if (_triedDetail) return (true,msg);
 
             var sUrl = $"https://movie.douban.com/subject/{id}/";
             var uri = new Uri(sUrl);
@@ -189,12 +195,12 @@ namespace MovieTorrents.Common
 #if !LOCALTEST
             try
             {
-                var request = (HttpWebRequest)WebRequest.Create(uri);
-                request.Method = "GET";
-                var response = (HttpWebResponse)request.GetResponse();
 
-                using var sr = new StreamReader(response.GetResponseStream());
-                html = sr.ReadToEnd();
+                var client = new HttpClient();
+                var response = await client.GetAsync(uri);
+                response.EnsureSuccessStatusCode();
+                html = await response.Content.ReadAsStringAsync();
+
                 //Debug.WriteLine(html);
 #if DEBUG
                 File.WriteAllText(MyMtSettings.Instance.CurrentPath + "\\temp\\sample_subject.txt", html);
@@ -204,14 +210,14 @@ namespace MovieTorrents.Common
             {
                 Debug.WriteLine(e.Message);
                 msg = e.Message;
-                return false;
+                return (false,msg);
             }
 #else
 
             html = File.ReadAllText(FormMain.CurrentPath + "\\temp\\sample_subject_standard.html");
 #endif
 
-            if (string.IsNullOrEmpty(html)) return false;
+            if (string.IsNullOrEmpty(html)) return (false, msg);
             //又名:</span> 星际启示录(港) / 星际效应(台) / 星际空间 / 星际之间 / 星际远航 / 星际 / Flora's Letter<br/>
             var match = Regex.Match(html, "又名:<\\/span>([\\s\\S]*?)<br\\/>");
             if (match.Success) othername = match.Groups[1].Value;
@@ -227,7 +233,7 @@ namespace MovieTorrents.Common
             // https://www.regextester.com/93588
             //<script type="application/ld+json"></script>
             match = Regex.Match(html, "<script type=\"application\\/ld\\+json\">([\\s\\S]*?)<\\/script>");
-            if (!match.Success) return false;
+            if (!match.Success) return (false, msg);
             html = match.Groups[1].Value;
         
             //Debug.Print(html);
@@ -253,12 +259,12 @@ namespace MovieTorrents.Common
             catch (Exception ex)
             {
                 msg = ex.Message;
-                return false;
+                return (false, msg);
             }
 
             _triedDetail = true;
 
-            return true;
+            return (true,msg);
         }
 
         public static DouBanSubject InitFromPageHtml(string sourceUrl, string html)
