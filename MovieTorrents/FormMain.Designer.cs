@@ -38,6 +38,8 @@
             toolStripMenuItem2 = new System.Windows.Forms.ToolStripSeparator();
             tsmiExit = new System.Windows.Forms.ToolStripMenuItem();
             工具ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            tsmiMatchMovieInfo = new System.Windows.Forms.ToolStripMenuItem();
+            toolStripMenuItem5 = new System.Windows.Forms.ToolStripSeparator();
             tsmiClearRecords = new System.Windows.Forms.ToolStripMenuItem();
             tsmiClearDuplicates = new System.Windows.Forms.ToolStripMenuItem();
             tsmiClearPoster = new System.Windows.Forms.ToolStripMenuItem();
@@ -119,8 +121,6 @@
             olvColSeen = new BrightIdeasSoftware.OLVColumn();
             olvColSeeDate = new BrightIdeasSoftware.OLVColumn();
             olvColSeeComment = new BrightIdeasSoftware.OLVColumn();
-            tsmiMatchMovieInfo = new System.Windows.Forms.ToolStripMenuItem();
-            toolStripMenuItem5 = new System.Windows.Forms.ToolStripSeparator();
             menuStrip1.SuspendLayout();
             statusStrip1.SuspendLayout();
             lvContextMenu.SuspendLayout();
@@ -131,11 +131,12 @@
             // 
             // menuStrip1
             // 
+            menuStrip1.ImageScalingSize = new System.Drawing.Size(20, 20);
             menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { 文件FToolStripMenuItem, 工具ToolStripMenuItem, 过滤TToolStripMenuItem });
             menuStrip1.Location = new System.Drawing.Point(0, 0);
             menuStrip1.Name = "menuStrip1";
-            menuStrip1.Padding = new System.Windows.Forms.Padding(7, 3, 0, 3);
-            menuStrip1.Size = new System.Drawing.Size(1317, 27);
+            menuStrip1.Padding = new System.Windows.Forms.Padding(9, 4, 0, 4);
+            menuStrip1.Size = new System.Drawing.Size(1693, 32);
             menuStrip1.TabIndex = 0;
             menuStrip1.Text = "menuStrip1";
             // 
@@ -143,37 +144,37 @@
             // 
             文件FToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { tsmiShowStatistics, toolStripMenuItem7, tsmiScanFile, toolStripMenuItem2, tsmiExit });
             文件FToolStripMenuItem.Name = "文件FToolStripMenuItem";
-            文件FToolStripMenuItem.Size = new System.Drawing.Size(58, 21);
+            文件FToolStripMenuItem.Size = new System.Drawing.Size(71, 24);
             文件FToolStripMenuItem.Text = "文件(&F)";
             // 
             // tsmiShowStatistics
             // 
             tsmiShowStatistics.Name = "tsmiShowStatistics";
-            tsmiShowStatistics.Size = new System.Drawing.Size(163, 22);
+            tsmiShowStatistics.Size = new System.Drawing.Size(201, 26);
             tsmiShowStatistics.Text = "统计(&T)";
             tsmiShowStatistics.Click += MenuItemShowStatistics_Click;
             // 
             // toolStripMenuItem7
             // 
             toolStripMenuItem7.Name = "toolStripMenuItem7";
-            toolStripMenuItem7.Size = new System.Drawing.Size(160, 6);
+            toolStripMenuItem7.Size = new System.Drawing.Size(198, 6);
             // 
             // tsmiScanFile
             // 
             tsmiScanFile.Name = "tsmiScanFile";
-            tsmiScanFile.Size = new System.Drawing.Size(163, 22);
+            tsmiScanFile.Size = new System.Drawing.Size(201, 26);
             tsmiScanFile.Text = "扫描种子文件(&S)";
             tsmiScanFile.Click += MenuItemScanFile_Click;
             // 
             // toolStripMenuItem2
             // 
             toolStripMenuItem2.Name = "toolStripMenuItem2";
-            toolStripMenuItem2.Size = new System.Drawing.Size(160, 6);
+            toolStripMenuItem2.Size = new System.Drawing.Size(198, 6);
             // 
             // tsmiExit
             // 
             tsmiExit.Name = "tsmiExit";
-            tsmiExit.Size = new System.Drawing.Size(163, 22);
+            tsmiExit.Size = new System.Drawing.Size(201, 26);
             tsmiExit.Text = "退出(X)";
             tsmiExit.Click += MenuitemExit_Click;
             // 
@@ -181,90 +182,104 @@
             // 
             工具ToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { tsmiMatchMovieInfo, toolStripMenuItem5, tsmiClearRecords, tsmiClearDuplicates, tsmiClearPoster });
             工具ToolStripMenuItem.Name = "工具ToolStripMenuItem";
-            工具ToolStripMenuItem.Size = new System.Drawing.Size(59, 21);
+            工具ToolStripMenuItem.Size = new System.Drawing.Size(72, 24);
             工具ToolStripMenuItem.Text = "工具(&T)";
+            // 
+            // tsmiMatchMovieInfo
+            // 
+            tsmiMatchMovieInfo.Name = "tsmiMatchMovieInfo";
+            tsmiMatchMovieInfo.Size = new System.Drawing.Size(203, 26);
+            tsmiMatchMovieInfo.Text = "匹配影视信息";
+            tsmiMatchMovieInfo.ToolTipText = "根据已有条目影视信息匹配未知条目。";
+            // 
+            // toolStripMenuItem5
+            // 
+            toolStripMenuItem5.Name = "toolStripMenuItem5";
+            toolStripMenuItem5.Size = new System.Drawing.Size(200, 6);
             // 
             // tsmiClearRecords
             // 
             tsmiClearRecords.Name = "tsmiClearRecords";
-            tsmiClearRecords.Size = new System.Drawing.Size(180, 22);
+            tsmiClearRecords.Size = new System.Drawing.Size(203, 26);
             tsmiClearRecords.Text = "清理无效记录(&C)";
             // 
             // tsmiClearDuplicates
             // 
             tsmiClearDuplicates.Name = "tsmiClearDuplicates";
-            tsmiClearDuplicates.Size = new System.Drawing.Size(180, 22);
+            tsmiClearDuplicates.Size = new System.Drawing.Size(203, 26);
             tsmiClearDuplicates.Text = "清理重复记录(&D)";
             // 
             // tsmiClearPoster
             // 
             tsmiClearPoster.Name = "tsmiClearPoster";
-            tsmiClearPoster.Size = new System.Drawing.Size(180, 22);
+            tsmiClearPoster.Size = new System.Drawing.Size(203, 26);
             tsmiClearPoster.Text = "清理海报";
             // 
             // 过滤TToolStripMenuItem
             // 
             过滤TToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { tsmiFilterRecent, tsmiFilterSeelater, toolStripSeparator6, tsmiHaveDoubanId, tsmiNoDoubanId, toolStripMenuItem1, tsmiFilterWatched, tsmiFilterNotWatched, tsmiFilterSeeNoWant, tsmiHideSameSubject, toolStripMenuItem6, tsmiLimit100, tsmiLimit200, tsmiLimit500, tsmiLimit1000, tsmiLimit2000 });
             过滤TToolStripMenuItem.Name = "过滤TToolStripMenuItem";
-            过滤TToolStripMenuItem.Size = new System.Drawing.Size(58, 21);
+            过滤TToolStripMenuItem.Size = new System.Drawing.Size(71, 24);
             过滤TToolStripMenuItem.Text = "过滤(&L)";
             // 
             // tsmiFilterRecent
             // 
+            tsmiFilterRecent.Checked = true;
+            tsmiFilterRecent.CheckState = System.Windows.Forms.CheckState.Checked;
             tsmiFilterRecent.Name = "tsmiFilterRecent";
-            tsmiFilterRecent.Size = new System.Drawing.Size(187, 22);
+            tsmiFilterRecent.Size = new System.Drawing.Size(231, 26);
             tsmiFilterRecent.Text = "最近添加(&N)";
             tsmiFilterRecent.Click += tsmiFilterRecent_Click;
             // 
             // tsmiFilterSeelater
             // 
             tsmiFilterSeelater.Name = "tsmiFilterSeelater";
-            tsmiFilterSeelater.Size = new System.Drawing.Size(187, 22);
+            tsmiFilterSeelater.Size = new System.Drawing.Size(231, 26);
             tsmiFilterSeelater.Text = "稍后看(&L)";
             tsmiFilterSeelater.Click += tsmiFilterSeelater_Click;
             // 
             // toolStripSeparator6
             // 
             toolStripSeparator6.Name = "toolStripSeparator6";
-            toolStripSeparator6.Size = new System.Drawing.Size(184, 6);
+            toolStripSeparator6.Size = new System.Drawing.Size(228, 6);
             // 
             // tsmiHaveDoubanId
             // 
             tsmiHaveDoubanId.Name = "tsmiHaveDoubanId";
-            tsmiHaveDoubanId.Size = new System.Drawing.Size(187, 22);
+            tsmiHaveDoubanId.Size = new System.Drawing.Size(231, 26);
             tsmiHaveDoubanId.Text = "有豆瓣ID";
             tsmiHaveDoubanId.Click += tsmiHaveDoubanId_Click;
             // 
             // tsmiNoDoubanId
             // 
             tsmiNoDoubanId.Name = "tsmiNoDoubanId";
-            tsmiNoDoubanId.Size = new System.Drawing.Size(187, 22);
+            tsmiNoDoubanId.Size = new System.Drawing.Size(231, 26);
             tsmiNoDoubanId.Text = "没有豆瓣ID";
             tsmiNoDoubanId.Click += tsmiNoDoubanId_Click;
             // 
             // toolStripMenuItem1
             // 
             toolStripMenuItem1.Name = "toolStripMenuItem1";
-            toolStripMenuItem1.Size = new System.Drawing.Size(184, 6);
+            toolStripMenuItem1.Size = new System.Drawing.Size(228, 6);
             // 
             // tsmiFilterWatched
             // 
             tsmiFilterWatched.Name = "tsmiFilterWatched";
-            tsmiFilterWatched.Size = new System.Drawing.Size(187, 22);
+            tsmiFilterWatched.Size = new System.Drawing.Size(231, 26);
             tsmiFilterWatched.Text = "看过";
             tsmiFilterWatched.Click += tsmiFilterWatched_Click;
             // 
             // tsmiFilterNotWatched
             // 
             tsmiFilterNotWatched.Name = "tsmiFilterNotWatched";
-            tsmiFilterNotWatched.Size = new System.Drawing.Size(187, 22);
+            tsmiFilterNotWatched.Size = new System.Drawing.Size(231, 26);
             tsmiFilterNotWatched.Text = "没有看过";
             tsmiFilterNotWatched.Click += tsmiFilterNotWatched_Click;
             // 
             // tsmiFilterSeeNoWant
             // 
             tsmiFilterSeeNoWant.Name = "tsmiFilterSeeNoWant";
-            tsmiFilterSeeNoWant.Size = new System.Drawing.Size(187, 22);
+            tsmiFilterSeeNoWant.Size = new System.Drawing.Size(231, 26);
             tsmiFilterSeeNoWant.Text = "隐藏不想看";
             tsmiFilterSeeNoWant.Click += tsmiFilterSeeNoWant_Click;
             // 
@@ -274,59 +289,60 @@
             tsmiHideSameSubject.CheckState = System.Windows.Forms.CheckState.Checked;
             tsmiHideSameSubject.Enabled = false;
             tsmiHideSameSubject.Name = "tsmiHideSameSubject";
-            tsmiHideSameSubject.Size = new System.Drawing.Size(187, 22);
+            tsmiHideSameSubject.Size = new System.Drawing.Size(231, 26);
             tsmiHideSameSubject.Text = "隐藏已看同名电影(&S)";
             tsmiHideSameSubject.Click += tsmiHideSameSubject_Click;
             // 
             // toolStripMenuItem6
             // 
             toolStripMenuItem6.Name = "toolStripMenuItem6";
-            toolStripMenuItem6.Size = new System.Drawing.Size(184, 6);
+            toolStripMenuItem6.Size = new System.Drawing.Size(228, 6);
             // 
             // tsmiLimit100
             // 
-            tsmiLimit100.Checked = true;
-            tsmiLimit100.CheckState = System.Windows.Forms.CheckState.Checked;
             tsmiLimit100.Name = "tsmiLimit100";
-            tsmiLimit100.Size = new System.Drawing.Size(187, 22);
+            tsmiLimit100.Size = new System.Drawing.Size(231, 26);
             tsmiLimit100.Tag = "100";
             tsmiLimit100.Text = "限制100条";
             // 
             // tsmiLimit200
             // 
             tsmiLimit200.Name = "tsmiLimit200";
-            tsmiLimit200.Size = new System.Drawing.Size(187, 22);
+            tsmiLimit200.Size = new System.Drawing.Size(231, 26);
             tsmiLimit200.Tag = "200";
             tsmiLimit200.Text = "限制200条";
             // 
             // tsmiLimit500
             // 
             tsmiLimit500.Name = "tsmiLimit500";
-            tsmiLimit500.Size = new System.Drawing.Size(187, 22);
+            tsmiLimit500.Size = new System.Drawing.Size(231, 26);
             tsmiLimit500.Tag = "300";
             tsmiLimit500.Text = "限制500条";
             // 
             // tsmiLimit1000
             // 
+            tsmiLimit1000.Checked = true;
+            tsmiLimit1000.CheckState = System.Windows.Forms.CheckState.Checked;
             tsmiLimit1000.Name = "tsmiLimit1000";
-            tsmiLimit1000.Size = new System.Drawing.Size(187, 22);
+            tsmiLimit1000.Size = new System.Drawing.Size(231, 26);
             tsmiLimit1000.Tag = "1000";
             tsmiLimit1000.Text = "限制1000条";
             // 
             // tsmiLimit2000
             // 
             tsmiLimit2000.Name = "tsmiLimit2000";
-            tsmiLimit2000.Size = new System.Drawing.Size(187, 22);
+            tsmiLimit2000.Size = new System.Drawing.Size(231, 26);
             tsmiLimit2000.Tag = "2000";
             tsmiLimit2000.Text = "限制2000条";
             // 
             // statusStrip1
             // 
+            statusStrip1.ImageScalingSize = new System.Drawing.Size(20, 20);
             statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { tssState, tssInfo, tsSummary, tsCurrentDir, tsButtonWatch });
-            statusStrip1.Location = new System.Drawing.Point(0, 786);
+            statusStrip1.Location = new System.Drawing.Point(0, 925);
             statusStrip1.Name = "statusStrip1";
-            statusStrip1.Padding = new System.Windows.Forms.Padding(1, 0, 16, 0);
-            statusStrip1.Size = new System.Drawing.Size(1317, 26);
+            statusStrip1.Padding = new System.Windows.Forms.Padding(1, 0, 21, 0);
+            statusStrip1.Size = new System.Drawing.Size(1693, 30);
             statusStrip1.TabIndex = 2;
             statusStrip1.Text = "statusStrip1";
             // 
@@ -336,14 +352,14 @@
             tssState.BackColor = System.Drawing.SystemColors.Control;
             tssState.Image = Resource.InfoGree32;
             tssState.Name = "tssState";
-            tssState.Size = new System.Drawing.Size(17, 21);
+            tssState.Size = new System.Drawing.Size(17, 24);
             tssState.Click += tssState_Click;
             // 
             // tssInfo
             // 
             tssInfo.AutoSize = false;
             tssInfo.Name = "tssInfo";
-            tssInfo.Size = new System.Drawing.Size(1187, 21);
+            tssInfo.Size = new System.Drawing.Size(1539, 24);
             tssInfo.Spring = true;
             tssInfo.Text = "空闲";
             tssInfo.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -353,14 +369,14 @@
             tsSummary.BorderSides = System.Windows.Forms.ToolStripStatusLabelBorderSides.Left | System.Windows.Forms.ToolStripStatusLabelBorderSides.Top | System.Windows.Forms.ToolStripStatusLabelBorderSides.Right | System.Windows.Forms.ToolStripStatusLabelBorderSides.Bottom;
             tsSummary.BorderStyle = System.Windows.Forms.Border3DStyle.Etched;
             tsSummary.Name = "tsSummary";
-            tsSummary.Size = new System.Drawing.Size(4, 21);
+            tsSummary.Size = new System.Drawing.Size(4, 24);
             // 
             // tsCurrentDir
             // 
             tsCurrentDir.BorderSides = System.Windows.Forms.ToolStripStatusLabelBorderSides.Left | System.Windows.Forms.ToolStripStatusLabelBorderSides.Top | System.Windows.Forms.ToolStripStatusLabelBorderSides.Right | System.Windows.Forms.ToolStripStatusLabelBorderSides.Bottom;
             tsCurrentDir.BorderStyle = System.Windows.Forms.Border3DStyle.Etched;
             tsCurrentDir.Name = "tsCurrentDir";
-            tsCurrentDir.Size = new System.Drawing.Size(63, 21);
+            tsCurrentDir.Size = new System.Drawing.Size(77, 24);
             tsCurrentDir.Text = "种子目录:";
             // 
             // tsButtonWatch
@@ -370,41 +386,42 @@
             tsButtonWatch.Image = (System.Drawing.Image)resources.GetObject("tsButtonWatch.Image");
             tsButtonWatch.ImageTransparentColor = System.Drawing.Color.Magenta;
             tsButtonWatch.Name = "tsButtonWatch";
-            tsButtonWatch.Size = new System.Drawing.Size(29, 24);
+            tsButtonWatch.Size = new System.Drawing.Size(34, 28);
             // 
             // tsmiToggleWatch
             // 
             tsmiToggleWatch.Name = "tsmiToggleWatch";
-            tsmiToggleWatch.Size = new System.Drawing.Size(192, 22);
+            tsmiToggleWatch.Size = new System.Drawing.Size(241, 26);
             tsmiToggleWatch.Text = "toolStripMenuItem7";
             tsmiToggleWatch.Click += MenuItemToggleWatch_Click;
             // 
             // lvContextMenu
             // 
+            lvContextMenu.ImageScalingSize = new System.Drawing.Size(20, 20);
             lvContextMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { tsmiSetWatched, tsmiSetSeelater, tsmiToggleSeeNoWant, tsmiSearchDouban, tsmiCopyDouban, toolStripMenuItem3, tsmiOpenFile, tsmiShowFileLocation, tsmiCopyName, tsmiCopyPath, tsmiCopyFile, toolStripMenuItem4, tsmiMove, tsmiMovePath, tsmiDelete });
             lvContextMenu.Name = "lvContextMenu";
-            lvContextMenu.Size = new System.Drawing.Size(213, 302);
+            lvContextMenu.Size = new System.Drawing.Size(253, 354);
             lvContextMenu.Text = "设置已看";
             lvContextMenu.Opening += lvContextMenu_Opening;
             // 
             // tsmiSetWatched
             // 
             tsmiSetWatched.Name = "tsmiSetWatched";
-            tsmiSetWatched.Size = new System.Drawing.Size(212, 22);
+            tsmiSetWatched.Size = new System.Drawing.Size(252, 26);
             tsmiSetWatched.Text = "设置为已观看(&W)";
             tsmiSetWatched.Click += MenuItemSetWatched_Click;
             // 
             // tsmiSetSeelater
             // 
             tsmiSetSeelater.Name = "tsmiSetSeelater";
-            tsmiSetSeelater.Size = new System.Drawing.Size(212, 22);
+            tsmiSetSeelater.Size = new System.Drawing.Size(252, 26);
             tsmiSetSeelater.Text = "切换稍后看(&L)";
             tsmiSetSeelater.Click += MenuItemSetSeeLater_Click;
             // 
             // tsmiToggleSeeNoWant
             // 
             tsmiToggleSeeNoWant.Name = "tsmiToggleSeeNoWant";
-            tsmiToggleSeeNoWant.Size = new System.Drawing.Size(212, 22);
+            tsmiToggleSeeNoWant.Size = new System.Drawing.Size(252, 26);
             tsmiToggleSeeNoWant.Text = "切换不想看(&N)";
             tsmiToggleSeeNoWant.Click += MenuItemToggleSeeNoWant_Click;
             // 
@@ -412,7 +429,7 @@
             // 
             tsmiSearchDouban.Image = Properties.Resources.douban24;
             tsmiSearchDouban.Name = "tsmiSearchDouban";
-            tsmiSearchDouban.Size = new System.Drawing.Size(212, 22);
+            tsmiSearchDouban.Size = new System.Drawing.Size(252, 26);
             tsmiSearchDouban.Text = "搜索豆瓣信息(&S)";
             tsmiSearchDouban.Click += MenuItemSearchDouBan_Click;
             // 
@@ -420,60 +437,60 @@
             // 
             tsmiCopyDouban.Image = Properties.Resources.Page_Copy24;
             tsmiCopyDouban.Name = "tsmiCopyDouban";
-            tsmiCopyDouban.Size = new System.Drawing.Size(212, 22);
+            tsmiCopyDouban.Size = new System.Drawing.Size(252, 26);
             tsmiCopyDouban.Text = "设置豆瓣信息为勾选项(&K)";
             tsmiCopyDouban.Click += MenuItemCopyDouBan_Click;
             // 
             // toolStripMenuItem3
             // 
             toolStripMenuItem3.Name = "toolStripMenuItem3";
-            toolStripMenuItem3.Size = new System.Drawing.Size(209, 6);
+            toolStripMenuItem3.Size = new System.Drawing.Size(249, 6);
             // 
             // tsmiOpenFile
             // 
             tsmiOpenFile.Name = "tsmiOpenFile";
-            tsmiOpenFile.Size = new System.Drawing.Size(212, 22);
+            tsmiOpenFile.Size = new System.Drawing.Size(252, 26);
             tsmiOpenFile.Text = "打开文件(&O)";
             tsmiOpenFile.Click += MenuItemOpenFile_Click;
             // 
             // tsmiShowFileLocation
             // 
             tsmiShowFileLocation.Name = "tsmiShowFileLocation";
-            tsmiShowFileLocation.Size = new System.Drawing.Size(212, 22);
+            tsmiShowFileLocation.Size = new System.Drawing.Size(252, 26);
             tsmiShowFileLocation.Text = "打开文件所在位置(&L)";
             tsmiShowFileLocation.Click += MenuItemShowFileLocation_Click;
             // 
             // tsmiCopyName
             // 
             tsmiCopyName.Name = "tsmiCopyName";
-            tsmiCopyName.Size = new System.Drawing.Size(212, 22);
+            tsmiCopyName.Size = new System.Drawing.Size(252, 26);
             tsmiCopyName.Text = "复制名称(&C)";
             tsmiCopyName.Click += MenuItemCopyName_Click;
             // 
             // tsmiCopyPath
             // 
             tsmiCopyPath.Name = "tsmiCopyPath";
-            tsmiCopyPath.Size = new System.Drawing.Size(212, 22);
+            tsmiCopyPath.Size = new System.Drawing.Size(252, 26);
             tsmiCopyPath.Text = "复制文件完整路径(&P)";
             tsmiCopyPath.Click += MenuItemCopyPath_Click;
             // 
             // tsmiCopyFile
             // 
             tsmiCopyFile.Name = "tsmiCopyFile";
-            tsmiCopyFile.Size = new System.Drawing.Size(212, 22);
+            tsmiCopyFile.Size = new System.Drawing.Size(252, 26);
             tsmiCopyFile.Text = "拷贝文件(&F)";
             tsmiCopyFile.Click += MenuItemCopyFile_Click;
             // 
             // toolStripMenuItem4
             // 
             toolStripMenuItem4.Name = "toolStripMenuItem4";
-            toolStripMenuItem4.Size = new System.Drawing.Size(209, 6);
+            toolStripMenuItem4.Size = new System.Drawing.Size(249, 6);
             // 
             // tsmiMove
             // 
             tsmiMove.Image = Properties.Resources.Move_To_Folder24;
             tsmiMove.Name = "tsmiMove";
-            tsmiMove.Size = new System.Drawing.Size(212, 22);
+            tsmiMove.Size = new System.Drawing.Size(252, 26);
             tsmiMove.Text = "移动...(&M)";
             tsmiMove.Click += ToolBarMove_Click;
             // 
@@ -481,14 +498,14 @@
             // 
             tsmiMovePath.Image = Properties.Resources.Folder_upload24;
             tsmiMovePath.Name = "tsmiMovePath";
-            tsmiMovePath.Size = new System.Drawing.Size(212, 22);
+            tsmiMovePath.Size = new System.Drawing.Size(252, 26);
             tsmiMovePath.Text = "移动路径(&P)";
             tsmiMovePath.Click += ToolbarMovePath_Click;
             // 
             // tsmiDelete
             // 
             tsmiDelete.Name = "tsmiDelete";
-            tsmiDelete.Size = new System.Drawing.Size(212, 22);
+            tsmiDelete.Size = new System.Drawing.Size(252, 26);
             tsmiDelete.Text = "删除(&D)";
             tsmiDelete.Click += ToolBarDelete_Click;
             // 
@@ -505,50 +522,50 @@
             // 
             // lbGenres
             // 
-            lbGenres.Location = new System.Drawing.Point(16, 664);
-            lbGenres.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            lbGenres.Location = new System.Drawing.Point(21, 781);
+            lbGenres.Margin = new System.Windows.Forms.Padding(5, 0, 5, 0);
             lbGenres.Name = "lbGenres";
-            lbGenres.Size = new System.Drawing.Size(114, 62);
+            lbGenres.Size = new System.Drawing.Size(147, 73);
             lbGenres.TabIndex = 1;
             lbGenres.Text = "Genres";
             lbGenres.TextAlign = System.Drawing.ContentAlignment.TopCenter;
             // 
             // lbRating
             // 
-            lbRating.Location = new System.Drawing.Point(14, 350);
-            lbRating.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            lbRating.Location = new System.Drawing.Point(18, 412);
+            lbRating.Margin = new System.Windows.Forms.Padding(5, 0, 5, 0);
             lbRating.Name = "lbRating";
-            lbRating.Size = new System.Drawing.Size(117, 33);
+            lbRating.Size = new System.Drawing.Size(150, 39);
             lbRating.TabIndex = 6;
             lbRating.Text = "Rating";
             lbRating.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // lbTitle
             // 
-            lbTitle.Location = new System.Drawing.Point(16, 445);
-            lbTitle.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            lbTitle.Location = new System.Drawing.Point(21, 524);
+            lbTitle.Margin = new System.Windows.Forms.Padding(5, 0, 5, 0);
             lbTitle.Name = "lbTitle";
-            lbTitle.Size = new System.Drawing.Size(114, 75);
+            lbTitle.Size = new System.Drawing.Size(147, 88);
             lbTitle.TabIndex = 1;
             lbTitle.Text = "keyName";
             lbTitle.TextAlign = System.Drawing.ContentAlignment.TopCenter;
             // 
             // lbOtherName
             // 
-            lbOtherName.Location = new System.Drawing.Point(16, 551);
-            lbOtherName.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            lbOtherName.Location = new System.Drawing.Point(21, 648);
+            lbOtherName.Margin = new System.Windows.Forms.Padding(5, 0, 5, 0);
             lbOtherName.Name = "lbOtherName";
-            lbOtherName.Size = new System.Drawing.Size(114, 82);
+            lbOtherName.Size = new System.Drawing.Size(147, 96);
             lbOtherName.TabIndex = 1;
             lbOtherName.Text = "otherName";
             lbOtherName.TextAlign = System.Drawing.ContentAlignment.TopCenter;
             // 
             // pictureBox1
             // 
-            pictureBox1.Location = new System.Drawing.Point(0, 105);
-            pictureBox1.Margin = new System.Windows.Forms.Padding(4);
+            pictureBox1.Location = new System.Drawing.Point(0, 124);
+            pictureBox1.Margin = new System.Windows.Forms.Padding(5, 5, 5, 5);
             pictureBox1.Name = "pictureBox1";
-            pictureBox1.Size = new System.Drawing.Size(147, 232);
+            pictureBox1.Size = new System.Drawing.Size(189, 273);
             pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             pictureBox1.TabIndex = 0;
             pictureBox1.TabStop = false;
@@ -556,10 +573,10 @@
             // 
             // lbZone
             // 
-            lbZone.Location = new System.Drawing.Point(14, 745);
-            lbZone.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            lbZone.Location = new System.Drawing.Point(18, 876);
+            lbZone.Margin = new System.Windows.Forms.Padding(5, 0, 5, 0);
             lbZone.Name = "lbZone";
-            lbZone.Size = new System.Drawing.Size(114, 44);
+            lbZone.Size = new System.Drawing.Size(147, 52);
             lbZone.TabIndex = 1;
             lbZone.Text = "zone";
             lbZone.TextAlign = System.Drawing.ContentAlignment.TopCenter;
@@ -568,9 +585,9 @@
             // 
             toolStrip1.ImageScalingSize = new System.Drawing.Size(24, 24);
             toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { toolStripButton1, toolStripSeparator1, tsbMove, tsbMovePath, tsbNormalize, toolStripSeparator5, tsbSearchDouban, tsbDelete, tsbCopyDouban, toolStripSeparator2, tsbFindSimilar, tsbRating0, toolStripSeparator3, tsbRating8, toolStripSeparator4, tsbRating9 });
-            toolStrip1.Location = new System.Drawing.Point(0, 27);
+            toolStrip1.Location = new System.Drawing.Point(0, 32);
             toolStrip1.Name = "toolStrip1";
-            toolStrip1.Size = new System.Drawing.Size(1317, 31);
+            toolStrip1.Size = new System.Drawing.Size(1693, 31);
             toolStrip1.TabIndex = 8;
             toolStrip1.Text = "toolStrip1";
             // 
@@ -580,7 +597,7 @@
             toolStripButton1.Image = Properties.Resources.btbt24;
             toolStripButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
             toolStripButton1.Name = "toolStripButton1";
-            toolStripButton1.Size = new System.Drawing.Size(28, 28);
+            toolStripButton1.Size = new System.Drawing.Size(29, 28);
             toolStripButton1.Text = "BtBTT下载";
             toolStripButton1.Click += MenuItemBtBtDownload_Click;
             // 
@@ -595,7 +612,7 @@
             tsbMove.Image = Properties.Resources.Move_To_Folder24;
             tsbMove.ImageTransparentColor = System.Drawing.Color.Magenta;
             tsbMove.Name = "tsbMove";
-            tsbMove.Size = new System.Drawing.Size(28, 28);
+            tsbMove.Size = new System.Drawing.Size(29, 28);
             tsbMove.Text = "移动";
             // 
             // tsbMovePath
@@ -604,7 +621,7 @@
             tsbMovePath.Image = Properties.Resources.Folder_upload24;
             tsbMovePath.ImageTransparentColor = System.Drawing.Color.Magenta;
             tsbMovePath.Name = "tsbMovePath";
-            tsbMovePath.Size = new System.Drawing.Size(28, 28);
+            tsbMovePath.Size = new System.Drawing.Size(29, 28);
             tsbMovePath.Text = "移动路径";
             // 
             // tsbNormalize
@@ -613,7 +630,7 @@
             tsbNormalize.Image = Properties.Resources.Pencil_and_Ruler24;
             tsbNormalize.ImageTransparentColor = System.Drawing.Color.Magenta;
             tsbNormalize.Name = "tsbNormalize";
-            tsbNormalize.Size = new System.Drawing.Size(28, 28);
+            tsbNormalize.Size = new System.Drawing.Size(29, 28);
             tsbNormalize.Text = "规范名称";
             // 
             // toolStripSeparator5
@@ -627,7 +644,7 @@
             tsbSearchDouban.Image = Properties.Resources.douban24;
             tsbSearchDouban.ImageTransparentColor = System.Drawing.Color.Magenta;
             tsbSearchDouban.Name = "tsbSearchDouban";
-            tsbSearchDouban.Size = new System.Drawing.Size(28, 28);
+            tsbSearchDouban.Size = new System.Drawing.Size(29, 28);
             tsbSearchDouban.Text = "搜索豆瓣";
             tsbSearchDouban.Click += tsbSearchDouBan_Click;
             // 
@@ -637,7 +654,7 @@
             tsbDelete.Image = Properties.Resources.Delete24;
             tsbDelete.ImageTransparentColor = System.Drawing.Color.Magenta;
             tsbDelete.Name = "tsbDelete";
-            tsbDelete.Size = new System.Drawing.Size(28, 28);
+            tsbDelete.Size = new System.Drawing.Size(29, 28);
             tsbDelete.Text = "删除";
             // 
             // tsbCopyDouban
@@ -646,7 +663,7 @@
             tsbCopyDouban.Image = Properties.Resources.Page_Copy24;
             tsbCopyDouban.ImageTransparentColor = System.Drawing.Color.Magenta;
             tsbCopyDouban.Name = "tsbCopyDouban";
-            tsbCopyDouban.Size = new System.Drawing.Size(28, 28);
+            tsbCopyDouban.Size = new System.Drawing.Size(29, 28);
             tsbCopyDouban.Text = "拷贝信息";
             tsbCopyDouban.ToolTipText = "设置豆瓣信息为勾选项";
             // 
@@ -661,7 +678,7 @@
             tsbFindSimilar.Image = Properties.Resources.Search24;
             tsbFindSimilar.ImageTransparentColor = System.Drawing.Color.Magenta;
             tsbFindSimilar.Name = "tsbFindSimilar";
-            tsbFindSimilar.Size = new System.Drawing.Size(28, 28);
+            tsbFindSimilar.Size = new System.Drawing.Size(29, 28);
             tsbFindSimilar.Text = "搜索类似电影";
             tsbFindSimilar.Click += tsbFindSimilar_Click;
             // 
@@ -671,7 +688,7 @@
             tsbRating0.Image = (System.Drawing.Image)resources.GetObject("tsbRating0.Image");
             tsbRating0.ImageTransparentColor = System.Drawing.Color.Magenta;
             tsbRating0.Name = "tsbRating0";
-            tsbRating0.Size = new System.Drawing.Size(65, 28);
+            tsbRating0.Size = new System.Drawing.Size(80, 28);
             tsbRating0.Text = "Rating=0";
             // 
             // toolStripSeparator3
@@ -685,7 +702,7 @@
             tsbRating8.Image = (System.Drawing.Image)resources.GetObject("tsbRating8.Image");
             tsbRating8.ImageTransparentColor = System.Drawing.Color.Magenta;
             tsbRating8.Name = "tsbRating8";
-            tsbRating8.Size = new System.Drawing.Size(65, 28);
+            tsbRating8.Size = new System.Drawing.Size(80, 28);
             tsbRating8.Text = "Rating>8";
             // 
             // toolStripSeparator4
@@ -699,7 +716,7 @@
             tsbRating9.Image = (System.Drawing.Image)resources.GetObject("tsbRating9.Image");
             tsbRating9.ImageTransparentColor = System.Drawing.Color.Magenta;
             tsbRating9.Name = "tsbRating9";
-            tsbRating9.Size = new System.Drawing.Size(65, 28);
+            tsbRating9.Size = new System.Drawing.Size(80, 28);
             tsbRating9.Text = "Rating>9";
             // 
             // tbSearchText
@@ -708,19 +725,19 @@
             tbSearchText.Font = new System.Drawing.Font("Microsoft YaHei", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             tbSearchText.FormattingEnabled = true;
             tbSearchText.Items.AddRange(new object[] { "rating:>9", "rating:>8", "rating:0" });
-            tbSearchText.Location = new System.Drawing.Point(35, 68);
-            tbSearchText.Margin = new System.Windows.Forms.Padding(4);
+            tbSearchText.Location = new System.Drawing.Point(45, 80);
+            tbSearchText.Margin = new System.Windows.Forms.Padding(5, 5, 5, 5);
             tbSearchText.Name = "tbSearchText";
-            tbSearchText.Size = new System.Drawing.Size(1282, 25);
+            tbSearchText.Size = new System.Drawing.Size(1647, 28);
             tbSearchText.TabIndex = 9;
             tbSearchText.TextChanged += tbSearchText_TextChanged;
             // 
             // btClearSearch
             // 
-            btClearSearch.Location = new System.Drawing.Point(5, 67);
-            btClearSearch.Margin = new System.Windows.Forms.Padding(4);
+            btClearSearch.Location = new System.Drawing.Point(6, 79);
+            btClearSearch.Margin = new System.Windows.Forms.Padding(5, 5, 5, 5);
             btClearSearch.Name = "btClearSearch";
-            btClearSearch.Size = new System.Drawing.Size(26, 31);
+            btClearSearch.Size = new System.Drawing.Size(33, 36);
             btClearSearch.TabIndex = 10;
             btClearSearch.Text = "X";
             btClearSearch.UseVisualStyleBackColor = true;
@@ -728,10 +745,10 @@
             // 
             // lbYear
             // 
-            lbYear.Location = new System.Drawing.Point(14, 394);
-            lbYear.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            lbYear.Location = new System.Drawing.Point(18, 464);
+            lbYear.Margin = new System.Windows.Forms.Padding(5, 0, 5, 0);
             lbYear.Name = "lbYear";
-            lbYear.Size = new System.Drawing.Size(117, 33);
+            lbYear.Size = new System.Drawing.Size(150, 39);
             lbYear.TabIndex = 6;
             lbYear.Text = "Year";
             lbYear.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -751,11 +768,11 @@
             lvResults.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
             lvResults.CellEditUseWholeCell = false;
             lvResults.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] { olvColName, olvColRating, olvColYear, olvColAddDate, olvColPath, olvColSeelater, olvColNoWant, olvColSeen, olvColSeeDate, olvColSeeComment });
-            lvResults.Location = new System.Drawing.Point(154, 105);
-            lvResults.Margin = new System.Windows.Forms.Padding(4);
+            lvResults.Location = new System.Drawing.Point(198, 124);
+            lvResults.Margin = new System.Windows.Forms.Padding(5, 5, 5, 5);
             lvResults.Name = "lvResults";
             lvResults.ShowGroups = false;
-            lvResults.Size = new System.Drawing.Size(1162, 668);
+            lvResults.Size = new System.Drawing.Size(1493, 785);
             lvResults.TabIndex = 11;
             lvResults.UseCompatibleStateImageBehavior = false;
             lvResults.View = System.Windows.Forms.View.Details;
@@ -816,23 +833,11 @@
             olvColSeeComment.Text = "观看评论";
             olvColSeeComment.Width = 120;
             // 
-            // tsmiMatchMovieInfo
-            // 
-            tsmiMatchMovieInfo.Name = "tsmiMatchMovieInfo";
-            tsmiMatchMovieInfo.Size = new System.Drawing.Size(180, 22);
-            tsmiMatchMovieInfo.Text = "匹配影视信息";
-            tsmiMatchMovieInfo.ToolTipText = "根据已有条目影视信息匹配未知条目。";
-            // 
-            // toolStripMenuItem5
-            // 
-            toolStripMenuItem5.Name = "toolStripMenuItem5";
-            toolStripMenuItem5.Size = new System.Drawing.Size(177, 6);
-            // 
             // FormMain
             // 
-            AutoScaleDimensions = new System.Drawing.SizeF(7F, 17F);
+            AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            ClientSize = new System.Drawing.Size(1317, 812);
+            ClientSize = new System.Drawing.Size(1693, 955);
             Controls.Add(lvResults);
             Controls.Add(btClearSearch);
             Controls.Add(tbSearchText);
@@ -847,7 +852,7 @@
             Controls.Add(statusStrip1);
             Controls.Add(menuStrip1);
             MainMenuStrip = menuStrip1;
-            Margin = new System.Windows.Forms.Padding(4);
+            Margin = new System.Windows.Forms.Padding(5, 5, 5, 5);
             Name = "FormMain";
             StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             Text = "Movie torrents";

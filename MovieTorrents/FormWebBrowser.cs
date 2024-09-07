@@ -203,7 +203,7 @@ namespace MovieTorrents
 #endif
             try
             {
-                DouBanSubject = DouBanSubject.InitFromPageHtml(webView2Control.Source.AbsoluteUri, html);
+                DouBanSubject = await DouBanSubject.InitFromPageHtml(webView2Control.Source.AbsoluteUri, html);
                 if(IsNullOrEmpty(DouBanSubject.ImgLocal) && !IsNullOrEmpty(DouBanSubject?.img_url))
                 {
 

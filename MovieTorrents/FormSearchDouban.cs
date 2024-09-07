@@ -101,29 +101,31 @@ namespace MovieTorrents
             if(string.IsNullOrEmpty(subject.ImgLocal))
               await subject.TryToDownloadSubjectImg();
 
-            if (!string.IsNullOrEmpty(subject.ImgLocal) && File.Exists(subject.ImgLocal))
-            {
-                try
-                {
-                    var ext = Path.GetExtension(subject.ImgLocal);
-                    if (ext.Equals(".webp", StringComparison.InvariantCultureIgnoreCase))
-                    {
-                        using var webp = new WebP();
-                        pictureBox1.Image = webp.Load(subject.ImgLocal);
-                    }
-                    else
-                    {
-                        await using var stream = new FileStream(subject.ImgLocal, FileMode.Open, FileAccess.Read);
-                        pictureBox1.Image = Image.FromStream(stream);
-                    }
+            if (string.IsNullOrEmpty(subject.ImgLocal) || !File.Exists(subject.ImgLocal)) return;
 
-                }
-                catch (Exception exception)
+            if((DouBanSubject)listView1.SelectedItems[0].Tag!=subject)
+                return;
+
+            try
+            {
+                var ext = Path.GetExtension(subject.ImgLocal);
+                if (ext.Equals(".webp", StringComparison.InvariantCultureIgnoreCase))
                 {
-                    tbInfo.AppendText(exception.Message);
+                    using var webp = new WebP();
+                    pictureBox1.Image = webp.Load(subject.ImgLocal);
+                }
+                else
+                {
+                    await using var stream = new FileStream(subject.ImgLocal, FileMode.Open, FileAccess.Read);
+                    pictureBox1.Image = Image.FromStream(stream);
                 }
 
             }
+            catch (Exception exception)
+            {
+                tbInfo.AppendText(exception.Message);
+            }
+
 
 
         }

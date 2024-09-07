@@ -131,7 +131,7 @@ namespace MovieTorrents.Common
                         img_url = (string)jobject["img"]
                     };
 
-                    await subject.TryToDownloadSubjectImg(client);
+                    //await subject.TryToDownloadSubjectImg(client);
 
                     sr.Subjects.Add(subject);
 
@@ -267,7 +267,13 @@ namespace MovieTorrents.Common
             return (true,msg);
         }
 
-        public static DouBanSubject InitFromPageHtml(string sourceUrl, string html)
+        /// <summary>
+        /// 从浏览器页面内容初始化
+        /// </summary>
+        /// <param name="sourceUrl"></param>
+        /// <param name="html"></param>
+        /// <returns></returns>
+        public static async Task<DouBanSubject> InitFromPageHtml(string sourceUrl, string html)
         {
             var subject = new DouBanSubject();
             var match = Regex.Match(sourceUrl, @"movie.douban.com/subject/(\d+)");
@@ -277,7 +283,35 @@ namespace MovieTorrents.Common
 
             //名称 <span property="v:itemreviewed">雷神 Thor</span>
             match = Regex.Match(html, @"""v:itemreviewed"">(.*?)</span>", RegexOptions.IgnoreCase);
-            if (match.Success) subject.title = match.Groups[1].Value;
+            if (match.Success)
+            {
+                var s = match.Groups[1].Value;
+                var c = s.ToCharArray();
+                
+                var i = 0;
+                while (i < c.Length)
+                {
+                    if ((c[i] >= 0x4e00 && c[i] <= 0x9fbb) 
+                        || c[i] == ' '
+                        || (c[i]>='0' && c[i]<='9')
+                        || c[i] == '：'
+
+                        )
+                    {
+                        i++;
+                        continue;
+                    }
+                    break;
+                }
+
+                if (i < c.Length)
+                {
+                    subject.title = s.Substring(0, i).Trim();
+                    subject.sub_title = s.Substring(i, s.Length-i).Trim();
+                }
+                else
+                    subject.title = s.Trim();
+            }
 
             //year <span class="year">(2011)</span>
             match = Regex.Match(html, @"class=""year"">\((.*?)\)</span>", RegexOptions.IgnoreCase);
@@ -298,7 +332,7 @@ namespace MovieTorrents.Common
             subject.zone = match.GetAllText();
 
             match = Regex.Match(html, @"class=""pl"">又名:</span>(.*?)<br>", RegexOptions.IgnoreCase);
-            subject.othername = match.GetAllText();
+            if(match.Success) subject.othername = match.GetAllText().Trim();
 
             match = Regex.Match(html, @"rating_num"" property=""v:average"">(.*?)</strong>", RegexOptions.IgnoreCase);
             subject.rating = match.GetAllText();
@@ -309,7 +343,7 @@ namespace MovieTorrents.Common
             match = Regex.Match(html, @"<div id=""mainpic"" class="""">[\s\S]*?src=""(.*?)""[\s\S]*?</div>", RegexOptions.IgnoreCase);
             if(match.Success) subject.img_url = match.Groups[1].Value;
 
-            subject.TryToDownloadSubjectImg();
+            await subject.TryToDownloadSubjectImg();
 
             //subject.title = subject.name;
             if(string.IsNullOrEmpty(subject.sub_title))

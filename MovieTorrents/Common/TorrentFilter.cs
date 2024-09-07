@@ -8,8 +8,8 @@ namespace MovieTorrents.Common;
 
 public class TorrentFilter
 {
-    public int RecordsLimit { get; set; } = 100;
-    public bool Recent { get; set; }
+    public int RecordsLimit { get; set; } = 1000;
+    public bool Recent { get; set; } = true;
     public bool HideSameSubject { get; set; } = true;
     public bool NotWatched { get; set; }
     public bool Watched { get; set; }
