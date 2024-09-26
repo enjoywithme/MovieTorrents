@@ -175,11 +175,8 @@ namespace MovieTorrents
                 if (_isAutoDownloading)
                 {
                     AutoDownloadNextPage();
-                }
-                else
-                {
-                    return;
-                }
+                } 
+                return;
             }
 
 
