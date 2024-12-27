@@ -64,7 +64,9 @@ namespace MovieTorrents.Common
             }
 
             //判断是否勾选此项
-            Checked = Rating >= 7.0M;
+            //Checked = Rating >= 7.0M;
+            Checked = true;
+
 
             Debug.WriteLine($"{Title} -- {DouBanRating} --{Rating} -- {Checked}");
 
