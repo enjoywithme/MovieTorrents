@@ -8,15 +8,21 @@ using Microsoft.Web.WebView2.Core;
 using MovieTorrents.Common;
 using mySharedLib;
 using System.Linq;
+using System.Diagnostics;
 
 namespace MovieTorrents
 {
     public partial class FormBtBtt : Form
     {
-        private bool _isQuerying;
+        private bool _isWorking;
+
         private IList<string> _threads;
         private int _threadIndex;
         private IList<BtBtItem> _btItems;
+        /// <summary>
+        /// 准备要下载的附件URL
+        /// </summary>
+        private readonly List<DownloadItem> _itemsToDownload = [];
         CoreWebView2Environment _environment;
         private string _currentPageUrl;
 
@@ -52,10 +58,11 @@ namespace MovieTorrents
             webView21.CoreWebView2.AddWebResourceRequestedFilter("http*", CoreWebView2WebResourceContext.Image);
             webView21.CoreWebView2.WebResourceRequested += CoreWebView2_WebResourceRequested;
             webView21.NavigationCompleted += WebView21_NavigationCompleted;
+            webView21.CoreWebView2.DownloadStarting += CoreWebView2_DownloadStarting;
 
             btArchiveTorrent.Click += BtArchiveTorrent_Click;
 #if DEBUG
-            tbSearch.Text = "模范刑警";
+            tbSearch.Text = "网络寻凶";
 #endif
             Resize += FormBtBtt_Resize;
             tbSearch.KeyDown += TbSearch_KeyDown;
@@ -66,8 +73,7 @@ namespace MovieTorrents
             btHomePage.Click += BtHomePage_Click;
         }
 
-
-
+        #region 动作事件
 
         private void TbSearch_Pasted(object sender, ClipboardEventArgs e)
         {
@@ -103,27 +109,39 @@ namespace MovieTorrents
 
         private void DoSearch()
         {
-            //if (!CheckAutoDownloading()) return;
+            if(_isWorking)
+                return;
+
+            _isWorking = true;
+            _isAutoDownloading = false;
+
             if (string.IsNullOrEmpty(tbSearch.Text.Trim())) return;
             tbUrl.Text = BtBtItem.SearPageUrl(tbSearch.Text.Trim());
             QueryIndexPage(tbUrl.Text.Trim());
         }
 
+        #endregion
+
+
+
 
         #region WebView actions
-
-        
-
         private void CoreWebView2_WebResourceRequested(object sender, CoreWebView2WebResourceRequestedEventArgs e)
         {
             e.Response = _environment.CreateWebResourceResponse(null, 404, "Not found", "");
         }
 
+        /// <summary>
+        /// 页面加载结束回调
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private async void WebView21_NavigationCompleted(object sender, CoreWebView2NavigationCompletedEventArgs e)
         {
    
 
-            if (!_isQuerying) return;
+            if (!_isWorking) 
+                return;
 
             var html = await webView21.ExecuteScriptAsync("document.documentElement.outerHTML;");
             html = Regex.Unescape(html);
@@ -152,6 +170,12 @@ namespace MovieTorrents
                 //Parse thread page
                 ProcessThreadPage(html,url);
             }
+            //https://www.1lou.me/attach-download-2096344.htm
+            else if (url.StartsWith($"{MyMtSettings.Instance.BtBtHomeUrl}attach-download-",
+                         StringComparison.InvariantCultureIgnoreCase))
+            {
+                CheckDownloadAttachment();
+            }
 
         }
 
@@ -162,16 +186,12 @@ namespace MovieTorrents
             {
                 if(!_isAutoDownloading)
                     MessageBox.Show(msg, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                _isQuerying = false;
-                _isAutoDownloading = false;
                 return;
             }
 
 
             if (_threads.Count == 0)
             {
-                _isQuerying = false;
-
                 if (_isAutoDownloading)
                 {
                     AutoDownloadNextPage();
@@ -193,16 +213,13 @@ namespace MovieTorrents
             {
                 if (!_isAutoDownloading)
                     MessageBox.Show(msg, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                _isQuerying = false;
-                _isAutoDownloading = false;
                 return;
             }
 
 
             if (_threads.Count == 0)
             {
-                _isQuerying = false;
-
+                _isWorking = false;
                 return;
             }
 
@@ -213,7 +230,11 @@ namespace MovieTorrents
             webView21.CoreWebView2?.Navigate($"{MyMtSettings.Instance.BtBtHomeUrl}{_threads[_threadIndex]}");
         }
 
-
+        /// <summary>
+        /// 解析帖子页面
+        /// </summary>
+        /// <param name="html"></param>
+        /// <param name="url"></param>
         private void ProcessThreadPage(string html,string url)
         {
             var btItem = BtBtItem.ParseThreadPage(html, url,out var msg);
@@ -234,7 +255,6 @@ namespace MovieTorrents
             _threadIndex++;
             if (_threadIndex == _threads.Count)
             {
-                _isQuerying = false;
 
                 if (_isAutoDownloading)
                     AutoDownloadNextPage();
@@ -293,18 +313,12 @@ namespace MovieTorrents
         /// <param name="url"></param>
         private void QueryIndexPage(string url)
         {
-            if(_isQuerying)
-                return;
-
             if (webView21.CoreWebView2 == null)
             {
-                _isQuerying = false;
+                _isWorking = false;
                 return;
             }
             webView21.CoreWebView2?.Navigate(url);
-
-            _isQuerying = true;
-
 
         }
 
@@ -347,23 +361,30 @@ namespace MovieTorrents
             if (IsWorking()) return;
 
             if (lvResults.CheckedItems.Count == 0) return;
-            var c = Cursor;
-            Cursor = Cursors.WaitCursor;
-            var message = "";
-            var i = 0;
+            //var c = Cursor;
+            //Cursor = Cursors.WaitCursor;
+            //var message = "";
+            //var i = 0;
+            var itemsToDownload = new List<BtBtItem>();
             foreach (ListViewItem checkedItem in lvResults.CheckedItems)
             {
                 var btItem = (BtBtItem)checkedItem.Tag;
-                i += btItem.DownLoadAttachments(out var msg);
-                if (!string.IsNullOrEmpty(msg))
-                    message += $"{msg}\r\n";
+
+                itemsToDownload.Add(btItem);
+
+                //i += btItem.DownLoadAttachments(out var msg);
+                
+                //if (!string.IsNullOrEmpty(msg))
+                //    message += $"{msg}\r\n";
 
             }
-            Cursor = c;
+            //Cursor = c;
 
-            message = $"下载了{i}个文件。{message}";
-            MessageBox.Show(message, Resource.TextHint, MessageBoxButtons.OK, MessageBoxIcon.Information);
-            Interlocked.Exchange(ref BtBtItem.AutoDownloadRunning, 0);
+            DownloadItemsWithBrowser(itemsToDownload);
+
+            //message = $"下载了{i}个文件。{message}";
+            //MessageBox.Show(message, Resource.TextHint, MessageBoxButtons.OK, MessageBoxIcon.Information);
+            //Interlocked.Exchange(ref BtBtItem.AutoDownloadRunning, 0);
 
         }
 
@@ -384,7 +405,8 @@ namespace MovieTorrents
         //检查是否正在自动下载
         private bool IsWorking()
         {
-            if (!_isQuerying && !_isAutoDownloading) return false;
+            if (!_isWorking) 
+                return false;
 
             MessageBox.Show(Resource.BTIsWorking, Resource.TextHint, MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
 
@@ -414,6 +436,20 @@ namespace MovieTorrents
 
         }
 
+
+
+        #region 自动定时下载
+
+        private static System.Windows.Forms.Timer _autoDownloadTimer;
+        private bool _isAutoDownloading;
+        private int _autoDownloadPages;
+        private IList<BtBtItem> _autoDownloadItems;
+
+        /// <summary>
+        /// 切换自动下载
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void cbAutoDownload_CheckedChanged(object sender, EventArgs e)
         {
             if (MyMtSettings.Instance.IsCurrentMonitor())
@@ -424,17 +460,10 @@ namespace MovieTorrents
             {
                 if (!cbAutoDownload.Checked) return;
                 MessageBox.Show(Resource.BtCurrentPcIsNotMonitor, Resource.TextHint, MessageBoxButtons.OK, MessageBoxIcon.Information);
-                cbAutoDownload.Checked=false;
+                cbAutoDownload.Checked = false;
 
             }
         }
-
-        #region 自动定时下载
-
-        private static System.Windows.Forms.Timer _autoDownloadTimer;
-        private bool _isAutoDownloading;
-        private int _autoDownloadPages;
-        private IList<BtBtItem> _autoDownloadItems;
 
         //启动自动下载
         private void EnableAutoDownload(bool bEnable)
@@ -449,11 +478,19 @@ namespace MovieTorrents
                 }
 
                 _autoDownloadTimer.Start();
-
+                _autoDownloadTimer_Tick(null,null);
             }
             else
             {
-                if (_autoDownloadTimer == null) return;
+                if (_autoDownloadTimer == null) 
+                    return;
+
+                if (_isWorking && _isAutoDownloading)
+                {
+                    _isWorking = false;
+                    _isAutoDownloading = false;
+                }
+
                 _autoDownloadTimer.Stop();
 
 
@@ -462,10 +499,11 @@ namespace MovieTorrents
 
         private void _autoDownloadTimer_Tick(object sender, EventArgs e)
         {
-            if (_isAutoDownloading || _isQuerying)
+            if (_isWorking)
                 return;
 
             MyLog.Log("=====自动下载开始运行======");
+            _isWorking = true;
             _isAutoDownloading = true;
             _autoDownloadPages = 0;
             _autoDownloadItems = new List<BtBtItem>();
@@ -519,17 +557,134 @@ namespace MovieTorrents
                 if (_autoDownloadItems is { Count: > 0 })
                 {
                     //下载附件
-                    var checkedItems = _autoDownloadItems.Where(x => x.Checked
-                                                                     && (x.tid == 0 || MyMtSettings.Instance.AutoDownloadLastTid == 0 
-                                                                         || x.tid > MyMtSettings.Instance.AutoDownloadLastTid)
-                    ).ToList();
-                    var i = 0;
-                    foreach (var btItem in checkedItems)
-                    {
-                        i += btItem.DownLoadAttachments(out var msg);
-                    }
-                    MyLog.Log($"下载了 {i} 个文件");
 
+                    //DownloadAttachmentsWithWebClient();
+
+                    DownloadItemsWithBrowser(_autoDownloadItems);
+
+                    
+                }
+                else
+                {
+                    _isAutoDownloading = false;
+                    _isWorking = false;
+                }
+
+                
+            }
+            else
+            {
+                var pageUrl = BtBtItem.NextPageUrl(_currentPageUrl);
+                MyLog.Log($"===搜索第{_autoDownloadPages}页====={pageUrl}");
+                QueryIndexPage(pageUrl);
+            }
+        }
+
+        /// <summary>
+        /// 使用webclient单独下载种子附件 - 2025/1/14日开始下载不了了
+        /// </summary>
+        private void DownloadAttachmentsWithWebClient()
+        {
+            //下载附件
+            var checkedItems = _autoDownloadItems.Where(x => x.Checked
+                                                             && (x.tid == 0 || MyMtSettings.Instance.AutoDownloadLastTid == 0
+                                                                            || x.tid > MyMtSettings.Instance.AutoDownloadLastTid)
+            ).ToList();
+            var i = 0;
+            foreach (var btItem in checkedItems)
+            {
+                i += btItem.DownLoadAttachments(out var msg);
+            }
+            MyLog.Log($"下载了 {i} 个文件");
+
+            //记录最新查询的
+            var maxTid = _autoDownloadItems.Max(x => x.tid);
+            var latestItem = _autoDownloadItems.FirstOrDefault(x => x.tid != 0 && x.tid == maxTid);
+            if (latestItem?.PostDateTime != null)
+            {
+                MyMtSettings.Instance.AutoDownloadLastPostDateTime = latestItem.PostDateTime.Value;
+                MyMtSettings.Instance.AutoDownloadLastTid = latestItem.tid;
+                //Utility.SaveSetting(nameof(AutoDownloadLastPostDateTime), AutoDownloadLastPostDateTime.ToString("yyyy-MM-dd HH:mm:ss"));
+                //Utility.SaveSetting(nameof(AutoDownloadLastTid), AutoDownloadLastTid.ToString());
+                MyMtSettings.Instance.Save();
+                MyLog.Log($"===Last item===={latestItem.Title}=={latestItem.tid}=={latestItem.PostDateTime}");
+            }
+        }
+
+        /// <summary>
+        /// 使用网页来下载附件
+        /// </summary>
+        /// <param name="items"></param>
+        private void DownloadItemsWithBrowser(IList<BtBtItem> items)
+        {
+            foreach (var item in items)
+            {
+                _itemsToDownload.AddRange(item.GetDownloadItems());
+            }
+
+            if(_itemsToDownload.Count>0)
+               webView21.CoreWebView2.Navigate($"{MyMtSettings.Instance.BtBtHomeUrl}{_itemsToDownload[0].Url}");
+
+        }
+
+
+        #endregion
+
+
+        #region 附件下载
+
+        CoreWebView2DownloadOperation _downloadOperation;
+
+        private void CoreWebView2_DownloadStarting(object sender, CoreWebView2DownloadStartingEventArgs e)
+        {
+            var state = e.DownloadOperation.State;
+            switch (state)
+            {
+                case CoreWebView2DownloadState.InProgress:
+                    _downloadOperation = e.DownloadOperation;
+                    var subPath = _itemsToDownload[0].SubPath;
+                    var fileName = System.IO.Path.GetFileName(e.ResultFilePath);
+                    if (string.IsNullOrEmpty(fileName))
+                    {
+                        e.Cancel = true;
+                    }
+                    else
+                        e.ResultFilePath = System.IO.Path.Combine(subPath, fileName);
+                    _downloadOperation.StateChanged += DownloadOperation_StateChanged;
+
+                    break;
+                case CoreWebView2DownloadState.Completed:
+                case CoreWebView2DownloadState.Interrupted:
+                    CheckDownloadAttachment();
+                    break;
+            }
+
+        }
+
+        private void DownloadOperation_StateChanged(object sender, object e)
+        {
+            CheckDownloadAttachment();
+        }
+
+        private void CheckDownloadAttachment()
+        {
+            if(_itemsToDownload.Count>0)
+                _itemsToDownload.RemoveAt(0);
+            //下载下一个附件
+            if (_itemsToDownload.Count > 0)
+                webView21.CoreWebView2.Navigate($"{MyMtSettings.Instance.BtBtHomeUrl}{_itemsToDownload[0].Url}");
+            else
+            {
+                if(!_isWorking)
+                    return;
+
+                if (!_isAutoDownloading)
+                {
+                    _isWorking = false;
+                    MessageBox.Show("下载完毕");
+                }
+                else
+                {
                     //记录最新查询的
                     var maxTid = _autoDownloadItems.Max(x => x.tid);
                     var latestItem = _autoDownloadItems.FirstOrDefault(x => x.tid != 0 && x.tid == maxTid);
@@ -542,20 +697,13 @@ namespace MovieTorrents
                         MyMtSettings.Instance.Save();
                         MyLog.Log($"===Last item===={latestItem.Title}=={latestItem.tid}=={latestItem.PostDateTime}");
                     }
-                }
 
-                _isQuerying = false;
-                _isAutoDownloading = false;
-            }
-            else
-            {
-                var pageUrl = BtBtItem.NextPageUrl(_currentPageUrl);
-                MyLog.Log($"===搜索第{_autoDownloadPages}页====={pageUrl}");
-                QueryIndexPage(pageUrl);
+                    _isWorking = false;
+                    _isAutoDownloading = false;
+                }
             }
         }
 
         #endregion
-
     }
 }

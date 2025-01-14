@@ -21,12 +21,18 @@ using Timer = System.Threading.Timer;
 
 namespace MovieTorrents.Common
 {
+    public class DownloadItem
+    {
+        public string Url { get; set; }
+        public string SubPath { get; set; }
+    }
+
     public class BtBtItem
     {
 
         //自动下载
         public static int AutoDownloadRunning;
-        private static Timer _autoDownloadTimer;
+        //private static Timer _autoDownloadTimer;
         
         //成员
         private string _title;
@@ -153,130 +159,130 @@ namespace MovieTorrents.Common
         }
 
         //查询页面上的文章
-        public static List<BtBtItem> QueryPage(string pageUrl, out string msg)
-        {
-            msg = string.Empty;
-            if (string.IsNullOrEmpty(pageUrl))
-            {
-                msg = "网页内容为空";
-                return null;
-            }
+        //public static List<BtBtItem> QueryPage(string pageUrl, out string msg)
+        //{
+        //    msg = string.Empty;
+        //    if (string.IsNullOrEmpty(pageUrl))
+        //    {
+        //        msg = "网页内容为空";
+        //        return null;
+        //    }
 
-            if (!pageUrl.StartsWith(MyMtSettings.Instance.BtBtHomeUrl))
-            {
-                msg = "非BtBt网页";
-                return null;
-            }
+        //    if (!pageUrl.StartsWith(MyMtSettings.Instance.BtBtHomeUrl))
+        //    {
+        //        msg = "非BtBt网页";
+        //        return null;
+        //    }
 
-            var items = new List<BtBtItem>();
-            var parser = new HtmlParser(new HtmlParserOptions
-            {
-                IsKeepingSourceReferences = true,
-            });//保留元素在文章中的位置 https://anglesharp.github.io/docs/Questions.html#can-i-retrieve-the-positions-of-elements-in-the-source-code
+        //    var items = new List<BtBtItem>();
+        //    var parser = new HtmlParser(new HtmlParserOptions
+        //    {
+        //        IsKeepingSourceReferences = true,
+        //    });//保留元素在文章中的位置 https://anglesharp.github.io/docs/Questions.html#can-i-retrieve-the-positions-of-elements-in-the-source-code
 
-            try
-            {
-                using var client = CreateWebClient();
-                var htmlData = client.DownloadData(pageUrl);
-                var htmlCode = Encoding.UTF8.GetString(htmlData);
-                //File.WriteAllText("d:\\temp\\1.txt", htmlCode, Encoding.UTF8);
-                //var htmlCode = File.ReadAllText("d:\\temp\\1.txt");
-                var document = parser.ParseDocument(htmlCode);
-                var topDiv = document.All.Where(d => d.LocalName == "div" && d.ClassList.Contains("bg2")).ToArray();//置顶帖分割线
+        //    try
+        //    {
+        //        using var client = CreateWebClient();
+        //        var htmlData = client.DownloadData(pageUrl);
+        //        var htmlCode = Encoding.UTF8.GetString(htmlData);
+        //        //File.WriteAllText("d:\\temp\\1.txt", htmlCode, Encoding.UTF8);
+        //        //var htmlCode = File.ReadAllText("d:\\temp\\1.txt");
+        //        var document = parser.ParseDocument(htmlCode);
+        //        var topDiv = document.All.Where(d => d.LocalName == "div" && d.ClassList.Contains("bg2")).ToArray();//置顶帖分割线
 
-                var links = document.All.Where(a => a.LocalName == "a" && a.ClassList.Contains("subject_link"));
-                foreach (var link in links)
-                {
-                    //略过置顶帖
-                    if(topDiv.Length>0 && link.SourceReference.Position.Position<topDiv[0].SourceReference.Position.Position)
-                        continue;
+        //        var links = document.All.Where(a => a.LocalName == "a" && a.ClassList.Contains("subject_link"));
+        //        foreach (var link in links)
+        //        {
+        //            //略过置顶帖
+        //            if(topDiv.Length>0 && link.SourceReference.Position.Position<topDiv[0].SourceReference.Position.Position)
+        //                continue;
                         
-                    var title = link.TextContent.Trim();
-                    if (string.IsNullOrEmpty(title)) continue;
+        //            var title = link.TextContent.Trim();
+        //            if (string.IsNullOrEmpty(title)) continue;
                      
-                    var detailLink = link.Attributes["href"].Value;
-                    if (string.IsNullOrEmpty(detailLink)) continue;
+        //            var detailLink = link.Attributes["href"].Value;
+        //            if (string.IsNullOrEmpty(detailLink)) continue;
 
-                    var btItem = new BtBtItem {Title = title};
+        //            var btItem = new BtBtItem {Title = title};
 
-                    //试图查找tid,lastpost
-                    var threadTable = link.Ancestors().OfType<IElement>()
-                        .Where(a => a.LocalName == "table" && a.Attributes.Any(b => b.Name == "tid")).ToArray();
-                    if (threadTable.Length > 0 && int.TryParse(threadTable[0].Attributes["tid"].Value,out var tid))
-                        btItem.tid = tid;
+        //            //试图查找tid,lastpost
+        //            var threadTable = link.Ancestors().OfType<IElement>()
+        //                .Where(a => a.LocalName == "table" && a.Attributes.Any(b => b.Name == "tid")).ToArray();
+        //            if (threadTable.Length > 0 && int.TryParse(threadTable[0].Attributes["tid"].Value,out var tid))
+        //                btItem.tid = tid;
 
-                    //下载具体页面
-                    var pageData = client.DownloadData($"{MyMtSettings.Instance.BtBtHomeUrl}{detailLink}");
-                    var pageCode = Encoding.UTF8.GetString(pageData);
-                    //File.WriteAllText("d:\\temp\\2.txt", pageCode, Encoding.UTF8);
+        //            //下载具体页面
+        //            var pageData = client.DownloadData($"{MyMtSettings.Instance.BtBtHomeUrl}{detailLink}");
+        //            var pageCode = Encoding.UTF8.GetString(pageData);
+        //            //File.WriteAllText("d:\\temp\\2.txt", pageCode, Encoding.UTF8);
 
-                    //查找可能的完整标题
-                    var match = Regex.Match(pageCode, "<blockquote>帖子完整标题：(.+?)</blockquote>");
-                    if (match.Success)
-                        btItem.Title = match.Groups[1].Value;
+        //            //查找可能的完整标题
+        //            var match = Regex.Match(pageCode, "<blockquote>帖子完整标题：(.+?)</blockquote>");
+        //            if (match.Success)
+        //                btItem.Title = match.Groups[1].Value;
 
-                    //查找豆瓣评分
-                    match = Regex.Match(pageCode, "豆瓣评分(.*?)/10");//非贪婪
-                    btItem.DouBanRating = match.Success ? match.Groups[1].Value.Trim() : "";
+        //            //查找豆瓣评分
+        //            match = Regex.Match(pageCode, "豆瓣评分(.*?)/10");//非贪婪
+        //            btItem.DouBanRating = match.Success ? match.Groups[1].Value.Trim() : "";
 
-                    //<span class="grey">发帖时间：</span><b>.*</b>
-                    match = Regex.Match(pageCode, "<span class=\"grey\">发帖时间：</span><b>(.*?)</b>");
-                    btItem.PublishTime = match.Success ? match.Groups[1].Value : "";
+        //            //<span class="grey">发帖时间：</span><b>.*</b>
+        //            match = Regex.Match(pageCode, "<span class=\"grey\">发帖时间：</span><b>(.*?)</b>");
+        //            btItem.PublishTime = match.Success ? match.Groups[1].Value : "";
 
-                    //◎年　　代　1954<br />
-                    match = Regex.Match(pageCode, "年　　代(.*?)<br />");
-                    if (match.Success && int.TryParse(match.Groups[1].Value, out var d)) btItem.Year = d;
+        //            //◎年　　代　1954<br />
+        //            match = Regex.Match(pageCode, "年　　代(.*?)<br />");
+        //            if (match.Success && int.TryParse(match.Groups[1].Value, out var d)) btItem.Year = d;
 
-                    //◎类　　别　剧情 / 喜剧 / 爱情 / 悬疑 / 音乐<br />
-                    match = Regex.Match(pageCode, "类　　别(.*?)<br />");
-                    btItem.Gene = match.Success ? match.Groups[1].Value.Trim() : "";
+        //            //◎类　　别　剧情 / 喜剧 / 爱情 / 悬疑 / 音乐<br />
+        //            match = Regex.Match(pageCode, "类　　别(.*?)<br />");
+        //            btItem.Gene = match.Success ? match.Groups[1].Value.Trim() : "";
 
-                    //标　　签　西班牙 | 西班牙电影 | JulioMedem | 爱情 | 1993 | 红松鼠杀人事件 | Julio_Medem | 密谭<br />
-                    match = Regex.Match(pageCode, "标　　签(.*?)<br />");
-                    btItem.Tag = match.Success ? match.Groups[1].Value.Trim() : "";
+        //            //标　　签　西班牙 | 西班牙电影 | JulioMedem | 爱情 | 1993 | 红松鼠杀人事件 | Julio_Medem | 密谭<br />
+        //            match = Regex.Match(pageCode, "标　　签(.*?)<br />");
+        //            btItem.Tag = match.Success ? match.Groups[1].Value.Trim() : "";
 
-                    //发帖时间
-                    match = Regex.Match(pageCode, "<span class=\"grey\">发帖时间：</span><b>(.*?)</b>");
-                    if (match.Success && DateTime.TryParse(match.Groups[1].Value, out var dt))
-                        btItem.PostDateTime = dt;
+        //            //发帖时间
+        //            match = Regex.Match(pageCode, "<span class=\"grey\">发帖时间：</span><b>(.*?)</b>");
+        //            if (match.Success && DateTime.TryParse(match.Groups[1].Value, out var dt))
+        //                btItem.PostDateTime = dt;
 
-                    //附件 <a href="attach-dialog-fid-1183-aid-5138072.htm" target="_blank" rel="nofollow"><img src="/view/image/filetype/zip.gif" width="16" height="16" />The.Red.Squirrel.1993.1080p.BluRay.x264-USURY.zip</a>
-                    var documentItem = parser.ParseDocument(pageCode);
-                    var attachments = documentItem.All.Where(a =>
-                        a.LocalName == "a"
-                        && a.HasAttribute("href")
-                        && a.Attributes["href"].Value.Contains("attach-dialog-fid-")).ToArray();
-                    foreach (var attachment in attachments)
-                    {
-                        var attachmentName = attachment.Text().Trim();
-                        var attachmentUrl = attachment.Attributes["href"].Value;
+        //            //附件 <a href="attach-dialog-fid-1183-aid-5138072.htm" target="_blank" rel="nofollow"><img src="/view/image/filetype/zip.gif" width="16" height="16" />The.Red.Squirrel.1993.1080p.BluRay.x264-USURY.zip</a>
+        //            var documentItem = parser.ParseDocument(pageCode);
+        //            var attachments = documentItem.All.Where(a =>
+        //                a.LocalName == "a"
+        //                && a.HasAttribute("href")
+        //                && a.Attributes["href"].Value.Contains("attach-dialog-fid-")).ToArray();
+        //            foreach (var attachment in attachments)
+        //            {
+        //                var attachmentName = attachment.Text().Trim();
+        //                var attachmentUrl = attachment.Attributes["href"].Value;
 
-                        if (!attachmentName.ToLower().EndsWith(".zip") &&
-                            !attachmentName.ToLower().EndsWith(".torrent")) continue;
+        //                if (!attachmentName.ToLower().EndsWith(".zip") &&
+        //                    !attachmentName.ToLower().EndsWith(".torrent")) continue;
 
-                        btItem.AttachmentUrls.Add(attachmentUrl.Replace("dialog", "download"));
+        //                btItem.AttachmentUrls.Add(attachmentUrl.Replace("dialog", "download"));
 
-                    }
+        //            }
 
-                    btItem.Parse();
-                    items.Add(btItem);
-
-
-
-                    Debug.WriteLine($"{btItem.Title} {btItem.Keyword} {btItem.DouBanRating} {btItem.Rating} {btItem.tid} {btItem.PostDateTime}");
+        //            btItem.Parse();
+        //            items.Add(btItem);
 
 
-                }
-            }
-            catch (Exception e)
-            {
-                msg = e.Message;
-                return null;
-            }
+
+        //            Debug.WriteLine($"{btItem.Title} {btItem.Keyword} {btItem.DouBanRating} {btItem.Rating} {btItem.tid} {btItem.PostDateTime}");
 
 
-            return items;
-        }
+        //        }
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        msg = e.Message;
+        //        return null;
+        //    }
+
+
+        //    return items;
+        //}
 
         /// <summary>
         /// Parse the list index page
@@ -475,6 +481,32 @@ namespace MovieTorrents.Common
             return null;
         }
 
+        /// <summary>
+        /// 获取要下载的URL和保存子路径
+        /// </summary>
+        /// <returns></returns>
+        public IList<DownloadItem> GetDownloadItems()
+        {
+            var downloadItems = new List<DownloadItem>();
+            if (AttachmentUrls.Count==1)
+                downloadItems.Add(new DownloadItem(){Url = AttachmentUrls[0] ,SubPath = MyMtSettings.Instance.DownLoadRootPath});
+            else
+            {
+                //下载到标题下的子目录
+                var subPath = Path.Combine(MyMtSettings.Instance.DownLoadRootPath, Title.SanitizeFileName());
+                if(!Directory.Exists(subPath))
+                    Directory.CreateDirectory(subPath);
+
+                foreach (var attachmentUrl in AttachmentUrls)
+                {
+                    downloadItems.Add(new DownloadItem(){Url = attachmentUrl ,SubPath = subPath});
+
+                }
+            }
+
+            return downloadItems;
+        }
+
         //下载附件
         public int DownLoadAttachments(out string msg)
         {
@@ -521,6 +553,8 @@ namespace MovieTorrents.Common
             return i;
         }
 
+
+
         //下载种子附件
         private void DownloadAttachmentFile(WebClient client, string fileUrl, string downloadPath,
             string fileName = null)
@@ -541,7 +575,8 @@ namespace MovieTorrents.Common
                 if (match.Success)
                     originalFileName = match.Groups[1].Value;
             }
-
+            if(string.IsNullOrEmpty(originalFileName) && !string.IsNullOrEmpty(fileName))
+                originalFileName = fileName;
             if (originalFileName.Length > 0)
             {
                 fileName = originalFileName;
@@ -774,109 +809,109 @@ namespace MovieTorrents.Common
         }
 
         //自动下载
-        public static void AutoDownloadCallback(object o)
-        {
-            if (0 != Interlocked.Exchange(ref AutoDownloadRunning, 1))
-                return;
-            MyLog.Log("=====自动下载开始运行======");
-            try
-            {
-                var items = new List<BtBtItem>();
+        //public static void AutoDownloadCallback(object o)
+        //{
+        //    if (0 != Interlocked.Exchange(ref AutoDownloadRunning, 1))
+        //        return;
+        //    MyLog.Log("=====自动下载开始运行======");
+        //    try
+        //    {
+        //        var items = new List<BtBtItem>();
 
-                var pages = 0;
-                var pageUrl = MyMtSettings.Instance.BtBtHomeUrl;
-                while (true)
-                {
-                    var searched = QueryPage(pageUrl,out var msg);
-                    if (searched != null)
-                    {
-                        items.AddRange(searched);
+        //        var pages = 0;
+        //        var pageUrl = MyMtSettings.Instance.BtBtHomeUrl;
+        //        while (true)
+        //        {
+        //            var searched = QueryPage(pageUrl,out var msg);
+        //            if (searched != null)
+        //            {
+        //                items.AddRange(searched);
 
-                        //如果上次已经有查询，退出
-                        if (MyMtSettings.Instance.AutoDownloadLastTid !=0 
-                            && MyMtSettings.Instance.AutoDownloadLastPostDateTime != default(DateTime)
-                            && searched.Any(x =>
-                                x.tid == MyMtSettings.Instance.AutoDownloadLastTid && x.PostDateTime == MyMtSettings.Instance.AutoDownloadLastPostDateTime))
-                        {
+        //                //如果上次已经有查询，退出
+        //                if (MyMtSettings.Instance.AutoDownloadLastTid !=0 
+        //                    && MyMtSettings.Instance.AutoDownloadLastPostDateTime != default(DateTime)
+        //                    && searched.Any(x =>
+        //                        x.tid == MyMtSettings.Instance.AutoDownloadLastTid && x.PostDateTime == MyMtSettings.Instance.AutoDownloadLastPostDateTime))
+        //                {
 
-                            MyLog.Log("=====已抵达上次搜索文章，退出======");
-                            break;
-                        }
+        //                    MyLog.Log("=====已抵达上次搜索文章，退出======");
+        //                    break;
+        //                }
 
-                        //如果超过24小时的贴，退出
-                        var now = DateTime.Now;
-                        if (searched.Any(x =>
-                            x.PostDateTime != null && (now - x.PostDateTime.Value).TotalHours > MyMtSettings.Instance.AutoDownloadSearchHours))
-                        {
-                            MyLog.Log($"====已搜索{MyMtSettings.Instance.AutoDownloadSearchHours}小时的文章，退出======");
-                            break;
-                        }
+        //                //如果超过24小时的贴，退出
+        //                var now = DateTime.Now;
+        //                if (searched.Any(x =>
+        //                    x.PostDateTime != null && (now - x.PostDateTime.Value).TotalHours > MyMtSettings.Instance.AutoDownloadSearchHours))
+        //                {
+        //                    MyLog.Log($"====已搜索{MyMtSettings.Instance.AutoDownloadSearchHours}小时的文章，退出======");
+        //                    break;
+        //                }
 
-                    }
+        //            }
 
-                    pages++;
-                    if(pages> MyMtSettings.Instance.AutoDownloadSearchPages) break;
-                    pageUrl = NextPageUrl(pageUrl);
-                    MyLog.Log($"====Page {pages}====={pageUrl}");
-                }
+        //            pages++;
+        //            if(pages> MyMtSettings.Instance.AutoDownloadSearchPages) break;
+        //            pageUrl = NextPageUrl(pageUrl);
+        //            MyLog.Log($"====Page {pages}====={pageUrl}");
+        //        }
 
-                //下载附件
-                var checkedItems = items.Where(x => x.Checked 
-                                                    &&(x.tid==0 ||MyMtSettings.Instance.AutoDownloadLastTid ==0 ||x.tid>MyMtSettings.Instance.AutoDownloadLastTid)
-                                                    ).ToList();
-                var i = 0;
-                foreach (var btItem in checkedItems)
-                {
-                    i+=btItem.DownLoadAttachments(out var msg);
-                }
-                MyLog.Log($"下载了 {i} 个文件");
+        //        //下载附件
+        //        var checkedItems = items.Where(x => x.Checked 
+        //                                            &&(x.tid==0 ||MyMtSettings.Instance.AutoDownloadLastTid ==0 ||x.tid>MyMtSettings.Instance.AutoDownloadLastTid)
+        //                                            ).ToList();
+        //        var i = 0;
+        //        foreach (var btItem in checkedItems)
+        //        {
+        //            i+=btItem.DownLoadAttachments(out var msg);
+        //        }
+        //        MyLog.Log($"下载了 {i} 个文件");
 
-                //记录最新查询的
-                var maxTid = items.Max(x => x.tid);
-                var latestItem = items.FirstOrDefault(x => x.tid != 0 && x.tid == maxTid);
-                if (latestItem?.PostDateTime != null)
-                {
-                    MyMtSettings.Instance.AutoDownloadLastPostDateTime = latestItem.PostDateTime.Value;
-                    MyMtSettings.Instance.AutoDownloadLastTid = latestItem.tid;
-                    //Utility.SaveSetting(nameof(AutoDownloadLastPostDateTime), AutoDownloadLastPostDateTime.ToString("yyyy-MM-dd HH:mm:ss"));
-                    //Utility.SaveSetting(nameof(AutoDownloadLastTid), AutoDownloadLastTid.ToString());
-                    MyMtSettings.Instance.Save();
-                    MyLog.Log($"===Last item===={latestItem.Title}=={latestItem.tid}=={latestItem.PostDateTime}");
-                }
-            }
-            catch (Exception e)
-            {
-                MyLog.Log($"====Error===={e.Message}");
-            }
-            finally
-            {
-                Interlocked.Exchange(ref AutoDownloadRunning, 0);
-                MyLog.Log($"====AUTO DOWNLOAD===ENDING====");
+        //        //记录最新查询的
+        //        var maxTid = items.Max(x => x.tid);
+        //        var latestItem = items.FirstOrDefault(x => x.tid != 0 && x.tid == maxTid);
+        //        if (latestItem?.PostDateTime != null)
+        //        {
+        //            MyMtSettings.Instance.AutoDownloadLastPostDateTime = latestItem.PostDateTime.Value;
+        //            MyMtSettings.Instance.AutoDownloadLastTid = latestItem.tid;
+        //            //Utility.SaveSetting(nameof(AutoDownloadLastPostDateTime), AutoDownloadLastPostDateTime.ToString("yyyy-MM-dd HH:mm:ss"));
+        //            //Utility.SaveSetting(nameof(AutoDownloadLastTid), AutoDownloadLastTid.ToString());
+        //            MyMtSettings.Instance.Save();
+        //            MyLog.Log($"===Last item===={latestItem.Title}=={latestItem.tid}=={latestItem.PostDateTime}");
+        //        }
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        MyLog.Log($"====Error===={e.Message}");
+        //    }
+        //    finally
+        //    {
+        //        Interlocked.Exchange(ref AutoDownloadRunning, 0);
+        //        MyLog.Log($"====AUTO DOWNLOAD===ENDING====");
 
-            }
+        //    }
 
-        }
+        //}
 
         
 
-        //启动自动下载
-        public static void EnableAutoDownload(bool bEnable)
-        {
-            if (bEnable)
-            {
-                if (_autoDownloadTimer == null)
-                {
-                    _autoDownloadTimer = new Timer(AutoDownloadCallback,null,Timeout.Infinite,Timeout.Infinite);
-                }
+        ////启动自动下载
+        //public static void EnableAutoDownload(bool bEnable)
+        //{
+        //    if (bEnable)
+        //    {
+        //        if (_autoDownloadTimer == null)
+        //        {
+        //            _autoDownloadTimer = new Timer(AutoDownloadCallback,null,Timeout.Infinite,Timeout.Infinite);
+        //        }
 
-                _autoDownloadTimer.Change(10 * 1000, MyMtSettings.Instance.AutoDownloadInterval * 60 * 1000);
-            }
-            else
-            {
-                if(_autoDownloadTimer==null) return;
-                _autoDownloadTimer.Change(Timeout.Infinite, Timeout.Infinite);
+        //        _autoDownloadTimer.Change(10 * 1000, MyMtSettings.Instance.AutoDownloadInterval * 60 * 1000);
+        //    }
+        //    else
+        //    {
+        //        if(_autoDownloadTimer==null) return;
+        //        _autoDownloadTimer.Change(Timeout.Infinite, Timeout.Infinite);
 
-            }
-        }
+        //    }
+        //}
     }
 }
