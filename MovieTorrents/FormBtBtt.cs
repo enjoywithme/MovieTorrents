@@ -9,6 +9,7 @@ using MovieTorrents.Common;
 using mySharedLib;
 using System.Linq;
 using System.Diagnostics;
+using System.IO;
 
 namespace MovieTorrents
 {
@@ -36,7 +37,8 @@ namespace MovieTorrents
         private async void FormBtBtt_Load(object sender, EventArgs e)
         {
             tbUrl.Text = MyMtSettings.Instance.BtBtHomeUrl;
-            _webViewUserDataFolder = System.IO.Path.Combine(Program.AssemblyDirectory, "webViewCache\\btbt\\");
+            _webViewUserDataFolder = Path.Combine(Program.AssemblyDirectory, "webViewCache\\btbt\\");
+
 
             if (!string.IsNullOrEmpty(MyMtSettings.Instance.WebProxy))
             {
@@ -54,7 +56,10 @@ namespace MovieTorrents
 
             }
 
+
             await webView21.EnsureCoreWebView2Async(_environment);
+            webView21.CoreWebView2.Profile.DefaultDownloadFolderPath = MyMtSettings.Instance.DownLoadRootPath;
+
             webView21.CoreWebView2.AddWebResourceRequestedFilter("http*", CoreWebView2WebResourceContext.Image);
             webView21.CoreWebView2.WebResourceRequested += CoreWebView2_WebResourceRequested;
             webView21.NavigationCompleted += WebView21_NavigationCompleted;
@@ -643,13 +648,20 @@ namespace MovieTorrents
                 case CoreWebView2DownloadState.InProgress:
                     _downloadOperation = e.DownloadOperation;
                     var subPath = _itemsToDownload[0].SubPath;
-                    var fileName = System.IO.Path.GetFileName(e.ResultFilePath);
+                    var fileName = Path.GetFileName(e.ResultFilePath);
                     if (string.IsNullOrEmpty(fileName))
                     {
                         e.Cancel = true;
                     }
                     else
-                        e.ResultFilePath = System.IO.Path.Combine(subPath, fileName);
+                        e.ResultFilePath = Path.Combine(subPath, fileName);
+
+                    //如果已经存在不重复下载
+                    if (File.Exists(e.ResultFilePath))
+                    {
+                        e.Cancel = true;
+                    }
+
                     _downloadOperation.StateChanged += DownloadOperation_StateChanged;
 
                     break;
@@ -675,6 +687,9 @@ namespace MovieTorrents
                 webView21.CoreWebView2.Navigate($"{MyMtSettings.Instance.BtBtHomeUrl}{_itemsToDownload[0].Url}");
             else
             {
+                var profile = webView21.CoreWebView2.Profile;
+                profile.ClearBrowsingDataAsync(CoreWebView2BrowsingDataKinds.DownloadHistory);
+
                 if(!_isWorking)
                     return;
 

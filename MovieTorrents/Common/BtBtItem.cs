@@ -726,9 +726,24 @@ namespace MovieTorrents.Common
                 foreach (var file in files)
                 {
                     //不考虑第XX集的文件
-                    if (Regex.IsMatch(file, "第[\\s]*[0-9]*[\\s]*集"))
+                    if (Regex.IsMatch(file, "第[\\s]*[0-9,-]*[\\s]*集"))
                     {
                         msg += $"\r\n{Path.GetFileName(file)} 非全季！";
+                        try
+                        {
+                            FileSystem.DeleteFile(file, UIOption.OnlyErrorDialogs, RecycleOption.SendToRecycleBin);
+                        }
+                        catch (Exception e)
+                        {
+                            msg += $"\r\n删除失败：{e.Message}";
+                        }
+                        continue;
+                    }
+
+                    //不考虑重复的文件 (1).torrent
+                    if (Regex.IsMatch(file, "\\(\\d+\\).torrent"))
+                    {
+                        msg += $"\r\n{Path.GetFileName(file)} 重复！";
                         try
                         {
                             FileSystem.DeleteFile(file, UIOption.OnlyErrorDialogs, RecycleOption.SendToRecycleBin);
