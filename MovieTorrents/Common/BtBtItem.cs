@@ -23,6 +23,7 @@ namespace MovieTorrents.Common
 {
     public class DownloadItem
     {
+        public string Title { get; set; }
         public string Url { get; set; }
         public string SubPath { get; set; }
     }
@@ -489,7 +490,7 @@ namespace MovieTorrents.Common
         {
             var downloadItems = new List<DownloadItem>();
             if (AttachmentUrls.Count==1)
-                downloadItems.Add(new DownloadItem(){Url = AttachmentUrls[0] ,SubPath = MyMtSettings.Instance.DownLoadRootPath});
+                downloadItems.Add(new DownloadItem {Url = AttachmentUrls[0] ,SubPath = MyMtSettings.Instance.DownLoadRootPath,Title = Title});
             else
             {
                 //下载到标题下的子目录
@@ -499,7 +500,7 @@ namespace MovieTorrents.Common
 
                 foreach (var attachmentUrl in AttachmentUrls)
                 {
-                    downloadItems.Add(new DownloadItem(){Url = attachmentUrl ,SubPath = subPath});
+                    downloadItems.Add(new DownloadItem {Url = attachmentUrl ,SubPath = subPath,Title = Title});
 
                 }
             }

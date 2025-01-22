@@ -10,6 +10,7 @@ using mySharedLib;
 using System.Linq;
 using System.Diagnostics;
 using System.IO;
+using System.Threading.Tasks;
 
 namespace MovieTorrents
 {
@@ -136,6 +137,22 @@ namespace MovieTorrents
             e.Response = _environment.CreateWebResourceResponse(null, 404, "Not found", "");
         }
 
+
+        /// <summary>
+        /// 获取页面HTML
+        /// </summary>
+        /// <returns></returns>
+        private async Task<string> GetPageHtml()
+        {
+            var html = await webView21.ExecuteScriptAsync("document.documentElement.outerHTML;");
+            html = Regex.Unescape(html);
+            html = html.Remove(0, 1);
+            html = html.Remove(html.Length - 1, 1);
+
+            return html;
+        }
+
+
         /// <summary>
         /// 页面加载结束回调
         /// </summary>
@@ -148,12 +165,6 @@ namespace MovieTorrents
             if (!_isWorking) 
                 return;
 
-            var html = await webView21.ExecuteScriptAsync("document.documentElement.outerHTML;");
-            html = Regex.Unescape(html);
-            html = html.Remove(0, 1);
-            html = html.Remove(html.Length - 1, 1);
-
-
             var url = webView21.CoreWebView2.Source;
             if (url.StartsWith($"{MyMtSettings.Instance.BtBtHomeUrl}index-",
                     StringComparison.InvariantCultureIgnoreCase)
@@ -161,18 +172,21 @@ namespace MovieTorrents
                     StringComparison.InvariantCultureIgnoreCase) == 0)
             {
                 //We are query list page
+                var html = await GetPageHtml();
                 ProcessIndexPage(html);
 
             }
             else if (url.StartsWith($"{MyMtSettings.Instance.BtBtHomeUrl}search-"))
             {
                 //Search page
+                var html = await GetPageHtml();
                 ProcessSearchPage(html);
             }
             else if (url.StartsWith($"{MyMtSettings.Instance.BtBtHomeUrl}thread-",
                          StringComparison.InvariantCultureIgnoreCase))
             {
                 //Parse thread page
+                var html = await GetPageHtml();
                 ProcessThreadPage(html,url);
             }
             //https://www.1lou.me/attach-download-2096344.htm
@@ -256,13 +270,11 @@ namespace MovieTorrents
                 }
             }
 
-            //next thread
             _threadIndex++;
             if (_threadIndex == _threads.Count)
             {
-
                 if (_isAutoDownloading)
-                    AutoDownloadNextPage();
+                    AutoDownloadNextPage();//继续查找下一个index page
                 else
                 {
 
@@ -274,8 +286,10 @@ namespace MovieTorrents
 
                 
             }
-            else
+            else if(_threadIndex<_threads.Count)
             {
+                //next thread
+
                 webView21.CoreWebView2?.Navigate($"{MyMtSettings.Instance.BtBtHomeUrl}{_threads[_threadIndex]}");
 
             }
@@ -384,8 +398,8 @@ namespace MovieTorrents
 
             }
             //Cursor = c;
-
-            DownloadItemsWithBrowser(itemsToDownload);
+            if(itemsToDownload.Count>0)
+                DownloadItemsWithBrowser(itemsToDownload);
 
             //message = $"下载了{i}个文件。{message}";
             //MessageBox.Show(message, Resource.TextHint, MessageBoxButtons.OK, MessageBoxIcon.Information);
@@ -552,6 +566,9 @@ namespace MovieTorrents
         
         }
 
+        /// <summary>
+        /// 转到下一个Index页面或者开始下载
+        /// </summary>
         private void AutoDownloadNextPage()
         {
             _autoDownloadPages++;
@@ -564,10 +581,10 @@ namespace MovieTorrents
                     //下载附件
 
                     //DownloadAttachmentsWithWebClient();
-
-                    DownloadItemsWithBrowser(_autoDownloadItems);
-
-                    
+                    BeginInvoke(() =>
+                    {
+                        DownloadItemsWithBrowser(_autoDownloadItems);
+                    });
                 }
                 else
                 {
@@ -581,6 +598,7 @@ namespace MovieTorrents
             {
                 var pageUrl = BtBtItem.NextPageUrl(_currentPageUrl);
                 MyLog.Log($"===搜索第{_autoDownloadPages}页====={pageUrl}");
+                _threadIndex = 0;//开始新的index页面
                 QueryIndexPage(pageUrl);
             }
         }
@@ -626,9 +644,11 @@ namespace MovieTorrents
             {
                 _itemsToDownload.AddRange(item.GetDownloadItems());
             }
+            items.Clear();
 
-            if(_itemsToDownload.Count>0)
-               webView21.CoreWebView2.Navigate($"{MyMtSettings.Instance.BtBtHomeUrl}{_itemsToDownload[0].Url}");
+            MyLog.Log($"开始下载附件：共{_itemsToDownload.Count}个");
+            MyLog.Log($"{_itemsToDownload.Count}：{_itemsToDownload[0].Title} {_itemsToDownload[0].Url}");
+            webView21.CoreWebView2.Navigate($"{MyMtSettings.Instance.BtBtHomeUrl}{_itemsToDownload[0].Url}");
 
         }
 
@@ -647,14 +667,17 @@ namespace MovieTorrents
             {
                 case CoreWebView2DownloadState.InProgress:
                     _downloadOperation = e.DownloadOperation;
-                    var subPath = _itemsToDownload[0].SubPath;
+                    
                     var fileName = Path.GetFileName(e.ResultFilePath);
-                    if (string.IsNullOrEmpty(fileName))
+                    if (string.IsNullOrEmpty(fileName) || _itemsToDownload.Count==0)
                     {
                         e.Cancel = true;
                     }
                     else
+                    {
+                        var subPath = _itemsToDownload[0].SubPath;
                         e.ResultFilePath = Path.Combine(subPath, fileName);
+                    }
 
                     //如果已经存在不重复下载
                     if (File.Exists(e.ResultFilePath))
@@ -684,7 +707,13 @@ namespace MovieTorrents
                 _itemsToDownload.RemoveAt(0);
             //下载下一个附件
             if (_itemsToDownload.Count > 0)
-                webView21.CoreWebView2.Navigate($"{MyMtSettings.Instance.BtBtHomeUrl}{_itemsToDownload[0].Url}");
+            {
+                var attachmentUrl = $"{MyMtSettings.Instance.BtBtHomeUrl}{_itemsToDownload[0].Url}";
+                Debug.WriteLine($"开始下载：{_itemsToDownload[0].Title} {attachmentUrl}");
+                MyLog.Log($"{_itemsToDownload.Count}：{_itemsToDownload[0].Title} {_itemsToDownload[0].Url}");
+
+                webView21.CoreWebView2.Navigate(attachmentUrl);
+            }
             else
             {
                 var profile = webView21.CoreWebView2.Profile;
@@ -700,6 +729,8 @@ namespace MovieTorrents
                 }
                 else
                 {
+                    MyLog.Log("下载完毕");
+
                     //记录最新查询的
                     var maxTid = _autoDownloadItems.Max(x => x.tid);
                     var latestItem = _autoDownloadItems.FirstOrDefault(x => x.tid != 0 && x.tid == maxTid);

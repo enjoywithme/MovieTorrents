@@ -47,15 +47,15 @@ namespace MovieTorrents
             }
 
 
-            try
-            {
+            //try
+            //{
                 Application.Run(new FormMain());
 
-            }
-            catch (Exception e)
-            {
-                ShowError(e.Message);
-            }
+            //}
+            //catch (Exception e)
+            //{
+            //    ShowError(e.Message);
+            //}
 
             MyMtSettings.Instance?.UnRegisterMonitor();
             MyMtSettings.Instance?.Save();
